@@ -542,6 +542,46 @@ export function Oracle() {
               <button onClick={clearCat} className="absolute top-2 right-2 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
                 <X className="w-5 h-5" />
               </button>
+
+              {/* Question input - INSIDE page 2 for proper centering */}
+              {!showNameInput && (
+                <div className="w-full max-w-xl mt-6 space-y-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) askOracle(); }}
+                      placeholder={`Ask ${displayName} a question...`}
+                      className="w-full px-5 py-4 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
+                      style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-600/40">✧</div>
+                  </div>
+
+                  <motion.button
+                    onClick={askOracle}
+                    disabled={!question.trim() || isThinking}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-4 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
+                  >
+                    ✦ Consult the Oracle ✦
+                  </motion.button>
+
+                  {response && !isThinking && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
+                      <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
+                        Ask Again
+                      </button>
+                      <button onClick={shareNative} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors" style={{ fontFamily: "Georgia, serif" }}>
+                        Share Wisdom
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -630,51 +670,12 @@ export function Oracle() {
             )}
           </AnimatePresence>
 
-          {/* Question input */}
-          {catImage && !showNameInput && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md mx-auto mt-6 space-y-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) askOracle(); }}
-                  placeholder={`Ask ${displayName} a question...`}
-                  className="w-full px-5 py-4 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
-                  style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
-                />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-600/40">✧</div>
-              </div>
-
-              <motion.button
-                onClick={askOracle}
-                disabled={!question.trim() || isThinking}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-4 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
-              >
-                ✦ Consult the Oracle ✦
-              </motion.button>
-
-              {response && !isThinking && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-                  <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
-                    Ask Again
-                  </button>
-                  <button onClick={shareNative} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors" style={{ fontFamily: "Georgia, serif" }}>
-                    Share Wisdom
-                  </button>
-                </motion.div>
-              )}
-            </motion.div>
-          )}
         </div>
 
         {/* Tagline */}
-        <div className="text-center py-2">
+        <div className="text-center py-4 mt-auto">
           <p className="text-lg md:text-2xl lg:text-3xl italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
-            Maybe wisdom. Maybe judgment.<br className="md:hidden" />Maybe salmon.
+            Maybe wisdom. Maybe judgment.<br className="md:hidden" /> Maybe salmon.
           </p>
           <p className="text-xl md:text-3xl lg:text-4xl font-black mt-1" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
             Always cat.
@@ -682,12 +683,12 @@ export function Oracle() {
         </div>
       </div>
 
-      {/* PURRfoot Sponsor Banner Placeholder - 150px for substantial presence */}
+      {/* PURRfoot Sponsor Banner - solid background, no bleed-through */}
       <div
-        className="w-full"
+        className="w-full flex-shrink-0"
         style={{
-          background: 'linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%)',
-          height: '150px',
+          background: '#0d1b2a',
+          minHeight: '120px',
         }}
       />
     </div>
