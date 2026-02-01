@@ -502,11 +502,10 @@ export function Oracle() {
                       backgroundColor: '#FFFBEB'
                     }}
                   >
-                    <img 
-                      src={catImage} 
-                      alt={displayName} 
+                    <img
+                      src={catImage}
+                      alt={displayName}
                       className="w-full aspect-square object-cover rounded-lg"
-                      style={{ filter: 'brightness(1.2) contrast(1.15) saturate(1.1) sepia(0.1)' }} // Nano-Banana: Lift shadows, deep blacks, warm tone
                     />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-800 rounded-full shadow-lg">
