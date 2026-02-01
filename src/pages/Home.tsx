@@ -286,7 +286,7 @@ export function Oracle() {
 
   return (
     <div
-      className="min-h-screen flex flex-col relative overflow-hidden"
+      className="h-screen flex flex-col relative overflow-hidden"
       style={{
         // Hot pink to gold gradient inspired by tarot deck
         background: 'linear-gradient(135deg, #EC4899 0%, #F472B6 20%, #FBBF24 50%, #F59E0B 80%, #D97706 100%)',
@@ -300,7 +300,7 @@ export function Oracle() {
         }}
       />
 
-      <div className="flex-1 flex flex-col px-4 py-3 relative z-10">
+      <div className="flex-1 flex flex-col px-4 py-3 relative z-10 overflow-auto">
         {/* Elaborate Art Nouveau corner vines - LARGE and ornate like tarot deck borders */}
         <CornerVine className="absolute top-0 left-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60" />
         <CornerVine className="absolute top-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-x-100" />
