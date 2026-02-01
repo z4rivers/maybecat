@@ -474,10 +474,10 @@ export function Oracle() {
             </motion.div>
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex-1 flex flex-col items-center justify-center">
-              {/* Oracle Reading Card */}
+              {/* Oracle Reading Card - wider to prevent vertical expansion */}
               <div
                 ref={responseRef}
-                className="w-full max-w-xl relative"
+                className="w-full max-w-2xl relative"
                 style={{
                   background: 'linear-gradient(145deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%)',
                   borderRadius: '1rem',
@@ -545,7 +545,7 @@ export function Oracle() {
 
               {/* Question input - INSIDE page 2 for proper centering */}
               {!showNameInput && (
-                <div className="w-full max-w-xl mt-6 space-y-4">
+                <div className="w-full max-w-2xl mt-6 space-y-4">
                   <div className="relative">
                     <input
                       type="text"
@@ -683,12 +683,12 @@ export function Oracle() {
         </div>
       </div>
 
-      {/* PURRfoot Sponsor Banner - solid background, no bleed-through */}
+      {/* PURRfoot Sponsor Banner - solid 150px, fully opaque */}
       <div
-        className="w-full flex-shrink-0"
+        className="w-full flex-shrink-0 relative z-20"
         style={{
-          background: '#0d1b2a',
-          minHeight: '120px',
+          backgroundColor: '#0d1b2a',
+          height: '150px',
         }}
       />
     </div>
