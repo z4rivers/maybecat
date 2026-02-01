@@ -232,7 +232,6 @@ export function Oracle() {
   const askOracle = useCallback(() => {
     if (!question.trim()) return;
     setIsThinking(true);
-    setResponse(null);
     const thinkingTime = 1500 + Math.random() * 1500;
     setTimeout(() => {
       setResponse(getRandomResponse());
@@ -322,7 +321,8 @@ export function Oracle() {
           </div>
 
           <h1
-            className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight"
+            onClick={clearCat}
+            className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity"
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
@@ -566,16 +566,16 @@ export function Oracle() {
 
                 <AnimatePresence mode="wait">
                   {isThinking && (
-                    <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-8">
-                      <Sparkles className="w-12 h-12 mx-auto mb-3 text-amber-700 animate-pulse" />
-                      <p className="text-amber-800 text-lg italic" style={{ fontFamily: "Georgia, serif" }}>
+                    <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
+                      <Sparkles className="w-8 h-8 mx-auto mb-2 text-amber-700 animate-pulse" />
+                      <p className="text-amber-800 text-base italic" style={{ fontFamily: "Georgia, serif" }}>
                         ✧ {displayName} contemplates... ✧
                       </p>
                     </motion.div>
                   )}
 
                   {response && !isThinking && (
-                    <motion.div key="response" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="text-center py-3">
+                    <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
                       <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif" }}>
                         "{response.text}"
                       </p>
@@ -614,18 +614,18 @@ export function Oracle() {
                     className="w-full py-2 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
                   >
-                    ✦ Consult the Oracle ✦
+                    ✦ Consult the Cat ✦
                   </motion.button>
 
-                  {response && !isThinking && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
+                  {response && (
+                    <div className="flex gap-3">
                       <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
                         Ask Again
                       </button>
-                      <button onClick={shareNative} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors" style={{ fontFamily: "Georgia, serif" }}>
+                      <button onClick={shareNative} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
                         Share Wisdom
                       </button>
-                    </motion.div>
+                    </div>
                   )}
                 </div>
               )}
