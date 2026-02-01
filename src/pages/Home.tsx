@@ -306,23 +306,23 @@ export function Oracle() {
         <CornerVine className="absolute top-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-x-100" />
         <CornerVine className="absolute bottom-0 left-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-y-100" />
         <CornerVine className="absolute bottom-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 scale-[-1]" />
-        
+
         {/* Ornate mandala decorations */}
         <CenterMandala className="absolute top-1/2 left-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
         <CenterMandala className="absolute top-1/2 right-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
         
-        {/* Header - compact */}
-        <header className="text-center mb-1">
-          <div className="flex items-center justify-center gap-3 mb-1">
-            <MysticalStar className="w-4 h-4 md:w-5 md:h-5 text-amber-100 drop-shadow-lg" />
-            <div className="h-0.5 w-12 md:w-20 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
-            <MysticalStar className="w-5 h-5 md:w-7 md:h-7 text-amber-100 drop-shadow-lg" />
-            <div className="h-0.5 w-12 md:w-20 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
-            <MysticalStar className="w-4 h-4 md:w-5 md:h-5 text-amber-100 drop-shadow-lg" />
+        {/* Header */}
+        <header className="text-center mb-2">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+            <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+            <MysticalStar className="w-6 h-6 md:w-8 md:h-8 text-amber-100 drop-shadow-lg" />
+            <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+            <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
           </div>
 
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight"
+            className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight"
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
@@ -333,8 +333,8 @@ export function Oracle() {
           </h1>
 
           <p
-            className="mt-1 text-base md:text-xl lg:text-2xl italic font-semibold"
-            style={{ 
+            className="mt-2 text-lg md:text-2xl lg:text-3xl italic font-semibold"
+            style={{
               fontFamily: "Georgia, serif",
               color: '#451A03',
               textShadow: '1px 1px 0 rgba(251,191,36,0.6)'
@@ -343,12 +343,12 @@ export function Oracle() {
             Your cat might have wisdom.
           </p>
 
-          <div className="flex items-center justify-center gap-2 mt-1">
-            <div className="h-0.5 w-10 bg-amber-800/60" />
-            <span className="text-amber-800 text-lg md:text-xl">☽</span>
-            <span className="text-amber-800 text-sm">✧</span>
-            <span className="text-amber-800 text-lg md:text-xl">☾</span>
-            <div className="h-0.5 w-10 bg-amber-800/60" />
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <div className="h-0.5 w-12 bg-amber-800/60" />
+            <span className="text-amber-800 text-xl md:text-2xl">☽</span>
+            <span className="text-amber-800 text-base">✧</span>
+            <span className="text-amber-800 text-xl md:text-2xl">☾</span>
+            <div className="h-0.5 w-12 bg-amber-800/60" />
           </div>
         </header>
 
@@ -358,7 +358,7 @@ export function Oracle() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex-1 flex flex-col items-center justify-start gap-2 pt-0 pb-12"
+              className="flex-1 flex flex-col items-center justify-center gap-2 -mt-8"
             >
               {/* Choose Your Oracle label */}
               <p 
@@ -373,7 +373,7 @@ export function Oracle() {
               </p>
 
               {/* Scroll container - constrained width enables scroll within overflow-hidden parent */}
-              <div className="w-full max-w-full overflow-x-auto pb-4">
+              <div className="w-full max-w-full overflow-x-auto pt-12 pb-4">
                 {/* All cats in one row - horizontal scroll on mobile, wrap on desktop */}
                 <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center items-end gap-4 md:gap-6 lg:gap-8 px-4 min-w-max md:min-w-0">
                 {/* YOUR CAT - larger than the others, tarot card style */}
@@ -542,10 +542,10 @@ export function Oracle() {
                 <div className="relative mx-auto mb-4" style={{ maxWidth: '280px' }}>
                   <div
                     className="rounded-xl overflow-hidden"
-                    style={{ 
-                      border: '4px solid #92400E', 
+                    style={{
+                      border: '4px solid #92400E',
                       boxShadow: '0 12px 30px rgba(120,53,15,0.4)',
-                      padding: '8px', // Thicker Nano-Banana matting
+                      padding: '8px',
                       backgroundColor: '#FFFBEB'
                     }}
                   >
@@ -575,7 +575,7 @@ export function Oracle() {
                   )}
 
                   {response && !isThinking && (
-                    <motion.div key="response" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="text-center py-6">
+                    <motion.div key="response" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="text-center py-3">
                       <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif" }}>
                         "{response.text}"
                       </p>
@@ -592,7 +592,7 @@ export function Oracle() {
 
               {/* Question input - INSIDE page 2 for proper centering */}
               {!showNameInput && (
-                <div className="w-full max-w-2xl mt-6 space-y-4">
+                <div className="w-full max-w-2xl mt-4 space-y-2">
                   <div className="relative">
                     <input
                       type="text"
@@ -600,7 +600,7 @@ export function Oracle() {
                       onChange={(e) => setQuestion(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) askOracle(); }}
                       placeholder={`Ask ${displayName} a question...`}
-                      className="w-full px-5 py-4 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
+                      className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
                       style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-600/40">✧</div>
@@ -611,7 +611,7 @@ export function Oracle() {
                     disabled={!question.trim() || isThinking}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full py-2 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
                   >
                     ✦ Consult the Oracle ✦
@@ -720,7 +720,7 @@ export function Oracle() {
         </div>
 
         {/* Tagline */}
-        <div className="text-center py-4 mt-auto">
+        <div className="text-center py-3 mt-auto">
           <p className="text-lg md:text-2xl lg:text-3xl italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
             Maybe wisdom. Maybe judgment.<br className="md:hidden" /> Maybe salmon.
           </p>
