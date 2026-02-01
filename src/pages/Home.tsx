@@ -159,8 +159,8 @@ export function Oracle() {
       }
 
       const avgBrightness = totalBrightness / pixelCount;
-      // If average brightness is below 100 (out of 255), image is dark
-      setNeedsBrightening(avgBrightness < 100);
+      // Only brighten truly dark images (threshold 70) - avoids washing out mixed-lighting photos
+      setNeedsBrightening(avgBrightness < 70);
     };
     img.src = imageSrc;
   }, []);
