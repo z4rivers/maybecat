@@ -473,7 +473,7 @@ export function Oracle() {
               </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex-1 flex flex-col items-center">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex-1 flex flex-col items-center justify-center">
               {/* Oracle Reading Card */}
               <div
                 ref={responseRef}
