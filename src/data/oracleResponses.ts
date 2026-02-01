@@ -1030,7 +1030,38 @@ const categoryWeights: Record<OracleCategory, number> = {
   meta: 4,
 };
 
+// Track recently shown responses to avoid repeats
+// Stores last 50 response texts to prevent repetition
+const recentResponses: string[] = [];
+const MAX_RECENT = 50;
+
+function addToRecent(text: string): void {
+  recentResponses.push(text);
+  if (recentResponses.length > MAX_RECENT) {
+    recentResponses.shift();
+  }
+}
+
+function isRecent(text: string): boolean {
+  return recentResponses.includes(text);
+}
+
 export function getRandomResponse(): OracleResponse {
+  // Try up to 10 times to find a non-repeat
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const response = getRandomResponseInternal();
+    if (!isRecent(response.text) || attempt === 9) {
+      addToRecent(response.text);
+      return response;
+    }
+  }
+  // Fallback (shouldn't reach here)
+  const response = getRandomResponseInternal();
+  addToRecent(response.text);
+  return response;
+}
+
+function getRandomResponseInternal(): OracleResponse {
   // 70% chance: use handcrafted response
   // 30% chance: generate from template (for variety)
   const useTemplate = Math.random() < 0.3;
