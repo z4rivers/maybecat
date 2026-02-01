@@ -124,8 +124,55 @@ export function Oracle() {
   const [showNameInput, setShowNameInput] = useState(false);
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
+  const [needsBrightening, setNeedsBrightening] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const responseRef = useRef<HTMLDivElement>(null);
+
+  // Analyze image brightness and determine if it needs enhancement
+  const analyzeImageBrightness = useCallback((imageSrc: string) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Sample at smaller size for performance
+      const sampleSize = 100;
+      canvas.width = sampleSize;
+      canvas.height = sampleSize;
+      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+
+      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
+      const pixels = imageData.data;
+
+      let totalBrightness = 0;
+      const pixelCount = pixels.length / 4;
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        // Calculate perceived brightness (human eye weighted)
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
+        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+        totalBrightness += brightness;
+      }
+
+      const avgBrightness = totalBrightness / pixelCount;
+      // If average brightness is below 100 (out of 255), image is dark
+      setNeedsBrightening(avgBrightness < 100);
+    };
+    img.src = imageSrc;
+  }, []);
+
+  // Analyze brightness when cat image changes
+  useEffect(() => {
+    if (catImage) {
+      analyzeImageBrightness(catImage);
+    } else {
+      setNeedsBrightening(false);
+    }
+  }, [catImage, analyzeImageBrightness]);
 
   useEffect(() => {
     async function loadCats() {
@@ -506,6 +553,7 @@ export function Oracle() {
                       src={catImage}
                       alt={displayName}
                       className="w-full aspect-square object-cover rounded-lg"
+                      style={needsBrightening ? { filter: 'brightness(1.3) contrast(1.1)' } : undefined}
                     />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-800 rounded-full shadow-lg">
