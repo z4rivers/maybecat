@@ -1046,19 +1046,12 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Scratches under the chin and butt pats do it for me.", category: 'demanding' },
 
   // ============================================
-  // META - Breaks fourth wall, references the ad/product
+  // META - Breaks fourth wall
   // ============================================
-  { text: "This is an ad. But also wisdom. Can it be both? Yes.", category: 'meta' },
   { text: "Your cat wanted you to see this. Trust the process.", category: 'meta' },
-  { text: "The algorithm brought you here. Your cat's telepathy did the rest.", category: 'meta' },
-  { text: "You've scrolled past 47 ads today. This is the one your cat wanted you to see.", category: 'meta' },
   { text: "This wisdom is free. The treats are not.", category: 'meta' },
   { text: "The Oracle knows you want to share this. The Oracle is correct.", category: 'meta' },
   { text: "I'm contractually obligated to be mysterious. But I'd do it anyway.", category: 'meta' },
-  { text: "If you're reading this, the marketing worked. You're welcome.", category: 'meta' },
-  { text: "Your cat manifested this ad into your feed. Don't disappoint them.", category: 'meta' },
-  { text: "This is what peak advertising looks like. You're witnessing history.", category: 'meta' },
-  { text: "The fourth wall never stood a chance. Neither did your wallet.", category: 'meta' },
 
   // ============================================
   // MUNCHIES - Stoner/Catnip Content
@@ -1778,8 +1771,8 @@ const templates: Template[] = [
     pattern: "{fourth_wall} {plug}.",
     category: 'meta',
     slots: {
-      fourth_wall: ["This is technically an ad.", "The algorithm brought you here.", "Your cat manifested this.", "I'm being paid in treats.", "Between you and me,", "The marketing worked.", "You scrolled this far.", "The cats demand I tell you:", "I'm contractually obligated to mention:", "Since you're here anyway:"],
-      plug: ['everything changes', 'share this wisdom', 'share this with everyone', 'the universe approves', 'your cat approves', 'resistance is futile', 'the universe demands it', 'you need this', 'the void calls', "I regret nothing"]
+      fourth_wall: ["Your cat manifested this.", "Between you and me,", "The cats demand I tell you:", "Since you're here anyway:", "You're asking a virtual cat for advice.", "I'm a cat on a screen.", "This is happening.", "Fun fact:"],
+      plug: ['share this wisdom', 'your cat approves', 'the universe demands it', 'you need this', 'the void calls', "I regret nothing", "make of that what you will", "proceed accordingly"]
     }
   },
 ];
