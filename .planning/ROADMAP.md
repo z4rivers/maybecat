@@ -7,7 +7,7 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 ## Phases
 
 - [x] **Phase 1: Remove Dead Code** - Delete unused variant files and routes
-- [ ] **Phase 2: Add Safety Net** - Error boundary and safe localStorage parsing
+- [x] **Phase 2: Add Safety Net** - Error boundary and safe localStorage parsing
 - [ ] **Phase 3: Extract Config** - Magic numbers to config file
 - [ ] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
 - [ ] **Phase 5: Extract Components** - Decorative SVGs and modal to components
@@ -40,8 +40,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Add error boundary component
-- [ ] 02-02: Safe localStorage parsing with try-catch
+- [x] 02-01: Add error boundary component
+- [x] 02-02: Safe localStorage parsing with try-catch
 
 ### Phase 3: Extract Config
 **Goal**: Centralize magic numbers in a config file
@@ -111,7 +111,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Remove Dead Code | 1/1 | Complete | 2026-02-02 |
-| 2. Add Safety Net | 0/2 | Not started | - |
+| 2. Add Safety Net | 2/2 | Complete | 2026-02-02 |
 | 3. Extract Config | 0/1 | Not started | - |
 | 4. Extract Hooks | 0/3 | Not started | - |
 | 5. Extract Components | 0/2 | Not started | - |
