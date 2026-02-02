@@ -31,17 +31,14 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   { text: "The answer lies beneath the blankets.", category: 'mystical' },
   { text: "I have consulted the ancient texts. They are shredded now. But I remember.", category: 'mystical' },
-  { text: "The tunnel reveals all to those who provide it.", category: 'mystical' },
   { text: "I have seen the future. You are in it. Barely.", category: 'mystical' },
   { text: "Ask again when you have provided adequate tribute.", category: 'mystical' },
   { text: "I sense... comfort. In your future. Perhaps.", category: 'mystical' },
-  { text: "The spirits whisper of a cylinder. I do not question the spirits.", category: 'mystical' },
   { text: "Your path becomes clear at 3am. As does mine. To your face.", category: 'mystical' },
   { text: "The universe has plans for you. I have different plans. Mine are better.", category: 'mystical' },
   { text: "What you seek is already within you. Also, treats are within the cabinet.", category: 'mystical' },
   { text: "The prophecy speaks of one who will provide endless warmth. Is it you?", category: 'mystical' },
   { text: "I have gazed into the void. The void gazed back. We have an understanding now.", category: 'mystical' },
-  { text: "Your aura tells me you need more sleep. Also a fort. Definitely a fort.", category: 'mystical' },
   { text: "The stars align in your favor. The blankets, however, do not.", category: 'mystical' },
   { text: "I foresee... a nap. For me. Your future remains cloudy.", category: 'mystical' },
   { text: "The ancient ones spoke of this moment. They were cats. They spoke of naps.", category: 'mystical' },
@@ -50,13 +47,11 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Your destiny is intertwined with soft fabrics. This is all I can say.", category: 'mystical' },
   { text: "I sense a disturbance. In the treats cabinet. Investigate immediately.", category: 'mystical' },
   { text: "The oracle sees all. The oracle judges silently. The oracle requires chin scratches.", category: 'mystical' },
-  { text: "Time is a flat circle. So is a tunnel. Coincidence? The oracle thinks not.", category: 'mystical' },
   { text: "Your question echoes through dimensions. Most dimensions say 'maybe.'", category: 'mystical' },
   { text: "I have walked between worlds. The other world also has blankets. Inferior ones.", category: 'mystical' },
   { text: "The threads of fate weave around you. Also around my scratching post.", category: 'mystical' },
   { text: "In another timeline, you already know this answer. That you is napping.", category: 'mystical' },
   { text: "The shadows speak. They say 'feed the cat.' The shadows are wise.", category: 'mystical' },
-  { text: "I see great warmth in your future. And in your present. If you provide the fort.", category: 'mystical' },
   { text: "The cosmos aligns when you least expect it. Usually during dinner.", category: 'mystical' },
   { text: "Your energy shifts. I felt that. Or it was the radiator. Hard to tell.", category: 'mystical' },
 
@@ -1006,7 +1001,6 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // EXISTENTIAL - Deep, philosophical, absurd
   // ============================================
-  { text: "What is comfort but a velour cylinder and the space to exist?", category: 'existential' },
   { text: "Existence is pain. Except under blankets. There, existence is acceptable.", category: 'existential' },
   { text: "What is a bed but a horizontal prison? What are blankets but soft oppressors?", category: 'existential' },
   { text: "In the grand scheme of things, your question doesn't matter. Neither does mine. And yet.", category: 'existential' },
@@ -1039,31 +1033,20 @@ export const oracleResponses: OracleResponse[] = [
   // DEMANDING - Wants something, transactional
   // ============================================
   { text: "Is it time for breakfast?", category: 'demanding' },
-  { text: "First: have you considered making me a fort?", category: 'demanding' },
-  { text: "The Oracle requires tribute. Something soft. Cylindrical.", category: 'demanding' },
-  { text: "I'll answer after you investigate PURRfoot. The logo is right there.", category: 'demanding' },
   { text: "Answers cost treats. You know the exchange rate.", category: 'demanding' },
   { text: "Before I answer: when did you last clean my litter box?", category: 'demanding' },
   { text: "The Oracle is hungry. Feed the Oracle. Then we talk.", category: 'demanding' },
-  { text: "I require a tunnel under the blankets. Then wisdom shall flow.", category: 'demanding' },
   { text: "Your question is noted. My dinner is late. Priorities.", category: 'demanding' },
   { text: "The answer exists. It is behind a paywall of chin scratches.", category: 'demanding' },
-  { text: "I'll tell you, but first: have you heard of blanket forts?", category: 'demanding' },
   { text: "My wisdom comes with terms and conditions. Mostly treats.", category: 'demanding' },
-  { text: "Click the logo below and I might elaborate.", category: 'demanding' },
-  { text: "The spirits demand you check out that PURRfoot thing. I don't make the rules.", category: 'demanding' },
   { text: "I am but a vessel. The vessel requires tuna.", category: 'demanding' },
-  { text: "You want answers? I want a fort. Perhaps we can negotiate.", category: 'demanding' },
   { text: "Wisdom isn't free. Neither is my time. Pay up.", category: 'demanding' },
   { text: "The door. Open it. Then we'll talk.", category: 'demanding' },
   { text: "My bowl situation is... concerning. Address that first.", category: 'demanding' },
   { text: "I'll consider your question when you consider my comfort.", category: 'demanding' },
   { text: "The oracle speaks when the oracle is fed.", category: 'demanding' },
-  { text: "You want something from me? I want something from you. The logo. Click it.", category: 'demanding' },
   { text: "Chin scratches. Then answers. This is non-negotiable.", category: 'demanding' },
   { text: "I notice the treat bag hasn't moved. Your question can wait.", category: 'demanding' },
-  { text: "My demands are simple: fort, treats, worship. Then we talk.", category: 'demanding' },
-  { text: "The answer requires payment. I accept pets, snacks, or blanket forts.", category: 'demanding' },
   { text: "Have you considered my needs? No? Then I haven't considered your question.", category: 'demanding' },
   { text: "The window. The bird. Let me closer. Then I'll answer.", category: 'demanding' },
   { text: "My services aren't free. The currency is tuna.", category: 'demanding' },
@@ -1097,25 +1080,16 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // META - Breaks fourth wall, references the ad/product
   // ============================================
-  { text: "Click the logo. I get a commission. In tuna.", category: 'meta' },
-  { text: "Click the logo. I get a commission. In tuna.", category: 'meta' },
   { text: "This is an ad. But also wisdom. Can it be both? Yes.", category: 'meta' },
-  { text: "Your cat is speaking through this advertisement. Buy the fort.", category: 'meta' },
   { text: "Your cat wanted you to see this. Trust the process.", category: 'meta' },
   { text: "The algorithm brought you here. Your cat's telepathy did the rest.", category: 'meta' },
   { text: "You've scrolled past 47 ads today. This is the one your cat wanted you to see.", category: 'meta' },
-  { text: "This information was classified until now. The cylinder changes everything.", category: 'meta' },
   { text: "This wisdom is free. The treats are not.", category: 'meta' },
   { text: "The Oracle knows you want to share this. The Oracle is correct.", category: 'meta' },
-  { text: "Share this image. Your friends need to see. The logo is right there.", category: 'meta' },
   { text: "I'm contractually obligated to be mysterious. But I'd do it anyway.", category: 'meta' },
   { text: "If you're reading this, the marketing worked. You're welcome.", category: 'meta' },
-  { text: "The cats demand you click that logo. This is not a suggestion.", category: 'meta' },
-  { text: "Every share gets a cat a fort. Probably. Just share it.", category: 'meta' },
-  { text: "The Oracle is brought to you by velour cylinders. Accept it.", category: 'meta' },
   { text: "Your cat manifested this ad into your feed. Don't disappoint them.", category: 'meta' },
   { text: "This is what peak advertising looks like. You're witnessing history.", category: 'meta' },
-  { text: "I could give you real wisdom, but instead: check out that logo.", category: 'meta' },
   { text: "The fourth wall never stood a chance. Neither did your wallet.", category: 'meta' },
 
   // ============================================
@@ -1688,7 +1662,7 @@ const templates: Template[] = [
     slots: {
       quality: ['warmth', 'chaos', 'uncertainty', 'treats', 'potential', 'discomfort', 'a disturbance', 'great napping energy', 'mild confusion', 'future comfort'],
       place: ['future', 'blankets', 'heart', 'cabinet', 'soul', 'immediate vicinity', 'aura', 'sleep schedule', 'life choices', 'search history'],
-      action: ['Investigate immediately', 'This pleases me', 'Perhaps rest', 'The tunnel will help', 'Proceed with caution', 'Nap on it', 'The answer will come', 'Interesting', 'I have no further comment', 'The fort knows']
+      action: ['Investigate immediately', 'This pleases me', 'Perhaps rest', 'Proceed with caution', 'Nap on it', 'The answer will come', 'Interesting', 'I have no further comment', 'The spirits approve', 'This is promising']
     }
   },
   {
@@ -1696,7 +1670,7 @@ const templates: Template[] = [
     category: 'mystical',
     slots: {
       noun: ['void', 'spirits', 'blankets', 'ancient texts', 'shadows', 'moonlight', 'cosmic forces', 'dust motes', 'ceiling fan', 'dryer lint'],
-      thing: ['change', 'comfort', 'a cylinder', 'treats', 'rest', 'uncertainty', 'warmth', 'the inevitable', 'something soft', 'your destiny'],
+      thing: ['change', 'comfort', 'a nap', 'treats', 'rest', 'uncertainty', 'warmth', 'the inevitable', 'something soft', 'your destiny'],
       response: ['I do not question them', 'Listen carefully', 'They are rarely wrong', 'This is concerning', 'This is good news', 'Ignore at your peril', 'Or perhaps not', 'The answer is within', 'I have translated this for you', 'Make of this what you will']
     }
   },
@@ -1705,8 +1679,8 @@ const templates: Template[] = [
     category: 'mystical',
     slots: {
       timeframe: ['coming days', 'next moon cycle', 'time between naps', 'quiet hours', 'darkness before dawn', 'moment of stillness', 'near future', 'space between thoughts', 'next 3am'],
-      thing: ['peace', 'a fort', 'the answer', 'comfort', 'clarity', 'a sunbeam', 'what you seek', 'treats', 'rest', 'your path'],
-      caveat: ['Or not', 'The oracle has spoken', 'This is certain', 'Probably', 'If you listen', 'The tunnel knows', 'Trust the process', 'Patience', 'Unless you ignore me', 'I have seen it']
+      thing: ['peace', 'a warm spot', 'the answer', 'comfort', 'clarity', 'a sunbeam', 'what you seek', 'treats', 'rest', 'your path'],
+      caveat: ['Or not', 'The oracle has spoken', 'This is certain', 'Probably', 'If you listen', 'The cosmos aligns', 'Trust the process', 'Patience', 'Unless you ignore me', 'I have seen it']
     }
   },
 
@@ -1802,8 +1776,8 @@ const templates: Template[] = [
     pattern: "{demand} {consequence}.",
     category: 'demanding',
     slots: {
-      demand: ['Feed me first.', 'Open the door.', 'Check out that logo.', 'Provide treats.', 'Build me a fort.', 'Chin scratches. Now.', 'The bowl. Fill it.', 'My demands are simple.', 'I require tribute.', 'Pay attention.'],
-      consequence: ['Then we talk', "Then I'll answer", 'The oracle waits', 'Wisdom costs', 'This is non-negotiable', 'My patience wanes', 'I have spoken', 'The spirits demand this', 'You know what to do', 'Click the logo']
+      demand: ['Feed me first.', 'Open the door.', 'Pet me now.', 'Provide treats.', 'Make room on the bed.', 'Chin scratches. Now.', 'The bowl. Fill it.', 'My demands are simple.', 'I require tribute.', 'Pay attention.'],
+      consequence: ['Then we talk', "Then I'll answer", 'The oracle waits', 'Wisdom costs', 'This is non-negotiable', 'My patience wanes', 'I have spoken', 'The spirits demand this', 'You know what to do', 'My word is final']
     }
   },
 
@@ -1813,7 +1787,7 @@ const templates: Template[] = [
     category: 'meta',
     slots: {
       fourth_wall: ["This is technically an ad.", "The algorithm brought you here.", "Your cat manifested this.", "I'm being paid in treats.", "Between you and me,", "The marketing worked.", "You scrolled this far.", "The cats demand I tell you:", "I'm contractually obligated to mention:", "Since you're here anyway:"],
-      plug: ['everything changes', 'click that logo', 'share this with everyone', 'the fort awaits', 'your cat approves', 'resistance is futile', 'the universe demands it', 'you need this', 'the cylinder calls', "I regret nothing"]
+      plug: ['everything changes', 'share this wisdom', 'share this with everyone', 'the universe approves', 'your cat approves', 'resistance is futile', 'the universe demands it', 'you need this', 'the void calls', "I regret nothing"]
     }
   },
 ];
