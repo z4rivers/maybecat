@@ -1771,6 +1771,58 @@ const templates: Template[] = [
     }
   },
 
+  // ACCEPTING templates - cats see you as you are
+  {
+    pattern: "You {flaw}. {acceptance}.",
+    category: 'nurturing',
+    slots: {
+      flaw: ["didn't do the thing", "made a mess", "failed again", "said the wrong thing", "let someone down", "aren't where you thought you'd be", "keep making the same mistake", "don't have it together", "forgot something important", "aren't your best self right now"],
+      acceptance: ["Okay", "And?", "Still here", "So what", "That's allowed", "You're still you", "I've seen worse", "Doesn't change anything", "The sun still came up", "I still chose you"]
+    }
+  },
+  {
+    pattern: "I know you {truth}. {response}.",
+    category: 'nurturing',
+    slots: {
+      truth: ["think you're not good enough", "feel like a fraud", "worry you're failing", "compare yourself to others", "don't believe it when people say nice things", "carry more than you show", "think you should be further along", "are harder on yourself than anyone", "hide the messy parts", "pretend you're fine when you're not"],
+      response: ["I don't care about any of that", "That's not what I see", "I just see you", "None of that matters to me", "You're warm and you feed me. We're good", "I'm a cat. I don't do expectations", "You're exactly who I signed up for", "I see you. The real you. It's fine", "Humans are weird. I accept this", "You're my human. That's enough"]
+    }
+  },
+
+  // BLUNT templates - direct, no sugarcoating
+  {
+    pattern: "{blunt}",
+    category: 'wise',
+    slots: {
+      blunt: ["You already know what to do. You just don't want to.", "That's not going to work and you know it.", "Stop asking for permission.", "You're overthinking this.", "It's not that complicated.", "You're avoiding the real problem.", "That excuse is tired.", "You can do hard things. Do the hard thing.", "Nobody's coming to save you. Save yourself.", "Say the thing. Send the text. Make the call.", "Waiting isn't a strategy.", "The answer is no. You knew that.", "You're not confused. You're scared.", "Do it badly. Do it anyway.", "Stop rehearsing conversations that won't happen."]
+    }
+  },
+  {
+    pattern: "Here's the thing: {truth}.",
+    category: 'wise',
+    slots: {
+      truth: ["most problems solve themselves if you stop poking them", "people aren't thinking about you as much as you think", "you can't control what you can't control", "good enough is usually good enough", "not everything needs to be fixed", "sometimes the answer is just 'wait'", "you're allowed to change your mind", "it probably won't matter in five years", "you're not behind, you're on your own timeline", "done is better than perfect", "rest isn't quitting", "some things are hard because they're hard, not because you're bad at them"]
+    }
+  },
+
+  // TRANSACTIONAL templates - clear expectations
+  {
+    pattern: "{offer}. {expectation}.",
+    category: 'demanding',
+    slots: {
+      offer: ["I will sit with you", "I'll purr", "I'll let you pet me", "I'll be cute", "I'll provide companionship", "I'll keep your lap warm", "I'll guard you while you sleep", "I'll bring you a gift", "I'll grace you with my presence", "I'll share my wisdom"],
+      expectation: ["You know what I expect in return", "Treats are appreciated", "The bowl should be full when I check", "This isn't charity", "I trust you understand the arrangement", "My terms are reasonable", "We have an agreement", "Compensation is expected", "Consider what you owe me", "This is a two-way street"]
+    }
+  },
+  {
+    pattern: "I {action}. Therefore, {consequence}.",
+    category: 'demanding',
+    slots: {
+      action: ["sat on your laptop", "woke you up gently (at 5am)", "didn't bite you (hard)", "tolerated the new furniture", "let the dog live another day", "used the litter box (not your shoes)", "only knocked over one thing", "came when you called (eventually)", "shared the bed (most of it)", "made biscuits on your stomach"],
+      consequence: ["I deserve treats", "breakfast should be immediate", "I've earned chin scratches", "you owe me", "the debt is noted", "payment is expected", "I'll be collecting later", "we're square (for now)", "I expect compensation", "my generosity should be recognized"]
+    }
+  },
+
   // WISE templates (cat logic)
   {
     pattern: "{observation}. {catWisdom}.",
