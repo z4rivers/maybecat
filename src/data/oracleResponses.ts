@@ -1715,6 +1715,33 @@ const templates: Template[] = [
       punchline: ["That's basically marriage in cat", "You should be honored", "It was the good kind of dead thing", "Don't make it weird", "That's more than most humans get", "Because I tolerate you", "That's the highest compliment", "In my culture that means forever", "That's 'I love you' in cat", "Because you're mine. I claimed you. It's done"]
     }
   },
+  // Genuinely sweet - some cats are just loving
+  {
+    pattern: "{action} {feeling}",
+    category: 'heartfelt',
+    slots: {
+      action: ["*curls up against you*", "*purrs without being touched*", "*follows you from room to room*", "*rests head on your hand*", "*falls asleep touching you*", "*looks at you and slow blinks*", "*kneads the blanket next to you*", "*sits close but not on you*", "*watches you leave, watches you return*", "*finds you when you're sad*"],
+      feeling: ["I just wanted to be near you.", "This is my favorite part of the day.", "You make everything feel safe.", "I don't need anything. Just this.", "Wherever you are is where I want to be.", "I don't know how to say it differently.", "I chose you. I keep choosing you.", "You're my person.", "I feel calm when you're here.", "I love you. That's all."]
+    }
+  },
+  // The mood swing - sweet then sudden change
+  {
+    pattern: "{sweet} {turn}",
+    category: 'chaotic',
+    slots: {
+      sweet: ["I love you so much—", "This is nice, we're having a moment—", "You're my favorite person and I—", "I could stay like this forev—", "Pet me, yes, that's perfect, keep—", "I trust you completely which is why—", "We're bonding, this is special—", "Your hand is so warm and gentle—"],
+      turn: ["and I bite now.", "OKAY TIME TO GO. *sprints away*", "that's enough. *kicks with back legs*", "wait what's that. BYE.", "I've changed my mind about everything.", "THE VIBE SHIFTED.", "I love you but I must destroy something.", "actually I hate this. *bites and runs*"]
+    }
+  },
+  // Quiet presence - cats who just want to be there
+  {
+    pattern: "I'm not {action}. I'm {truth}.",
+    category: 'heartfelt',
+    slots: {
+      action: ["following you", "needy", "clingy", "staring", "waiting", "sitting here for no reason", "being weird", "hovering", "watching you sleep", "always in this room"],
+      truth: ["just making sure you're okay", "keeping you company in my own way", "choosing to be where you are", "checking that you're still here", "being present", "here because I want to be", "showing up the way I know how", "standing guard", "loving you quietly", "staying close because it matters"]
+    }
+  },
 
   // JUDGY templates
   {
