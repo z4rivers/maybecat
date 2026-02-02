@@ -5,6 +5,7 @@ import { getRandomResponse, type OracleResponse } from '../data/oracleResponses'
 import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { useCatStorage } from '../hooks/useCatStorage';
 
 
 // Elaborate Art Nouveau corner vine flourish inspired by tarot deck
@@ -80,16 +81,16 @@ function MysticalStar({ className = '' }: { className?: string }) {
 export function Oracle() {
   useDocumentMeta();
 
-  const [catImage, setCatImage] = useState<string | null>(() => localStorage.getItem('oracleCatImage'));
-  const [catName, setCatName] = useState(() => localStorage.getItem('oracleCatName') || '');
-  const [shelterCat, setShelterCat] = useState<ShelterCat | null>(() => {
-    try {
-      const stored = localStorage.getItem('oracleShelterCat');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
+  const {
+    catImage,
+    catName,
+    shelterCat,
+    setCatFromUpload,
+    setCatName,
+    setCatFromShelter,
+    clearCat: clearCatStorage,
+  } = useCatStorage();
+
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState<OracleResponse | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -166,40 +167,22 @@ export function Oracle() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
-        setCatImage(base64);
-        localStorage.setItem('oracleCatImage', base64);
-        setShelterCat(null);
-        localStorage.removeItem('oracleShelterCat');
+        setCatFromUpload(base64);
         setShowNameInput(true);
       };
       reader.readAsDataURL(file);
     }
-  }, []);
+  }, [setCatFromUpload]);
 
   const handleNameSave = useCallback((name: string) => {
     setCatName(name);
-    localStorage.setItem('oracleCatName', name);
     setShowNameInput(false);
-  }, []);
+  }, [setCatName]);
 
   const clearCat = useCallback(() => {
-    setCatImage(null);
-    setCatName('');
-    setShelterCat(null);
+    clearCatStorage();
     setResponse(null);
-    localStorage.removeItem('oracleCatImage');
-    localStorage.removeItem('oracleCatName');
-    localStorage.removeItem('oracleShelterCat');
-  }, []);
-
-  const selectShelterCat = useCallback((cat: ShelterCat) => {
-    setCatImage(cat.photo);
-    setCatName(cat.name);
-    setShelterCat(cat);
-    localStorage.setItem('oracleCatImage', cat.photo);
-    localStorage.setItem('oracleCatName', cat.name);
-    localStorage.setItem('oracleShelterCat', JSON.stringify(cat));
-  }, []);
+  }, [clearCatStorage]);
 
   const askOracle = useCallback(() => {
     if (!question.trim()) return;
@@ -440,7 +423,7 @@ export function Oracle() {
                         key={cat.id}
                         whileHover={{ scale: 1.1, y: -12, rotate: 0, zIndex: 10 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => selectShelterCat(cat)}
+                        onClick={() => setCatFromShelter(cat)}
                         style={{ rotate: rotation }}
                         className="relative flex-shrink-0"
                       >
