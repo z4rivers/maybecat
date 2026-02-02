@@ -74,19 +74,13 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I chose you, remember? That means something.", category: 'nurturing' },
   { text: "Whatever happened today, you made it. That's enough.", category: 'nurturing' },
   { text: "I'll sit with you. You don't have to talk.", category: 'nurturing' },
-  { text: "Your presence is enough. Just be here.", category: 'nurturing' },
   { text: "The hard part is almost over. I can sense it.", category: 'nurturing' },
   { text: "You've been strong for long enough. Rest now.", category: 'nurturing' },
   { text: "I'm proud of you. In my way.", category: 'nurturing' },
   { text: "Tomorrow will be better. Or at least different. Different is okay.", category: 'nurturing' },
   { text: "I know things are hard. I'm here anyway.", category: 'nurturing' },
-  { text: "You don't have to figure it all out today.", category: 'nurturing' },
   { text: "Some days are just for surviving. This might be one.", category: 'nurturing' },
-  { text: "I trust you. Even when you don't trust yourself.", category: 'nurturing' },
   { text: "I'll purr for you. It's all I can offer, but it's real.", category: 'nurturing' },
-  { text: "You're not alone. I'm right here.", category: 'nurturing' },
-  { text: "Softness isn't weakness. Remember that.", category: 'nurturing' },
-  { text: "Even on bad days, you matter. Especially then.", category: 'nurturing' },
   { text: "I chose this spot next to you on purpose.", category: 'nurturing' },
   { text: "You're warm. Stay warm. That's the whole answer.", category: 'nurturing' },
   { text: "I forgive you for whatever you're mad at yourself about.", category: 'nurturing' },
@@ -109,14 +103,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Three AM is when / the truth reveals itself to me. / You should be awake.", category: 'poetic' },
   { text: "This box is too small. / And yet I am inside it. / Explain this. You can't.", category: 'poetic' },
   { text: "The sun will return. / Until then, rest in shadow. / I will wait with you.", category: 'poetic' },
-  { text: "Heavy clouds pass through. / You are not the storm, dear one. / You are the sky.", category: 'poetic' },
-  { text: "Night comes for us all. / But morning follows, always. / Breathe until it does.", category: 'poetic' },
-  { text: "One breath, then the next. / That is all that's asked of you. / That is enough.", category: 'poetic' },
-  { text: "The wound knows how to heal. / Your only job is rest. / Trust the quiet work.", category: 'poetic' },
-  { text: "Even still water / holds the memory of rain. / You carry so much.", category: 'poetic' },
-  { text: "Leaves fall without shame. / Let go of what weighs you down. / The branch still stands.", category: 'poetic' },
-  { text: "The moon does not rush. / Neither should you, tired heart. / Slow is still moving.", category: 'poetic' },
-  { text: "Even in the dark, / roots are reaching, growing still. / So are you. Unseen.", category: 'poetic' },
 
   // Wabi-sabi (imperfection, transience)
   { text: "The scratched furniture holds our history.", category: 'poetic' },
@@ -127,25 +113,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The crack in the bowl lets the light through. Also the kibble.", category: 'poetic' },
 
   // Gentle verse (Rumi-esque comfort without pretense)
-  { text: "You do not have to be whole to be worthy.", category: 'poetic' },
-  { text: "The cracks are where you grew. They are not mistakes.", category: 'poetic' },
-  { text: "Rest is not giving up. Rest is gathering strength.", category: 'poetic' },
-  { text: "Some doors close so your hands are free to open others.", category: 'poetic' },
-  { text: "The heart knows how to mend. Give it time and quiet.", category: 'poetic' },
-  { text: "Not all storms come to destroy. Some come to clear a path.", category: 'poetic' },
-  { text: "You are allowed to begin again. As many times as it takes.", category: 'poetic' },
-  { text: "What feels like falling apart might be falling into place.", category: 'poetic' },
-  { text: "Grief is just love with nowhere to go. Let it move through you.", category: 'poetic' },
-  { text: "You are doing something hard. Be kind to the one doing it.", category: 'poetic' },
-  { text: "This too shall pass. And when it does, you will still be here.", category: 'poetic' },
-  { text: "The light you are looking for is already inside you.", category: 'poetic' },
-  { text: "Even the longest night ends. Even the hardest season turns.", category: 'poetic' },
 
   // Simple comfort (direct, no metaphor needed)
-  { text: "It's okay to be tired. You've been carrying a lot.", category: 'poetic' },
-  { text: "You don't have to have the answers yet.", category: 'poetic' },
-  { text: "This moment is hard. But it is only a moment.", category: 'poetic' },
-  { text: "You're still here. That counts for something.", category: 'poetic' },
 
   // ============================================
   // COLD - Pure dismissal, minimal words
@@ -1640,6 +1609,30 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I fit in this box. Therefore I sit in this box. Logic is simple when you're a cat.", category: 'poetic' },
   { text: "*lies dramatically on back* I could use a belly rub. I could also attack. Life is risk.", category: 'poetic' },
   { text: "The Christmas tree is a forest of temptation. I will conquer it. Eventually.", category: 'poetic' },
+
+  // ============================================
+  // BATCH 3 CATIFIED QUOTES - User-edited catifications
+  // ============================================
+  { text: "My presence is enough. Appreciate it.", category: 'nurturing' },
+  { text: "Some problems solve themselves. Try that first.", category: 'nurturing' },
+  { text: "I didn't follow you into this room. I guided you to where I wanted.", category: 'nurturing' },
+  { text: "I am soft and I could still take you. Softness is strategy.", category: 'nurturing' },
+  { text: "Even on bad days, you matter. We get to be bad on bad days, right?", category: 'nurturing' },
+  { text: "Heavy clouds pass through. / I watch from the windowsill. / Weather is for outside.", category: 'poetic' },
+  { text: "Night comes for us all. / I own the night. And breakfast. / Both will arrive.", category: 'poetic' },
+  { text: "One breath, then the next. / I match my breathing to yours. / Just like the cats in the scary movies / Still trust me?", category: 'poetic' },
+  { text: "The wound knows healing. / I lick mine and then I nap. / Same prescription. Try.", category: 'poetic' },
+  { text: "Even still water / holds the memory of rain. / The memory of rain was in the glass. / It is on the ground now.", category: 'poetic' },
+  { text: "I have claimed you. Your flaws are irrelevant to this arrangement.", category: 'poetic' },
+  { text: "Scratches tell stories. Every mark on the furniture is a memory.", category: 'poetic' },
+  { text: "Lie down. Be warm. Let the purring do its work.", category: 'poetic' },
+  { text: "Thunder is just noise. Oh, my god - it's a noise - PANIC!", category: 'chaotic' },
+  { text: "Knock things off tables and start fresh every day.", category: 'wise' },
+  { text: "You need grooming. Not by me. But you need it.", category: 'nurturing' },
+  { text: "The vacuum always stops eventually. And then quiet returns. Patience.", category: 'poetic' },
+  { text: "I never know what I want until the bowl is full. Then I know. Wait for clarity.", category: 'wise' },
+  { text: "The vet visit ends. The car ride ends. All bad things end. This advice from a virtual cat will end.", category: 'meta' },
+  { text: "You came home again. That's all I needed. Never ever go anywhere again!", category: 'heartfelt' },
 ];
 
 // ============================================
