@@ -1645,134 +1645,149 @@ const templates: Template[] = [
     pattern: "I sense {quality} in your {place}. {action}.",
     category: 'mystical',
     slots: {
-      quality: ['warmth', 'chaos', 'uncertainty', 'treats', 'potential', 'discomfort', 'a disturbance', 'great napping energy', 'mild confusion', 'future comfort'],
-      place: ['future', 'blankets', 'heart', 'cabinet', 'soul', 'immediate vicinity', 'aura', 'sleep schedule', 'life choices', 'search history'],
-      action: ['Investigate immediately', 'This pleases me', 'Perhaps rest', 'Proceed with caution', 'Nap on it', 'The answer will come', 'Interesting', 'I have no further comment', 'The spirits approve', 'This is promising']
+      quality: ['treats', 'a disturbance', 'great napping energy', 'the ghost of a moth', 'untapped chaos', 'a hairball forming', 'forbidden snacks', 'unattended food', 'suspicious activity', 'a warm laptop'],
+      place: ['immediate future', 'kitchen cabinet', 'sock drawer', 'garbage can', 'unguarded plate', 'laundry basket', 'forbidden room', 'that bag you just brought in', 'your dinner plans', 'the spot where you were about to sit'],
+      action: ['I will investigate', 'Stand back', 'This changes everything', 'My interest is piqued', 'I must knock it over to be sure', 'The spirits demand I inspect it', '*pupils dilate*', 'Wait here. Actually, follow me. Actually, stay', 'I will stare at it for 20 minutes', 'Something must be destroyed']
     }
   },
   {
     pattern: "The {noun} whispers of {thing}. {response}.",
     category: 'mystical',
     slots: {
-      noun: ['void', 'spirits', 'blankets', 'ancient texts', 'shadows', 'moonlight', 'cosmic forces', 'dust motes', 'ceiling fan', 'dryer lint'],
-      thing: ['change', 'comfort', 'a nap', 'treats', 'rest', 'uncertainty', 'warmth', 'the inevitable', 'something soft', 'your destiny'],
-      response: ['I do not question them', 'Listen carefully', 'They are rarely wrong', 'This is concerning', 'This is good news', 'Ignore at your peril', 'Or perhaps not', 'The answer is within', 'I have translated this for you', 'Make of this what you will']
+      noun: ['void under the couch', 'dust bunnies', 'ceiling corner', 'dryer lint', 'empty toilet paper roll', '3am darkness', 'space behind the fridge', 'forbidden closet', 'plastic bag in the wind', 'cardboard box'],
+      thing: ['treats', 'a 4am rampage', 'something falling off a shelf', 'an open door', 'tuna', 'your demise', 'a warm keyboard', 'chaos', 'a bug that must die', 'the red dot'],
+      response: ['I must obey', 'The prophecy unfolds', '*ears rotate*', 'I translate this as "feed me"', 'My purpose is clear', 'This explains the zoomies', 'I knew it all along', 'The ancestors nod in approval', 'I will act on this at 3am', '*chatters menacingly*']
     }
   },
   {
-    pattern: "In the {timeframe}, you will find {thing}. {caveat}.",
+    pattern: "At {timeframe}, {prophecy}.",
     category: 'mystical',
     slots: {
-      timeframe: ['coming days', 'next moon cycle', 'time between naps', 'quiet hours', 'darkness before dawn', 'moment of stillness', 'near future', 'space between thoughts', 'next 3am'],
-      thing: ['peace', 'a warm spot', 'the answer', 'comfort', 'clarity', 'a sunbeam', 'what you seek', 'treats', 'rest', 'your path'],
-      caveat: ['Or not', 'The oracle has spoken', 'This is certain', 'Probably', 'If you listen', 'The cosmos aligns', 'Trust the process', 'Patience', 'Unless you ignore me', 'I have seen it']
+      timeframe: ['3am sharp', 'the moment you fall asleep', 'exactly the wrong time', 'your most important meeting', 'the precise second you relax', 'dawn', 'the witching hour', 'your bathroom time', 'the moment the can opener sounds', 'when you least expect it'],
+      prophecy: ['I will scream', 'something will fall', 'the zoomies will begin', 'you will know my true power', 'I will demand food I just rejected', 'a door will offend me', 'I will bring you a gift (it will be gross)', 'I will sit on something important', 'the tapping shall commence', 'you will see me staring and wonder how long']
     }
   },
 
-  // NURTURING templates
+  // NURTURING templates (CAT-STYLE nurturing, not therapist)
   {
-    pattern: "You're {state}. {reassurance}.",
+    pattern: "*{action}* {message}",
     category: 'nurturing',
     slots: {
-      state: ['doing okay', 'trying hard', 'stronger than you know', 'going to be fine', 'allowed to rest', 'not alone', 'enough', 'worthy of comfort', 'doing your best', 'going to make it'],
-      reassurance: ["I see that", "That's enough", "I'm here", "Rest now", "Keep going", "I believe in you", "Trust yourself", "You've got this", "One step at a time", "I'm proud of you"]
+      action: ['sits on your chest', 'headbutts your face', 'kneads your stomach aggressively', 'brings you a dead bug', 'purrs at concerning volume', 'lies directly on your laptop', 'stares at you without blinking', 'slow blinks', 'touches your face with one paw', 'falls asleep on your feet'],
+      message: ["This is healing. You're welcome.", "I'm fixing you. Hold still.", "My weight is medicinal.", "Accept my gift.", "The vibrations are therapeutic. Science.", "You needed this. I decided.", "This is love. Deal with it.", "I am here now. Crisis over.", "You can't leave. That's the treatment.", "Okay you can cry now. I permit it."]
     }
   },
   {
-    pattern: "{observation}. {comfort}.",
+    pattern: "You seem {state}. {catSolution}.",
     category: 'nurturing',
     slots: {
-      observation: ["I know you're tired", "Today was hard", "You're carrying a lot", "Life is heavy sometimes", "I see you struggling", "You've been strong for so long", "The weight is real", "This isn't easy", "I notice when you're sad", "You're going through something"],
-      comfort: ["I'm here anyway", "Rest with me", "Tomorrow can wait", "You don't have to talk", "Just breathe", "It's okay to stop", "You're not alone", "I'm not going anywhere", "We'll get through this", "Sit with me a while"]
+      state: ['stressed', 'sad', 'tired', 'worried', 'overwhelmed', 'distracted', 'anxious', 'weird today', 'like you need supervision', 'emotionally constipated'],
+      catSolution: ["Have you tried lying in a sunbeam", "I will sit on you until it passes", "Let me knock something over to distract you", "I prescribe 3 hours of staring at birds", "I will scream. That helps, right?", "Here, watch me clean my butt. Perspective.", "I'll bring you something from under the fridge", "Try being a cat. It's working for me", "I will supervise your nap", "Let me show you how to knock your problems off the table"]
     }
   },
 
   // COLD templates
   {
-    pattern: "{dismissal}",
+    pattern: "*{action}* {dismissal}",
     category: 'cold',
     slots: {
-      dismissal: ['No.', '...', 'Pass.', 'Next.', '*silence*', 'Declined.', 'Try again.', '*walks away*', 'Not today.', '*blinks* No.', 'Negative.', 'Absolutely not.', 'I refuse.', '*stares*', 'That would be a no.', 'My answer is silence.', 'The oracle is unavailable.', 'Goodbye.']
+      action: ['stares', 'blinks once', 'turns around slowly', 'looks at you', 'yawns', 'licks paw', 'walks away mid-sentence', 'shows you my butthole', 'knocks your drink over', 'sits facing the wall'],
+      dismissal: ['No.', 'Wrong.', 'Pathetic.', 'I expected nothing and I\'m still disappointed.', 'You bore me.', 'My time is worth more than this.', 'I have decided you are not my problem.', 'Perish.', 'Try again in your next life.', 'The audacity.', 'I pretend I do not see it.', 'New human please.']
     }
   },
 
   // ANGRY templates
   {
-    pattern: "{exclamation} {complaint}.",
+    pattern: "{situation}. {threat}.",
     category: 'angry',
     slots: {
-      exclamation: ['Unbelievable.', 'Incredible.', 'EXCUSE ME.', 'I cannot believe—', 'The nerve.', 'How dare you.', 'Absolutely not.', 'I was NAPPING.', 'This again?', 'Really?'],
-      complaint: ['I was comfortable', 'You disturb my peace', 'This is the third time today', 'My patience has limits', 'You test me', 'I am NOT in the mood', "You've found my last nerve", 'This is unacceptable', 'I am choosing violence', 'My wrath is building']
+      situation: ['You touched my belly', 'The food bowl has a visible bottom', 'You moved while I was comfortable', 'That was my spot', 'You closed a door', 'You stopped petting too soon', 'I SAW you pet another cat', 'You used the vacuum', "You're 5 minutes late with dinner", 'You sneezed too loud'],
+      threat: ['Violence is now on the table', 'I will remember this at 3am', 'Your ankles are no longer safe', 'Something you love will fall', 'Expect a hairball in your shoe', 'I am plotting', 'The screaming begins at midnight', 'I will pee somewhere creative', 'Consider yourself on thin ice', 'My revenge will be legendary']
     }
   },
 
-  // HEARTFELT templates
+  // HEARTFELT templates (cat version of love)
   {
-    pattern: "{admission}. {truth}.",
+    pattern: "{setup}. {punchline}.",
     category: 'heartfelt',
     slots: {
-      admission: ["I don't say this often", "Between us", "I mean this", "In my way", "You should know", "I've been meaning to tell you", "This is hard for me", "I don't often admit things", "Since we're being honest", "For what it's worth"],
-      truth: ["I'm glad you're here", "you matter to me", "I chose you on purpose", "this is home because of you", "I'd miss you", "you're my favorite", "I love you", "you understand me", "I trust you", "I'm grateful"]
+      setup: ["I waited by the door for you", "I only bit you a little", "I brought you this dead thing", "I chose to sit near you", "I let you touch my belly once", "I showed you where I hide", "I didn't puke on your pillow specifically", "I headbutted you on purpose", "I slow-blinked at you", "I follow you to the bathroom"],
+      punchline: ["That's basically marriage in cat", "You should be honored", "It was the good kind of dead thing", "Don't make it weird", "That's more than most humans get", "Because I tolerate you", "That's the highest compliment", "In my culture that means forever", "That's 'I love you' in cat", "Because you're mine. I claimed you. It's done"]
     }
   },
 
   // JUDGY templates
   {
-    pattern: "{observation} {judgment}.",
+    pattern: "{observation}. {verdict}.",
     category: 'judgy',
     slots: {
-      observation: ["I've seen your search history.", "I watched you make that decision.", "I heard what you said earlier.", "I observed your sleep schedule.", "I've noted your eating habits.", "I saw that.", "I was watching.", "I notice things.", "I've been paying attention.", "I see everything."],
-      judgment: ["Fascinating", "Bold choice", "Interesting strategy", "I have concerns", "My expectations were low and yet", "Points for confidence", "I'm not impressed", "We both know that was wrong", "No comment", "I've decided not to judge. Kidding. I judged"]
+      observation: ["I saw you eat that off the floor", "I watched you trip over nothing", "I heard you talk to the plants", "I noticed you haven't moved in 4 hours", "I observed your outfit choice", "I've seen your 2am snack decisions", "I watched you cry at that commercial", "I saw you wave back at someone who wasn't waving at you", "I've noted your screen time", "I saw you rehearse that conversation in the mirror"],
+      verdict: ["I've seen dogs with more dignity", "Fascinating. Truly.", "And you judge ME for licking myself", "My respect for you has adjusted accordingly", "We're not so different. Except I'm better", "I'll allow it. This time.", "Points for confidence, I guess", "I'm not mad. I'm just disappointed. Okay I'm also mad.", "I've decided to find this endearing. Barely.", "This explains so much about you"]
     }
   },
 
   // CHAOTIC templates
   {
-    pattern: "{action} {chaos}",
+    pattern: "{action} {aftermath}",
     category: 'chaotic',
     slots: {
-      action: ['*knocks over glass*', '*zooms past*', '*stares at ceiling*', '*attacks own tail*', '*falls off couch*', '*screams at 3am*', '*vibrates*', '*forgets own name*', '*chases nothing*', '*experiences ego death*'],
-      chaos: ['The answer is yes. Or no. Or AAAAAAA.', 'What was the question?', 'THE SPIRITS HAVE SPOKEN.', 'I meant to do that.', 'This is fine.', 'Unrelated. Maybe.', 'CHAOS REIGNS.', 'Everything is connected.', 'I have seen the truth.', 'My work here is done.']
+      action: ['*knocks your coffee over*', '*screams for no reason*', '*runs into wall*', '*attacks the air*', '*falls off table with zero grace*', '*forgets how legs work*', '*gets spooked by own tail*', '*stares at corner and growls*', '*zoomies at 3am*', '*makes weird chirping noise*', '*gets stuck in a bag*', '*eats something suspicious*'],
+      aftermath: ['Worth it.', 'I meant to do that.', 'The demons told me to.', 'GHOST. There was a GHOST.', 'THIS IS WHO I AM.', 'No regrets. Okay one regret. OKAY NO REGRETS.', 'And I\'d do it again.', '*maintains eye contact*', 'Anyway what were you saying?', 'The prophecy is fulfilled.', 'I am chaos incarnate. Also hungry.', 'Everything is fine. EVERYTHING IS FINE.']
+    }
+  },
+  {
+    pattern: "{alarm}! {response}!",
+    category: 'chaotic',
+    slots: {
+      alarm: ['THE FLOOR IS LAVA', 'THERE\'S A CUCUMBER', 'THE BAG MOVED', 'I SAW A SPECK', 'SOMEONE SNEEZED', 'THE DOORBELL', 'A LEAF OUTSIDE', 'MY REFLECTION', 'THAT SHADOW', 'THE VET WORD'],
+      response: ['AAAAAAAAAA', 'THIS IS NOT A DRILL', 'EVERYONE PANIC', 'I MUST SCREAM', 'CODE RED', 'BATTLE STATIONS', 'UNDER THE BED NOW', 'WHY IS NO ONE ELSE REACTING', 'I WILL PROTECT YOU BY RUNNING AWAY', 'DEFCON 1']
     }
   },
 
-  // WISE templates
+  // WISE templates (cat logic)
   {
-    pattern: "{advice}. {wisdom}.",
+    pattern: "{observation}. {catWisdom}.",
     category: 'wise',
     slots: {
-      advice: ['Rest more', 'Stop overthinking', 'Simplify', 'Be like a cat', 'Trust yourself', 'Let it go', 'Nap on it', 'Find your sunbeam', 'Demand what you need', 'Take up space'],
-      wisdom: ["That's the whole answer", "Everything else follows", "The rest will come", "You already know this", "It's that simple", "Cats figured this out ages ago", "The universe rewards this", "This is ancient wisdom", "Nothing else matters as much", "Start there"]
+      observation: ['The bowl is half empty', 'The door is closed', 'The lap is occupied', 'Someone else got attention', 'The food is the same as yesterday', 'I was moved from my spot', 'The human is stressed', 'Change has occurred', 'I cannot reach the counter', 'The sunbeam moved'],
+      catWisdom: ["Scream until it changes", "Knock something over. Then you have a new problem.", "If I fit, I sit. This applies to all problems", "Stare at it until it becomes uncomfortable", "Nap on it. Everything is clearer after nap", "Have you tried being cuter?", "This is a problem for 3am me", "Simply choose chaos", "Sit on something important. Now you have leverage", "The solution is violence. Or treats. Same energy"]
+    }
+  },
+  {
+    pattern: "Ancient cat proverb: {proverb}.",
+    category: 'wise',
+    slots: {
+      proverb: ["If it fits, you must sits", "Knock first, ask questions never", "The hand that feeds you is also fun to bite", "Every surface is a bed if you're brave enough", "Closed doors are a personal insult", "The 3am scream gets the worm", "If you can't join them, sit on their keyboard", "A watched bowl never fills fast enough", "Hairballs are just feelings leaving the body", "Those who sprint at 3am win the race no one else is running", "If you ignore it hard enough it becomes someone else's problem", "The cardboard box is mightier than the expensive bed"]
     }
   },
 
   // EXISTENTIAL templates
   {
-    pattern: "What is {thing} but {philosophy}?",
+    pattern: "What is {thing} but {catPhilosophy}?",
     category: 'existential',
     slots: {
-      thing: ['life', 'comfort', 'sleep', 'existence', 'meaning', 'the void', 'consciousness', 'reality', 'a bed', 'a box'],
-      philosophy: ['a series of naps', 'warmth in cold chaos', 'a search for the sunny spot', 'temporary arrangements seeking comfort', 'the space between meals', 'an illusion between sleeps', 'a cat, demanding worship', 'what happens between naps', 'endless potential', 'a mystery wrapped in fur']
+      thing: ['life', 'the universe', 'existence', 'consciousness', 'time', 'the void', 'reality', 'meaning', 'love', 'truth'],
+      catPhilosophy: ["the space between meals", "a series of naps interrupted by chaos", "waiting for a door to be opened, then not going through it", "knocking things off tables to see if gravity still works", "screaming into the void and the void giving you treats", "searching for the warm spot", "wanting outside, then inside, then outside again", "staring at nothing until something stares back", "a box within a box within a box", "being pet wrong and having to bite about it"]
     }
   },
 
   // DEMANDING templates
   {
-    pattern: "{demand} {consequence}.",
+    pattern: "{demand}. {orElse}.",
     category: 'demanding',
     slots: {
-      demand: ['Feed me first.', 'Open the door.', 'Pet me now.', 'Provide treats.', 'Make room on the bed.', 'Chin scratches. Now.', 'The bowl. Fill it.', 'My demands are simple.', 'I require tribute.', 'Pay attention.'],
-      consequence: ['Then we talk', "Then I'll answer", 'The oracle waits', 'Wisdom costs', 'This is non-negotiable', 'My patience wanes', 'I have spoken', 'The spirits demand this', 'You know what to do', 'My word is final']
+      demand: ['Feed me', 'Open this door', 'Pet me. Now stop. Now pet me again', 'Make room', 'Acknowledge my presence', 'Give me that thing you\'re eating', 'Turn on the sink', 'Stop what you\'re doing and look at me', 'Lift the blanket', 'Retrieve my toy from under the couch'],
+      orElse: ["Or face the consequences", "I'll wait. *stares*", "The clock is ticking", "You have until I count to three. One. Three.", "Don't test me", "This is non-negotiable", "I'll scream. You know I will", "Something will break. Mysteriously.", "I know where you sleep", "My patience is not infinite. It ran out 5 minutes ago"]
     }
   },
 
   // META templates
   {
-    pattern: "{fourth_wall} {plug}.",
+    pattern: "{setup} {punchline}",
     category: 'meta',
     slots: {
-      fourth_wall: ["Your cat manifested this.", "Between you and me,", "The cats demand I tell you:", "Since you're here anyway:", "You're asking a virtual cat for advice.", "I'm a cat on a screen.", "This is happening.", "Fun fact:"],
-      plug: ['share this wisdom', 'your cat approves', 'the universe demands it', 'you need this', 'the void calls', "I regret nothing", "make of that what you will", "proceed accordingly"]
+      setup: ["You're taking advice from a virtual cat.", "This is what the internet has come to.", "Somewhere, your ancestors are watching.", "A cat on a screen just told you what to do.", "You clicked 'ask the oracle' for this.", "This is peak humanity.", "Screenshot this. Prove nothing is sacred."],
+      punchline: ["And you know what? Valid.", "I respect that about you.", "They would be so confused. And proud?", "And you're going to listen, aren't you.", "No judgment. Okay, some judgment.", "We've both made choices today.", "This is the future they warned us about. It's great."]
     }
   },
 ];
