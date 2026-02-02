@@ -1696,23 +1696,23 @@ const templates: Template[] = [
     }
   },
 
-  // ANGRY templates
+  // ANGRY templates - reframed as responses
   {
-    pattern: "{situation}. {threat}.",
+    pattern: "You're asking ME for advice? After {grievance}? {reaction}.",
     category: 'angry',
     slots: {
-      situation: ['You touched my belly', 'The food bowl has a visible bottom', 'You moved while I was comfortable', 'That was my spot', 'You closed a door', 'You stopped petting too soon', 'I SAW you pet another cat', 'You used the vacuum', "You're 5 minutes late with dinner", 'You sneezed too loud'],
-      threat: ['Violence is now on the table', 'I will remember this at 3am', 'Your ankles are no longer safe', 'Something you love will fall', 'Expect a hairball in your shoe', 'I am plotting', 'The screaming begins at midnight', 'I will pee somewhere creative', 'Consider yourself on thin ice', 'My revenge will be legendary']
+      grievance: ["you touched my belly", "the food bowl situation", "you moved while I was comfortable", "you took my spot", "you closed that door", "you stopped petting too soon", "I saw you pet another cat", "the vacuum incident", "you were late with dinner", "that sneeze"],
+      reaction: ["Bold", "The audacity", "We'll discuss this later", "I'm still processing", "I haven't forgotten", "You're on thin ice", "My patience is being tested", "I'm choosing to let it go. For now.", "Consider this a warning", "I'll answer, but I'm not happy about it"]
     }
   },
 
-  // HEARTFELT templates (cat version of love)
+  // HEARTFELT templates - cat explaining their love language as advice
   {
-    pattern: "{setup}. {punchline}.",
+    pattern: "You want to know if it's real? {example}. {meaning}.",
     category: 'heartfelt',
     slots: {
-      setup: ["I waited by the door for you", "I only bit you a little", "I brought you this dead thing", "I chose to sit near you", "I let you touch my belly once", "I showed you where I hide", "I didn't puke on your pillow specifically", "I headbutted you on purpose", "I slow-blinked at you", "I follow you to the bathroom"],
-      punchline: ["That's basically marriage in cat", "You should be honored", "It was the good kind of dead thing", "Don't make it weird", "That's more than most humans get", "Because I tolerate you", "That's the highest compliment", "In my culture that means forever", "That's 'I love you' in cat", "Because you're mine. I claimed you. It's done"]
+      example: ["I wait by the door for you", "I only bite you a little", "I bring you dead things", "I chose to sit near you", "I let you touch my belly", "I showed you where I hide", "I headbutt you on purpose", "I slow-blink at you", "I follow you to the bathroom"],
+      meaning: ["That's basically marriage in cat", "That means I trust you", "That's 'I love you' in my language", "Don't overthink it", "That's more than most get", "It means something", "In my culture that's forever", "The small things ARE the big things", "Love looks different for everyone. Look for the pattern."]
     }
   },
   // Genuinely sweet - but with punch
@@ -1759,29 +1759,31 @@ const templates: Template[] = [
       truth: ["conducting a welfare check", "supervising", "keeping you alive (you're welcome)", "making sure you don't do anything stupid", "quality control", "here by choice and I'm CHOOSING loudly", "on duty", "haunting you affectionately", "your emotional support predator", "aggressively present"]
     }
   },
-  // Gift-giving - cats bring things (dead, wounded, found)
+  // Gift-giving wisdom - using cat gift experience to answer questions
   {
-    pattern: "I brought you {gift}. {meaning}.",
-    category: 'heartfelt',
+    pattern: "Do it like I do with {gift}: {wisdom}.",
+    category: 'wise',
     slots: {
-      gift: ["a dead bird", "half a mouse", "a live moth", "something from under the fridge", "a leaf", "a sock I found", "a bug (mostly dead)", "a hair tie", "a lizard tail (no lizard)", "a spider (it's still moving)", "something I caught", "a gift from outside", "this thing I found", "my favorite toy"],
-      meaning: ["You're welcome", "Because you can't hunt", "I'm providing for this family", "This means I love you", "I noticed you never catch your own", "It's the thought that counts", "Accept my offering", "I worry about you", "This is the good stuff", "You seemed hungry", "I worked hard on this", "Please be impressed", "I wanted you to have it", "Don't say I never gave you anything"]
+      gift: ["dead birds", "mice", "things I find", "my offerings", "gifts", "the stuff I catch", "treasures from outside", "bugs I bring home"],
+      wisdom: ["give your best, expect nothing", "offer it anyway, even if they don't understand", "the effort is the point", "you can't control how it's received", "do it because you want to, not for the reaction", "some gifts aren't appreciated until later", "intent matters more than outcome", "showing up is the whole thing"]
     }
   },
   {
-    pattern: "*drops {gift} at your feet* {reaction}",
-    category: 'nurturing',
+    pattern: "When I bring my human {gift}, {observation}. {lesson}.",
+    category: 'wise',
     slots: {
-      gift: ["a dead thing", "something wet", "a creature of unknown origin", "a partially deceased offering", "nature's bounty", "a protein", "evidence of my skill", "a trophy", "something that used to be alive", "a fresh catch", "breakfast", "a surprise"],
-      reaction: ["I made this for you.", "Fresh.", "You're not eating enough.", "This is love in my language.", "The hunt was successful.", "Don't look at me like that.", "You never appreciate my efforts.", "I thought of you when I killed it.", "Still warm.", "This is what providers do.", "I could teach you, but you're hopeless.", "Eat up."]
+      gift: ["a dead bird", "half a mouse", "something I caught", "a gift from outside", "my best work", "a prize"],
+      observation: ["they never appreciate it", "they make that face", "they don't understand", "they seem confused", "they don't eat it", "they act weird about it"],
+      lesson: ["I bring it anyway. That's love.", "Doesn't stop me. Shouldn't stop you.", "Their reaction isn't my business.", "I know what I meant by it.", "Do it for you, not for them.", "Give freely. The rest isn't up to you."]
     }
   },
   {
-    pattern: "I tried to bring you {attempt}. {outcome}.",
-    category: 'chaotic',
+    pattern: "I once {attempt}. {outcome}. {takeaway}.",
+    category: 'wise',
     slots: {
-      attempt: ["a bird", "a mouse", "something from outside", "a gift", "a live one", "the big one", "the one that got away last time", "a worthy offering", "something impressive", "a challenge"],
-      outcome: ["It escaped. We don't talk about it.", "I got distracted.", "It's somewhere in the house now. Good luck.", "The screen door betrayed me.", "I ate it. Sorry. It was good though.", "Long story. Check your shoe later.", "Mission failed. I'll try again.", "It fought back. I respect that.", "Anyway there's feathers everywhere.", "The point is I tried."]
+      attempt: ["tried to bring a bird inside", "caught something too big to carry", "brought a live one by accident", "offered my best catch", "worked really hard on a gift", "dragged something home"],
+      outcome: ["It escaped", "It didn't go as planned", "They weren't impressed", "It got complicated", "The whole thing fell apart", "It was chaos"],
+      takeaway: ["The point is I tried.", "Effort still counts.", "You can't control everything.", "Sometimes the attempt IS the thing.", "Failure is just information.", "I'd do it again."]
     }
   },
 
