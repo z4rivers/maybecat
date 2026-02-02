@@ -1715,13 +1715,30 @@ const templates: Template[] = [
       punchline: ["That's basically marriage in cat", "You should be honored", "It was the good kind of dead thing", "Don't make it weird", "That's more than most humans get", "Because I tolerate you", "That's the highest compliment", "In my culture that means forever", "That's 'I love you' in cat", "Because you're mine. I claimed you. It's done"]
     }
   },
-  // Genuinely sweet - some cats are just loving
+  // Genuinely sweet - but with punch
   {
     pattern: "{action} {feeling}",
     category: 'heartfelt',
     slots: {
       action: ["*curls up against you*", "*purrs without being touched*", "*follows you from room to room*", "*rests head on your hand*", "*falls asleep touching you*", "*looks at you and slow blinks*", "*kneads the blanket next to you*", "*sits close but not on you*", "*watches you leave, watches you return*", "*finds you when you're sad*"],
-      feeling: ["I just wanted to be near you.", "This is my favorite part of the day.", "You make everything feel safe.", "I don't need anything. Just this.", "Wherever you are is where I want to be.", "I don't know how to say it differently.", "I chose you. I keep choosing you.", "You're my person.", "I feel calm when you're here.", "I love you. That's all."]
+      feeling: ["Don't read into it. (Read into it.)", "This is the whole thing. Right here.", "I'm not explaining myself.", "What? I like your smell. Sue me.", "I don't do this for everyone. Just you. Shut up.", "Don't make it weird. It's already weird. I don't care.", "I'm not good at words. This is the words.", "You're tolerable. That's huge coming from me.", "I'd pick you again. Whatever.", "This is me trying. Can you tell?"]
+    }
+  },
+  // Reluctant tenderness - admitting feelings grudgingly
+  {
+    pattern: "{admission}, {deflection}.",
+    category: 'heartfelt',
+    slots: {
+      admission: ["Fine, I missed you", "Okay, I love you", "Yes, you're my favorite", "I guess I care about you", "You matter to me or whatever", "I waited by the door", "I like when you come home", "I need you around", "You're important to me", "I chose you on purpose"],
+      deflection: ["don't let it go to your head", "it's not a big deal", "I'll deny it later", "we don't need to talk about it", "that's all you're getting", "moving on", "this changes nothing", "forget I said anything", "I'm still the boss though", "also feed me"]
+    }
+  },
+  // Sweet with unexpected specificity
+  {
+    pattern: "I love {specific}.",
+    category: 'heartfelt',
+    slots: {
+      specific: ["the sound you make when you sleep", "how you smell after outside", "your weird laugh", "that you talk to me like I understand (I do)", "your warm spots", "the way you say my name", "that you always come back", "your terrible singing in the shower", "when you think I'm not watching (I am)", "the specific way you pet my head", "your heartbeat when I sit on your chest", "that you chose me too", "how you look when you first wake up", "that you're kind of a mess but you try"]
     }
   },
   // The mood swing - sweet then sudden change
@@ -1733,13 +1750,22 @@ const templates: Template[] = [
       turn: ["and I bite now.", "OKAY TIME TO GO. *sprints away*", "that's enough. *kicks with back legs*", "wait what's that. BYE.", "I've changed my mind about everything.", "THE VIBE SHIFTED.", "I love you but I must destroy something.", "actually I hate this. *bites and runs*"]
     }
   },
-  // Quiet presence - cats who just want to be there
+  // Quiet presence - punchy version
   {
     pattern: "I'm not {action}. I'm {truth}.",
     category: 'heartfelt',
     slots: {
-      action: ["following you", "needy", "clingy", "staring", "waiting", "sitting here for no reason", "being weird", "hovering", "watching you sleep", "always in this room"],
-      truth: ["just making sure you're okay", "keeping you company in my own way", "choosing to be where you are", "checking that you're still here", "being present", "here because I want to be", "showing up the way I know how", "standing guard", "loving you quietly", "staying close because it matters"]
+      action: ["following you", "needy", "clingy", "staring", "waiting", "sitting here for no reason", "being weird", "hovering", "watching you sleep", "obsessed"],
+      truth: ["conducting a welfare check", "supervising", "keeping you alive (you're welcome)", "making sure you don't do anything stupid", "quality control", "here by choice and I'm CHOOSING loudly", "on duty", "haunting you affectionately", "your emotional support predator", "aggressively present"]
+    }
+  },
+  // Self-aware sweetness
+  {
+    pattern: "Look, {setup}. {punchline}.",
+    category: 'heartfelt',
+    slots: {
+      setup: ["I'm a cat", "I'm not good at this", "feelings are hard", "I don't say this stuff", "vulnerability isn't my brand", "this is awkward", "I'm going to keep this short", "don't expect a speech", "I'm only saying this once", "this is embarrassing"],
+      punchline: ["But you're my person and that's permanent", "But I'd be sad if you left", "But you matter or whatever", "But I'm glad you exist", "But here we are and I'm not leaving", "But I pick you every time", "But you're the only human I like", "But you're stuck with me now", "But I need you around. There. I said it.", "But this is home because of you"]
     }
   },
 
