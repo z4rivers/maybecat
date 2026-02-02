@@ -6,77 +6,7 @@ import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
-
-
-// Elaborate Art Nouveau corner vine flourish inspired by tarot deck
-function CornerVine({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 200 200" className={className} fill="none">
-      {/* Main vine curves */}
-      <path 
-        d="M0,200 Q0,150 30,120 Q60,90 40,60 Q20,30 50,10 Q80,0 100,20" 
-        stroke="currentColor" 
-        strokeWidth="3" 
-        fill="none"
-      />
-      <path 
-        d="M200,0 Q150,0 120,30 Q90,60 60,40 Q30,20 10,50 Q0,80 20,100" 
-        stroke="currentColor" 
-        strokeWidth="3" 
-        fill="none"
-      />
-      {/* Decorative leaves */}
-      <ellipse cx="30" cy="120" rx="12" ry="6" fill="currentColor" transform="rotate(-45 30 120)" />
-      <ellipse cx="50" cy="60" rx="10" ry="5" fill="currentColor" transform="rotate(30 50 60)" />
-      <ellipse cx="80" cy="30" rx="8" ry="4" fill="currentColor" transform="rotate(-20 80 30)" />
-      <ellipse cx="120" cy="30" rx="12" ry="6" fill="currentColor" transform="rotate(45 120 30)" />
-      <ellipse cx="60" cy="40" rx="10" ry="5" fill="currentColor" transform="rotate(-30 60 40)" />
-      {/* Flowers/circles */}
-      <circle cx="50" cy="90" r="8" fill="currentColor" opacity="0.8" />
-      <circle cx="90" cy="50" r="8" fill="currentColor" opacity="0.8" />
-      <circle cx="25" cy="150" r="6" fill="currentColor" opacity="0.6" />
-      <circle cx="150" cy="25" r="6" fill="currentColor" opacity="0.6" />
-      {/* Inner flower details */}
-      <circle cx="50" cy="90" r="4" fill="currentColor" opacity="0.4" />
-      <circle cx="90" cy="50" r="4" fill="currentColor" opacity="0.4" />
-    </svg>
-  );
-}
-
-// Ornate mandala-style center decoration
-function CenterMandala({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 100" className={className}>
-      <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="2" fill="none" />
-      <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="1.5" fill="none" />
-      <circle cx="50" cy="50" r="25" stroke="currentColor" strokeWidth="1" fill="none" />
-      <circle cx="50" cy="50" r="15" fill="currentColor" opacity="0.3" />
-      <circle cx="50" cy="50" r="8" fill="currentColor" />
-      {/* Petals */}
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-        <ellipse
-          key={angle}
-          cx="50"
-          cy="15"
-          rx="6"
-          ry="12"
-          fill="currentColor"
-          opacity="0.6"
-          transform={`rotate(${angle} 50 50)`}
-        />
-      ))}
-    </svg>
-  );
-}
-
-// Mystical star decoration  
-function MysticalStar({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 0L14.59 8.41L24 12L14.59 15.59L12 24L9.41 15.59L0 12L9.41 8.41L12 0Z" />
-    </svg>
-  );
-}
+import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 
 export function Oracle() {
   useDocumentMeta();
