@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** The site keeps working exactly as it does now. No regressions, no surprises.
-**Current focus:** Phase 1 - Remove Dead Code
+**Current focus:** Phase 2 - Add Safety Net
 
 ## Current Position
 
-Phase: 1 of 6 (Remove Dead Code)
-Plan: 1 of 1 in current phase
-Status: Ready to execute
-Last activity: 2026-02-02 — Roadmap created
+Phase: 2 of 6 (Add Safety Net)
+Plan: 0 of 2 in current phase
+Status: Ready to plan
+Last activity: 2026-02-02 — Phase 1 complete
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 8%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: ~2 min
+- Total execution time: ~2 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 1. Remove Dead Code | 1 | ~2 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 2m
+- Trend: Starting
 
 *Updated after each plan completion*
 
@@ -42,7 +42,7 @@ Progress: [░░░░░░░░░░] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Keep Home.tsx, delete variants A & B
+- Keep Home.tsx, delete variants A & B (executed)
 - Extract logic to hooks, not new frameworks
 - Add Vitest for testing
 
@@ -57,5 +57,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Roadmap created
+Stopped at: Phase 1 complete - deleted variants, cleaned routing
 Resume file: None

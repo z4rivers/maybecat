@@ -6,7 +6,7 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 
 ## Phases
 
-- [ ] **Phase 1: Remove Dead Code** - Delete unused variant files and routes
+- [x] **Phase 1: Remove Dead Code** - Delete unused variant files and routes
 - [ ] **Phase 2: Add Safety Net** - Error boundary and safe localStorage parsing
 - [ ] **Phase 3: Extract Config** - Magic numbers to config file
 - [ ] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
@@ -26,7 +26,7 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: Delete variant files and clean up routing
+- [x] 01-01: Delete variant files and clean up routing
 
 ### Phase 2: Add Safety Net
 **Goal**: Protect the app from crashes with error handling
@@ -110,7 +110,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Remove Dead Code | 0/1 | Not started | - |
+| 1. Remove Dead Code | 1/1 | Complete | 2026-02-02 |
 | 2. Add Safety Net | 0/2 | Not started | - |
 | 3. Extract Config | 0/1 | Not started | - |
 | 4. Extract Hooks | 0/3 | Not started | - |
