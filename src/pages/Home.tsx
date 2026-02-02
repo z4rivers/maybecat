@@ -115,8 +115,12 @@ export function Oracle() {
   const [catImage, setCatImage] = useState<string | null>(() => localStorage.getItem('oracleCatImage'));
   const [catName, setCatName] = useState(() => localStorage.getItem('oracleCatName') || '');
   const [shelterCat, setShelterCat] = useState<ShelterCat | null>(() => {
-    const stored = localStorage.getItem('oracleShelterCat');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('oracleShelterCat');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   });
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState<OracleResponse | null>(null);
