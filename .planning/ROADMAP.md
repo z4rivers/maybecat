@@ -11,7 +11,7 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 - [x] **Phase 3: Extract Config** - Magic numbers to config file
 - [x] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
 - [x] **Phase 5: Extract Components** - Decorative SVGs and modal to components
-- [ ] **Phase 6: Add Tests** - Tests for critical paths
+- [x] **Phase 6: Add Tests** - Tests for critical paths
 
 ## Phase Details
 
@@ -102,9 +102,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Set up Vitest
-- [ ] 06-02: Test API and data functions
-- [ ] 06-03: Test hooks
+- [x] 06-01: Set up Vitest
+- [x] 06-02: Test API and data functions
+- [x] 06-03: Test hooks
 
 ## Progress
 
@@ -115,4 +115,4 @@ Plans:
 | 3. Extract Config | 1/1 | Complete | 2026-02-02 |
 | 4. Extract Hooks | 3/3 | Complete | 2026-02-02 |
 | 5. Extract Components | 2/2 | Complete | 2026-02-02 |
-| 6. Add Tests | 0/3 | Not started | - |
+| 6. Add Tests | 3/3 | Complete | 2026-02-02 |
