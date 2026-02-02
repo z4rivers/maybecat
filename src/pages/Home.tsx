@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Sparkles, Camera } from 'lucide-react';
 import { getRandomResponse, type OracleResponse } from '../data/oracleResponses';
 import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
+import { config } from '../config';
 
 
 // Elaborate Art Nouveau corner vine flourish inspired by tarot deck
@@ -142,7 +143,7 @@ export function Oracle() {
       if (!ctx) return;
 
       // Sample at smaller size for performance
-      const sampleSize = 100;
+      const sampleSize = config.brightness.sampleSize;
       canvas.width = sampleSize;
       canvas.height = sampleSize;
       ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
@@ -163,8 +164,8 @@ export function Oracle() {
       }
 
       const avgBrightness = totalBrightness / pixelCount;
-      // Only brighten truly dark images (threshold 70) - avoids washing out mixed-lighting photos
-      setNeedsBrightening(avgBrightness < 70);
+      // Only brighten truly dark images - avoids washing out mixed-lighting photos
+      setNeedsBrightening(avgBrightness < config.brightness.threshold);
     };
     img.src = imageSrc;
   }, []);
@@ -181,7 +182,7 @@ export function Oracle() {
   useEffect(() => {
     async function loadCats() {
       try {
-        const cats = await fetchAdoptableCats(5);
+        const cats = await fetchAdoptableCats(config.shelterCats.fetchCount);
         setShelterCats(cats);
       } catch (error) {
         console.error('Failed to fetch cats:', error);
@@ -236,7 +237,8 @@ export function Oracle() {
   const askOracle = useCallback(() => {
     if (!question.trim()) return;
     setIsThinking(true);
-    const thinkingTime = 1500 + Math.random() * 1500;
+    const { base, variance } = config.thinking.firstAsk;
+    const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
       setResponse(getRandomResponse());
       setIsThinking(false);
@@ -245,7 +247,8 @@ export function Oracle() {
 
   const askAgain = useCallback(() => {
     setIsThinking(true);
-    const thinkingTime = 800 + Math.random() * 800;
+    const { base, variance } = config.thinking.askAgain;
+    const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
       setResponse(getRandomResponse());
       setIsThinking(false);
@@ -255,7 +258,10 @@ export function Oracle() {
   const downloadImage = useCallback(async () => {
     if (!responseRef.current) return;
     const { default: html2canvas } = await import('html2canvas');
-    const canvas = await html2canvas(responseRef.current, { backgroundColor: '#fef3c7', scale: 2 });
+    const canvas = await html2canvas(responseRef.current, {
+      backgroundColor: config.export.backgroundColor,
+      scale: config.export.scale,
+    });
     const link = document.createElement('a');
     link.download = `maybecat-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -266,7 +272,10 @@ export function Oracle() {
     if (!responseRef.current) return;
     try {
       const { default: html2canvas } = await import('html2canvas');
-      const canvas = await html2canvas(responseRef.current, { backgroundColor: '#fef3c7', scale: 2 });
+      const canvas = await html2canvas(responseRef.current, {
+        backgroundColor: config.export.backgroundColor,
+        scale: config.export.scale,
+      });
       canvas.toBlob(async (blob) => {
         if (!blob) return;
         const file = new File([blob], 'maybecat.png', { type: 'image/png' });
@@ -557,7 +566,7 @@ export function Oracle() {
                       src={catImage}
                       alt={displayName}
                       className="w-full aspect-square object-cover rounded-lg"
-                      style={needsBrightening ? { filter: 'brightness(1.3) contrast(1.1)' } : undefined}
+                      style={needsBrightening ? { filter: config.brightness.enhanceFilter } : undefined}
                     />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-800 rounded-full shadow-lg">
