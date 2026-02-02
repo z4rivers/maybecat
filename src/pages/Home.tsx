@@ -1,11 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Sparkles, Camera } from 'lucide-react';
-import { getRandomResponse, type OracleResponse } from '../data/oracleResponses';
 import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
+import { useOracle } from '../hooks/useOracle';
 
 
 // Elaborate Art Nouveau corner vine flourish inspired by tarot deck
@@ -91,9 +91,16 @@ export function Oracle() {
     clearCat: clearCatStorage,
   } = useCatStorage();
 
-  const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState<OracleResponse | null>(null);
-  const [isThinking, setIsThinking] = useState(false);
+  const {
+    question,
+    setQuestion,
+    response,
+    isThinking,
+    askOracle,
+    askAgain,
+    clearResponse,
+  } = useOracle();
+
   const [showNameInput, setShowNameInput] = useState(false);
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
@@ -181,29 +188,8 @@ export function Oracle() {
 
   const clearCat = useCallback(() => {
     clearCatStorage();
-    setResponse(null);
-  }, [clearCatStorage]);
-
-  const askOracle = useCallback(() => {
-    if (!question.trim()) return;
-    setIsThinking(true);
-    const { base, variance } = config.thinking.firstAsk;
-    const thinkingTime = base + Math.random() * variance;
-    setTimeout(() => {
-      setResponse(getRandomResponse());
-      setIsThinking(false);
-    }, thinkingTime);
-  }, [question]);
-
-  const askAgain = useCallback(() => {
-    setIsThinking(true);
-    const { base, variance } = config.thinking.askAgain;
-    const thinkingTime = base + Math.random() * variance;
-    setTimeout(() => {
-      setResponse(getRandomResponse());
-      setIsThinking(false);
-    }, thinkingTime);
-  }, []);
+    clearResponse();
+  }, [clearCatStorage, clearResponse]);
 
   const downloadImage = useCallback(async () => {
     if (!responseRef.current) return;
