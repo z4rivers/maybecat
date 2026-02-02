@@ -8,8 +8,8 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 
 - [x] **Phase 1: Remove Dead Code** - Delete unused variant files and routes
 - [x] **Phase 2: Add Safety Net** - Error boundary and safe localStorage parsing
-- [ ] **Phase 3: Extract Config** - Magic numbers to config file
-- [ ] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
+- [x] **Phase 3: Extract Config** - Magic numbers to config file
+- [x] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
 - [ ] **Phase 5: Extract Components** - Decorative SVGs and modal to components
 - [ ] **Phase 6: Add Tests** - Tests for critical paths
 
@@ -55,7 +55,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: Create config file and replace magic numbers
+- [x] 03-01: Create config file and replace magic numbers
 
 ### Phase 4: Extract Hooks
 **Goal**: Move reusable logic from Home.tsx to custom hooks
@@ -70,9 +70,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Extract useDocumentMeta hook
-- [ ] 04-02: Extract useCatStorage hook (localStorage logic)
-- [ ] 04-03: Extract useOracle hook (question/response logic)
+- [x] 04-01: Extract useDocumentMeta hook
+- [x] 04-02: Extract useCatStorage hook
+- [x] 04-03: Extract useOracle hook
 
 ### Phase 5: Extract Components
 **Goal**: Move reusable UI pieces to component files
@@ -112,7 +112,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Remove Dead Code | 1/1 | Complete | 2026-02-02 |
 | 2. Add Safety Net | 2/2 | Complete | 2026-02-02 |
-| 3. Extract Config | 0/1 | Not started | - |
-| 4. Extract Hooks | 0/3 | Not started | - |
+| 3. Extract Config | 1/1 | Complete | 2026-02-02 |
+| 4. Extract Hooks | 3/3 | Complete | 2026-02-02 |
 | 5. Extract Components | 0/2 | Not started | - |
 | 6. Add Tests | 0/3 | Not started | - |

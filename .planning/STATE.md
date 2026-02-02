@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** The site keeps working exactly as it does now. No regressions, no surprises.
-**Current focus:** Phase 3 - Extract Config
+**Current focus:** Phase 5 - Extract Components
 
 ## Current Position
 
-Phase: 3 of 6 (Extract Config)
-Plan: 0 of 1 in current phase
+Phase: 5 of 6 (Extract Components)
+Plan: 0 of 2 in current phase
 Status: Ready to plan
-Last activity: 2026-02-02 — Phase 2 complete
+Last activity: 2026-02-02 — Phase 4 complete
 
-Progress: [██░░░░░░░░] 25%
+Progress: [██████░░░░] 58%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: ~2 min
-- Total execution time: ~5 min
+- Total plans completed: 7
+- Average duration: ~1.3 min
+- Total execution time: ~9 min
 
 **By Phase:**
 
@@ -29,10 +29,12 @@ Progress: [██░░░░░░░░] 25%
 |-------|-------|-------|----------|
 | 1. Remove Dead Code | 1 | ~2 min | ~2 min |
 | 2. Add Safety Net | 2 | ~3 min | ~1.5 min |
+| 3. Extract Config | 1 | ~1 min | ~1 min |
+| 4. Extract Hooks | 3 | ~3 min | ~1 min |
 
 **Recent Trend:**
-- Last 5 plans: 2m, 2m, 1m
-- Trend: Stable
+- Last 5 plans: 1m, 1m, 1m, 1m, 1m
+- Trend: Stable/fast
 
 *Updated after each plan completion*
 
