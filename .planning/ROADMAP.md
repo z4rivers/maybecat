@@ -10,7 +10,7 @@ Clean up the maybecat codebase without changing user-visible behavior. Remove de
 - [x] **Phase 2: Add Safety Net** - Error boundary and safe localStorage parsing
 - [x] **Phase 3: Extract Config** - Magic numbers to config file
 - [x] **Phase 4: Extract Hooks** - Shared logic from Home.tsx to reusable hooks
-- [ ] **Phase 5: Extract Components** - Decorative SVGs and modal to components
+- [x] **Phase 5: Extract Components** - Decorative SVGs and modal to components
 - [ ] **Phase 6: Add Tests** - Tests for critical paths
 
 ## Phase Details
@@ -86,8 +86,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Extract decorative SVG components
-- [ ] 05-02: Extract NameInputModal component
+- [x] 05-01: Extract decorative SVG components
+- [x] 05-02: Extract NameInputModal component
 
 ### Phase 6: Add Tests
 **Goal**: Test critical paths to catch regressions
@@ -114,5 +114,5 @@ Plans:
 | 2. Add Safety Net | 2/2 | Complete | 2026-02-02 |
 | 3. Extract Config | 1/1 | Complete | 2026-02-02 |
 | 4. Extract Hooks | 3/3 | Complete | 2026-02-02 |
-| 5. Extract Components | 0/2 | Not started | - |
+| 5. Extract Components | 2/2 | Complete | 2026-02-02 |
 | 6. Add Tests | 0/3 | Not started | - |
