@@ -1771,6 +1771,47 @@ const templates: Template[] = [
     }
   },
 
+  // CONTEMPLATIVE - Cat internal monologue, window-staring thoughts
+  {
+    pattern: "I've been watching {thing} and I think {thought}.",
+    category: 'existential',
+    slots: {
+      thing: ['the birds', 'the rain', 'you sleep', 'the shadows move', 'dust float in the light', 'the ceiling for hours', 'the same spot on the wall', 'nothing in particular', 'the world outside', 'time pass'],
+      thought: ["they know something we don't", "none of it matters and all of it matters", "there's a pattern but I can't prove it", "the answer is just out of reach", "I almost understand everything", "we're all just waiting", "movement is its own kind of stillness", "the small things are the big things", "I've been here before, somehow", "maybe this is all there is, and that's okay"]
+    }
+  },
+  {
+    pattern: "Sometimes I wonder {wonder}.",
+    category: 'existential',
+    slots: {
+      wonder: ["if the birds think about me too", "where the sun goes when it leaves the window", "if my reflection knows things I don't", "what the other side of the door is really like", "if everyone feels this quiet and just doesn't say", "if I was someone else before this", "why some moments feel longer than others", "if the humans know how short it all is", "what the rain remembers", "if sleep is practice for something", "if this is the good part or we're still waiting", "where all the lost toys go"]
+    }
+  },
+  {
+    pattern: "{observation}. {musing}.",
+    category: 'existential',
+    slots: {
+      observation: ["The sunbeam moved again", "Another day ended", "The house got quiet", "Everyone left", "The light changed", "I woke up in a different spot than I fell asleep", "The bird came back to the same branch", "Snow fell and then it was gone", "You looked sad today", "Nothing happened and everything felt different"],
+      musing: ["I don't know what that means but I felt it", "Maybe that's how time works", "I think that's supposed to mean something", "I sat with that for a while", "I don't have words for it but I know what it is", "I watched until I understood, or thought I did", "Some things just pass through", "I'll think about it again tomorrow", "That's the whole story, I guess", "I'm still thinking about it"]
+    }
+  },
+  {
+    pattern: "The thing about {topic} is {insight}.",
+    category: 'wise',
+    slots: {
+      topic: ["waiting", "watching", "wanting", "losing things", "finding things", "being alone", "being with someone", "change", "staying the same", "time", "comfort", "home"],
+      insight: ["you don't know you're doing it until you stop", "it changes you even when nothing happens", "you can do it wrong for a long time before you notice", "the feeling outlasts the thing", "everyone does it differently and thinks their way is the only way", "it's simpler than you make it", "it takes as long as it takes", "you can't force it", "sometimes it finds you", "you already know how, you just forgot", "the hard part is the beginning. Or the end. Actually, all of it."]
+    }
+  },
+  {
+    pattern: "I used to think {before}. Now I think {after}.",
+    category: 'wise',
+    slots: {
+      before: ["everything mattered", "nothing mattered", "the world was bigger", "I needed more", "other cats had it figured out", "the answer was coming", "busy meant important", "being right was the point", "comfort was weakness", "I had to understand everything"],
+      after: ["only some things matter, but they matter a lot", "the small things are the whole thing", "the world is exactly the right size", "I have enough", "nobody has it figured out and that's fine", "the answer is the question", "still is where the good stuff happens", "being kind is the point", "comfort is the point", "understanding isn't the same as knowing"]
+    }
+  },
+
   // DEMANDING templates
   {
     pattern: "{demand}. {orElse}.",
