@@ -718,7 +718,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Every day, I choose you again.", category: 'heartfelt' },
   { text: "I sit with you because I want to.", category: 'heartfelt' },
   { text: "I wait by the door because I miss you.", category: 'heartfelt' },
-  { text: "You're my favorite human. Don't tell the others.", category: 'heartfelt' },
   { text: "I'm not clingy. I just love you aggressively.", category: 'heartfelt' },
   { text: "You don't have to earn rest. You deserve it already.", category: 'heartfelt' },
   { text: "Your existence is not a burden.", category: 'heartfelt' },
