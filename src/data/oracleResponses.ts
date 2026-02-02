@@ -1759,6 +1759,32 @@ const templates: Template[] = [
       truth: ["conducting a welfare check", "supervising", "keeping you alive (you're welcome)", "making sure you don't do anything stupid", "quality control", "here by choice and I'm CHOOSING loudly", "on duty", "haunting you affectionately", "your emotional support predator", "aggressively present"]
     }
   },
+  // Gift-giving - cats bring things (dead, wounded, found)
+  {
+    pattern: "I brought you {gift}. {meaning}.",
+    category: 'heartfelt',
+    slots: {
+      gift: ["a dead bird", "half a mouse", "a live moth", "something from under the fridge", "a leaf", "a sock I found", "a bug (mostly dead)", "a hair tie", "a lizard tail (no lizard)", "a spider (it's still moving)", "something I caught", "a gift from outside", "this thing I found", "my favorite toy"],
+      meaning: ["You're welcome", "Because you can't hunt", "I'm providing for this family", "This means I love you", "I noticed you never catch your own", "It's the thought that counts", "Accept my offering", "I worry about you", "This is the good stuff", "You seemed hungry", "I worked hard on this", "Please be impressed", "I wanted you to have it", "Don't say I never gave you anything"]
+    }
+  },
+  {
+    pattern: "*drops {gift} at your feet* {reaction}",
+    category: 'nurturing',
+    slots: {
+      gift: ["a dead thing", "something wet", "a creature of unknown origin", "a partially deceased offering", "nature's bounty", "a protein", "evidence of my skill", "a trophy", "something that used to be alive", "a fresh catch", "breakfast", "a surprise"],
+      reaction: ["I made this for you.", "Fresh.", "You're not eating enough.", "This is love in my language.", "The hunt was successful.", "Don't look at me like that.", "You never appreciate my efforts.", "I thought of you when I killed it.", "Still warm.", "This is what providers do.", "I could teach you, but you're hopeless.", "Eat up."]
+    }
+  },
+  {
+    pattern: "I tried to bring you {attempt}. {outcome}.",
+    category: 'chaotic',
+    slots: {
+      attempt: ["a bird", "a mouse", "something from outside", "a gift", "a live one", "the big one", "the one that got away last time", "a worthy offering", "something impressive", "a challenge"],
+      outcome: ["It escaped. We don't talk about it.", "I got distracted.", "It's somewhere in the house now. Good luck.", "The screen door betrayed me.", "I ate it. Sorry. It was good though.", "Long story. Check your shoe later.", "Mission failed. I'll try again.", "It fought back. I respect that.", "Anyway there's feathers everywhere.", "The point is I tried."]
+    }
+  },
+
   // Self-aware sweetness
   {
     pattern: "Look, {setup}. {punchline}.",
