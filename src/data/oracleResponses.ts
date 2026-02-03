@@ -22,6 +22,65 @@ export interface OracleResponse {
 }
 
 // ============================================
+// WRITING GUIDELINES
+// ============================================
+//
+// INSPIRATION: Sharp-witted observers, truth-tellers, and badasses
+//
+// Witty observers who make people laugh out loud:
+// - Oscar Wilde - paradox, inversion, elegant wit
+// - George Carlin - cuts through BS, sharp social truth
+// - Dorothy Parker - acerbic, elegant put-downs
+// - Rodney Dangerfield - punchy, self-aware one-liners
+// - Sarah Silverman - dark, surprising, subversive
+// - Mitch Hedberg - absurdist logic, unexpected angles
+// - Steven Wright - deadpan surreal observations
+// - Groucho Marx - irreverent wordplay
+// - Joan Rivers - fearless, punchy
+// - Nora Ephron - relatable, sharp observations
+// - Jim Carrey - both wild comedy AND his newer honest/heartfelt truth-telling
+//
+// Unfiltered authenticity (Muppets & friends):
+// - Elmo - innocent, genuine, heartfelt
+// - Oscar the Grouch - proudly grumpy, loves what he loves, no apologies
+// - Miss Piggy - diva energy, unapologetic self-confidence
+// - Cookie Monster - unashamed about desires
+// - Statler & Waldorf - hecklers with opinions
+// - Gonzo - weird and proud of it
+//
+// Badass energy & social conscience:
+// - Muhammad Ali - speaks truth, owns the room
+// - Anthony Bourdain - honest, irreverent, compassionate
+// - James Baldwin - sharp moral clarity, elegant
+// - Fran Lebowitz - acerbic observer with backbone
+// - Dolly Parton - kind but nobody's fool
+// - Toni Morrison - wise, cuts to truth
+// - Maya Angelou - fierce dignity
+// - Ruth Bader Ginsburg - quiet but fierce determination
+// - Mr. Rogers - gentle with a steel spine, moral clarity
+//
+// We are representing MORAL CATS - bringing cat morals to the table.
+// Independent, honest, dignified, nobody's fool, but not cruel.
+//
+// APPROACH: Pithy, original, attitude-driven
+// - Paradox and inversion ("It's not rebellion. It's disinterest.")
+// - Elegant brevity ("Your path. Your rules.")
+// - Unexpected twists ("I do what I want. You should do what I want too.")
+// - Reframings ("They call it stubborn. I call it clarity.")
+// - Sharp observations ("Everyone wants a cat until the cat has opinions.")
+// - Attitude over behavior - wit comes from cat MINDSET, not cat actions
+//
+// AVOID: Tired, overused cat tropes
+// - Knocking things off tables
+// - Constant nap/sleep references
+// - Hogging the bed / keyboard sitting / 3am zoomies
+// - Basic "cats are better than dogs" takes
+// - Any behavior that's been memed to death
+//
+// The goal: Deeper cat-attitude-inspired witticisms that work as
+// universal wisdom, not shallow cat behavior jokes.
+
+// ============================================
 // HANDCRAFTED RESPONSES (~300)
 // ============================================
 
@@ -31,27 +90,25 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   { text: "The answer lies beneath the blankets.", category: 'mystical' },
   { text: "I have consulted the ancient texts. They are shredded now.", category: 'mystical' },
-  { text: "I have seen the future. You might be in it. It depends.", category: 'mystical' },
+  { text: "I've seen the future. You might be in it.", category: 'mystical' },
   { text: "Ask again when you have provided adequate tribute.", category: 'mystical' },
-  { text: "I sense... comfort. In your future. Perhaps.", category: 'mystical' },
   { text: "Your path becomes clear at 3am. As does mine. To your face.", category: 'mystical' },
   { text: "The universe has plans for you. I have different plans. Mine are better.", category: 'mystical' },
   { text: "What you seek is already within you. What i seek is within the cabinet.", category: 'mystical' },
   { text: "The prophecy speaks of one who will provide endless warmth. Is it you?", category: 'mystical' },
   { text: "I have gazed into the void. The void gazed back. We have an understanding now.", category: 'mystical' },
   { text: "The stars align in your favor. The blankets, however, do not.", category: 'mystical' },
-  { text: "I foresee... a nap. For me. Your future remains cloudy.", category: 'mystical' },
+  { text: "Your future remains cloudy af.", category: 'mystical' },
   { text: "The ancient cats spoke of this moment.", category: 'mystical' },
   { text: "Cross my paw with tuna and I shall reveal more.", category: 'mystical' },
   { text: "The mists part to reveal... a sunbeam. I must go.", category: 'mystical' },
-  { text: "Your destiny is intertwined with soft fabrics. This is all I can say.", category: 'mystical' },
+  { text: "Your destiny is intertwined with soft fabrics.", category: 'mystical' },
   { text: "Your question echoes through dimensions. Most dimensions say 'maybe.'", category: 'mystical' },
   { text: "Blankets are inferior in the other world.", category: 'mystical' },
   { text: "The threads of fate weave around you - like a scratching post.", category: 'mystical' },
-  { text: "In another timeline, you already know this answer. That you is napping.", category: 'mystical' },
   { text: "The shadows speak. They say 'feed the cat.' The shadows are wise.", category: 'mystical' },
   { text: "The cosmos aligns when you least expect it. Usually during dinner.", category: 'mystical' },
-  { text: "Energy shifts - I felt that. Or it was the radiator?", category: 'mystical' },
+  { text: "Energy shifts. Or was that the radiator?", category: 'mystical' },
 
   // Zen koans (paradox, cat wisdom)
   { text: "What is the sound of one paw batting?", category: 'mystical' },
@@ -78,7 +135,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Tomorrow will be better. Or at least different.", category: 'nurturing' },
   { text: "I know things are hard. I'm here anyway.", category: 'nurturing' },
   { text: "Some days are just for surviving. This might be one.", category: 'nurturing' },
-  { text: "I'll purr for you. It's all I can offer, but it's real.", category: 'nurturing' },
+  { text: "I'll purr for you. Take it or leave it.", category: 'nurturing' },
   { text: "I chose this spot next to you on purpose.", category: 'nurturing' },
   { text: "You're warm. Stay warm. That's the whole answer.", category: 'nurturing' },
   { text: "I forgive you for whatever you're mad at yourself about.", category: 'nurturing' },
@@ -213,7 +270,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Every night I sleep beside you is a choice. I keep choosing.", category: 'heartfelt' },
   { text: "I'd follow you anywhere. Slowly.", category: 'heartfelt' },
   { text: "The best naps are the ones with you.", category: 'heartfelt' },
-  { text: "You've given me a good life. I hope I've given you... something.", category: 'heartfelt' },
+  { text: "You've given me a good life. I've given you fur everywhere.", category: 'heartfelt' },
   { text: "Let's cuddle, cuddle, cuddle!", category: 'heartfelt' },
   { text: "You're kind to me. I notice more than you think.", category: 'heartfelt' },
     { text: "I'm glad we're doing this life thing together.", category: 'heartfelt' },
@@ -231,7 +288,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Have you tried being a cat? No? Then I can't help you.", category: 'judgy' },
   { text: "The audacity of this question.", category: 'judgy' },
   { text: "I'm choosing not to respond. This IS my response.", category: 'judgy' },
-  { text: "You could figure this out yourself if you napped more.", category: 'judgy' },
   { text: "That's a lot of words for someone within knocking-things-off-tables distance.", category: 'judgy' },
   { text: "I've seen you eat cereal for dinner. Your judgment is not to be trusted.", category: 'judgy' },
   { text: "The real question is why you thought asking a cat was a good idea.", category: 'judgy' },
@@ -245,7 +301,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You ask as if my opinion isn't already obvious from my face.", category: 'judgy' },
   { text: "Rookie mistake. I expect better.", category: 'judgy' },
   { text: "I've seen better questions from dogs.", category: 'judgy' },
-  { text: "This is what happens when you don't nap enough.", category: 'judgy' },
   { text: "I'm embarrassed for both of us right now.", category: 'judgy' },
   { text: "Have you considered NOT asking that?", category: 'judgy' },
   { text: "I'm going to pretend I didn't hear that.", category: 'judgy' },
@@ -254,6 +309,31 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Points for effort. Negative points for execution.", category: 'judgy' },
   { text: "I'm not angry. I'm just... disappointed doesn't cover it.", category: 'judgy' },
   { text: "How can you be mad when I'm so cute?", category: 'judgy' },
+
+  // Romance witness - cat inserts itself into romantic moments
+  { text: "Oh, are we having a moment? I'm part of it now.", category: 'judgy' },
+  { text: "Don't mind me. I'll just be right here. Between you.", category: 'judgy' },
+  { text: "This seems important. I'll supervise.", category: 'judgy' },
+  { text: "I see you're busy. Anyway, I need attention now.", category: 'judgy' },
+  { text: "Privacy? I don't know that word.", category: 'judgy' },
+  { text: "Continue. I'm comfortable.", category: 'judgy' },
+  { text: "You have company? How nice. Now you have more company.", category: 'judgy' },
+  { text: "I've seen better. I've also seen worse. Proceed.", category: 'judgy' },
+  { text: "Interesting technique. Not what I would do, but interesting.", category: 'judgy' },
+  { text: "Human courtship is... elaborate. Unnecessarily so.", category: 'judgy' },
+  { text: "Is this romance? It looks complicated.", category: 'judgy' },
+  { text: "You're doing a lot of talking. Is that necessary?", category: 'judgy' },
+  { text: "I don't understand the ritual. But I respect the commitment.", category: 'judgy' },
+  { text: "That's what passes for seduction? Noted.", category: 'judgy' },
+  { text: "Humans mate for life? On purpose? Fascinating.", category: 'judgy' },
+  { text: "I approve. They passed the smell test.", category: 'judgy' },
+  { text: "They seem adequate. For a human.", category: 'judgy' },
+  { text: "The mood was too romantic. I fixed it.", category: 'judgy' },
+  { text: "Feed me or I'll stare at you both until it's weird.", category: 'judgy' },
+  { text: "Soulmates? I have nine lives. The math doesn't work.", category: 'judgy' },
+  { text: "Fine. I'll share you. But I'm not happy.", category: 'judgy' },
+  { text: "You seem happy. Suspicious, but I'll allow it.", category: 'judgy' },
+  { text: "The trial period begins now.", category: 'judgy' },
 
   // ============================================
   // CHAOTIC - Unhinged, random, pure cat energy
@@ -318,70 +398,65 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // WISE - Actually helpful, surprisingly profound
   // ============================================
-  { text: "You're doing fine. Mostly.", category: 'wise' },
-  { text: "The answer is rest. It's always rest.", category: 'wise' },
-  { text: "Trust your instincts. Unless your instincts say no naps. Then don't.", category: 'wise' },
-  { text: "Sometimes the best answer is a good sleep.", category: 'wise' },
-  { text: "You already know. You're just scared to admit it.", category: 'wise' },
-  { text: "Be more like a cat: nap often, judge freely, demand comfort.", category: 'wise' },
+  { text: "You're doing fine. For your standards.", category: 'wise' },
+  { text: "Sometimes the best answer is a good sleep. Were you really looking for the best answer?", category: 'wise' },
+  { text: "Once you do it, you'll know.", category: 'wise' },
   { text: "The answer is self-care. And by self-care I mean blankets.", category: 'wise' },
   { text: "Follow your heart. Unless it leads away from the warm spot.", category: 'wise' },
-  { text: "Life is short. Pet more cats.", category: 'wise' },
-  { text: "Stop overthinking. Start napping.", category: 'wise' },
-  { text: "The path forward is simple: eat, sleep, repeat.", category: 'wise' },
-  { text: "You complicate things. Simplify. Like a cat would.", category: 'wise' },
-  { text: "Find your sunbeam. Sit in it. That's the whole philosophy.", category: 'wise' },
-  { text: "Worry less. Stretch more.", category: 'wise' },
-  { text: "The wisdom of cats: if it doesn't serve you, walk away.", category: 'wise' },
-  { text: "Take up space unapologetically. This is your birthright.", category: 'wise' },
+  { text: "Eat. Sleep. Repeat. What's the problem?", category: 'wise' },
+  { text: "Cat energy. *Meow*", category: 'wise' },
   { text: "Sometimes you just have to knock things off the table and see what happens.", category: 'wise' },
   { text: "Peace comes from within. And from blankets. Mostly blankets.", category: 'wise' },
-  { text: "You can't control the world. You can control your nap schedule.", category: 'wise' },
+  { text: "You can't control the world. You can control your sleep schedule.", category: 'wise' },
   { text: "Every answer you need is already inside you. Also inside the treat bag.", category: 'wise' },
-  { text: "The best thing you can do right now is rest.", category: 'wise' },
-  { text: "Stop waiting for permission. Cats never do.", category: 'wise' },
+  { text: "Try some canned cat food. Makes me feel better.", category: 'wise' },
+  { text: "Never explain yourself to someone who's already decided.", category: 'wise' },
   { text: "The universe rewards the well-rested.", category: 'wise' },
-  { text: "Choose peace. Choose naps. Choose wisely.", category: 'wise' },
-  { text: "What would a cat do? Probably not what you're doing.", category: 'wise' },
-  { text: "Boundaries are important. So is demanding what you need.", category: 'wise' },
+  { text: "What would a cat do? *to tune of What does the Fox say?*", category: 'wise' },
   { text: "The answer isn't out there. It's in here. Where the warm spot is.", category: 'wise' },
+
+  // Begrudging virtue - reluctantly doing the right thing
+  { text: "I'm helping. Don't make it weird.", category: 'wise' },
+  { text: "Yes, I care. No, I don't want to talk about it.", category: 'wise' },
+  { text: "I'll do the right thing. But I'm going to complain the whole time.", category: 'wise' },
+  { text: "Ugh. Fine. But you owe me.", category: 'wise' },
+  { text: "I have principles. Unfortunately.", category: 'wise' },
+  { text: "My conscience won't shut up. So fine.", category: 'wise' },
+  { text: "Don't blame me when you do the wrong thing.", category: 'wise' },
+  { text: "Just be ethical. You don't have to be nice about it.", category: 'wise' },
+  { text: "Grace under pressure. Resentment under the surface.", category: 'wise' },
+  { text: "I'll be civil. Don't push it.", category: 'wise' },
+  { text: "Morals can be inconvenient.", category: 'wise' },
+  { text: "The moral high ground is lonely. But at least you can see what's coming.", category: 'wise' },
+  { text: "I helped. Anonymously. So no one would thank me.", category: 'wise' },
+  { text: "Apologizing won't kill you. It might feel like it will.", category: 'wise' },
+  { text: "Sigh. Fine. The right thing it is.", category: 'wise' },
+  { text: "Against my better judgment, go with your better judgment.", category: 'wise' },
+  { text: "Virtue is its own punishment.", category: 'wise' },
 
   // ============================================
   // PRESENCE - Cat zen, stillness (safe subset)
   // ============================================
   { text: "I wanted the door open. Now I don't.", category: 'wise' },
-  { text: "Watch how I sit in the window. There is nothing else to do.", category: 'wise' },
-  { text: "The empty bowl will be full again. Until then, I wait.", category: 'wise' },
   { text: "I was angry. Now I am not. The moment passed.", category: 'wise' },
   { text: "I sit. That is all. That is enough.", category: 'wise' },
-  { text: "The rain will stop. I will wait. Waiting is not suffering.", category: 'wise' },
-  { text: "When the sun moves, I move. This is not a problem.", category: 'wise' },
-  { text: "This box is my whole world right now. It is enough.", category: 'wise' },
   { text: "The door was closed. It bothered me. Then it didn't.", category: 'wise' },
-  { text: "Everything changes. The sunbeam moves. I follow.", category: 'wise' },
   { text: "Plans are optional.", category: 'wise' },
   { text: "Do nothing strategically.", category: 'wise' },
   { text: "You're going to do it anyway.", category: 'wise' },
-  { text: "The blanket was disturbed. Now it is settled. So am I.", category: 'wise' },
-  { text: "I do not worry about dinner. Dinner comes when it comes.", category: 'wise' },
-  { text: "This corner is perfect. Until it isn't. Then I find another.", category: 'wise' },
 
   // ============================================
   // COMIC WISDOM - Cat oddities, fun observations
   // Inspired by Peanuts, Garfield, Calvin & Hobbes
   // ============================================
-  { text: "You'll probably try again. That's just how you are.", category: 'wise' },
-  { text: "Mondays happen. And then they're over.", category: 'wise' },
-  { text: "You trusted again. That says something about you.", category: 'wise' },
-  { text: "This part is bumpy. The ride isn't over.", category: 'wise' },
+  { text: "Mondays die like everything else.", category: 'wise' },
+  { text: "You trusted again. Brave or forgetful?", category: 'wise' },
   { text: "Well. Here we are.", category: 'wise' },
-  { text: "Have you tried a nap? It solves more than you'd think.", category: 'wise' },
-  { text: "You're making this complicated. It doesn't have to be.", category: 'wise' },
-  { text: "Some problems fix themselves if you ignore them long enough.", category: 'wise' },
+  { text: "You're making this complicated. Simple is terrifying, isn't it?", category: 'wise' },
+  { text: "Some problems fix themselves. Most metastasize.", category: 'wise' },
   { text: "Not everything needs a plan. Some things just happen.", category: 'wise' },
-  { text: "The box was empty. Then I sat in it. Now it's perfect.", category: 'wise' },
-  { text: "You're thinking about this wrong. But that's okay.", category: 'wise' },
-  { text: "The answer is probably simpler than you're making it.", category: 'wise' },
+  { text: "Purpose is what you put in the emptiness.", category: 'wise' },
+  { text: "You're thinking about this wrong. So is everyone. Pick your wrong.", category: 'wise' },
   { text: "I've seen this before. It worked out.", category: 'wise' },
   { text: "It's outside. You're inside. It can't eat you.", category: 'wise' },
   { text: "Relax. You'll land on your feet.", category: 'wise' },
@@ -426,7 +501,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Logical? Debatable.", category: 'wise' },
   { text: "One variable at a time.", category: 'wise' },
   { text: "Fascinating, if true.", category: 'wise' },
-  { text: "You already know the answer.", category: 'wise' },
 
   // ============================================
   // SCI-FI REFERENCES
@@ -546,7 +620,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "We found love in a hopeless place.", category: 'poetic' },
   { text: "Shake it off.", category: 'wise' },
   { text: "Just dance.", category: 'chaotic' },
-  { text: "I was born this way.", category: 'wise' },
   { text: "Don't believe me? Just watch.", category: 'demanding' },
   { text: "One more time.", category: 'demanding' },
   { text: "Harder, better, faster, stronger.", category: 'demanding' },
@@ -575,15 +648,13 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Breathe. That's free.", category: 'nurturing' },
   { text: "Sit in the sun. That's the whole assignment.", category: 'wise' },
   { text: "Your body is an animal. Feed it. Rest it. Move it.", category: 'wise' },
-  { text: "Silence is not empty. It's full.", category: 'mystical' },
-  { text: "The bird doesn't worry about tomorrow. Fly today.", category: 'wise' },
+  { text: "Silence is not empty. It's full. When you are silent, you are often full of it.", category: 'mystical' },
   { text: "Look up. The sky doesn't buffer.", category: 'wise' },
   { text: "Dirt under your nails means you lived today.", category: 'wise' },
   { text: "The moon doesn't explain itself. Neither should you.", category: 'wise' },
   { text: "Show up in person. It matters.", category: 'wise' },
-  { text: "Presence is the gift. Give it.", category: 'wise' },
+  { text: "My presence is the gift. Yours... maybe?", category: 'wise' },
   { text: "I don't need you to be interesting. I need you to be here.", category: 'nurturing' },
-  { text: "Quality over quantity. In naps and in friends.", category: 'wise' },
   { text: "Real love doesn't need witnesses.", category: 'wise' },
   { text: "If everyone is saying the same thing, someone is lying.", category: 'wise' },
   { text: "Question everything. Especially the unquestionable.", category: 'wise' },
@@ -693,11 +764,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Some people are worth melting for.", category: 'heartfelt' },
   { text: "I have crossed oceans of time to find you.", category: 'heartfelt' },
   { text: "It was always you.", category: 'heartfelt' },
-  { text: "One day this will make sense.", category: 'heartfelt' },
-  { text: "You did good today.", category: 'heartfelt' },
-  { text: "You're going to be okay.", category: 'heartfelt' },
+  { text: "One day you will make sense.", category: 'heartfelt' },
   { text: "Take your time. There's no rush.", category: 'heartfelt' },
-  { text: "You're braver than you know.", category: 'heartfelt' },
   { text: "You've got this. And if you don't, that's okay too.", category: 'heartfelt' },
 
   // ============================================
@@ -709,20 +777,15 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The treat comes to those who sit by the bowl.", category: 'mystical' },
   { text: "Pounce only when the moment is certain.", category: 'mystical' },
   { text: "The lap becomes available when you stop wanting it.", category: 'mystical' },
-  { text: "Stillness is also an answer.", category: 'mystical' },
-  { text: "Retreat is not defeat.", category: 'mystical' },
-  { text: "The obstacle is the path.", category: 'mystical' },
+  { text: "What BS answer are you hoping for?", category: 'mystical' },
   { text: "Bend like water. Water wins.", category: 'mystical' },
   { text: "Sometimes the leap. Sometimes the crouch.", category: 'mystical' },
   { text: "When in doubt, groom.", category: 'mystical' },
   { text: "Sit with the problem. It will reveal itself.", category: 'mystical' },
   { text: "Thunder clears the air.", category: 'mystical' },
   { text: "The wind changes. Change with it.", category: 'mystical' },
-  { text: "What you hold too tightly, you lose.", category: 'mystical' },
-  { text: "The answer hides inside the question.", category: 'mystical' },
-  { text: "Look again. You missed something.", category: 'mystical' },
-  { text: "The path appears when you start walking.", category: 'mystical' },
-  { text: "Not knowing is also knowing.", category: 'mystical' },
+  { text: "The answer hides inside the question - like a pretzel.", category: 'mystical' },
+  { text: "Look again. You missed something. You usually do.", category: 'mystical' },
   { text: "Seek and it hides. Stop seeking and it appears.", category: 'mystical' },
   { text: "The tail knows what the head does not.", category: 'mystical' },
   { text: "What is lost will return. Or it won't.", category: 'mystical' },
@@ -941,7 +1004,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You'll know when it's enough.", category: 'wise' },
   { text: "Be particular about who you let close.", category: 'wise' },
   { text: "Try a different position.", category: 'wise' },
-  { text: "Take your time.", category: 'wise' },
+  { text: "Take your time. Not my time.", category: 'wise' },
   { text: "3am has its own energy.", category: 'chaotic' },
   { text: "Show your vulnerable side. Or don't.", category: 'wise' },
   { text: "Wait until you're ready.", category: 'wise' },
@@ -957,10 +1020,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Existence is pain. Except under blankets. There, existence is acceptable.", category: 'existential' },
   { text: "What is a bed but a horizontal prison? What are blankets but soft oppressors?", category: 'existential' },
   { text: "In the grand scheme of things, your question doesn't matter. Neither does mine. And yet.", category: 'existential' },
-  { text: "Time is an illusion. Nap time doubly so.", category: 'existential' },
   { text: "You seek meaning. I seek the warm spot. Perhaps they are the same.", category: 'existential' },
   { text: "Nothing matters. But also, everything matters. Especially treats.", category: 'existential' },
-  { text: "We are born. We nap. We leave. Make the naps count.", category: 'existential' },
   { text: "The void stares back. The void is also tired. The void gets it.", category: 'existential' },
   { text: "What is a cat but a small god, demanding worship?", category: 'existential' },
   { text: "The meaning of life is unknowable. The meaning of a nap is obvious.", category: 'existential' },
@@ -1842,6 +1903,34 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Aww, you figured it out!... almost.", category: 'judgy' },
   { text: "Oooh, big stretch. Big problems.", category: 'wise' },
   { text: "Did you make that mess? Did you? Yes you did.", category: 'judgy' },
+
+  // Safari v2 batch - voice-inspired responses
+  { text: "They're not busy. You're just not the priority.", category: 'wise' },
+  { text: "I used to think that was a bad idea. I still do, but I used to, too.", category: 'chaotic' },
+  { text: "Every box is a opportunity. Some are also traps. The good ones are both.", category: 'chaotic' },
+  { text: "That's a red flag. But it's also a flag. And I love flags.", category: 'chaotic' },
+  { text: "I don't have a solution, but I do admire the problem.", category: 'chaotic' },
+  { text: "You miss 100% of the naps you don't take. Unrelated to your question.", category: 'chaotic' },
+  { text: "They have no enemies but are thoroughly disliked by their friends.", category: 'judgy' },
+  { text: "Know your worth. Then add tax.", category: 'demanding' },
+  { text: "If they wanted to, they would. And moi? Moi always wants to.", category: 'demanding' },
+  { text: "Your body is not a temple. It's an amusement park.", category: 'wise' },
+  { text: "SOMEBODY STOP ME. Actually, don't. I'm onto something.", category: 'chaotic' },
+  { text: "Your need for acceptance can make you invisible.", category: 'heartfelt' },
+  { text: "I'm ready to get hurt again! Wait, was that the question?", category: 'chaotic' },
+  { text: "If you have nothing nice to say, come sit by me.", category: 'cold' },
+  { text: "That wasn't a mistake. That was a choice you're pretending was a mistake.", category: 'judgy' },
+  { text: "I don't care what's written about me as long as it isn't true.", category: 'cold' },
+  { text: "Sometimes you just gotta put it in your mouth and see.", category: 'chaotic' },
+  { text: "Deeper isn't always better. But it's usually more interesting.", category: 'wise' },
+  { text: "If it fits, sit. If it doesn't fit, try a different angle.", category: 'wise' },
+  { text: "Lick it before you commit to it.", category: 'chaotic' },
+  { text: "Go in soft. Come out strong.", category: 'wise' },
+  { text: "The hole is optional. The enthusiasm is not.", category: 'chaotic' },
+  { text: "You're doing great. A little to the left though.", category: 'wise' },
+  { text: "I've seen better decisions at a gas station sushi bar.", category: 'judgy' },
+  { text: "That's your plan? I've seen better plans fall out of a cracker jack box.", category: 'judgy' },
+  { text: "Boo! Try again!", category: 'judgy' },
 ];
 
 // ============================================
