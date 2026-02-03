@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera } from 'lucide-react';
+import { X, Heart, Sparkles, Camera, Twitter, Copy, Check } from 'lucide-react';
 import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
@@ -8,6 +8,13 @@ import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { NameInputModal } from '../components/NameInputModal';
+
+const EXAMPLE_QUESTIONS = [
+  "Should I quit my job?",
+  "Am I making a mistake?",
+  "What do they really think?",
+  "Is this the right decision?",
+];
 
 export function Oracle() {
   useDocumentMeta();
@@ -36,6 +43,9 @@ export function Oracle() {
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
   const [needsBrightening, setNeedsBrightening] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [hashtagsCopied, setHashtagsCopied] = useState(false);
+  const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const responseRef = useRef<HTMLDivElement>(null);
 
@@ -160,6 +170,44 @@ export function Oracle() {
       downloadImage();
     }
   }, [downloadImage]);
+
+  const shareToTwitter = useCallback(() => {
+    if (!response) return;
+    const text = `"${response.text}" - My cat's wisdom on MaybeCat`;
+    const url = 'https://maybecat.com';
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(tweetUrl, '_blank', 'noopener,noreferrer');
+  }, [response]);
+
+  const copyToClipboard = useCallback(async () => {
+    if (!response) return;
+    try {
+      await navigator.clipboard.writeText(response.text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }, [response]);
+
+  const copyHashtags = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText('#AskMaybeCat #CatWisdom');
+      setHashtagsCopied(true);
+      setTimeout(() => setHashtagsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy hashtags:', err);
+    }
+  }, []);
+
+  const handleAskOracle = useCallback(() => {
+    askOracle();
+    setHasAskedQuestion(true);
+  }, [askOracle]);
+
+  const handleExampleClick = useCallback((exampleQuestion: string) => {
+    setQuestion(exampleQuestion);
+  }, [setQuestion]);
 
   const displayName = catName || 'Maybe Cat';
 
@@ -456,14 +504,19 @@ export function Oracle() {
 
                   {response && !isThinking && (
                     <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
-                      <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif" }}>
+                      <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif", textWrap: 'balance' }}>
                         "{response.text}"
                       </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-
+                {/* Watermark for screenshots */}
+                <div className="text-center mt-2">
+                  <p className="text-amber-700/40 text-xs" style={{ fontFamily: "Georgia, serif" }}>
+                    maybecat.com
+                  </p>
+                </div>
               </div>
 
               <button onClick={clearCat} className="absolute top-2 right-2 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
@@ -478,7 +531,7 @@ export function Oracle() {
                       type="text"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) askOracle(); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
                       placeholder={`Ask ${displayName} a question...`}
                       className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
                       style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
@@ -487,7 +540,7 @@ export function Oracle() {
                   </div>
 
                   <motion.button
-                    onClick={askOracle}
+                    onClick={handleAskOracle}
                     disabled={!question.trim() || isThinking}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -497,14 +550,77 @@ export function Oracle() {
                     ✦ Consult the Cat ✦
                   </motion.button>
 
+                  {/* Example question prompts - shown only before first question */}
+                  {!hasAskedQuestion && !response && (
+                    <div className="text-center mt-3">
+                      <p className="text-amber-800/70 text-sm mb-2" style={{ fontFamily: "Georgia, serif" }}>
+                        Try asking:
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {EXAMPLE_QUESTIONS.map((q) => (
+                          <button
+                            key={q}
+                            onClick={() => handleExampleClick(q)}
+                            className="px-3 py-1.5 rounded-full bg-amber-100/80 text-amber-800 text-sm hover:bg-amber-200/80 transition-colors border border-amber-600/30"
+                            style={{ fontFamily: "Georgia, serif" }}
+                          >
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {response && (
-                    <div className="flex gap-3">
-                      <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
-                        Ask Again
-                      </button>
-                      <button onClick={shareNative} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
-                        Share Wisdom
-                      </button>
+                    <div className="space-y-2">
+                      <div className="flex gap-3">
+                        <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
+                          Ask Again
+                        </button>
+                        <button onClick={shareNative} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
+                          Share Wisdom
+                        </button>
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={shareToTwitter}
+                          disabled={isThinking}
+                          className="flex-1 py-3 rounded-xl bg-sky-600 text-white font-bold hover:bg-sky-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                          style={{ fontFamily: "Georgia, serif" }}
+                        >
+                          <Twitter className="w-5 h-5" />
+                          Share on X
+                        </button>
+                        <button
+                          onClick={copyToClipboard}
+                          disabled={isThinking}
+                          className="flex-1 py-3 rounded-xl bg-violet-700 text-white font-bold hover:bg-violet-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                          style={{ fontFamily: "Georgia, serif" }}
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="w-5 h-5" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-5 h-5" />
+                              Copy Text
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      {/* Hashtag suggestions */}
+                      <div className="text-center pt-1">
+                        <button
+                          onClick={copyHashtags}
+                          className="text-amber-700/60 text-sm hover:text-amber-800 transition-colors cursor-pointer"
+                          style={{ fontFamily: "Georgia, serif" }}
+                          title="Click to copy hashtags"
+                        >
+                          {hashtagsCopied ? '✓ Copied!' : '#AskMaybeCat #CatWisdom'}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
