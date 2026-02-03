@@ -149,6 +149,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Undecided. Unbothered.", category: 'cold' },
   { text: "Indifference is an option.", category: 'cold' },
   { text: "Oh yeah, I know. I just don't care.", category: 'cold' },
+  { text: "You were supposed to notice sooner.", category: 'cold' },
+  { text: "You're hoping I say yes.", category: 'cold' },
 
   // ============================================
   // ANGRY - Irritated, fed up, had enough
@@ -358,6 +360,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The door was closed. It bothered me. Then it didn't.", category: 'wise' },
   { text: "Everything changes. The sunbeam moves. I follow.", category: 'wise' },
   { text: "Plans are optional.", category: 'wise' },
+  { text: "Do nothing strategically.", category: 'wise' },
+  { text: "You're going to do it anyway.", category: 'wise' },
   { text: "The blanket was disturbed. Now it is settled. So am I.", category: 'wise' },
   { text: "I do not worry about dinner. Dinner comes when it comes.", category: 'wise' },
   { text: "This corner is perfect. Until it isn't. Then I find another.", category: 'wise' },
