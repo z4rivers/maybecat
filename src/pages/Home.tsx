@@ -170,25 +170,6 @@ export function Oracle() {
     }
   }, [downloadImage]);
 
-  const shareToTwitter = useCallback(() => {
-    if (!response) return;
-    const text = `"${response.text}" - My cat's wisdom on MaybeCat`;
-    const url = 'https://maybecat.com';
-    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(tweetUrl, '_blank', 'noopener,noreferrer');
-  }, [response]);
-
-  const copyToClipboard = useCallback(async () => {
-    if (!response) return;
-    try {
-      await navigator.clipboard.writeText(response.text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  }, [response]);
-
   const copyHashtags = useCallback(async () => {
     try {
       await navigator.clipboard.writeText('#AskMaybeCat #CatWisdom');

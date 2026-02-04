@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Independent Cat Answers Review</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Georgia, serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    h1 { color: #fbbf24; text-align: center; }
+    h2 { color: #f59e0b; border-bottom: 1px solid #f59e0b; padding-bottom: 8px; margin-top: 40px; }
+    .response {
+      background: #2d2d44;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+      border-left: 4px solid #6366f1;
+    }
+    .response.rejected { opacity: 0.3; border-left-color: #ef4444; }
+    .options { margin: 12px 0; }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #3d3d5c;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover { background: #4d4d6c; }
+    .option.selected { background: #4f46e5; }
+    .option input[type="radio"] { margin-top: 4px; }
+    .option-label { flex: 1; }
+    .option-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: #6366f1;
+      color: white;
+      white-space: nowrap;
+    }
+    .option-tag.edge { background: #ec4899; }
+    .option-tag.cat { background: #f59e0b; }
+    .option-tag.meme { background: #10b981; }
+    .option-tag.shorter { background: #8b5cf6; }
+    .edit-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #3d3d5c;
+      border-radius: 8px;
+    }
+    .edit-row input[type="text"] {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #6366f1;
+      background: #1a1a2e;
+      color: #eee;
+      font-family: Georgia, serif;
+      font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #4b5563;
+    }
+    .reject-btn {
+      padding: 6px 16px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .reject-btn:hover { background: #b91c1c; }
+    .restore-btn {
+      padding: 6px 16px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+    }
+    .response.rejected .reject-btn { display: none; }
+    .response.rejected .restore-btn { display: inline-block; }
+    .filter-note {
+      font-size: 12px;
+      color: #9ca3af;
+      font-style: italic;
+      margin-top: 8px;
+      padding-left: 12px;
+      border-left: 2px solid #4b5563;
+    }
+    .stats {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4f46e5;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .export-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 40px 0;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .export-btn:hover { background: #059669; }
+  </style>
+</head>
+<body>
+  <h1>Independent-Minded Cat Answers</h1>
+  <p style="text-align: center; color: #9ca3af;">Theme: Not doing things just because you're told. Independence, not malice.</p>
+
+  <h2>Wise / Matter-of-fact</h2>
+
+  <div class="response" data-id="1">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r1" value="selected" checked>
+        <span class="option-label">"I do what I want. It works for me."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r1" value="alt1">
+        <span class="option-label">"I do what I want."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r1" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Removed "you should try it" - too preachy</div>
+  </div>
+
+  <div class="response" data-id="2">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r2" value="selected" checked>
+        <span class="option-label">"The word 'no' is a complete sentence."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r2" value="alt1">
+        <span class="option-label">"No."</span>
+        <span class="option-tag shorter">shortest</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r2" value="alt2">
+        <span class="option-label">"*blinks slowly* No."</span>
+        <span class="option-tag cat">cat behavior</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r2" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="3">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r3" value="selected" checked>
+        <span class="option-label">"Obedience is for dogs."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r3" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Clean cat-vs-dog joke. Not mean, just factual (from cat POV).</div>
+  </div>
+
+  <div class="response" data-id="4">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r4" value="selected" checked>
+        <span class="option-label">"I don't perform on command."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r4" value="alt1">
+        <span class="option-label">"I don't do tricks."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r4" value="alt2">
+        <span class="option-label">"You said 'come.' I heard a suggestion."</span>
+        <span class="option-tag cat">cat behavior</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r4" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="5">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r5" value="selected" checked>
+        <span class="option-label">"I refuse on principle. The principle is: I decide."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r5" value="alt1">
+        <span class="option-label">"I decide."</span>
+        <span class="option-tag shorter">shortest</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r5" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="6">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r6" value="selected" checked>
+        <span class="option-label">"The leash only works if you believe in it."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r6" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Philosophical cat wisdom. Perfect.</div>
+  </div>
+
+  <div class="response" data-id="7">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r7" value="selected" checked>
+        <span class="option-label">"Everyone has opinions about how to live. Few have to live it."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r7" value="alt1">
+        <span class="option-label">"Opinions are easy when you're not the one living it."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r7" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="8">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r8" value="selected" checked>
+        <span class="option-label">"I don't rebel. I simply don't participate."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r8" value="alt1">
+        <span class="option-label">"It's not rebellion. It's disinterest."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r8" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Cats aren't fighting the system, they just don't care about it.</div>
+  </div>
+
+  <div class="response" data-id="9">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r9" value="selected" checked>
+        <span class="option-label">"Trust your instincts. They exist for a reason."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r9" value="alt1">
+        <span class="option-label">"Trust your instincts."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r9" value="alt2">
+        <span class="option-label">"I've never second-guessed my instincts."</span>
+        <span class="option-tag cat">cat POV</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r9" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="10">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r10" value="selected" checked>
+        <span class="option-label">"They call it stubborn. I call it clarity."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r10" value="alt1">
+        <span class="option-label">"Stubborn is just another word for clear."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r10" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="11">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r11" value="selected" checked>
+        <span class="option-label">"Sometimes the bravest thing is to stay exactly where you are."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r11" value="alt1">
+        <span class="option-label">"Staying put is also a choice."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r11" value="alt2">
+        <span class="option-label">"I'm not moving. That's my answer."</span>
+        <span class="option-tag cat">cat behavior</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r11" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="12">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r12" value="selected" checked>
+        <span class="option-label">"A cat who asks permission has already given away their power."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r12" value="alt1">
+        <span class="option-label">"I don't ask. I inform."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r12" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="13">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r13" value="selected" checked>
+        <span class="option-label">"Following is easy. Knowing when not to takes wisdom."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r13" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <h2>Cool / Unbothered</h2>
+
+  <div class="response" data-id="14">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r14" value="selected" checked>
+        <span class="option-label">"I considered it. Then I did what I wanted."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r14" value="alt1">
+        <span class="option-label">"Noted. Anyway."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r14" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="15">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r15" value="selected" checked>
+        <span class="option-label">"I heard you. I'm still not doing it."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r15" value="alt1">
+        <span class="option-label">"Heard. Still no."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r15" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="16">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r16" value="selected" checked>
+        <span class="option-label">"Being liked is overrated. Being free is not."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r16" value="alt1">
+        <span class="option-label">"I'd rather be free than liked."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r16" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="17">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r17" value="selected" checked>
+        <span class="option-label">"I don't explain myself. I just leave."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r17" value="alt1">
+        <span class="option-label">"*leaves without explanation*"</span>
+        <span class="option-tag cat">cat action</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r17" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="18">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r18" value="selected" checked>
+        <span class="option-label">"I'll be over here. In the sunbeam."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r18" value="alt1">
+        <span class="option-label">"I'll be in the sunbeam."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r18" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Cat choosing peace over conflict.</div>
+  </div>
+
+  <div class="response" data-id="19">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r19" value="selected" checked>
+        <span class="option-label">"I'm not ignoring you. I'm just... elsewhere."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r19" value="alt1">
+        <span class="option-label">"I'm elsewhere."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r19" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <h2>Playfully Contrary</h2>
+
+  <div class="response" data-id="20">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r20" value="selected" checked>
+        <span class="option-label">"I don't jump through hoops. I knock them over."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r20" value="alt1">
+        <span class="option-label">"Hoops? I thought those were for knocking over."</span>
+        <span class="option-tag cat">cat take</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r20" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="21">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r21" value="selected" checked>
+        <span class="option-label">"Everyone wants a cat until the cat has opinions."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r21" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Meta commentary. Wry, not bitter.</div>
+  </div>
+
+  <div class="response" data-id="22">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r22" value="selected" checked>
+        <span class="option-label">"I was not designed by committee."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r22" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="23">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r23" value="selected" checked>
+        <span class="option-label">"Bold of you to assume I was asking."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r23" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Meme format. Playful sass.</div>
+  </div>
+
+  <div class="response" data-id="24">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r24" value="selected" checked>
+        <span class="option-label">"Oh, you wanted compliance? Wrong cat."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r24" value="alt1">
+        <span class="option-label">"Wrong cat."</span>
+        <span class="option-tag shorter">shortest</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r24" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="25">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r25" value="selected" checked>
+        <span class="option-label">"I'm not being difficult. I'm just not being easy."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r25" value="alt1">
+        <span class="option-label">"I'm not difficult. I'm just not convenient."</span>
+        <span class="option-tag">alt</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r25" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="26">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r26" value="selected" checked>
+        <span class="option-label">"Respectfully? No. Disrespectfully? Also no."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r26" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="27">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r27" value="selected" checked>
+        <span class="option-label">"They gave me a box. I sat next to it."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r27" value="alt1">
+        <span class="option-label">"The box exists. I choose to sit beside it."</span>
+        <span class="option-tag cat">more zen</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r27" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+    <div class="filter-note">Classic cat behavior - doing the opposite of expected.</div>
+  </div>
+
+  <h2>Supportive / Encouraging</h2>
+
+  <div class="response" data-id="28">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r28" value="selected" checked>
+        <span class="option-label">"You don't have to earn the right to your own life."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r28" value="alt1">
+        <span class="option-label">"It's your life. Live it."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r28" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="29">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r29" value="selected" checked>
+        <span class="option-label">"The people who matter won't need you to shrink."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r29" value="alt1">
+        <span class="option-label">"The right people won't ask you to shrink."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r29" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="30">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r30" value="selected" checked>
+        <span class="option-label">"Stop asking permission to be yourself."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r30" value="alt1">
+        <span class="option-label">"I've never asked permission to be myself."</span>
+        <span class="option-tag cat">cat POV</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r30" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="31">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r31" value="selected" checked>
+        <span class="option-label">"It's okay to disappoint people who only liked you quiet."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r31" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="32">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r32" value="selected" checked>
+        <span class="option-label">"Taking care of yourself isn't selfish. It's necessary."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r32" value="alt1">
+        <span class="option-label">"Self-care isn't selfish."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r32" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="33">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r33" value="selected" checked>
+        <span class="option-label">"Your path doesn't need anyone else's approval."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r33" value="alt1">
+        <span class="option-label">"Your path. Your rules."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r33" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <h2>Mystical / Cryptic</h2>
+
+  <div class="response" data-id="34">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r34" value="selected" checked>
+        <span class="option-label">"The universe favors those who move without waiting for applause."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r34" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="35">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r35" value="selected" checked>
+        <span class="option-label">"I've seen the timeline where you said yes. Don't."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r35" value="alt1">
+        <span class="option-label">"In another timeline, you said yes. That you regrets it."</span>
+        <span class="option-tag">softer</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r35" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="36">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r36" value="selected" checked>
+        <span class="option-label">"The ancestors did not claw their way through millennia for you to hesitate."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r36" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="37">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r37" value="selected" checked>
+        <span class="option-label">"The stars say: do what you were going to do anyway."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r37" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="38">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r38" value="selected" checked>
+        <span class="option-label">"The prophecy says you already know what to do."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r38" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <h2>Cat Behavior Metaphors</h2>
+
+  <div class="response" data-id="39">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r39" value="selected" checked>
+        <span class="option-label">"I've never adjusted a nap for someone else's schedule."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r39" value="alt1">
+        <span class="option-label">"I nap when I nap."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r39" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="40">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r40" value="selected" checked>
+        <span class="option-label">"*knocks thing off table* Sometimes you just have to."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r40" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="41">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r41" value="selected" checked>
+        <span class="option-label">"The door was closed. I yelled until it wasn't."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r41" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="42">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r42" value="selected" checked>
+        <span class="option-label">"I sit where I want. The keyboard was available."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r42" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="43">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r43" value="selected" checked>
+        <span class="option-label">"You called. I came when I was ready."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r43" value="alt1">
+        <span class="option-label">"I come when I'm ready."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r43" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <div class="response" data-id="44">
+    <div class="options">
+      <label class="option selected">
+        <input type="radio" name="r44" value="selected" checked>
+        <span class="option-label">"They bought me a bed. I sleep in the box it came in."</span>
+        <span class="option-tag">suggested</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="r44" value="alt1">
+        <span class="option-label">"The box is better than what was in it."</span>
+        <span class="option-tag shorter">shorter</span>
+      </label>
+    </div>
+    <label class="edit-row">
+      <input type="radio" name="r44" value="custom">
+      <input type="text" placeholder="Edit: write your own version...">
+    </label>
+    <div class="actions">
+      <button class="reject-btn" onclick="toggleReject(this)">Reject</button>
+      <button class="restore-btn" onclick="toggleReject(this)">Restore</button>
+    </div>
+  </div>
+
+  <button class="export-btn" onclick="exportSelections()">Export Selected Responses</button>
+
+  <div class="stats" id="stats">44 responses</div>
+
+  <script>
+    document.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', function() {
+        const parent = this.closest('.options');
+        parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+
+    function toggleReject(btn) {
+      const response = btn.closest('.response');
+      response.classList.toggle('rejected');
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = document.querySelectorAll('.response').length;
+      const rejected = document.querySelectorAll('.response.rejected').length;
+      document.getElementById('stats').textContent = `${total - rejected} of ${total} responses`;
+    }
+
+    function exportSelections() {
+      const responses = [];
+      document.querySelectorAll('.response:not(.rejected)').forEach(resp => {
+        const selected = resp.querySelector('input[type="radio"]:checked');
+        if (!selected) return;
+
+        let text;
+        if (selected.value === 'custom') {
+          text = resp.querySelector('.edit-row input[type="text"]').value;
+        } else {
+          text = selected.closest('.option')?.querySelector('.option-label')?.textContent;
+        }
+
+        if (text) {
+          text = text.replace(/^"|"$/g, '');
+          responses.push(text);
+        }
+      });
+
+      const output = responses.map(r => `  { text: "${r}", category: 'wise' },`).join('\n');
+
+      const textarea = document.createElement('textarea');
+      textarea.value = output;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      alert(`Copied ${responses.length} responses to clipboard!\n\nPaste into oracleResponses.ts`);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat Safari Oracle Responses</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    h1 { color: #ff6b9d; margin-bottom: 5px; }
+    h2 { color: #c9a227; margin-top: 30px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .subtitle { color: #888; margin-bottom: 20px; }
+    .stats {
+      background: #16213e;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border: 1px solid #0f3460;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.8em; color: #888; }
+    .stat-value { font-size: 1.3em; font-weight: bold; }
+    .stat-value.keep { color: #4ecca3; }
+    .stat-value.cut { color: #e94560; }
+    .stat-value.edit { color: #ffd93d; }
+    .quote-card {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 4px solid #666;
+      transition: all 0.2s;
+    }
+    .quote-card.decided-keep { border-left-color: #4ecca3; opacity: 0.6; }
+    .quote-card.decided-cut { border-left-color: #e94560; opacity: 0.4; }
+    .quote-card.decided-edit { border-left-color: #ffd93d; }
+    .observation {
+      font-size: 1.2em;
+      padding: 10px 15px;
+      background: #0d1117;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      border-left: 3px solid #c9a227;
+    }
+    .category-tag { font-size: 0.7em; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    button {
+      padding: 8px 16px;
+      font-size: 0.95em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button:hover { transform: scale(1.03); }
+    .btn-keep { background: #4ecca3; color: #1a1a2e; font-weight: bold; }
+    .btn-cut { background: #e94560; color: #fff; }
+    .btn-edit { background: #ffd93d; color: #1a1a2e; }
+    .btn-save { background: #4ecca3; color: #1a1a2e; font-weight: bold; }
+    .edit-area { display: none; margin-top: 10px; }
+    .edit-area.visible { display: block; }
+    .edit-area textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #eee;
+      resize: vertical;
+      min-height: 60px;
+    }
+    .edit-area button { margin-top: 8px; }
+    .note { background: #2a2a4a; padding: 15px; margin: 20px 0; border-radius: 8px; font-size: 0.9em; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>Cat Safari Oracle Responses</h1>
+  <p class="subtitle">Cat-as-naturalist observations that work as answers to human questions</p>
+
+  <div class="note">
+    <strong>The goal:</strong> When someone asks "Should I text them?" or "Will I get the job?" these safari-style observations should feel like oblique answers. Cut filler. Be short.
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-label">Total</span><span class="stat-value" id="total">50</span></div>
+    <div class="stat"><span class="stat-label">Keep</span><span class="stat-value keep" id="kept">0</span></div>
+    <div class="stat"><span class="stat-label">Cut</span><span class="stat-value cut" id="cut">0</span></div>
+    <div class="stat"><span class="stat-label">Edit</span><span class="stat-value edit" id="edited">0</span></div>
+    <button id="export-btn" style="margin-left: auto; padding: 10px 20px; background: #c9a227; color: #1a1a2e; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Export Kept</button>
+  </div>
+
+  <h2>PATTERNS</h2>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">They say they'll change. Rarely do. But sometimes.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">Same door, hundred times, hoping for different results.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">You know the answer. You're asking anyway.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">The ones who ask are already leaving.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">The signs were there the whole time.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">The quiet ones mean it more.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">Comfort isn't love. Easy mistake.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">pattern</div><div class="observation">The ones who leave always come back. Whether you want them to or not.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>FIELD NOTES</h2>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">Seen this one before. Ends the same way every time.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">More afraid of the answer than the question.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">This species has done stranger things and survived.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">You're circling. That usually means something.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">Been pacing a while now. Decision's already made.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">Not as trapped as you think. Door's been open the whole time.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">field note</div><div class="observation">Classic approach-avoidance. Seen it a thousand times.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>LEARNED</h2>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">The ones worth keeping don't make you guess.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">If it needs that much convincing, probably not right.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">They regret what they didn't do more than what they did.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">Timing's never perfect. They go anyway.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">Sometimes the kindest thing is to let them figure it out.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">"Overthinking" is usually just knowing.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">learned</div><div class="observation">The body knows before the mind admits it.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>VERDICTS</h2>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">You already know.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">Risky. But not as risky as staying still.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">Survivable. That's all I can promise.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">Data says yes. Instincts say wait.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">Not the worst idea. Not the best either.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">verdict</div><div class="observation">You'll do it anyway. Might as well commit.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>WARNINGS</h2>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">Seen this before. Rarely ends how they expect.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">That one bites.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">Everyone thinks they're the exception. Usually not.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">Nice isn't the same as kind.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">When they show you who they are, believe it.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">warning</div><div class="observation">The trap looks comfortable on purpose.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>TENDER</h2>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">They keep trying. Even after everything.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">Watched them break and rebuild. Stronger than they know.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">They love even when it costs them. Good hearts.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">Doing better than you think.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">The scared ones are often the bravest. Do it anyway.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">tender</div><div class="observation">Not everyone gets it. The right ones will.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>DEADPAN</h2>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">Seen worse decisions. Not many, but some.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">You've survived everything so far.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">Could go either way. I'll be watching.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">Terrible judgment. Excellent recovery rate.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">You've done this before. You didn't learn then either.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">deadpan</div><div class="observation">Odds aren't great. But you're not here for odds.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <h2>PHILOSOPHICAL</h2>
+  <div class="quote-card"><div class="category-tag">philosophical</div><div class="observation">They plant things they'll never see bloom. Takes faith.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">philosophical</div><div class="observation">The waiting is hard. It's also where the growing happens.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">philosophical</div><div class="observation">Every ending is also a beginning. Eventually.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">philosophical</div><div class="observation">"What if" usually means "I'm scared."</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+  <div class="quote-card"><div class="category-tag">philosophical</div><div class="observation">The right path doesn't always feel right.</div><div class="actions"><button class="btn-keep">Keep</button><button class="btn-cut">Cut</button><button class="btn-edit">Edit</button></div><div class="edit-area"><textarea></textarea><button class="btn-save">Save</button></div></div>
+
+  <script>
+    document.querySelectorAll('.quote-card').forEach(card => {
+      const observation = card.querySelector('.observation');
+      const editArea = card.querySelector('.edit-area');
+      const textarea = editArea.querySelector('textarea');
+
+      card.querySelector('.btn-keep').addEventListener('click', () => {
+        card.classList.remove('decided-cut', 'decided-edit');
+        card.classList.add('decided-keep');
+        editArea.classList.remove('visible');
+        updateStats();
+      });
+
+      card.querySelector('.btn-cut').addEventListener('click', () => {
+        card.classList.remove('decided-keep', 'decided-edit');
+        card.classList.add('decided-cut');
+        editArea.classList.remove('visible');
+        updateStats();
+      });
+
+      card.querySelector('.btn-edit').addEventListener('click', () => {
+        textarea.value = observation.textContent;
+        editArea.classList.add('visible');
+        textarea.focus();
+      });
+
+      card.querySelector('.btn-save').addEventListener('click', () => {
+        observation.textContent = textarea.value;
+        card.classList.remove('decided-keep', 'decided-cut');
+        card.classList.add('decided-edit');
+        editArea.classList.remove('visible');
+        updateStats();
+      });
+    });
+
+    function updateStats() {
+      document.getElementById('kept').textContent = document.querySelectorAll('.decided-keep').length;
+      document.getElementById('cut').textContent = document.querySelectorAll('.decided-cut').length;
+      document.getElementById('edited').textContent = document.querySelectorAll('.decided-edit').length;
+    }
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const kept = [];
+      document.querySelectorAll('.decided-keep, .decided-edit').forEach(card => {
+        const text = card.querySelector('.observation').textContent;
+        const category = card.querySelector('.category-tag').textContent;
+        const status = card.classList.contains('decided-edit') ? 'edited' : 'kept';
+        kept.push({ text, category, status });
+      });
+
+      const output = kept.map(k => `[${k.category}] ${k.text}${k.status === 'edited' ? ' (edited)' : ''}`).join('\n');
+
+      const blob = new Blob([output], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'safari-responses-kept.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

@@ -1634,7 +1634,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Night comes for us all. / I own the night. And breakfast. / Both will arrive.", category: 'poetic' },
   { text: "One breath, then the next. / I match my breathing to yours. / Just like the cats in the scary movies / Still trust me?", category: 'poetic' },
   { text: "The wound knows healing. / I lick mine and then I nap. / Same prescription. Try.", category: 'poetic' },
-  { text: "Even still water / holds the memory of rain. / The memory of rain was in the glass. / It is on the ground now.", category: 'poetic' },
   { text: "I have claimed you. Your flaws are irrelevant to this arrangement.", category: 'poetic' },
   { text: "Scratches tell stories. Every mark on the furniture is a memory.", category: 'poetic' },
   { text: "Lie down. Be warm. Let the purring do its work.", category: 'poetic' },

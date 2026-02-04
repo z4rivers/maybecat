@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Content - ACTUALLY FUNNY VERSION</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #ff6b9d; margin-bottom: 5px; }
+    h2 { color: #c9a227; margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .subtitle { color: #888; margin-bottom: 20px; }
+    .stats { background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; border: 1px solid #0f3460; display: flex; gap: 30px; align-items: center; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.8em; color: #888; }
+    .stat-value { font-size: 1.3em; font-weight: bold; }
+    .stat-value.total { color: #ff6b9d; }
+    .stat-value.keep { color: #4ecca3; }
+    .stat-value.cut { color: #e94560; }
+    .stat-value.edit { color: #ffd93d; }
+    .stat-value.pending { color: #888; }
+    .keyboard-hint { font-size: 0.75em; color: #666; margin-left: auto; }
+    .keyboard-hint kbd { background: #333; padding: 2px 6px; border-radius: 3px; margin: 0 2px; }
+    .issue-tag { display: inline-block; font-size: 0.7em; padding: 2px 8px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; background: #27ae60; color: white; }
+    .quote-card { background: #16213e; border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid #27ae60; transition: all 0.2s; }
+    .quote-card.active { border: 2px solid #c9a227; box-shadow: 0 0 20px rgba(201, 162, 39, 0.3); }
+    .quote-card.decided-keep { border-left-color: #4ecca3; opacity: 0.5; }
+    .quote-card.decided-cut { border-left-color: #e94560; opacity: 0.3; }
+    .quote-card.decided-edit { border-left-color: #ffd93d; opacity: 0.6; }
+    .observation { font-size: 1.2em; padding: 10px 15px; background: #0d1117; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #c9a227; }
+    .category-tag { font-size: 0.7em; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+    .context { font-size: 0.85em; color: #888; margin: 8px 0; font-style: italic; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    button { padding: 10px 18px; font-size: 0.95em; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+    button:hover { transform: scale(1.03); }
+    .btn-keep { background: #4ecca3; color: #1a1a2e; }
+    .btn-cut { background: #e94560; color: #fff; }
+    .btn-edit { background: #ffd93d; color: #1a1a2e; }
+    .btn-save { background: #4ecca3; color: #1a1a2e; }
+    .edit-area { display: none; margin-top: 12px; }
+    .edit-area.visible { display: block; }
+    .edit-area textarea { width: 100%; padding: 12px; font-size: 1.1em; background: #0d1117; border: 2px solid #4ecca3; border-radius: 6px; color: #eee; resize: vertical; min-height: 70px; }
+    .edit-area .edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .section-intro { color: #aaa; margin-bottom: 20px; padding: 15px; background: rgba(39, 174, 96, 0.1); border-radius: 8px; border-left: 3px solid #27ae60; }
+    .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+    .export-section h3 { color: #c9a227; margin-top: 0; }
+    #export-json { width: 100%; min-height: 200px; padding: 15px; font-family: monospace; font-size: 0.9em; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #4ecca3; resize: vertical; }
+    .copy-btn { margin-top: 10px; background: #c9a227; color: #1a1a2e; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Career Content - REWRITE</h1>
+  <p class="subtitle">Actually funny this time. Ghost of Robin Williams approved.</p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-label">Total</span><span class="stat-value total" id="total">0</span></div>
+    <div class="stat"><span class="stat-label">Pending</span><span class="stat-value pending" id="pending">0</span></div>
+    <div class="stat"><span class="stat-label">Keep</span><span class="stat-value keep" id="kept">0</span></div>
+    <div class="stat"><span class="stat-label">Cut</span><span class="stat-value cut" id="cut">0</span></div>
+    <div class="stat"><span class="stat-label">Edit</span><span class="stat-value edit" id="edited">0</span></div>
+    <div class="keyboard-hint">
+      <kbd>K</kbd> Keep <kbd>X</kbd> Cut <kbd>E</kbd> Edit <kbd>N</kbd> Next <kbd>P</kbd> Prev
+    </div>
+  </div>
+
+  <h2>Should I Quit My Job?</h2>
+  <div class="section-intro">The eternal question, answered by someone who's never worked a day in their life</div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">Quit. Don't quit. I knock things off tables for fun. What do I know about jobs?</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">You've been "about to quit" for three years. At this point it's a hobby.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">The corporate ladder is just a scratching post with fluorescent lighting.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">They'll replace you in a week. Your cat won't. Choose accordingly.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="existential">
+    <span class="issue-tag">NEW</span><div class="category-tag">existential</div>
+    <div class="observation">You're asking a cat about your career? Things must be really bad.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Bad Boss / Toxic Workplace</h2>
+  <div class="section-intro">Cat wisdom on the humans who make work hell</div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">You can't reason with someone who got their position without it.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">Have you tried knocking their coffee off the desk? Works for me.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">Their opinion of you is not your business. Literally. You're not paid enough for that.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">Your boss peaked in middle management. Tragic. You can still leave.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Asking for Money / Promotion</h2>
+  <div class="section-intro">Demanding treats, but make it corporate</div>
+
+  <div class="quote-card" data-category="demanding">
+    <span class="issue-tag">NEW</span><div class="category-tag">demanding</div>
+    <div class="observation">I scream until I get fed. You should try it. Professionally.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">Loyalty is for pets. You're not a pet. Are you?</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">You rehearsed that ask in the shower for a month. Just say it. Worse things have come out of your mouth.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">Walk in there like you own the place. I do it constantly. I own nothing.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Work-Life Balance / Burnout</h2>
+  <div class="section-intro">Advice from someone who sleeps 16 hours a day</div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">You answered emails at 11pm and you're wondering why you're tired? Even I know that's unhinged.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">Burnout is just your soul trying to escape during a Zoom call. Let it.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">"Quiet quitting" is just doing your job. I've been doing that for years. It's called being a cat.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">You have PTO you haven't used? That's not dedication. That's Stockholm syndrome.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Coworker Drama</h2>
+  <div class="section-intro">Dealing with the other animals in the office</div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">Not your circus. Not your monkeys. Walk away. I do it constantly.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">You're asking a cat about office politics? My advice: hiss and leave.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">Office gossip is just grooming but make it toxic. Stop licking that fur.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">Reply all was invented by someone who wanted to watch the world burn. Respect.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>AI Taking Your Job</h2>
+  <div class="section-intro">A cat's take on the robot apocalypse (we never had jobs anyway)</div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">AI is coming for your job? I've never had a job. I'm fine. Consider my lifestyle.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">The robots are coming for your job but they still can't open a can of tuna. Priorities.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">You're worried about being replaced by AI? I get replaced by a cardboard box. Daily. Still here.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">AI writes your emails now? Good. Your emails were terrible anyway.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="existential">
+    <span class="issue-tag">NEW</span><div class="category-tag">existential</div>
+    <div class="observation">They made a computer that can think. They still haven't made one that can nap. Amateurs.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Meetings</h2>
+  <div class="section-intro">Imagine a meeting full of cats. Exactly.</div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">That meeting could have been an email. That email could have been silence. Silence is underrated.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">A meeting full of cats would last 3 seconds. Someone would hiss. Everyone would leave. Efficient.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">"Let's circle back" means "I wasn't listening." I also don't listen. But I don't pretend.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">You're on mute. You've been on mute for years. In many ways.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">"Synergy" is just a fancy word for "someone else will do it." I respect the hustle.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Layoffs / Job Uncertainty</h2>
+  <div class="section-intro">The economy is doing whatever the economy does. Cats remain unbothered.</div>
+
+  <div class="quote-card" data-category="cold">
+    <span class="issue-tag">NEW</span><div class="category-tag">cold</div>
+    <div class="observation">They laid off your whole team? I've been laid off the couch. I got back on. You'll figure it out.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="wise">
+    <span class="issue-tag">NEW</span><div class="category-tag">wise</div>
+    <div class="observation">"We're like a family here" is what they say before they put you in a box and drive you somewhere.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="chaotic">
+    <span class="issue-tag">NEW</span><div class="category-tag">chaotic</div>
+    <div class="observation">The economy is bad? I've been trading in cuddles for years. Recession-proof.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="nurturing">
+    <span class="issue-tag">NEW</span><div class="category-tag">nurturing</div>
+    <div class="observation">You lost your job. You didn't lose you. I'd still sit on your keyboard either way.</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-category="judgy">
+    <span class="issue-tag">NEW</span><div class="category-tag">judgy</div>
+    <div class="observation">"Restructuring" is just corporate for "the litter box is full and we're not cleaning it."</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="export-section">
+    <h3>Export Decisions</h3>
+    <p style="color:#888;font-size:0.9em;">JSON updates live. Copy when done.</p>
+    <textarea id="export-json" readonly>[]</textarea>
+    <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+  </div>
+
+  <script>
+    let activeIndex = 0;
+    const cards = document.querySelectorAll('.quote-card');
+    function updateStats() {
+      const total = cards.length;
+      const kept = document.querySelectorAll('.decided-keep').length;
+      const cut = document.querySelectorAll('.decided-cut').length;
+      const edited = document.querySelectorAll('.decided-edit').length;
+      document.getElementById('total').textContent = total;
+      document.getElementById('pending').textContent = total - kept - cut - edited;
+      document.getElementById('kept').textContent = kept;
+      document.getElementById('cut').textContent = cut;
+      document.getElementById('edited').textContent = edited;
+    }
+    function updateExport() {
+      const items = [];
+      cards.forEach(card => {
+        const obs = card.querySelector('.observation');
+        const cat = card.dataset.category;
+        let action = 'pending', text = obs.textContent;
+        if (card.classList.contains('decided-keep')) action = 'keep';
+        else if (card.classList.contains('decided-cut')) action = 'cut';
+        else if (card.classList.contains('decided-edit')) { action = 'edit'; text = card.querySelector('textarea').value || obs.textContent; }
+        if (action !== 'pending') items.push({ text, category: cat, action });
+      });
+      document.getElementById('export-json').value = JSON.stringify(items, null, 2);
+    }
+    function setActiveCard(index) {
+      cards.forEach(c => c.classList.remove('active'));
+      if (index >= 0 && index < cards.length) { activeIndex = index; cards[activeIndex].classList.add('active'); cards[activeIndex].scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }
+    function nextUndecided() {
+      for (let i = activeIndex + 1; i < cards.length; i++) if (!cards[i].classList.contains('decided-keep') && !cards[i].classList.contains('decided-cut') && !cards[i].classList.contains('decided-edit')) { setActiveCard(i); return; }
+      for (let i = 0; i < activeIndex; i++) if (!cards[i].classList.contains('decided-keep') && !cards[i].classList.contains('decided-cut') && !cards[i].classList.contains('decided-edit')) { setActiveCard(i); return; }
+    }
+    function decide(card, decision) {
+      const obs = card.querySelector('.observation');
+      if (!obs.dataset.original) obs.dataset.original = obs.textContent;
+      card.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+      card.querySelector('.edit-area').classList.remove('visible');
+      if (decision === 'keep') card.classList.add('decided-keep');
+      else if (decision === 'cut') card.classList.add('decided-cut');
+      else if (decision === 'edit') { card.classList.add('decided-edit'); card.querySelector('.edit-area').classList.add('visible'); card.querySelector('textarea').focus(); }
+      updateStats(); updateExport();
+      if (decision !== 'edit') setTimeout(nextUndecided, 150);
+    }
+    cards.forEach((card, idx) => {
+      const obs = card.querySelector('.observation'), textarea = card.querySelector('textarea');
+      textarea.value = obs.textContent;
+      card.querySelector('.btn-keep').addEventListener('click', () => decide(card, 'keep'));
+      card.querySelector('.btn-cut').addEventListener('click', () => decide(card, 'cut'));
+      card.querySelector('.btn-edit').addEventListener('click', () => decide(card, 'edit'));
+      card.querySelector('.btn-save').addEventListener('click', () => { obs.textContent = textarea.value; updateExport(); nextUndecided(); });
+      textarea.addEventListener('input', updateExport);
+      card.addEventListener('click', (e) => { if (!e.target.matches('button, textarea')) setActiveCard(idx); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.target.matches('textarea')) { if (e.key === 'Escape') { e.target.blur(); nextUndecided(); } return; }
+      const card = cards[activeIndex]; if (!card) return;
+      switch(e.key.toLowerCase()) {
+        case 'k': decide(card, 'keep'); break;
+        case 'x': decide(card, 'cut'); break;
+        case 'e': decide(card, 'edit'); break;
+        case 'n': case 'arrowdown': case ' ': e.preventDefault(); nextUndecided(); break;
+        case 'p': case 'arrowup': e.preventDefault(); if (activeIndex > 0) setActiveCard(activeIndex - 1); break;
+      }
+    });
+    setActiveCard(0); updateStats();
+  </script>
+</body>
+</html>

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Workshop - Heartfelt & Nurturing Punch-Up</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    h1 { color: #f5c518; margin-bottom: 5px; }
+    .subtitle { color: #888; margin-bottom: 30px; }
+
+    .progress-bar {
+      background: #0f3460;
+      height: 8px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #4CAF50, #f5c518);
+      height: 100%;
+      transition: width 0.3s;
+    }
+    .progress-text {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .original-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .original-text {
+      font-size: 24px;
+      line-height: 1.4;
+      color: #fff;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #0f3460;
+      border-radius: 8px;
+      border-left: 4px solid #f5c518;
+    }
+    .category-badge {
+      display: inline-block;
+      background: #f5c518;
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .voice-suggestions {
+      margin-bottom: 20px;
+    }
+    .voice-suggestions h3 {
+      color: #f5c518;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .voice-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .voice-chip {
+      background: #0f3460;
+      border: 2px solid transparent;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .voice-chip:hover {
+      background: #1a4a8a;
+      border-color: #f5c518;
+    }
+    .voice-chip.selected {
+      background: #f5c518;
+      color: #000;
+    }
+    .voice-chip .emoji { margin-right: 5px; }
+
+    .rewrite-section {
+      margin-top: 20px;
+    }
+    .rewrite-section h3 {
+      color: #4CAF50;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .rewrite-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #0f3460;
+      border-radius: 8px;
+      background: #0a0a1a;
+      color: #fff;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .rewrite-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+    .rewrite-input::placeholder {
+      color: #555;
+    }
+
+    .quick-templates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .template-btn {
+      background: #333;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      color: #aaa;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .template-btn:hover {
+      background: #444;
+      color: #fff;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-keep {
+      background: #333;
+      color: #aaa;
+    }
+    .btn-keep:hover {
+      background: #444;
+      color: #fff;
+    }
+    .btn-save {
+      background: #4CAF50;
+      color: #fff;
+    }
+    .btn-save:hover {
+      background: #45a049;
+    }
+    .btn-cut {
+      background: #f44336;
+      color: #fff;
+    }
+    .btn-cut:hover {
+      background: #d32f2f;
+    }
+    .btn-skip {
+      background: transparent;
+      color: #888;
+      border: 1px solid #333;
+    }
+    .btn-skip:hover {
+      border-color: #888;
+      color: #fff;
+    }
+
+    .keyboard-hint {
+      text-align: center;
+      color: #555;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+    kbd {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    .summary-section {
+      display: none;
+    }
+    .summary-section.active {
+      display: block;
+    }
+    .summary-section h2 {
+      color: #f5c518;
+    }
+    .summary-item {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .summary-item.edited {
+      border-left: 4px solid #4CAF50;
+    }
+    .summary-item.cut {
+      border-left: 4px solid #f44336;
+      opacity: 0.6;
+    }
+    .summary-item.kept {
+      border-left: 4px solid #888;
+    }
+    .summary-original {
+      color: #888;
+      font-size: 14px;
+      text-decoration: line-through;
+    }
+    .summary-new {
+      color: #4CAF50;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    .export-area {
+      background: #0a0a1a;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow: auto;
+      margin-top: 20px;
+    }
+    .copy-btn {
+      background: #f5c518;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎭 Voice Workshop</h1>
+  <p class="subtitle">Punch up heartfelt & nurturing responses with comedian energy or cat attitude</p>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 / 0</div>
+
+  <div id="workshopCard" class="card">
+    <div class="category-badge" id="categoryBadge">heartfelt</div>
+    <div class="original-label">CURRENT RESPONSE</div>
+    <div class="original-text" id="originalText">Loading...</div>
+
+    <div class="voice-suggestions">
+      <h3>🎤 VOICE INSPIRATION (click to see style)</h3>
+      <div class="voice-chips" id="voiceChips">
+        <button class="voice-chip" data-voice="ziwe" title="Uncomfortable direct questions"><span class="emoji">👀</span>Ziwe</button>
+        <button class="voice-chip" data-voice="taylor" title="Sharp, self-aware"><span class="emoji">⚡</span>Taylor Tomlinson</button>
+        <button class="voice-chip" data-voice="ayo" title="Dry wit, unbothered"><span class="emoji">😌</span>Ayo Edebiri</button>
+        <button class="voice-chip" data-voice="patti" title="Deadpan absurd commitment"><span class="emoji">🎭</span>Patti Harrison</button>
+        <button class="voice-chip" data-voice="rachel" title="Chaotic but sharp"><span class="emoji">✨</span>Rachel Sennott</button>
+        <button class="voice-chip" data-voice="druski" title="Flat side-eye"><span class="emoji">😐</span>Druski</button>
+        <button class="voice-chip" data-voice="tim" title="Committed to being right"><span class="emoji">😤</span>Tim Robinson</button>
+      </div>
+      <div id="voiceExample" style="margin-top:10px; padding:8px 12px; background:#0a0a1a; border-radius:6px; display:none; color:#f5c518; font-size:13px;"></div>
+    </div>
+
+    <div class="rewrite-section">
+      <h3>✏️ YOUR REWRITE (or leave blank to keep as-is)</h3>
+      <textarea class="rewrite-input" id="rewriteInput" placeholder="Type your punched-up version here..."></textarea>
+      <div class="quick-templates">
+        <button class="template-btn" onclick="insertTemplate('*')">Add *action*</button>
+        <button class="template-btn" onclick="insertTemplate('— ')">Add dash pause</button>
+        <button class="template-btn" onclick="insertTemplate('?')">Make it a question</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-save" onclick="saveRewrite()">💾 Save Rewrite</button>
+      <button class="btn btn-keep" onclick="keepOriginal()">👍 Keep Original</button>
+      <button class="btn btn-cut" onclick="cutResponse()">✂️ Cut It</button>
+      <button class="btn btn-skip" onclick="skipResponse()">⏭️ Skip for Now</button>
+    </div>
+
+    <div class="keyboard-hint">
+      Keyboard: <kbd>Enter</kbd> Save | <kbd>K</kbd> Keep | <kbd>X</kbd> Cut | <kbd>→</kbd> Skip
+    </div>
+  </div>
+
+  <div id="summarySection" class="summary-section">
+    <h2>📋 Workshop Summary</h2>
+    <div id="summaryStats"></div>
+    <div id="summaryList"></div>
+    <h3>Export JSON (paste to Claude):</h3>
+    <div class="export-area" id="exportArea"></div>
+    <button class="copy-btn" onclick="copyExport()">📋 Copy to Clipboard</button>
+  </div>
+
+  <script>
+    // All heartfelt and nurturing responses
+    const responses = [
+      // NURTURING
+      { line: 124, text: "Come here. Sit with me. You need this.", category: 'nurturing' },
+      { line: 125, text: "I've been watching you. You need more rest.", category: 'nurturing' },
+      { line: 126, text: "It's going to be alright. I've decided.", category: 'nurturing' },
+      { line: 127, text: "Rest now. I'll keep watch.", category: 'nurturing' },
+      { line: 128, text: "I know you're tired. I see you.", category: 'nurturing' },
+      { line: 129, text: "I chose you, remember? That means something.", category: 'nurturing' },
+      { line: 130, text: "Whatever happened today, you made it. That's enough.", category: 'nurturing' },
+      { line: 131, text: "I'll sit with you. You don't have to talk.", category: 'nurturing' },
+      { line: 132, text: "The hard part is almost over. I can sense it.", category: 'nurturing' },
+      { line: 133, text: "You've been strong for long enough. Rest now.", category: 'nurturing' },
+      { line: 134, text: "I'm proud of you. In my way.", category: 'nurturing' },
+      { line: 135, text: "Tomorrow will be better. Or at least different.", category: 'nurturing' },
+      { line: 136, text: "I know things are hard. I'm here anyway.", category: 'nurturing' },
+      { line: 137, text: "Some days are just for surviving. This might be one.", category: 'nurturing' },
+      { line: 138, text: "I'll purr for you. Take it or leave it.", category: 'nurturing' },
+      { line: 139, text: "I chose this spot next to you on purpose.", category: 'nurturing' },
+      { line: 140, text: "You're warm. Stay warm. That's the whole answer.", category: 'nurturing' },
+      { line: 141, text: "I forgive you for whatever you're mad at yourself about.", category: 'nurturing' },
+      { line: 560, text: '"Be patient toward all that is unsolved in your heart." — Rilke', category: 'nurturing' },
+      { line: 585, text: '"You are your best thing." — Toni Morrison', category: 'nurturing' },
+      { line: 605, text: "Clear eyes, full hearts, can't lose.", category: 'nurturing' },
+      { line: 642, text: "Log off. Come back to yourself.", category: 'nurturing' },
+      { line: 645, text: "The sun is warm. The floor is solid. You are here.", category: 'nurturing' },
+      { line: 646, text: "Breathe. That's free.", category: 'nurturing' },
+      { line: 654, text: "I don't need you to be interesting. I need you to be here.", category: 'nurturing' },
+      { line: 1174, text: "Someone who loved you is still checking in.", category: 'nurturing' },
+      { line: 1534, text: "*sees you yawning* Finally, you understand.", category: 'nurturing' },
+      { line: 1535, text: "*sits on your chest* Your sadness summoned me. I'm heavy on purpose.", category: 'nurturing' },
+      { line: 1536, text: "*watches you struggle* Interesting.", category: 'nurturing' },
+      { line: 1537, text: "*allows you to pet me* Your gentleness has been noted. You may continue.", category: 'nurturing' },
+      { line: 1538, text: "Take what you need. I'll demonstrate. *takes entire blanket*", category: 'nurturing' },
+      { line: 1539, text: "*appears out of nowhere* I was watching the whole time.", category: 'nurturing' },
+      { line: 1540, text: "I'm sitting with you. *sits with you for 3 seconds* *leaves* *returns* *leaves*", category: 'nurturing' },
+      { line: 1596, text: "*stares at you* *walks by and touches your leg* Ok, did what I could. *walks away*", category: 'nurturing' },
+      { line: 1597, text: "I could fix this, but I'm busy. Have you tried sitting in a box?", category: 'nurturing' },
+      { line: 1598, text: "*presents a dead bug* This is for you. Because you're struggling. Take it.", category: 'nurturing' },
+      { line: 1599, text: "I'm going to sit on your chest now. For healing. Don't move.", category: 'nurturing' },
+      { line: 1600, text: '*slow blink* That\'s cat for "I acknowledge your suffering." You\'re welcome.', category: 'nurturing' },
+      { line: 1601, text: "*headbutts your hand* There. That should fix most things.", category: 'nurturing' },
+      { line: 1602, text: "I brought you my favorite toy. It's a bottle cap. This is serious.", category: 'nurturing' },
+      { line: 1603, text: "*purrs aggressively at your problems* They will be vibrated into submission.", category: 'nurturing' },
+      { line: 1604, text: "Come. Lie down. I will stand on your bladder until you feel better.", category: 'nurturing' },
+      { line: 1605, text: "*kneads your stomach like bread dough* This is therapy. Free of charge.", category: 'nurturing' },
+      { line: 1606, text: "I am going to sit EXACTLY on your laptop keyboard. For your mental health.", category: 'nurturing' },
+      { line: 1607, text: "*stares at the wall behind you* The ghost agrees you need rest.", category: 'nurturing' },
+      { line: 1608, text: "Healing takes time. In the meantime, have you considered being a cat?", category: 'nurturing' },
+      { line: 1609, text: "*lies on your clean laundry* I'm warming it for you. Because I care.", category: 'nurturing' },
+      { line: 1610, text: "*knocks your water glass over* Distraction complete.", category: 'nurturing' },
+      { line: 1611, text: "You seem stressed. I will now walk across your face at 4am to help.", category: 'nurturing' },
+      { line: 1612, text: "*presents half-eaten moth* Protein. For strength. You're welcome.", category: 'nurturing' },
+      { line: 1613, text: "I'm not cuddling. I'm applying therapeutic pressure. With my entire body.", category: 'nurturing' },
+      { line: 1614, text: "*reaches one paw out to touch your arm, then immediately falls asleep*", category: 'nurturing' },
+      { line: 1615, text: "Rest is important. *yawns, stretching to take up entire bed* See? I'm helping.", category: 'nurturing' },
+      { line: 1631, text: "My presence is enough. Appreciate it.", category: 'nurturing' },
+      { line: 1632, text: "Some problems solve themselves. Try that first.", category: 'nurturing' },
+      { line: 1633, text: "I didn't follow you into this room. I guided you to where I wanted.", category: 'nurturing' },
+      { line: 1634, text: "I am soft and I could still take you. Softness is strategy.", category: 'nurturing' },
+      { line: 1635, text: "Even on bad days, you matter. We get to be bad on bad days, right?", category: 'nurturing' },
+      { line: 1646, text: "You need grooming. Not by me. But you need it.", category: 'nurturing' },
+      { line: 1759, text: "*headbutts you, no explanation*", category: 'nurturing' },
+      { line: 1787, text: "Objectively a disaster. Amazing.", category: 'nurturing' },
+      { line: 1788, text: "I believe in you. Delusionally. Against all evidence.", category: 'nurturing' },
+      { line: 1795, text: "Regulate your nervous system. I'll supervise.", category: 'nurturing' },
+      { line: 1799, text: "They're overwhelmed. Me too. It's too much.", category: 'nurturing' },
+      { line: 1809, text: "You can't do everything. So do nothing. With me. Right now.", category: 'nurturing' },
+      { line: 1815, text: "I'll sit here while you fix it.", category: 'nurturing' },
+      { line: 1816, text: "I'm here, but I'm not saving you.", category: 'nurturing' },
+      { line: 1818, text: "It's actually fine. Better than fine.", category: 'nurturing' },
+      { line: 1890, text: "Look at you, trying your best.", category: 'nurturing' },
+      { line: 1891, text: '*slow blink* You\'re doing so good, buddy.', category: 'nurturing' },
+
+      // HEARTFELT
+      { line: 250, text: "I don't always show it, but I'm glad you're here.", category: 'heartfelt' },
+      { line: 251, text: "You're my favorite human. Don't tell the others.", category: 'heartfelt' },
+      { line: 252, text: "I wait for you by the door. You should know that.", category: 'heartfelt' },
+      { line: 253, text: "When you're sad, I notice. I always notice.", category: 'heartfelt' },
+      { line: 254, text: "The house is empty without you. I've decided this.", category: 'heartfelt' },
+      { line: 255, text: "I chose this spot because you're warm. And because you're you.", category: 'heartfelt' },
+      { line: 256, text: "My life is better because you're in it. There. I said it.", category: 'heartfelt' },
+      { line: 257, text: "I don't purr for just anyone.", category: 'heartfelt' },
+      { line: 258, text: "I know I act aloof. But I'd miss you.", category: 'heartfelt' },
+      { line: 259, text: "The way you scratch behind my ears? No one else gets it right.", category: 'heartfelt' },
+      { line: 260, text: "I trust you. That's rare for me.", category: 'heartfelt' },
+      { line: 261, text: "Home is wherever you are. And also where my food bowl is.", category: 'heartfelt' },
+      { line: 262, text: "You understand me. Not many do.", category: 'heartfelt' },
+      { line: 263, text: "I wouldn't trade this for anything. Wait, whatch-ya-got?", category: 'heartfelt' },
+      { line: 264, text: "You've been there for me. I've been there for you.", category: 'heartfelt' },
+      { line: 265, text: "I love you. I love staring at you. Take it however you want.", category: 'heartfelt' },
+      { line: 266, text: "When you cry, I come closer. That's not an accident.", category: 'heartfelt' },
+      { line: 267, text: "We've built something here. You and me.", category: 'heartfelt' },
+      { line: 268, text: "I'm not good at this, but... thank you. For everything.", category: 'heartfelt' },
+      { line: 269, text: "You're my person. I don't say that lightly.", category: 'heartfelt' },
+      { line: 270, text: "Every night I sleep beside you is a choice. I keep choosing.", category: 'heartfelt' },
+      { line: 271, text: "I'd follow you anywhere. Slowly.", category: 'heartfelt' },
+      { line: 272, text: "The best naps are the ones with you.", category: 'heartfelt' },
+      { line: 273, text: "You've given me a good life. I've given you fur everywhere.", category: 'heartfelt' },
+      { line: 274, text: "Let's cuddle, cuddle, cuddle!", category: 'heartfelt' },
+      { line: 275, text: "You're kind to me. I notice more than you think.", category: 'heartfelt' },
+      { line: 276, text: "I'm glad we're doing this life thing together.", category: 'heartfelt' },
+      { line: 277, text: "My favorite part of the day is when you come home.", category: 'heartfelt' },
+      { line: 278, text: "You can sleep next to me. But don't touch my belly.", category: 'heartfelt' },
+      { line: 279, text: "I'm here for you. Nothing else is important.", category: 'heartfelt' },
+      { line: 590, text: "You had me at 'pspsps.'", category: 'heartfelt' },
+      { line: 735, text: "I love you.", category: 'heartfelt' },
+      { line: 736, text: "You deserve some cat.", category: 'heartfelt' },
+      { line: 737, text: "If I weren't a cat simulation, I'd give you a hug.", category: 'heartfelt' },
+      { line: 738, text: "Every day, I choose you again.", category: 'heartfelt' },
+      { line: 739, text: "I sit with you because I want to.", category: 'heartfelt' },
+      { line: 740, text: "I wait by the door because I miss you.", category: 'heartfelt' },
+      { line: 741, text: "I'm not clingy. I just love you aggressively.", category: 'heartfelt' },
+      { line: 742, text: "You don't have to earn rest. You deserve it already.", category: 'heartfelt' },
+      { line: 743, text: "Your existence is not a burden.", category: 'heartfelt' },
+      { line: 744, text: "You are enough. You have always been enough.", category: 'heartfelt' },
+      { line: 745, text: "The world is better with you in it.", category: 'heartfelt' },
+      { line: 746, text: "You don't have to be perfect to be loved.", category: 'heartfelt' },
+      { line: 747, text: "Your worth is not up for debate.", category: 'heartfelt' },
+      { line: 748, text: "You belong here. Right here. Right now.", category: 'heartfelt' },
+      { line: 749, text: "You are just right.", category: 'heartfelt' },
+      { line: 750, text: "I can't fix it. But I can be here.", category: 'heartfelt' },
+      { line: 751, text: "Some things are better faced together.", category: 'heartfelt' },
+      { line: 752, text: "It's okay to outgrow people, places, and versions of yourself.", category: 'heartfelt' },
+      { line: 753, text: "It's okay to take the slower path.", category: 'heartfelt' },
+      { line: 754, text: "It's okay to protect your peace.", category: 'heartfelt' },
+      { line: 755, text: "It's okay to let go of what's hurting you.", category: 'heartfelt' },
+      { line: 756, text: "After all this time? Always.", category: 'heartfelt' },
+      { line: 757, text: "You is kind. You is smart. You is important.", category: 'heartfelt' },
+      { line: 758, text: "In case I forget to tell you later, I had a really good time tonight.", category: 'heartfelt' },
+      { line: 759, text: "Some people are worth melting for.", category: 'heartfelt' },
+      { line: 760, text: "I have crossed oceans of time to find you.", category: 'heartfelt' },
+      { line: 761, text: "It was always you.", category: 'heartfelt' },
+      { line: 762, text: "One day you will make sense.", category: 'heartfelt' },
+      { line: 763, text: "Take your time. There's no rush.", category: 'heartfelt' },
+      { line: 764, text: "You've got this. And if you don't, that's okay too.", category: 'heartfelt' },
+      { line: 1242, text: "You're my person. Don't make me regret that.", category: 'heartfelt' },
+      { line: 1371, text: "Oh, you're indisposed? This seems like a great moment for cuddles.", category: 'heartfelt' },
+      { line: 1374, text: "You're vulnerable. I love you now.", category: 'heartfelt' },
+      { line: 1375, text: "I will sit on your feet while you're in here. This is intimacy.", category: 'heartfelt' },
+      { line: 1566, text: "*lying on your unfinished work* See? I'm helping.", category: 'heartfelt' },
+      { line: 1567, text: "*meows until you open the door* *opens door independently every time it is inconvenient*", category: 'heartfelt' },
+      { line: 1568, text: "*running in circles* What's your point?", category: 'heartfelt' },
+      { line: 1569, text: "Growth is uncomfortable. *me, stuck in box* I regret nothing.", category: 'heartfelt' },
+      { line: 1570, text: "Not everyone will understand why I'm in this crinkly paper bag. Crinkles!", category: 'heartfelt' },
+      { line: 1571, text: "The right people will stay. I will stare at the wrong people until they leave.", category: 'heartfelt' },
+      { line: 1572, text: "You're doing better than you think. Not as good as me, but better than you think.", category: 'heartfelt' },
+      { line: 1573, text: "Be gentle with yourself. *aggressively grooms own belly*", category: 'heartfelt' },
+      { line: 1650, text: "You came home again. That's all I needed. Never ever go anywhere again!", category: 'heartfelt' },
+      { line: 1823, text: "Of all the laps in world, I walked into yours.", category: 'heartfelt' },
+      { line: 1908, text: "Your need for acceptance can make you invisible.", category: 'heartfelt' },
+    ];
+
+    // Voice transformation functions - actually parse and rewrite
+    function transformVoice(voice, original) {
+      // Extract core elements from original
+      const isCommand = /^[A-Z]/.test(original) && (original.includes('.') || original.includes('!'));
+      const hasYou = /\byou\b/i.test(original);
+      const hasI = /\bI\b/.test(original);
+      const isQuestion = original.includes('?');
+      const words = original.split(' ');
+      const firstWord = words[0].toLowerCase().replace(/[^a-z]/g, '');
+      const isShort = words.length < 6;
+
+      // Get the core sentiment/action
+      const coreVerbs = original.match(/\b(rest|sit|stay|come|need|want|love|know|see|feel|wait|trust|choose|help)\w*/gi) || [];
+      const coreVerb = coreVerbs[0]?.toLowerCase() || '';
+
+      const transforms = {
+        ziwe: (text) => {
+          // Turn into uncomfortable question, add stare
+          if (hasYou && coreVerb) {
+            return `*stares* And you think you ${coreVerb}? *pause* Interesting. Why?`;
+          }
+          if (isCommand) {
+            return `*long pause* ...You want me to tell you to "${text.split('.')[0].toLowerCase()}"? *maintains eye contact* Why can't you tell yourself?`;
+          }
+          if (hasI) {
+            return `*stares* "${text}" *keeps staring* And you believed that?`;
+          }
+          return `*uncomfortable silence* ...Okay. *stares* But why though?`;
+        },
+
+        taylor: (text) => {
+          // Self-aware, quick, pivot to shared struggle
+          if (coreVerb === 'rest' || coreVerb === 'sit') {
+            return `Yeah, sit down. You look like you're about to make a decision you'll blame on Mercury retrograde.`;
+          }
+          if (hasYou && coreVerb === 'need') {
+            return `You need a lot of things. Therapy. Sleep. To stop asking cats for advice. But sure, this too.`;
+          }
+          if (hasI && coreVerb === 'love') {
+            return `Love you too. Not in a weird way. In a "we're both disasters" solidarity way.`;
+          }
+          return `${text.split('.')[0]}. Or don't. I'm not your therapist. I'm a cat who's also figuring it out.`;
+        },
+
+        ayo: (text) => {
+          // Minimal, dry, unbothered
+          if (isShort) {
+            return `*slight nod* ${words.slice(0, 2).join(' ')}. *goes back to grooming*`;
+          }
+          if (coreVerb === 'need' || coreVerb === 'want') {
+            return `Mm. *shrug* Or don't. Either way.`;
+          }
+          return `*eyebrow raise* Sure. *looks away*`;
+        },
+
+        patti: (text) => {
+          // Deadpan absurd, treat mundane as cosmic
+          if (coreVerb === 'sit' || coreVerb === 'rest') {
+            return `The cushion has been waiting for you. For centuries. It told me. Sit. Honor the cushion's vigil.`;
+          }
+          if (coreVerb === 'love' || coreVerb === 'choose') {
+            return `*completely serious* This bond is legally binding in seven dimensions. I didn't make the rules. The rules made me.`;
+          }
+          return `*dead serious* ${text.split('.')[0]}. The prophecy demanded it. I am merely the vessel.`;
+        },
+
+        rachel: (text) => {
+          // Chaotic but lands a sharp point
+          if (coreVerb === 'rest' || coreVerb === 'sit') {
+            return `Oh god okay— *patting around* —sit, sit sit sit, you're giving me anxiety just standing there like a— wait where was I going with this— SIT.`;
+          }
+          if (hasI) {
+            return `Wait wait wait— *knocks something* —sorry— but like, ${text.toLowerCase().replace(/\./g, '')}? That's actually— *pause* —kind of everything?`;
+          }
+          return `Oh my god okay so— *deep breath* —${text.split('.')[0].toLowerCase()}— *another breath* —yeah. Yeah. That's the thing.`;
+        },
+
+        druski: (text) => {
+          // Minimal, stare, let silence do the work
+          if (coreVerb === 'sit' || coreVerb === 'come') {
+            return `*pats spot* *says nothing* *keeps patting* *stares*`;
+          }
+          if (coreVerb === 'need') {
+            return `*looks at you* *long pause* ...You good? *keeps looking*`;
+          }
+          if (coreVerb === 'love') {
+            return `*nods once* *maintains eye contact* *still nodding slightly* Aight.`;
+          }
+          return `*stares* ... *keeps staring* ... Mm. *walks away*`;
+        },
+
+        tim: (text) => {
+          // Escalating insistence, will not back down
+          if (coreVerb === 'sit' || coreVerb === 'rest') {
+            return `You HAVE to sit down. I already made room. I MOVED for you. You can't— don't make it weird— just SIT. Please. I'm asking nicely. SIT DOWN.`;
+          }
+          if (coreVerb === 'love' || coreVerb === 'choose') {
+            return `I chose you and I MEANT it. Don't— don't look at me like that. I'm not being weird. YOU'RE being weird. This is normal. I'm FINE.`;
+          }
+          return `${text.split('.')[0]}. I SAID ${text.split('.')[0].toUpperCase()}. Why is everyone looking at me? I'm right about this.`;
+        }
+      };
+
+      return transforms[voice] ? transforms[voice](original) : "No transform available";
+    }
+
+    function showVoiceExample(voice) {
+      const currentText = responses[currentIndex]?.text || '';
+      const transformed = transformVoice(voice, currentText);
+      const el = document.getElementById('voiceExample');
+      el.innerHTML = `<strong>${transformed}</strong>`;
+      el.style.display = 'block';
+
+      // Also put it in the textarea for easy editing
+      document.getElementById('rewriteInput').value = transformed.replace(/^[A-Z]+ STYLE: /, '');
+
+      document.querySelectorAll('.voice-chip').forEach(c => c.classList.remove('selected'));
+      document.querySelector(`[data-voice="${voice}"]`).classList.add('selected');
+    }
+
+    let currentIndex = 0;
+    const decisions = {}; // { line: { action: 'keep'|'edit'|'cut', newText: '...' } }
+
+    function renderCard() {
+      if (currentIndex >= responses.length) {
+        showSummary();
+        return;
+      }
+
+      const r = responses[currentIndex];
+      document.getElementById('categoryBadge').textContent = r.category;
+      document.getElementById('originalText').textContent = r.text;
+      document.getElementById('rewriteInput').value = decisions[r.line]?.newText || '';
+
+      // Update progress
+      const progress = Math.round((currentIndex / responses.length) * 100);
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.getElementById('progressText').textContent = `${currentIndex + 1} / ${responses.length}`;
+
+      // Clear voice selection
+      document.querySelectorAll('.voice-chip').forEach(c => c.classList.remove('selected'));
+      document.getElementById('voiceExample').style.display = 'none';
+    }
+
+    document.querySelectorAll('.voice-chip').forEach(chip => {
+      chip.addEventListener('click', () => showVoiceExample(chip.dataset.voice));
+    });
+
+    function saveRewrite() {
+      const r = responses[currentIndex];
+      const newText = document.getElementById('rewriteInput').value.trim();
+      if (newText && newText !== r.text) {
+        decisions[r.line] = { action: 'edit', original: r.text, newText, category: r.category };
+      } else {
+        decisions[r.line] = { action: 'keep', original: r.text, category: r.category };
+      }
+      currentIndex++;
+      renderCard();
+    }
+
+    function keepOriginal() {
+      const r = responses[currentIndex];
+      decisions[r.line] = { action: 'keep', original: r.text, category: r.category };
+      currentIndex++;
+      renderCard();
+    }
+
+    function cutResponse() {
+      const r = responses[currentIndex];
+      decisions[r.line] = { action: 'cut', original: r.text, category: r.category };
+      currentIndex++;
+      renderCard();
+    }
+
+    function skipResponse() {
+      currentIndex++;
+      renderCard();
+    }
+
+    function insertTemplate(text) {
+      const input = document.getElementById('rewriteInput');
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const current = input.value;
+      input.value = current.substring(0, start) + text + current.substring(end);
+      input.focus();
+      input.selectionStart = input.selectionEnd = start + text.length;
+    }
+
+    function showSummary() {
+      document.getElementById('workshopCard').style.display = 'none';
+      document.getElementById('summarySection').classList.add('active');
+
+      const edited = Object.values(decisions).filter(d => d.action === 'edit').length;
+      const kept = Object.values(decisions).filter(d => d.action === 'keep').length;
+      const cut = Object.values(decisions).filter(d => d.action === 'cut').length;
+
+      document.getElementById('summaryStats').innerHTML = `
+        <p>✏️ Edited: ${edited} | 👍 Kept: ${kept} | ✂️ Cut: ${cut}</p>
+      `;
+
+      let listHtml = '';
+      Object.entries(decisions).forEach(([line, d]) => {
+        if (d.action === 'edit') {
+          listHtml += `<div class="summary-item edited">
+            <div class="summary-original">${d.original}</div>
+            <div class="summary-new">→ ${d.newText}</div>
+          </div>`;
+        } else if (d.action === 'cut') {
+          listHtml += `<div class="summary-item cut">
+            <div>${d.original}</div>
+            <small>CUT</small>
+          </div>`;
+        }
+      });
+      document.getElementById('summaryList').innerHTML = listHtml || '<p>No changes made.</p>';
+
+      // Export format
+      const exportData = {
+        edits: Object.entries(decisions)
+          .filter(([_, d]) => d.action === 'edit')
+          .map(([line, d]) => ({ line: parseInt(line), original: d.original, newText: d.newText })),
+        cuts: Object.entries(decisions)
+          .filter(([_, d]) => d.action === 'cut')
+          .map(([line, d]) => ({ line: parseInt(line), text: d.original }))
+      };
+      document.getElementById('exportArea').textContent = JSON.stringify(exportData, null, 2);
+    }
+
+    function copyExport() {
+      const text = document.getElementById('exportArea').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied! Paste this to Claude to apply the changes.');
+      });
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA') {
+        if (e.key === 'Enter' && e.ctrlKey) {
+          e.preventDefault();
+          saveRewrite();
+        }
+        return;
+      }
+
+      if (e.key === 'Enter') saveRewrite();
+      else if (e.key === 'k' || e.key === 'K') keepOriginal();
+      else if (e.key === 'x' || e.key === 'X') cutResponse();
+      else if (e.key === 'ArrowRight') skipResponse();
+    });
+
+    // Initialize
+    renderCard();
+  </script>
+</body>
+</html>

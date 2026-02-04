@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Template Review - MaybeCat</title>
+  <style>
+    body { font-family: Georgia, serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #c9a227; border-bottom: 2px solid #c9a227; padding-bottom: 10px; }
+    h2 { color: #8b7355; margin-top: 40px; }
+    .template { background: #252542; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #c9a227; }
+    .pattern { font-size: 1.3em; color: #fff; margin-bottom: 15px; font-style: italic; }
+    .pattern em { color: #c9a227; font-style: normal; }
+    .slot { margin: 10px 0; }
+    .slot-name { color: #c9a227; font-weight: bold; }
+    .slot-options { color: #aaa; font-size: 0.95em; line-height: 1.6; }
+    .examples { background: #1e1e35; padding: 15px; margin-top: 15px; border-radius: 4px; }
+    .examples h4 { margin: 0 0 10px 0; color: #888; font-size: 0.85em; }
+    .example { color: #ddd; margin: 5px 0; padding: 5px 0; border-bottom: 1px solid #333; }
+    .verdict { margin-top: 10px; }
+    .verdict button { padding: 8px 16px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .keep { background: #2e7d32; color: white; }
+    .kill { background: #c62828; color: white; }
+    .extract { background: #1565c0; color: white; }
+    .category { font-size: 0.8em; color: #666; text-transform: uppercase; }
+    .summary { position: fixed; bottom: 20px; right: 20px; background: #333; padding: 15px; border-radius: 8px; }
+    .note { background: #2a2a4a; padding: 15px; margin: 20px 0; border-radius: 8px; font-size: 0.9em; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>Template Review</h1>
+
+  <div class="note">
+    <strong>The Problem:</strong> Templates combine patterns + slots to generate responses. The frames often add nothing ("Ancient cat proverb:") and the combinations can be clunky. But some slot content is good on its own.<br><br>
+    <strong>Options:</strong> KEEP template as-is | KILL entirely | EXTRACT good slot content as standalone responses
+  </div>
+
+  <h2>MYSTICAL Templates</h2>
+
+  <div class="template">
+    <div class="category">mystical</div>
+    <div class="pattern">"I sense <em>{quality}</em> in your <em>{place}</em>. <em>{action}</em>."</div>
+    <div class="slot"><span class="slot-name">quality:</span> <span class="slot-options">treats, a disturbance, great napping energy, the ghost of a moth, untapped chaos, a hairball forming, forbidden snacks, unattended food, suspicious activity, a warm laptop</span></div>
+    <div class="slot"><span class="slot-name">place:</span> <span class="slot-options">immediate future, kitchen cabinet, sock drawer, garbage can, unguarded plate, laundry basket, forbidden room, that bag you just brought in, your dinner plans, the spot where you were about to sit</span></div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">I will investigate, Stand back, This changes everything, My interest is piqued, I must knock it over to be sure, The spirits demand I inspect it, *pupils dilate*, Wait here. Actually follow me. Actually stay, I will stare at it for 20 minutes, Something must be destroyed</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"I sense forbidden snacks in your kitchen cabinet. I will investigate."</div>
+      <div class="example">"I sense a warm laptop in your immediate future. *pupils dilate*"</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">mystical</div>
+    <div class="pattern">"The <em>{noun}</em> whispers of <em>{thing}</em>. <em>{response}</em>."</div>
+    <div class="slot"><span class="slot-name">noun:</span> <span class="slot-options">void under the couch, dust bunnies, ceiling corner, dryer lint, empty toilet paper roll, 3am darkness, space behind the fridge, forbidden closet, plastic bag in the wind, cardboard box</span></div>
+    <div class="slot"><span class="slot-name">thing:</span> <span class="slot-options">treats, a 4am rampage, something falling off a shelf, an open door, tuna, your demise, a warm keyboard, chaos, a bug that must die, the red dot</span></div>
+    <div class="slot"><span class="slot-name">response:</span> <span class="slot-options">I must obey, The prophecy unfolds, *ears rotate*, I translate this as "feed me", My purpose is clear, This explains the zoomies, I knew it all along, The ancestors nod in approval, I will act on this at 3am, *chatters menacingly*</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"The void under the couch whispers of chaos. I must obey."</div>
+      <div class="example">"The cardboard box whispers of treats. The prophecy unfolds."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">mystical</div>
+    <div class="pattern">"At <em>{timeframe}</em>, <em>{prophecy}</em>."</div>
+    <div class="slot"><span class="slot-name">timeframe:</span> <span class="slot-options">3am sharp, the moment you fall asleep, exactly the wrong time, your most important meeting, the precise second you relax, dawn, the witching hour, your bathroom time, the moment the can opener sounds, when you least expect it</span></div>
+    <div class="slot"><span class="slot-name">prophecy:</span> <span class="slot-options">something will fall, the zoomies will begin, you will know my true power, I will demand food I just rejected, a door will offend me, I will bring you a gift (it will be gross), I will sit on something important, the tapping shall commence, you will see me staring and wonder how long</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"At the moment you fall asleep, the zoomies will begin."</div>
+      <div class="example">"At 3am sharp, something will fall."</div>
+    </div>
+  </div>
+
+  <h2>NURTURING Templates</h2>
+
+  <div class="template">
+    <div class="category">nurturing</div>
+    <div class="pattern">"*<em>{action}</em>* <em>{message}</em>"</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">sits on your chest, headbutts your face, kneads your stomach aggressively, brings you a dead bug, purrs at concerning volume, lies directly on your laptop, stares at you without blinking, slow blinks, touches your face with one paw, falls asleep on your feet</span></div>
+    <div class="slot"><span class="slot-name">message:</span> <span class="slot-options">This is healing. You're welcome., I'm fixing you. Hold still., My weight is medicinal., Accept my gift., The vibrations are therapeutic. Science., You needed this. I decided., This is love. Deal with it., I am here now. Crisis over., You can't leave. That's the treatment., Okay you can cry now. I permit it.</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"*sits on your chest* My weight is medicinal."</div>
+      <div class="example">"*slow blinks* This is love. Deal with it."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">nurturing</div>
+    <div class="pattern">"You seem <em>{state}</em>. <em>{catSolution}</em>."</div>
+    <div class="slot"><span class="slot-name">state:</span> <span class="slot-options">stressed, sad, tired, worried, overwhelmed, distracted, anxious, weird today, like you need supervision, emotionally constipated</span></div>
+    <div class="slot"><span class="slot-name">catSolution:</span> <span class="slot-options">Have you tried lying in a sunbeam, I will sit on you until it passes, I prescribe 3 hours of staring at birds, Here watch me clean my butt. Perspective., I'll bring you something from under the fridge, Try being a cat. It's working for me, I will supervise your nap</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"You seem stressed. Have you tried lying in a sunbeam."</div>
+      <div class="example">"You seem emotionally constipated. Here watch me clean my butt. Perspective."</div>
+    </div>
+  </div>
+
+  <h2>COLD Templates</h2>
+
+  <div class="template">
+    <div class="category">cold</div>
+    <div class="pattern">"*<em>{action}</em>* <em>{dismissal}</em>"</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">stares, blinks once, turns around slowly, looks at you, yawns, licks paw, walks away mid-sentence, shows you my butthole, sits facing the wall</span></div>
+    <div class="slot"><span class="slot-name">dismissal:</span> <span class="slot-options">No., Wrong., Pathetic., I expected nothing and I'm still disappointed., You bore me., My time is worth more than this., I have decided you are not my problem., Perish., Try again in your next life., The audacity., I pretend I do not see it., New human please.</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"*yawns* Pathetic."</div>
+      <div class="example">"*stares* I expected nothing and I'm still disappointed."</div>
+    </div>
+  </div>
+
+  <h2>ANGRY Templates</h2>
+
+  <div class="template">
+    <div class="category">angry</div>
+    <div class="pattern">"You're asking ME for advice? After <em>{grievance}</em>? <em>{reaction}</em>."</div>
+    <div class="slot"><span class="slot-name">grievance:</span> <span class="slot-options">you touched my belly, the food bowl situation, you moved while I was comfortable, you took my spot, you closed that door, you stopped petting too soon, I saw you pet another cat, the vacuum incident, you were late with dinner, that sneeze</span></div>
+    <div class="slot"><span class="slot-name">reaction:</span> <span class="slot-options">Bold, The audacity, We'll discuss this later, I'm still processing, I haven't forgotten, You're on thin ice, My patience is being tested, I'm choosing to let it go. For now., Consider this a warning, I'll answer but I'm not happy about it</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"You're asking ME for advice? After the vacuum incident? The audacity."</div>
+    </div>
+  </div>
+
+  <h2>HEARTFELT Templates</h2>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"You want to know if it's real? <em>{example}</em>. <em>{meaning}</em>."</div>
+    <div class="slot"><span class="slot-name">example:</span> <span class="slot-options">I wait by the door for you, I only bite you a little, I bring you dead things, I chose to sit near you, I let you touch my belly, I showed you where I hide, I headbutt you on purpose, I slow-blink at you, I follow you to the bathroom</span></div>
+    <div class="slot"><span class="slot-name">meaning:</span> <span class="slot-options">That's basically marriage in cat, That means I trust you, That's 'I love you' in my language, Don't overthink it, That's more than most get, It means something, In my culture that's forever, The small things ARE the big things, Love looks different for everyone. Look for the pattern.</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"<em>{action}</em> <em>{feeling}</em>"</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">*curls up against you*, *purrs without being touched*, *follows you from room to room*, *rests head on your hand*, *falls asleep touching you*, *looks at you and slow blinks*, *kneads the blanket next to you*, *sits close but not on you*, *watches you leave watches you return*, *finds you when you're sad*</span></div>
+    <div class="slot"><span class="slot-name">feeling:</span> <span class="slot-options">Don't read into it. (Read into it.), This is the whole thing. Right here., I'm not explaining myself., What? I like your smell. Sue me., I don't do this for everyone. Just you. Shut up., Don't make it weird. It's already weird. I don't care., I'm not good at words. This is the words., You're tolerable. That's huge coming from me., I'd pick you again. Whatever., This is me trying. Can you tell?</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"<em>{admission}</em>, <em>{deflection}</em>."</div>
+    <div class="slot"><span class="slot-name">admission:</span> <span class="slot-options">Fine I missed you, Okay I love you, Yes you're my favorite, I guess I care about you, You matter to me or whatever, I waited by the door, I like when you come home, I need you around, You're important to me, I chose you on purpose</span></div>
+    <div class="slot"><span class="slot-name">deflection:</span> <span class="slot-options">don't let it go to your head, it's not a big deal, I'll deny it later, we don't need to talk about it, that's all you're getting, moving on, this changes nothing, forget I said anything, I'm still the boss though, also feed me</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"Fine I missed you, don't let it go to your head."</div>
+      <div class="example">"Okay I love you, also feed me."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"I love <em>{specific}</em>."</div>
+    <div class="slot"><span class="slot-name">specific:</span> <span class="slot-options">the sound you make when you sleep, how you smell after outside, your weird laugh, that you talk to me like I understand (I do), your warm spots, the way you say my name, that you always come back, your terrible singing in the shower, when you think I'm not watching (I am), the specific way you pet my head, your heartbeat when I sit on your chest, that you chose me too, how you look when you first wake up, that you're kind of a mess but you try</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"I love that you talk to me like I understand (I do)."</div>
+      <div class="example">"I love that you're kind of a mess but you try."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"Look, <em>{setup}</em>. <em>{punchline}</em>."</div>
+    <div class="slot"><span class="slot-name">setup:</span> <span class="slot-options">I'm a cat, I'm not good at this, feelings are hard, I don't say this stuff, vulnerability isn't my brand, this is awkward, I'm going to keep this short, don't expect a speech, I'm only saying this once, this is embarrassing</span></div>
+    <div class="slot"><span class="slot-name">punchline:</span> <span class="slot-options">But you're my person and that's permanent, But I'd be sad if you left, But you matter or whatever, But I'm glad you exist, But here we are and I'm not leaving, But I pick you every time, But you're the only human I like, But you're stuck with me now, But I need you around. There. I said it., But this is home because of you</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">heartfelt</div>
+    <div class="pattern">"I'm not <em>{action}</em>. I'm <em>{truth}</em>."</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">following you, needy, clingy, staring, waiting, sitting here for no reason, being weird, hovering, watching you sleep, obsessed</span></div>
+    <div class="slot"><span class="slot-name">truth:</span> <span class="slot-options">conducting a welfare check, supervising, keeping you alive (you're welcome), making sure you don't do anything stupid, quality control, here by choice and I'm CHOOSING loudly, on duty, haunting you affectionately, your emotional support predator, aggressively present</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"I'm not stalking you. I'm conducting a welfare check."</div>
+      <div class="example">"I'm not obsessed. I'm your emotional support predator."</div>
+    </div>
+  </div>
+
+  <h2>CHAOTIC Templates</h2>
+
+  <div class="template">
+    <div class="category">chaotic</div>
+    <div class="pattern">"<em>{sweet}</em> <em>{turn}</em>"</div>
+    <div class="slot"><span class="slot-name">sweet:</span> <span class="slot-options">I love you so much—, This is nice we're having a moment—, You're my favorite person and I—, I could stay like this forev—, Pet me yes that's perfect keep—, I trust you completely which is why—, We're bonding this is special—, Your hand is so warm and gentle—</span></div>
+    <div class="slot"><span class="slot-name">turn:</span> <span class="slot-options">and I bite now., OKAY TIME TO GO. *sprints away*, that's enough. *kicks with back legs*, wait what's that. BYE., I've changed my mind about everything., THE VIBE SHIFTED., I love you but I must destroy something., actually I hate this. *bites and runs*</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">chaotic</div>
+    <div class="pattern">"<em>{action}</em> <em>{aftermath}</em>"</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">*runs into wall*, *attacks the air*, *falls off table with zero grace*, *forgets how legs work*, *gets spooked by own tail*, *stares at corner and growls*, *zoomies at 3am*, *makes weird chirping noise*, *gets stuck in a bag*, *eats something suspicious*</span></div>
+    <div class="slot"><span class="slot-name">aftermath:</span> <span class="slot-options">Worth it., I meant to do that., The demons told me to., GHOST. There was a GHOST., THIS IS WHO I AM., No regrets. Okay one regret. OKAY NO REGRETS., And I'd do it again., *maintains eye contact*, Anyway what were you saying?, The prophecy is fulfilled., I am chaos incarnate. Also hungry., Everything is fine. EVERYTHING IS FINE.</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">chaotic</div>
+    <div class="pattern">"<em>{alarm}</em>! <em>{response}</em>!"</div>
+    <div class="slot"><span class="slot-name">alarm:</span> <span class="slot-options">THE FLOOR IS LAVA, THERE'S A CUCUMBER, THE BAG MOVED, I SAW A SPECK, SOMEONE SNEEZED, THE DOORBELL, A LEAF OUTSIDE, MY REFLECTION, THAT SHADOW, THE VET WORD</span></div>
+    <div class="slot"><span class="slot-name">response:</span> <span class="slot-options">AAAAAAAAAA, THIS IS NOT A DRILL, EVERYONE PANIC, CODE RED, BATTLE STATIONS, UNDER THE BED NOW, WHY IS NO ONE ELSE REACTING, I WILL PROTECT YOU BY RUNNING AWAY, DEFCON 1</span></div>
+  </div>
+
+  <h2>JUDGY Templates</h2>
+
+  <div class="template">
+    <div class="category">judgy</div>
+    <div class="pattern">"<em>{observation}</em>. <em>{verdict}</em>."</div>
+    <div class="slot"><span class="slot-name">observation:</span> <span class="slot-options">I saw you eat that off the floor, I watched you trip over nothing, I heard you talk to the plants, I noticed you haven't moved in 4 hours, I observed your outfit choice, I've seen your 2am snack decisions, I watched you cry at that commercial, I saw you wave back at someone who wasn't waving at you, I've noted your screen time, I saw you rehearse that conversation in the mirror</span></div>
+    <div class="slot"><span class="slot-name">verdict:</span> <span class="slot-options">I've seen dogs with more dignity, Fascinating. Truly., And you judge ME for licking myself, My respect for you has adjusted accordingly, We're not so different. Except I'm better, I'll allow it. This time., Points for confidence I guess, I'm not mad. I'm just disappointed. Okay I'm also mad., I've decided to find this endearing. Barely., This explains so much about you</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"I saw you rehearse that conversation in the mirror. This explains so much about you."</div>
+    </div>
+  </div>
+
+  <h2>WISE Templates</h2>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"<em>{observation}</em>. <em>{catWisdom}</em>."</div>
+    <div class="slot"><span class="slot-name">observation:</span> <span class="slot-options">The bowl is half empty, The door is closed, The lap is occupied, Someone else got attention, The food is the same as yesterday, I was moved from my spot, The human is stressed, Change has occurred, I cannot reach the counter, The sunbeam moved</span></div>
+    <div class="slot"><span class="slot-name">catWisdom:</span> <span class="slot-options">If I fit I sit. This applies to all problems, Stare at it until it becomes uncomfortable, Nap on it. Everything is clearer after nap, Have you tried being cuter?, This is a problem for 3am me, Simply choose chaos, Sit on something important. Now you have leverage, The solution is violence. Or treats. Same energy</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"Ancient cat proverb: <em>{proverb}</em>."</div>
+    <div class="slot"><span class="slot-name">proverb:</span> <span class="slot-options">If it fits you must sits, Knock first ask questions never, The hand that feeds you is also fun to bite, Every surface is a bed if you're brave enough, Closed doors are a personal insult, The 3am scream gets the worm, If you can't join them sit on their keyboard, A watched bowl never fills fast enough, Hairballs are just feelings leaving the body, Those who sprint at 3am win the race no one else is running, If you ignore it hard enough it becomes someone else's problem, The cardboard box is mightier than the expensive bed</span></div>
+    <div class="examples">
+      <h4>These work better WITHOUT the frame:</h4>
+      <div class="example">"A watched bowl never fills fast enough."</div>
+      <div class="example">"Closed doors are a personal insult."</div>
+      <div class="example">"If you ignore it hard enough it becomes someone else's problem."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"<em>{blunt}</em>"</div>
+    <div class="slot"><span class="slot-name">blunt:</span> <span class="slot-options">You already know what to do. You just don't want to., That's not going to work and you know it., Stop asking for permission., You're overthinking this., It's not that complicated., You're avoiding the real problem., That excuse is tired., You can do hard things. Do the hard thing., Nobody's coming to save you. Save yourself., Say the thing. Send the text. Make the call., Waiting isn't a strategy., The answer is no. You knew that., You're not confused. You're scared., Do it badly. Do it anyway., Stop rehearsing conversations that won't happen.</span></div>
+    <div class="examples">
+      <h4>These are already good standalone:</h4>
+      <div class="example">"You're not confused. You're scared."</div>
+      <div class="example">"Stop rehearsing conversations that won't happen."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"Here's the thing: <em>{truth}</em>."</div>
+    <div class="slot"><span class="slot-name">truth:</span> <span class="slot-options">most problems solve themselves if you stop poking them, people aren't thinking about you as much as you think, you can't control what you can't control, good enough is usually good enough, not everything needs to be fixed, sometimes the answer is just 'wait', you're allowed to change your mind, it probably won't matter in five years, you're not behind you're on your own timeline, done is better than perfect, rest isn't quitting, some things are hard because they're hard not because you're bad at them</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"The thing about <em>{topic}</em> is <em>{insight}</em>."</div>
+    <div class="slot"><span class="slot-name">topic:</span> <span class="slot-options">waiting, watching, wanting, losing things, finding things, being alone, being with someone, change, staying the same, time, comfort, home</span></div>
+    <div class="slot"><span class="slot-name">insight:</span> <span class="slot-options">you don't know you're doing it until you stop, it changes you even when nothing happens, you can do it wrong for a long time before you notice, the feeling outlasts the thing, everyone does it differently and thinks their way is the only way, it's simpler than you make it, it takes as long as it takes, you can't force it, sometimes it finds you, you already know how you just forgot, the hard part is the beginning. Or the end. Actually all of it.</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"I used to think <em>{before}</em>. Now I think <em>{after}</em>."</div>
+    <div class="slot"><span class="slot-name">before:</span> <span class="slot-options">everything mattered, nothing mattered, the world was bigger, I needed more, other cats had it figured out, the answer was coming, busy meant important, being right was the point, comfort was weakness, I had to understand everything</span></div>
+    <div class="slot"><span class="slot-name">after:</span> <span class="slot-options">only some things matter but they matter a lot, the small things are the whole thing, the world is exactly the right size, I have enough, nobody has it figured out and that's fine, the answer is the question, still is where the good stuff happens, being kind is the point, comfort is the point, understanding isn't the same as knowing</span></div>
+  </div>
+
+  <h2>EXISTENTIAL Templates</h2>
+
+  <div class="template">
+    <div class="category">existential</div>
+    <div class="pattern">"What is <em>{thing}</em> but <em>{catPhilosophy}</em>?"</div>
+    <div class="slot"><span class="slot-name">thing:</span> <span class="slot-options">life, the universe, existence, consciousness, time, the void, reality, meaning, love, truth</span></div>
+    <div class="slot"><span class="slot-name">catPhilosophy:</span> <span class="slot-options">the space between meals, a series of naps interrupted by chaos, waiting for a door to be opened then not going through it, knocking things off tables to see if gravity still works, searching for the warm spot, wanting outside then inside then outside again, staring at nothing until something stares back, a box within a box within a box, being pet wrong and having to bite about it</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">existential</div>
+    <div class="pattern">"I've been watching <em>{thing}</em> and I think <em>{thought}</em>."</div>
+    <div class="slot"><span class="slot-name">thing:</span> <span class="slot-options">the birds, the rain, you sleep, the shadows move, dust float in the light, the ceiling for hours, the same spot on the wall, nothing in particular, the world outside, time pass</span></div>
+    <div class="slot"><span class="slot-name">thought:</span> <span class="slot-options">they know something we don't, none of it matters and all of it matters, there's a pattern but I can't prove it, the answer is just out of reach, I almost understand everything, we're all just waiting, movement is its own kind of stillness, the small things are the big things, I've been here before somehow, maybe this is all there is and that's okay</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">existential</div>
+    <div class="pattern">"Sometimes I wonder <em>{wonder}</em>."</div>
+    <div class="slot"><span class="slot-name">wonder:</span> <span class="slot-options">if the birds think about me too, where the sun goes when it leaves the window, if my reflection knows things I don't, what the other side of the door is really like, if everyone feels this quiet and just doesn't say, if I was someone else before this, why some moments feel longer than others, if the humans know how short it all is, what the rain remembers, if sleep is practice for something, if this is the good part or we're still waiting, where all the lost toys go</span></div>
+    <div class="examples">
+      <h4>These work well as-is:</h4>
+      <div class="example">"Sometimes I wonder if this is the good part or we're still waiting."</div>
+      <div class="example">"Sometimes I wonder if the humans know how short it all is."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">existential</div>
+    <div class="pattern">"<em>{observation}</em>. <em>{musing}</em>."</div>
+    <div class="slot"><span class="slot-name">observation:</span> <span class="slot-options">The sunbeam moved again, Another day ended, The house got quiet, Everyone left, The light changed, I woke up in a different spot than I fell asleep, The bird came back to the same branch, Snow fell and then it was gone, You looked sad today, Nothing happened and everything felt different</span></div>
+    <div class="slot"><span class="slot-name">musing:</span> <span class="slot-options">I don't know what that means but I felt it, Maybe that's how time works, I think that's supposed to mean something, I sat with that for a while, I don't have words for it but I know what it is, I watched until I understood or thought I did, Some things just pass through, I'll think about it again tomorrow, That's the whole story I guess, I'm still thinking about it</span></div>
+  </div>
+
+  <h2>DEMANDING Templates</h2>
+
+  <div class="template">
+    <div class="category">demanding</div>
+    <div class="pattern">"<em>{offer}</em>. <em>{expectation}</em>."</div>
+    <div class="slot"><span class="slot-name">offer:</span> <span class="slot-options">I will sit with you, I'll purr, I'll let you pet me, I'll be cute, I'll provide companionship, I'll keep your lap warm, I'll guard you while you sleep, I'll bring you a gift, I'll grace you with my presence, I'll share my wisdom</span></div>
+    <div class="slot"><span class="slot-name">expectation:</span> <span class="slot-options">You know what I expect in return, Treats are appreciated, The bowl should be full when I check, This isn't charity, I trust you understand the arrangement, My terms are reasonable, We have an agreement, Compensation is expected, Consider what you owe me, This is a two-way street</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">demanding</div>
+    <div class="pattern">"I <em>{action}</em>. Therefore, <em>{consequence}</em>."</div>
+    <div class="slot"><span class="slot-name">action:</span> <span class="slot-options">sat on your laptop, woke you up gently (at 5am), didn't bite you (hard), tolerated the new furniture, let the dog live another day, used the litter box (not your shoes), came when you called (eventually), shared the bed (most of it), made biscuits on your stomach</span></div>
+    <div class="slot"><span class="slot-name">consequence:</span> <span class="slot-options">I deserve treats, breakfast should be immediate, I've earned chin scratches, you owe me, the debt is noted, payment is expected, I'll be collecting later, we're square (for now), I expect compensation, my generosity should be recognized</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">demanding</div>
+    <div class="pattern">"<em>{demand}</em>. <em>{orElse}</em>."</div>
+    <div class="slot"><span class="slot-name">demand:</span> <span class="slot-options">Feed me, Open this door, Pet me. Now stop. Now pet me again, Make room, Acknowledge my presence, Give me that thing you're eating, Turn on the sink, Stop what you're doing and look at me, Lift the blanket, Retrieve my toy from under the couch</span></div>
+    <div class="slot"><span class="slot-name">orElse:</span> <span class="slot-options">Or face the consequences, I'll wait. *stares*, The clock is ticking, You have until I count to three. One. Three., Don't test me, This is non-negotiable, Something will break. Mysteriously., I know where you sleep, My patience is not infinite. It ran out 5 minutes ago</span></div>
+  </div>
+
+  <h2>META Templates</h2>
+
+  <div class="template">
+    <div class="category">meta</div>
+    <div class="pattern">"<em>{setup}</em> <em>{punchline}</em>"</div>
+    <div class="slot"><span class="slot-name">setup:</span> <span class="slot-options">You're taking advice from a virtual cat., This is what the internet has come to., Somewhere your ancestors are watching., A cat on a screen just told you what to do., You clicked 'ask the oracle' for this., This is peak humanity., Screenshot this. Prove nothing is sacred.</span></div>
+    <div class="slot"><span class="slot-name">punchline:</span> <span class="slot-options">And you know what? Valid., I respect that about you., They would be so confused. And proud?, And you're going to listen aren't you., No judgment. Okay some judgment., We've both made choices today., This is the future they warned us about. It's great.</span></div>
+  </div>
+
+  <h2>GIFT-GIVING WISDOM Templates</h2>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"Do it like I do with <em>{gift}</em>: <em>{wisdom}</em>."</div>
+    <div class="slot"><span class="slot-name">gift:</span> <span class="slot-options">dead birds, mice, things I find, my offerings, gifts, the stuff I catch, treasures from outside, bugs I bring home</span></div>
+    <div class="slot"><span class="slot-name">wisdom:</span> <span class="slot-options">give your best expect nothing, offer it anyway even if they don't understand, the effort is the point, you can't control how it's received, do it because you want to not for the reaction, some gifts aren't appreciated until later, intent matters more than outcome, showing up is the whole thing</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"When I bring my human <em>{gift}</em>, <em>{observation}</em>. <em>{lesson}</em>."</div>
+    <div class="slot"><span class="slot-name">gift:</span> <span class="slot-options">a dead bird, half a mouse, something I caught, a gift from outside, my best work, a prize</span></div>
+    <div class="slot"><span class="slot-name">observation:</span> <span class="slot-options">they never appreciate it, they make that face, they don't understand, they seem confused, they don't eat it, they act weird about it</span></div>
+    <div class="slot"><span class="slot-name">lesson:</span> <span class="slot-options">I bring it anyway. That's love., Doesn't stop me. Shouldn't stop you., Their reaction isn't my business., I know what I meant by it., Do it for you not for them., Give freely. The rest isn't up to you.</span></div>
+  </div>
+
+  <div class="template">
+    <div class="category">wise</div>
+    <div class="pattern">"I once <em>{attempt}</em>. <em>{outcome}</em>. <em>{takeaway}</em>."</div>
+    <div class="slot"><span class="slot-name">attempt:</span> <span class="slot-options">tried to bring a bird inside, caught something too big to carry, brought a live one by accident, offered my best catch, worked really hard on a gift, dragged something home</span></div>
+    <div class="slot"><span class="slot-name">outcome:</span> <span class="slot-options">It escaped, It didn't go as planned, They weren't impressed, It got complicated, The whole thing fell apart, It was chaos</span></div>
+    <div class="slot"><span class="slot-name">takeaway:</span> <span class="slot-options">The point is I tried., Effort still counts., You can't control everything., Sometimes the attempt IS the thing., Failure is just information., I'd do it again.</span></div>
+  </div>
+
+  <h2>ACCEPTING/NURTURING Templates</h2>
+
+  <div class="template">
+    <div class="category">nurturing</div>
+    <div class="pattern">"You <em>{flaw}</em>. <em>{acceptance}</em>."</div>
+    <div class="slot"><span class="slot-name">flaw:</span> <span class="slot-options">didn't do the thing, made a mess, failed again, said the wrong thing, let someone down, aren't where you thought you'd be, keep making the same mistake, don't have it together, forgot something important, aren't your best self right now</span></div>
+    <div class="slot"><span class="slot-name">acceptance:</span> <span class="slot-options">Okay, And?, Still here, So what, That's allowed, You're still you, I've seen worse, Doesn't change anything, The sun still came up, I still chose you</span></div>
+    <div class="examples">
+      <h4>Example outputs:</h4>
+      <div class="example">"You failed again. Still here."</div>
+      <div class="example">"You aren't your best self right now. That's allowed."</div>
+    </div>
+  </div>
+
+  <div class="template">
+    <div class="category">nurturing</div>
+    <div class="pattern">"I know you <em>{truth}</em>. <em>{response}</em>."</div>
+    <div class="slot"><span class="slot-name">truth:</span> <span class="slot-options">think you're not good enough, feel like a fraud, worry you're failing, compare yourself to others, don't believe it when people say nice things, carry more than you show, think you should be further along, are harder on yourself than anyone, hide the messy parts, pretend you're fine when you're not</span></div>
+    <div class="slot"><span class="slot-name">response:</span> <span class="slot-options">I don't care about any of that, That's not what I see, I just see you, None of that matters to me, You're warm and you feed me. We're good, I'm a cat. I don't do expectations, You're exactly who I signed up for, I see you. The real you. It's fine, Humans are weird. I accept this, You're my human. That's enough</span></div>
+  </div>
+
+</body>
+</html>

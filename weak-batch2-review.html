@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weak Batch 2 - Oracle Review</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    h1 { color: #ff6b9d; margin-bottom: 5px; }
+    .subtitle { color: #888; margin-bottom: 20px; font-size: 0.95em; }
+    .stats {
+      background: #16213e;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border: 1px solid #0f3460;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.8em; color: #888; }
+    .stat-value { font-size: 1.3em; font-weight: bold; }
+    .stat-value.keep { color: #4ecca3; }
+    .stat-value.cut { color: #e94560; }
+    .stat-value.edit { color: #ffd93d; }
+    .quote-card {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 4px solid #666;
+      transition: all 0.2s;
+    }
+    .quote-card.decided-keep { border-left-color: #4ecca3; opacity: 0.6; }
+    .quote-card.decided-cut { border-left-color: #e94560; opacity: 0.4; }
+    .quote-card.decided-edit { border-left-color: #ffd93d; opacity: 0.7; }
+    .original {
+      font-size: 1.1em;
+      padding: 12px 15px;
+      background: #0d1117;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border-left: 3px solid #e94560;
+    }
+    .original-label { font-size: 0.75em; color: #e94560; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+    .issue-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7em;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+    .tag-fortune-cookie { background: #8b7355; color: #fff; }
+    .tag-therapy-speak { background: #6b5b95; color: #fff; }
+    .tag-cliche { background: #d64045; color: #fff; }
+    .tag-generic { background: #f18f01; color: #fff; }
+    .tag-weak { background: #c1121f; color: #fff; }
+    .tag-vague { background: #6a3e37; color: #fff; }
+    .tag-clunky { background: #a23b72; color: #fff; }
+    .tag-predictable { background: #588b8b; color: #fff; }
+    .tag-whiny { background: #cd5c5c; color: #fff; }
+    .tag-cynical { background: #556270; color: #fff; }
+    .tag-overdone { background: #7c5a3c; color: #fff; }
+    .tag-mixed { background: #8b4513; color: #fff; }
+    .tag-dismissive { background: #6b3410; color: #fff; }
+    .tag-reckless { background: #8b0000; color: #fff; }
+    .tag-avoidance { background: #614e4e; color: #fff; }
+    .tag-mystical { background: #483d8b; color: #fff; }
+    .tag-simple { background: #5a4a42; color: #fff; }
+    .category-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #0f3460;
+      border-radius: 4px;
+      font-size: 0.75em;
+      color: #c9b1ff;
+    }
+    .suggestion {
+      font-size: 1.05em;
+      padding: 12px 15px;
+      background: #0f2027;
+      border-radius: 6px;
+      margin: 12px 0;
+      border-left: 3px solid #4ecca3;
+    }
+    .suggestion-label { font-size: 0.75em; color: #4ecca3; margin-bottom: 5px; }
+    .voice-attribution { font-size: 0.8em; color: #888; font-style: italic; margin-top: 5px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    button {
+      padding: 8px 14px;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button:hover { transform: scale(1.03); }
+    .btn-keep { background: #4ecca3; color: #1a1a2e; font-weight: bold; }
+    .btn-cut { background: #e94560; color: #fff; }
+    .btn-use-suggestion { background: #2d6a4f; color: #fff; }
+    .btn-edit { background: #ffd93d; color: #1a1a2e; }
+    .btn-primary { background: #4ecca3; color: #1a1a2e; font-weight: bold; padding: 12px 24px; }
+    .edit-area { display: none; margin-top: 10px; }
+    .edit-area.visible { display: block; }
+    .edit-area textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.95em;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #eee;
+      resize: vertical;
+      min-height: 60px;
+    }
+    .edit-area button { margin-top: 8px; }
+    .decision-badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-left: auto;
+    }
+    .decision-badge.keep { background: #4ecca3; color: #1a1a2e; }
+    .decision-badge.cut { background: #e94560; color: #fff; }
+    .decision-badge.edit { background: #ffd93d; color: #1a1a2e; }
+    .output {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+      display: none;
+    }
+    .output h3 { color: #4ecca3; margin-top: 0; }
+    .output pre {
+      background: #161b22;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 0.85em;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .copy-btn { background: #238636; color: white; margin-bottom: 10px; margin-right: 10px; }
+    .progress-bar {
+      height: 4px;
+      background: #0f3460;
+      border-radius: 2px;
+      margin-top: 10px;
+      overflow: hidden;
+      width: 200px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ecca3, #ffd93d);
+      transition: width 0.3s;
+    }
+    .shortcuts {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+    .shortcuts strong { color: #4ecca3; }
+  </style>
+</head>
+<body>
+  <h1>Weak Batch 2 - Oracle Review</h1>
+  <p class="subtitle">50 weak oracle responses needing catification. Issue tags, suggestions with voice attribution, K/X/S/E/N/P shortcuts.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-label">Keep Original</span>
+      <span class="stat-value keep" id="keep-count">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Cut</span>
+      <span class="stat-value cut" id="cut-count">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Use Suggestion</span>
+      <span class="stat-value edit" id="edit-count">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Remaining</span>
+      <span class="stat-value" id="remaining-count">0</span>
+    </div>
+    <button class="btn-primary" onclick="generateOutput()">Generate Results</button>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress" style="width: 0%"></div>
+    </div>
+    <div class="shortcuts">
+      <strong>K</strong>=Keep, <strong>X</strong>=Cut, <strong>S</strong>=Use Suggestion, <strong>E</strong>=Edit, <strong>N</strong>=Next, <strong>P</strong>=Prev
+    </div>
+  </div>
+
+  <div id="quotes-container"></div>
+
+  <div id="output" class="output">
+    <h3>Results</h3>
+    <button class="copy-btn" onclick="copyToKeep()">Copy KEEP/EDITED quotes</button>
+    <button class="copy-btn" onclick="copyToCut()" style="background: #e94560;">Copy CUT list</button>
+    <h4 style="color: #4ecca3;">Quotes to KEEP (paste into oracleResponses.ts):</h4>
+    <pre><code id="keep-output"></code></pre>
+    <h4 style="color: #e94560; margin-top: 20px;">Quotes to CUT (search and delete):</h4>
+    <pre><code id="cut-output"></code></pre>
+  </div>
+
+  <script>
+    const quotes = [
+      { original: "Find your sunbeam. Sit in it. That's the whole philosophy.", issue: "CAT CLICHE", category: "wise", suggestion: "The sun moves but you don't. That's the difference between us.", voice: "Oscar Wilde" },
+      { original: "The answer is self-care. And by self-care I mean blankets.", issue: "OVERDONE", category: "wise", suggestion: "Self-care is what happens when you stop performing for people who aren't watching.", voice: "George Carlin" },
+      { original: "Life is short. Pet more cats.", issue: "FORTUNE COOKIE", category: "wise", suggestion: "Life is short. Stop waiting for permission you'll never get.", voice: "Oscar Wilde" },
+      { original: "I'm helping. Don't make it weird.", issue: "WEAK", category: "wise", suggestion: "I'm helping by not helping. That's advanced assistance.", voice: "Mitch Hedberg" },
+      { original: "Yes, I care. No, I don't want to talk about it.", issue: "GENERIC", category: "wise", suggestion: "Yes, I care. No, this doesn't entitle you to my process.", voice: "Miss Piggy" },
+      { original: "Ugh. Fine. But you owe me.", issue: "TOO SIMPLE", category: "wise", suggestion: "Fine. I'm doing this. Don't thank me. Actually, thank me quietly.", voice: "Dorothy Parker" },
+      { original: "I have principles. Unfortunately.", issue: "WEAK", category: "wise", suggestion: "I have principles. They're expensive. You're welcome.", voice: "Oscar Wilde" },
+      { original: "My conscience won't shut up. So fine.", issue: "THERAPY SPEAK", category: "wise", suggestion: "My conscience is the worst roommate. So here we are.", voice: "Mitch Hedberg" },
+      { original: "Grace under pressure. Resentment under the surface.", issue: "CLUNKY", category: "wise", suggestion: "Grace under pressure just means your rage is well-organized.", voice: "Dorothy Parker" },
+      { original: "I'll be civil. Don't push it.", issue: "GENERIC", category: "wise", suggestion: "I'll be civil. That's my most aggressive move.", voice: "Miss Piggy" },
+      { original: "Morals can be inconvenient.", issue: "WEAK", category: "wise", suggestion: "Morals are inconvenient. They're also the only thing that makes you interesting.", voice: "Oscar Wilde" },
+      { original: "The moral high ground has a terrible view. But here I am.", issue: "MIXED METAPHOR", category: "wise", suggestion: "The moral high ground is lonely. But at least you can see what's coming.", voice: "George Carlin" },
+      { original: "Apologizing won't kill you. It might feel like it will.", issue: "PREDICTABLE", category: "wise", suggestion: "Apologizing won't kill you. The ego death is the whole point.", voice: "Oscar Wilde" },
+      { original: "Sigh. Fine. The right thing it is.", issue: "WHINY", category: "wise", suggestion: "The right thing is boring. Let's do it anyway.", voice: "Statler & Waldorf" },
+      { original: "Against my better judgment, I care.", issue: "GENERIC", category: "wise", suggestion: "Against my better judgment, I think your better judgment is worth fighting for.", voice: "Oscar Wilde" },
+      { original: "Virtue is its own punishment.", issue: "CYNICAL BUT TOOTHLESS", category: "wise", suggestion: "Virtue is its own punishment. That's how you know it's working.", voice: "George Carlin" },
+      { original: "Watch how I sit in the window. There is nothing else to do.", issue: "VAGUE ZEN", category: "wise", suggestion: "Watch how I sit in the window. I'm teaching you what intentional looks like.", voice: "George Carlin" },
+      { original: "The empty bowl will be full again. Until then, I wait.", issue: "GENERIC PATIENCE", category: "wise", suggestion: "The empty bowl will be full again. Waiting is just deciding the rage can wait too.", voice: "Mitch Hedberg" },
+      { original: "I was angry. Now I am not. The moment passed.", issue: "WEAK", category: "wise", suggestion: "I was angry. Now I'm not. The moment passed so I could plan something better.", voice: "George Carlin" },
+      { original: "I sit. That is all. That is enough.", issue: "FORTUNE COOKIE ZEN", category: "wise", suggestion: "I sit. That is all. You could learn something from complete refusal.", voice: "Dorothy Parker" },
+      { original: "The rain will stop. I will wait. Waiting is not suffering.", issue: "GENERIC", category: "wise", suggestion: "The rain will stop. I'll wait. Suffering is optional. I'm choosing it anyway.", voice: "Mitch Hedberg" },
+      { original: "When the sun moves, I move. This is not a problem.", issue: "VAGUE", category: "wise", suggestion: "When the sun moves, I move. Resistance to change is just exhaustion with better PR.", voice: "George Carlin" },
+      { original: "This box is my whole world right now. It is enough.", issue: "CONTENTMENT PLATITUDE", category: "wise", suggestion: "This box is my whole world right now. Your whole world is a lot bigger and somehow smaller.", voice: "Oscar Wilde" },
+      { original: "The door was closed. It bothered me. Then it didn't.", issue: "WEAK", category: "wise", suggestion: "The door was closed. I forgot why it mattered. That's how obsessions die.", voice: "Mitch Hedberg" },
+      { original: "Everything changes. The sunbeam moves. I follow.", issue: "GENERIC", category: "wise", suggestion: "Everything changes. The sunbeam moves. I follow. That's not going with the flow. That's leading it.", voice: "Oscar Wilde" },
+      { original: "Plans are optional.", issue: "TOO BRIEF", category: "wise", suggestion: "Plans are optional. Reality is mandatory. Pick your battles.", voice: "George Carlin" },
+      { original: "Do nothing strategically.", issue: "CUTE BUT UNCLEAR", category: "wise", suggestion: "Do nothing strategically. That's how you become unstoppable.", voice: "Mitch Hedberg" },
+      { original: "You're going to do it anyway.", issue: "DEFEATIST", category: "wise", suggestion: "You're going to do it anyway. That's where character lives.", voice: "George Carlin" },
+      { original: "The blanket was disturbed. Now it is settled. So am I.", issue: "WEAK METAPHOR", category: "wise", suggestion: "The blanket was disturbed. Now I've decided to haunt it peacefully.", voice: "Oscar Wilde" },
+      { original: "I do not worry about dinner. Dinner comes when it comes.", issue: "GENERIC TRUST", category: "wise", suggestion: "I don't worry about dinner. I demand it loudly and dinner respects that.", voice: "Miss Piggy" },
+      { original: "This corner is perfect. Until it isn't. Then I find another.", issue: "VAGUE", category: "wise", suggestion: "This corner is perfect. Until I've made it mine. Then it's ruined.", voice: "Mitch Hedberg" },
+      { original: "You'll probably try again. That's just how you are.", issue: "WEAK", category: "wise", suggestion: "You'll try again. That's not hope. That's just compulsion with better marketing.", voice: "George Carlin" },
+      { original: "Mondays happen. And then they're over.", issue: "GENERIC", category: "wise", suggestion: "Mondays happen. They die like everything else. Be patient.", voice: "Statler & Waldorf" },
+      { original: "You trusted again. That says something about you.", issue: "VAGUE", category: "wise", suggestion: "You trusted again. That's either bravery or memory problems. Same result.", voice: "Mitch Hedberg" },
+      { original: "This part is bumpy. The ride isn't over.", issue: "GENERIC STRUGGLE", category: "wise", suggestion: "This part is bumpy. The ride isn't supposed to be smooth. That's just TV.", voice: "George Carlin" },
+      { original: "Well. Here we are.", issue: "TOO VAGUE", category: "wise", suggestion: "Well. Here we are. Make it count before someone notices.", voice: "Oscar Wilde" },
+      { original: "You're making this complicated. It doesn't have to be.", issue: "GENERIC", category: "wise", suggestion: "You're making this complicated because simple is terrifying.", voice: "George Carlin" },
+      { original: "Some problems fix themselves if you ignore them long enough.", issue: "AVOIDANCE", category: "wise", suggestion: "Some problems fix themselves. Most metastasize into better stories.", voice: "Mitch Hedberg" },
+      { original: "The box was empty. Then I sat in it. Now it's perfect.", issue: "CAT CLICHE", category: "wise", suggestion: "The box was empty. That was the point. Purpose is just what you put in the emptiness.", voice: "Oscar Wilde" },
+      { original: "You're thinking about this wrong. But that's okay.", issue: "WEAK", category: "wise", suggestion: "You're thinking about this wrong. So is everyone. We're all making it up.", voice: "George Carlin" },
+      { original: "The answer is probably simpler than you're making it.", issue: "GENERIC", category: "wise", suggestion: "The answer is simple. You're complex. They'll never meet. That's the whole game.", voice: "Oscar Wilde" },
+      { original: "I've seen this before. It worked out.", issue: "VAGUE", category: "wise", suggestion: "I've seen this before. It barely worked. But it worked.", voice: "Statler & Waldorf" },
+      { original: "It's outside. You're inside. It can't eat you.", issue: "WEAK", category: "wise", suggestion: "It's outside. You're inside. It's hunting the idea of you anyway.", voice: "Mitch Hedberg" },
+      { original: "Relax. You'll land on your feet.", issue: "CAT CLICHE", category: "wise", suggestion: "Relax. You'll land on your feet. Or you won't. Either way, you're awake for it.", voice: "George Carlin" },
+      { original: "You can think whatever you want.", issue: "DISMISSIVE", category: "wise", suggestion: "You can think whatever you want. Thoughts are free. Everything else costs.", voice: "Oscar Wilde" },
+      { original: "Comfort can be found in small dark places.", issue: "VAGUE MYSTICAL", category: "wise", suggestion: "Comfort can be found in small dark places. Humans call it avoidance. I call it strategy.", voice: "Mitch Hedberg" },
+      { original: "This is your chance. Strut your stuff.", issue: "GENERIC", category: "wise", suggestion: "This is your chance. You'll probably ruin it. Do it anyway.", voice: "Statler & Waldorf" },
+      { original: "Retreat under a blanket.", issue: "TOO SIMPLE", category: "wise", suggestion: "Retreat under a blanket. Call it meditation. Own the fiction.", voice: "Oscar Wilde" },
+      { original: "Stare at it long enough, it might change.", issue: "VAGUE", category: "wise", suggestion: "Stare at it long enough, you'll understand why it won't change.", voice: "George Carlin" },
+      { original: "Climb like you have no plan to get back down.", issue: "RECKLESS", category: "wise", suggestion: "Climb like you have no plan to get down. Firefighters love that energy.", voice: "Mitch Hedberg" }
+    ];
+
+    const container = document.getElementById('quotes-container');
+    const decisions = {};
+    let currentIndex = 0;
+
+    quotes.forEach((q, i) => {
+      decisions[i] = { status: 'pending', text: q.original, original: q.original };
+
+      const card = document.createElement('div');
+      card.className = 'quote-card';
+      card.id = `card-${i}`;
+
+      const tagClass = `tag-${q.issue.toLowerCase().replace(/ /g, '-').replace(/&/g, '')}`;
+
+      card.innerHTML = `
+        <div class="original">
+          <div class="original-label">
+            ORIGINAL
+            <span class="issue-tag ${tagClass}">${q.issue}</span>
+            <span class="category-tag">${q.category}</span>
+          </div>
+          ${q.original}
+        </div>
+        <div class="suggestion">
+          <div class="suggestion-label">SUGGESTED CATIFICATION</div>
+          ${q.suggestion}
+          <div class="voice-attribution">(${q.voice})</div>
+        </div>
+        <div class="actions">
+          <button class="btn-keep" onclick="decide(${i}, 'keep')">Keep</button>
+          <button class="btn-use-suggestion" onclick="decide(${i}, 'use-suggestion', \`${q.suggestion.replace(/`/g, "\\`").replace(/\$/g, "\\$")}\`)">Use Suggestion</button>
+          <button class="btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+          <button class="btn-edit" onclick="showEdit(${i})">Edit</button>
+          <span class="decision-badge" id="badge-${i}" style="display: none;"></span>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}" placeholder="Write your own version...">${q.suggestion}</textarea>
+          <button class="btn-use-suggestion" onclick="saveEdit(${i})">Save My Edit</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    function decide(i, status, customText = null) {
+      const card = document.getElementById(`card-${i}`);
+      const badge = document.getElementById(`badge-${i}`);
+      const q = quotes[i];
+
+      card.className = 'quote-card decided-' + (status === 'use-suggestion' ? 'edit' : status);
+      badge.style.display = 'block';
+
+      if (status === 'keep') {
+        decisions[i] = { status: 'keep', text: q.original, original: q.original, category: q.category };
+        badge.className = 'decision-badge keep';
+        badge.textContent = 'KEEPING';
+      } else if (status === 'cut') {
+        decisions[i] = { status: 'cut', text: q.original, original: q.original, category: q.category };
+        badge.className = 'decision-badge cut';
+        badge.textContent = 'CUTTING';
+      } else if (status === 'use-suggestion') {
+        decisions[i] = { status: 'edit', text: customText || q.suggestion, original: q.original, category: q.category };
+        badge.className = 'decision-badge edit';
+        badge.textContent = 'EDITED';
+      }
+
+      updateStats();
+    }
+
+    function showEdit(i) {
+      document.getElementById(`edit-${i}`).classList.toggle('visible');
+    }
+
+    function saveEdit(i) {
+      const text = document.getElementById(`textarea-${i}`).value;
+      if (text.trim()) {
+        decide(i, 'use-suggestion', text);
+        document.getElementById(`edit-${i}`).classList.remove('visible');
+      }
+    }
+
+    function updateStats() {
+      let keep = 0, cut = 0, edit = 0, pending = 0;
+      Object.values(decisions).forEach(d => {
+        if (d.status === 'keep') keep++;
+        else if (d.status === 'cut') cut++;
+        else if (d.status === 'edit') edit++;
+        else pending++;
+      });
+
+      document.getElementById('keep-count').textContent = keep;
+      document.getElementById('cut-count').textContent = cut;
+      document.getElementById('edit-count').textContent = edit;
+      document.getElementById('remaining-count').textContent = pending;
+
+      const total = Object.keys(decisions).length;
+      const done = keep + cut + edit;
+      document.getElementById('progress').style.width = (done / total * 100) + '%';
+    }
+
+    function generateOutput() {
+      const keepLines = [];
+      const cutLines = [];
+
+      Object.entries(decisions).forEach(([i, d]) => {
+        if (d.status === 'keep') {
+          // Keep original - no change needed
+        } else if (d.status === 'edit') {
+          // Edited - include new version
+          const escaped = d.text.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          keepLines.push(`{ text: '${escaped}', category: '${d.category}' },`);
+          cutLines.push(`"${d.original}"`);
+        } else if (d.status === 'cut') {
+          cutLines.push(`"${d.original}"`);
+        }
+      });
+
+      document.getElementById('keep-output').textContent = keepLines.length > 0 ? keepLines.join('\n') : '(No new quotes to add)';
+      document.getElementById('cut-output').textContent = cutLines.length > 0 ? cutLines.join('\n') : '(Nothing to cut)';
+      document.getElementById('output').style.display = 'block';
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyToKeep() {
+      navigator.clipboard.writeText(document.getElementById('keep-output').textContent);
+    }
+
+    function copyToCut() {
+      navigator.clipboard.writeText(document.getElementById('cut-output').textContent);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'TEXTAREA') return;
+
+      const card = document.querySelector('.quote-card:not(.decided-keep):not(.decided-cut):not(.decided-edit)');
+      if (!card) return;
+
+      const cardId = card.id.replace('card-', '');
+      const idx = parseInt(cardId);
+
+      if (e.key === 'k' || e.key === 'K') {
+        decide(idx, 'keep');
+      } else if (e.key === 'x' || e.key === 'X') {
+        decide(idx, 'cut');
+      } else if (e.key === 's' || e.key === 'S') {
+        decide(idx, 'use-suggestion');
+      } else if (e.key === 'e' || e.key === 'E') {
+        showEdit(idx);
+      }
+    });
+
+    updateStats();
+  </script>
+</body>
+</html>

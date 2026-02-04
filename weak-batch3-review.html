@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oracle Response Quality Review - Batch 3</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #ff6b9d; margin-bottom: 5px; }
+    h2 { color: #c9a227; margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .subtitle { color: #888; margin-bottom: 20px; }
+    .stats { background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; border: 1px solid #0f3460; display: flex; gap: 30px; align-items: center; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.8em; color: #888; }
+    .stat-value { font-size: 1.3em; font-weight: bold; }
+    .stat-value.total { color: #ff6b9d; }
+    .stat-value.keep { color: #4ecca3; }
+    .stat-value.cut { color: #e94560; }
+    .stat-value.edit { color: #ffd93d; }
+    .stat-value.pending { color: #888; }
+    .keyboard-hint { font-size: 0.75em; color: #666; margin-left: auto; }
+    .keyboard-hint kbd { background: #333; padding: 2px 6px; border-radius: 3px; margin: 0 2px; }
+    .issue-tag { display: inline-block; font-size: 0.7em; padding: 2px 8px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; }
+    .issue-wordy { background: #e94560; color: white; }
+    .issue-generic { background: #9b59b6; color: white; }
+    .issue-repeat { background: #e67e22; color: white; }
+    .issue-boring { background: #7f8c8d; color: white; }
+    .issue-zen { background: #3498db; color: white; }
+    .quote-card { background: #16213e; border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid #666; transition: all 0.2s; }
+    .quote-card.active { border: 2px solid #c9a227; box-shadow: 0 0 20px rgba(201, 162, 39, 0.3); }
+    .quote-card.decided-keep { border-left-color: #4ecca3; opacity: 0.5; }
+    .quote-card.decided-cut { border-left-color: #e94560; opacity: 0.3; }
+    .quote-card.decided-edit { border-left-color: #ffd93d; opacity: 0.6; }
+    .observation { font-size: 1.2em; padding: 10px 15px; background: #0d1117; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #c9a227; }
+    .category-tag { font-size: 0.7em; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+    .suggestion { font-size: 0.9em; color: #4ecca3; margin: 10px 0; padding: 10px 15px; background: rgba(78, 204, 163, 0.15); border-radius: 6px; border-left: 3px solid #4ecca3; }
+    .suggestion-text { font-style: italic; color: #7fdbbc; }
+    .voice-tag { font-size: 0.7em; color: #888; margin-left: 8px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    button { padding: 10px 18px; font-size: 0.95em; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+    button:hover { transform: scale(1.03); }
+    .btn-keep { background: #4ecca3; color: #1a1a2e; }
+    .btn-cut { background: #e94560; color: #fff; }
+    .btn-edit { background: #ffd93d; color: #1a1a2e; }
+    .btn-use-suggestion { background: #9b59b6; color: #fff; }
+    .btn-save { background: #4ecca3; color: #1a1a2e; }
+    .edit-area { display: none; margin-top: 12px; }
+    .edit-area.visible { display: block; }
+    .edit-area textarea { width: 100%; padding: 12px; font-size: 1.1em; background: #0d1117; border: 2px solid #4ecca3; border-radius: 6px; color: #eee; resize: vertical; min-height: 70px; }
+    .edit-area .edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .section-intro { color: #aaa; margin-bottom: 20px; padding: 15px; background: rgba(201, 162, 39, 0.1); border-radius: 8px; border-left: 3px solid #c9a227; }
+    .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+    .export-section h3 { color: #c9a227; margin-top: 0; }
+    #export-json { width: 100%; min-height: 200px; padding: 15px; font-family: monospace; font-size: 0.9em; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #4ecca3; resize: vertical; }
+    .copy-btn { margin-top: 10px; background: #c9a227; color: #1a1a2e; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Oracle Response Quality Review - Batch 3</h1>
+  <p class="subtitle">Zen platitudes & generic wisdom - add edge or cut</p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-label">Total</span><span class="stat-value total" id="total">0</span></div>
+    <div class="stat"><span class="stat-label">Pending</span><span class="stat-value pending" id="pending">0</span></div>
+    <div class="stat"><span class="stat-label">Keep</span><span class="stat-value keep" id="kept">0</span></div>
+    <div class="stat"><span class="stat-label">Cut</span><span class="stat-value cut" id="cut">0</span></div>
+    <div class="stat"><span class="stat-label">Edit</span><span class="stat-value edit" id="edited">0</span></div>
+    <div class="keyboard-hint">
+      <kbd>K</kbd> Keep <kbd>X</kbd> Cut <kbd>E</kbd> Edit <kbd>S</kbd> Use Suggestion <kbd>N</kbd> Next <kbd>P</kbd> Prev
+    </div>
+  </div>
+
+  <h2>Zen Platitudes</h2>
+  <div class="section-intro">Generic presence/stillness quotes - where's the cat? Where's the twist?</div>
+
+  <div class="quote-card" data-suggestion="I wanted the door open. Now I want it closed. Make up YOUR mind.">
+    <span class="issue-tag issue-zen">ZEN</span><div class="category-tag">wise</div>
+    <div class="observation">I wanted the door open. Now I don't.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"I wanted the door open. Now I want it closed. Make up YOUR mind."</span> <span class="voice-tag">— Carlin</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="I was angry. Now I'm not. The moment passed so I could plan something better.">
+    <span class="issue-tag issue-zen">ZEN</span><div class="category-tag">wise</div>
+    <div class="observation">I was angry. Now I am not. The moment passed.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"I was angry. Now I'm not. The moment passed so I could plan something better."</span> <span class="voice-tag">— Carlin</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">MEH</span><div class="category-tag">wise</div>
+    <div class="observation">I sit. That is all. That is enough.</div>
+    <div class="suggestion">CUT - or add twist</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-zen">ZEN</span><div class="category-tag">wise</div>
+    <div class="observation">The rain will stop. I will wait. Waiting is not suffering.</div>
+    <div class="suggestion">CUT - generic patience</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">MEH</span><div class="category-tag">wise</div>
+    <div class="observation">This box is my whole world right now. It is enough.</div>
+    <div class="suggestion">CUT - box cliché without twist</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-repeat">SIMILAR</span><div class="category-tag">wise</div>
+    <div class="observation">The door was closed. It bothered me. Then it didn't.</div>
+    <div class="suggestion">CUT - same structure as other door response</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-repeat">SUNBEAM</span><div class="category-tag">wise</div>
+    <div class="observation">Everything changes. The sunbeam moves. I follow.</div>
+    <div class="suggestion">CUT - still has sunbeam, generic impermanence</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Plans are optional. Results are not.">
+    <span class="issue-tag issue-boring">BRIEF</span><div class="category-tag">wise</div>
+    <div class="observation">Plans are optional.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Plans are optional. Results are not."</span> <span class="voice-tag">— Wilde</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">WEAK</span><div class="category-tag">wise</div>
+    <div class="observation">You're going to do it anyway.</div>
+    <div class="suggestion">CUT - defeatist without humor</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">WEAK</span><div class="category-tag">wise</div>
+    <div class="observation">The blanket was disturbed. Now it is settled. So am I.</div>
+    <div class="suggestion">CUT - weak metaphor</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">MEH</span><div class="category-tag">wise</div>
+    <div class="observation">This corner is perfect. Until it isn't. Then I find another.</div>
+    <div class="suggestion">CUT - vague adaptation wisdom</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <h2>Generic Wisdom</h2>
+  <div class="section-intro">Could be any fortune cookie. Needs cat edge.</div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">You'll probably try again. That's just how you are.</div>
+    <div class="suggestion">CUT - weak observation</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Mondays die like everything else.">
+    <span class="issue-tag issue-generic">WEAK</span><div class="category-tag">wise</div>
+    <div class="observation">Mondays happen. And then they're over.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Mondays die like everything else."</span> <span class="voice-tag">— Statler</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">This part is bumpy. The ride isn't over.</div>
+    <div class="suggestion">CUT - generic struggle metaphor</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Well. Here we are. Make it count before someone notices.">
+    <span class="issue-tag issue-boring">VAGUE</span><div class="category-tag">wise</div>
+    <div class="observation">Well. Here we are.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Well. Here we are. Make it count before someone notices."</span> <span class="voice-tag">— Wilde</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="You're making this complicated. Simple is terrifying, isn't it?">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">You're making this complicated. It doesn't have to be.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"You're making this complicated. Simple is terrifying, isn't it?"</span> <span class="voice-tag">— Carlin</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Some problems fix themselves. Most metastasize.">
+    <span class="issue-tag issue-generic">AVOIDANCE</span><div class="category-tag">wise</div>
+    <div class="observation">Some problems fix themselves if you ignore them long enough.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Some problems fix themselves. Most metastasize."</span> <span class="voice-tag">— Hedberg</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">Not everything needs a plan. Some things just happen.</div>
+    <div class="suggestion">CUT - generic anti-planning</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="You're thinking about this wrong. So is everyone. Pick your wrong.">
+    <span class="issue-tag issue-generic">WEAK</span><div class="category-tag">wise</div>
+    <div class="observation">You're thinking about this wrong. But that's okay.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"You're thinking about this wrong. So is everyone. Pick your wrong."</span> <span class="voice-tag">— Carlin</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">The answer is probably simpler than you're making it.</div>
+    <div class="suggestion">CUT - generic simplicity</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="I've seen this before. It barely worked. But it worked.">
+    <span class="issue-tag issue-generic">VAGUE</span><div class="category-tag">wise</div>
+    <div class="observation">I've seen this before. It worked out.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"I've seen this before. It barely worked. But it worked."</span> <span class="voice-tag">— Statler</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">CAT CLICHE</span><div class="category-tag">wise</div>
+    <div class="observation">Relax. You'll land on your feet.</div>
+    <div class="suggestion">CUT - overdone cat cliché</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="">
+    <span class="issue-tag issue-boring">DISMISSIVE</span><div class="category-tag">wise</div>
+    <div class="observation">You can think whatever you want.</div>
+    <div class="suggestion">CUT - dismissive without purpose</div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Comfort can be found in small dark places. Humans call it avoidance. I call it strategy.">
+    <span class="issue-tag issue-boring">VAGUE</span><div class="category-tag">wise</div>
+    <div class="observation">Comfort can be found in small dark places.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Comfort can be found in small dark places. Humans call it avoidance. I call it strategy."</span> <span class="voice-tag">— Hedberg</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="This is your chance. You'll probably blow it. Do it anyway.">
+    <span class="issue-tag issue-generic">GENERIC</span><div class="category-tag">wise</div>
+    <div class="observation">This is your chance. Strut your stuff.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"This is your chance. You'll probably blow it. Do it anyway."</span> <span class="voice-tag">— Statler</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Retreat under a blanket. Call it meditation. Own the fiction.">
+    <span class="issue-tag issue-boring">SIMPLE</span><div class="category-tag">wise</div>
+    <div class="observation">Retreat under a blanket.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Retreat under a blanket. Call it meditation. Own the fiction."</span> <span class="voice-tag">— Wilde</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Stare at it long enough, you'll understand why it won't change.">
+    <span class="issue-tag issue-boring">VAGUE</span><div class="category-tag">wise</div>
+    <div class="observation">Stare at it long enough, it might change.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Stare at it long enough, you'll understand why it won't change."</span> <span class="voice-tag">— Carlin</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="quote-card" data-suggestion="Climb like you have no plan to get down. Firefighters love that energy.">
+    <span class="issue-tag issue-boring">RECKLESS</span><div class="category-tag">wise</div>
+    <div class="observation">Climb like you have no plan to get back down.</div>
+    <div class="suggestion">Suggestion: <span class="suggestion-text">"Climb like you have no plan to get down. Firefighters love that energy."</span> <span class="voice-tag">— Hedberg</span></div>
+    <div class="actions">
+      <button class="btn-keep">Keep (K)</button>
+      <button class="btn-cut">Cut (X)</button>
+      <button class="btn-use-suggestion">Use Suggestion (S)</button>
+      <button class="btn-edit">Custom Edit (E)</button>
+    </div>
+    <div class="edit-area"><textarea></textarea><div class="edit-actions"><button class="btn-save">Save</button></div></div>
+  </div>
+
+  <div class="export-section">
+    <h3>Export Decisions</h3>
+    <p style="color:#888;font-size:0.9em;">JSON updates live. Copy when done.</p>
+    <textarea id="export-json" readonly>[]</textarea>
+    <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+  </div>
+
+  <script>
+    let activeIndex = 0;
+    const cards = document.querySelectorAll('.quote-card');
+
+    function updateStats() {
+      const total = cards.length;
+      const kept = document.querySelectorAll('.decided-keep').length;
+      const cut = document.querySelectorAll('.decided-cut').length;
+      const edited = document.querySelectorAll('.decided-edit').length;
+      const pending = total - kept - cut - edited;
+
+      document.getElementById('total').textContent = total;
+      document.getElementById('pending').textContent = pending;
+      document.getElementById('kept').textContent = kept;
+      document.getElementById('cut').textContent = cut;
+      document.getElementById('edited').textContent = edited;
+    }
+
+    function updateExport() {
+      const items = [];
+      cards.forEach(card => {
+        const obs = card.querySelector('.observation');
+        let action = 'pending';
+        let text = obs.textContent;
+
+        if (card.classList.contains('decided-keep')) action = 'keep';
+        else if (card.classList.contains('decided-cut')) action = 'cut';
+        else if (card.classList.contains('decided-edit')) {
+          action = 'edit';
+          text = card.querySelector('textarea').value || obs.textContent;
+        }
+
+        if (action !== 'pending') {
+          items.push({
+            original: obs.dataset.original || obs.textContent,
+            text: text,
+            category: card.querySelector('.category-tag').textContent,
+            action: action
+          });
+        }
+      });
+      document.getElementById('export-json').value = JSON.stringify(items, null, 2);
+    }
+
+    function setActiveCard(index) {
+      cards.forEach(c => c.classList.remove('active'));
+      if (index >= 0 && index < cards.length) {
+        activeIndex = index;
+        cards[activeIndex].classList.add('active');
+        cards[activeIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function nextUndecided() {
+      for (let i = activeIndex + 1; i < cards.length; i++) {
+        const card = cards[i];
+        if (!card.classList.contains('decided-keep') &&
+            !card.classList.contains('decided-cut') &&
+            !card.classList.contains('decided-edit')) {
+          setActiveCard(i);
+          return;
+        }
+      }
+      for (let i = 0; i < activeIndex; i++) {
+        const card = cards[i];
+        if (!card.classList.contains('decided-keep') &&
+            !card.classList.contains('decided-cut') &&
+            !card.classList.contains('decided-edit')) {
+          setActiveCard(i);
+          return;
+        }
+      }
+    }
+
+    function decide(card, decision) {
+      const obs = card.querySelector('.observation');
+      if (!obs.dataset.original) obs.dataset.original = obs.textContent;
+
+      card.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+      card.querySelector('.edit-area').classList.remove('visible');
+
+      if (decision === 'keep') {
+        card.classList.add('decided-keep');
+      } else if (decision === 'cut') {
+        card.classList.add('decided-cut');
+      } else if (decision === 'edit') {
+        card.classList.add('decided-edit');
+        card.querySelector('.edit-area').classList.add('visible');
+        card.querySelector('textarea').focus();
+      } else if (decision === 'suggestion') {
+        const suggestion = card.dataset.suggestion;
+        if (suggestion) {
+          card.classList.add('decided-edit');
+          obs.textContent = suggestion;
+          card.querySelector('textarea').value = suggestion;
+        }
+      }
+
+      updateStats();
+      updateExport();
+
+      if (decision !== 'edit') {
+        setTimeout(nextUndecided, 150);
+      }
+    }
+
+    cards.forEach((card, idx) => {
+      const obs = card.querySelector('.observation');
+      const textarea = card.querySelector('textarea');
+      textarea.value = obs.textContent;
+
+      card.querySelector('.btn-keep').addEventListener('click', () => decide(card, 'keep'));
+      card.querySelector('.btn-cut').addEventListener('click', () => decide(card, 'cut'));
+      card.querySelector('.btn-edit').addEventListener('click', () => decide(card, 'edit'));
+
+      const suggBtn = card.querySelector('.btn-use-suggestion');
+      if (suggBtn) {
+        suggBtn.addEventListener('click', () => decide(card, 'suggestion'));
+      }
+
+      card.querySelector('.btn-save').addEventListener('click', () => {
+        obs.textContent = textarea.value;
+        updateExport();
+        nextUndecided();
+      });
+
+      textarea.addEventListener('input', updateExport);
+
+      card.addEventListener('click', (e) => {
+        if (!e.target.matches('button, textarea')) {
+          setActiveCard(idx);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.matches('textarea')) {
+        if (e.key === 'Escape') {
+          e.target.blur();
+          nextUndecided();
+        }
+        return;
+      }
+
+      const card = cards[activeIndex];
+      if (!card) return;
+
+      switch(e.key.toLowerCase()) {
+        case 'k': decide(card, 'keep'); break;
+        case 'x': decide(card, 'cut'); break;
+        case 'e': decide(card, 'edit'); break;
+        case 's':
+          if (card.dataset.suggestion) decide(card, 'suggestion');
+          break;
+        case 'n':
+        case 'arrowdown':
+        case ' ':
+          e.preventDefault();
+          nextUndecided();
+          break;
+        case 'p':
+        case 'arrowup':
+          e.preventDefault();
+          if (activeIndex > 0) setActiveCard(activeIndex - 1);
+          break;
+      }
+    });
+
+    setActiveCard(0);
+    updateStats();
+  </script>
+</body>
+</html>

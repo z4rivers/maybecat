@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: initialize maybecat cleanup\n\nFull codebase cleanup: delete unused variants, extract shared logic, add error handling and tests.\n\nCreates PROJECT.md with requirements and constraints.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebSearch",
+      "Bash(npx vite build)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat\\(ux\\): add screenshot watermark for viral sharing\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
