@@ -264,3 +264,54 @@ Marc Maron (neurotic), Jerrod Carmichael (uncomfortable truth)
 - Pass 2 multiplies it through different deliveries
 - Doubles yield from good insights
 - Creates variety in tone/category from same source material
+
+---
+
+## Make Boring Cool Strategy
+
+Take obvious truths / clichés and strip the sentimental packaging. Deliver gruff.
+
+### The Formula
+1. Start with a boring truth ("you're doing okay", "you tried", "things worked out")
+2. Strip the Hallmark energy
+3. Say it clipped, gruff, backhanded
+4. The support is INSIDE the tough delivery, not wrapped around it
+
+### What Works
+```
+"Duct tape solution. Duct tape holds."
+"Half-assed but whole-hearted. Acceptable trade."
+"Failed upward. Trajectory holds."
+"Wrong, but in the right direction."
+"You overthought it, underprepared, and still landed. Baffling."
+"Tolerable. Surprisingly."
+"Everyone's winging it. You're just honest about it."
+```
+
+### What Doesn't Work
+- Frame + cliché ("Memo to self: [nice thing]")
+- Mafia/gangster framing (lazy, overdone)
+- "Adjective but adjective" formula on repeat
+- Landing on the encouragement too hard
+
+### Prompt
+```
+Generate 20 gruff encouragements. Cloaked wisdom.
+
+Take obvious truths and deliver them tough:
+- Clipped sentences
+- Backhanded compliments that are actually kind
+- Grudging acknowledgment
+- The kindness is IN the gruffness, not around it
+
+Good: "Survived another one. Streak continues."
+Bad: "Just a reminder: you survived another one!"
+
+Categories: cold, judgy, wise, chaotic
+```
+
+### Why This Works
+- Subverts expectation (sounds dismissive, lands supportive)
+- Feels earned, not given
+- Cat energy - acknowledging without being soft about it
+- "You'll do." hits different than "You're enough!"
