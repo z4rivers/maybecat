@@ -2003,6 +2003,20 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The flinch tells you where the wound is.", category: 'mystical' },
   { text: "You teach people how you want to be treated.", category: 'wise' },
   { text: "Clarity often comes after the decision, not before.", category: 'wise' },
+
+  // ============================================
+  // COMEDIAN-VOICED INSIGHTS - Same truths, different delivery
+  // ============================================
+  { text: "'I don't know' means 'I know exactly what I want to say and it's gonna start a fight.'", category: 'wise' },
+  { text: "'I don't know' usually means I know. I just don't want to be in charge of knowing.", category: 'wise' },
+  { text: "I say 'I don't know' a lot. I know a lot of things. I just don't know if I know them correctly.", category: 'chaotic' },
+  { text: "Anxiety is just your brain being REALLY helpful about things that MIGHT happen! Thanks, brain! I hate it!", category: 'chaotic' },
+  { text: "I love silence. It's where I keep my opinions about you.", category: 'cold' },
+  { text: "I'm not avoiding my feelings. I'm just... scheduling around them indefinitely.", category: 'chaotic' },
+  { text: "At the time I didn't get it. Looking back, I still don't. But I see why I didn't.", category: 'wise' },
+  { text: "Whatever you can't joke about. That's where it lives.", category: 'wise' },
+  { text: "I never know until after. Then I know. But it's already done. So.", category: 'wise' },
+  { text: "You decide. Then you find out. That's just the order. Nobody likes it.", category: 'wise' },
 ];
 
 // ============================================
