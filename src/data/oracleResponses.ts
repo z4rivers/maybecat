@@ -2050,6 +2050,9 @@ export const oracleResponses: OracleResponse[] = [
   { text: "42.", category: 'mystical' },
   { text: "There's always money in the banana stand.", category: 'mystical' },
   { text: "Not great, Bob.", category: 'judgy' },
+  // Friends
+  { text: "Could this BE any more obvious?", category: 'judgy' },
+  { text: "It's a moo point. Like a cow's opinion. It doesn't matter.", category: 'wise' },
 ];
 
 // ============================================
