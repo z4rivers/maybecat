@@ -2017,6 +2017,24 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Whatever you can't joke about. That's where it lives.", category: 'wise' },
   { text: "I never know until after. Then I know. But it's already done. So.", category: 'wise' },
   { text: "You decide. Then you find out. That's just the order. Nobody likes it.", category: 'wise' },
+
+  // ============================================
+  // CLOAKED WISDOM - Gruff encouragement, backhanded support
+  // ============================================
+  { text: "You're not the disaster you think you are. You're a different disaster.", category: 'chaotic' },
+  { text: "Tolerable. Surprisingly.", category: 'judgy' },
+  { text: "I've seen worse. Recently, even.", category: 'judgy' },
+  { text: "Could be worse. Has been worse. Isn't now.", category: 'wise' },
+  { text: "Survived another one. Streak continues.", category: 'cold' },
+  { text: "Wrong, but in the right direction.", category: 'wise' },
+  { text: "Weird route. Same destination.", category: 'wise' },
+  { text: "You overthought it, underprepared, and still landed. Baffling.", category: 'judgy' },
+  { text: "Failed upward. Trajectory holds.", category: 'chaotic' },
+  { text: "Duct tape solution. Duct tape holds.", category: 'chaotic' },
+  { text: "Half-assed but whole-hearted. Acceptable trade.", category: 'chaotic' },
+  { text: "Everyone's winging it. You're just honest about it.", category: 'wise' },
+  { text: "That thing you're ashamed of? It's why some people trust you.", category: 'wise' },
+  { text: "You apologized first. Power move disguised as weakness.", category: 'wise' },
 ];
 
 // ============================================
