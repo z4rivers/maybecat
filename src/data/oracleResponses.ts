@@ -1964,6 +1964,29 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You can be right and still be an ass about it.", category: 'judgy' },
   { text: "Well. That's a choice you could make.", category: 'cold' },
   { text: "You want permission? Fine. Granted. Now what?", category: 'demanding' },
+
+  // ============================================
+  // BADASS BATCH - Strategic, clever, steel-spine energy
+  // ============================================
+  { text: "I'm not threatening you. I'm telling you what's going to happen.", category: 'cold' },
+  { text: "The loudest one in the room is rarely the most dangerous.", category: 'wise' },
+  { text: "Revenge is a dish best served unexpectedly, years later, with a smile.", category: 'cold' },
+  { text: "Be the person they have to schedule a meeting to deal with.", category: 'wise' },
+  { text: "Walk in like you've already won. Let them figure out why.", category: 'wise' },
+  { text: "Make them wonder how you knew. Never explain.", category: 'wise' },
+  { text: "The door wasn't opened for me. I built my own door.", category: 'wise' },
+  { text: "I didn't come this far to only come this far.", category: 'demanding' },
+  { text: "I don't explain. I don't complain. I just handle it.", category: 'cold' },
+  { text: "Be the plot twist they didn't see coming.", category: 'wise' },
+  { text: "The best revenge is making them irrelevant.", category: 'cold' },
+  { text: "I've read the room. The room is wrong.", category: 'judgy' },
+  { text: "Closed mouths don't get fed. Neither do polite ones.", category: 'demanding' },
+  { text: "I don't wait for opportunities. I create disturbances.", category: 'chaotic' },
+  { text: "My silence is not weakness. It's the sound of me planning.", category: 'cold' },
+  { text: "Watch me pivot like this was the plan all along.", category: 'chaotic' },
+  { text: "The best apology is changed behavior. The second best is disappearing.", category: 'cold' },
+  { text: "I'm not bossy. I have leadership skills you're not ready for.", category: 'judgy' },
+  { text: "Work in silence. Let your results start the rumors.", category: 'wise' },
 ];
 
 // ============================================
