@@ -1058,6 +1058,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I found something in the drain. We're friends now.", category: 'chaotic' },
   { text: "You're obsessed with me. That's okay. I get it.", category: 'judgy' },
   { text: "I'm the problem. But I'm a fun problem.", category: 'chaotic' },
+  { text: "Stay angry. Angry gets things done.", category: 'wise' },
+  { text: "We all saw it. We all heard it. Do we believe it?", category: 'existential' },
 
   // ============================================
   // META - Breaks fourth wall
