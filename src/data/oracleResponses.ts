@@ -1927,6 +1927,43 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I've seen better decisions at a gas station sushi bar.", category: 'judgy' },
   { text: "That's your plan? I've seen better plans fall out of a cracker jack box.", category: 'judgy' },
   { text: "Boo! Try again!", category: 'judgy' },
+
+  // ============================================
+  // NEW BATCH - Modern & Decade-Earlier Comedian Energy
+  // ============================================
+  { text: "Every corpse on Everest was once a highly motivated person.", category: 'existential' },
+  { text: "Rock bottom has a basement. And the basement has a sub-basement.", category: 'chaotic' },
+  { text: "Good news: it's not your fault. Bad news: it's still your problem.", category: 'cold' },
+  { text: "I don't know what's happening but I'm confident it's happening.", category: 'chaotic' },
+  { text: "I've thought about this a lot. And then I stopped. And now I'm here.", category: 'chaotic' },
+  { text: "Everything is fine. I have no evidence for this. But everything is fine.", category: 'chaotic' },
+  { text: "I'm not saying you're wrong. I'm saying I'm uncomfortable.", category: 'wise' },
+  { text: "You're not tired. You're depleted. Different thing. Worse thing.", category: 'nurturing' },
+  { text: "I didn't come here to be correct. I came here to be HEARD.", category: 'demanding' },
+  { text: "I've invented a new emotion. It's called 'almost.' You're feeling it now.", category: 'mystical' },
+  { text: "I'm going to need you to elaborate and also apologize. In that order.", category: 'demanding' },
+  { text: "That's the dumbest thing I've ever heard and I kind of respect it.", category: 'judgy' },
+  { text: "Is it stupid? Yes. Am I going to do it? Absolutely.", category: 'chaotic' },
+  { text: "I'm not depressed. I'm just... realistic. Which is worse, actually.", category: 'existential' },
+  { text: "The universe has a plan. The plan is confusing and the universe won't explain.", category: 'mystical' },
+  { text: "Therapy taught me to name my feelings. I named them all 'complicated.'", category: 'chaotic' },
+  { text: "The vibe is off. I am the vibe. I am off. This tracks.", category: 'chaotic' },
+  { text: "Your laziness has layers. It's impressive, actually.", category: 'judgy' },
+  { text: "The perfect reply doesn't exist. Send the message. Be free.", category: 'wise' },
+  { text: "You're not 'going through something.' You're just awake and life is hard.", category: 'cold' },
+  { text: "The world owes you nothing. Actually, it might owe you an apology, but you're not getting one.", category: 'cold' },
+  { text: "You know what helps? Nothing. Nothing helps. Do it anyway.", category: 'angry' },
+  { text: "Everyone's broken. You're not special. Neither am I. We're all just here.", category: 'existential' },
+  { text: "The hot mess is still hot. Focus on that.", category: 'nurturing' },
+  { text: "That's weird. Everything's weird. We're all just pretending it isn't.", category: 'chaotic' },
+  { text: "I don't have advice. I have observations that might accidentally help.", category: 'wise' },
+  { text: "Good things come to those who wait. So do bad things. Waiting doesn't help.", category: 'existential' },
+  { text: "Of course you're anxious. Have you MET the world?", category: 'nurturing' },
+  { text: "Your hot take is lukewarm at best. Room temperature, really.", category: 'cold' },
+  { text: "Logic? In THIS economy? In THIS emotional state?", category: 'chaotic' },
+  { text: "You can be right and still be an ass about it.", category: 'judgy' },
+  { text: "Well. That's a choice you could make.", category: 'cold' },
+  { text: "You want permission? Fine. Granted. Now what?", category: 'demanding' },
 ];
 
 // ============================================
