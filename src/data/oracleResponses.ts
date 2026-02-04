@@ -1987,6 +1987,22 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The best apology is changed behavior. The second best is disappearing.", category: 'cold' },
   { text: "I'm not bossy. I have leadership skills you're not ready for.", category: 'judgy' },
   { text: "Work in silence. Let your results start the rumors.", category: 'wise' },
+
+  // ============================================
+  // AHA MOMENTS - Open observations, quiet truths
+  // ============================================
+  { text: "Sometimes 'I don't know' means 'I don't want to say it out loud yet.'", category: 'wise' },
+  { text: "The anxiety isn't lying. It's just bad at math.", category: 'chaotic' },
+  { text: "Some silences are full.", category: 'poetic' },
+  { text: "The resistance is information.", category: 'mystical' },
+  { text: "You can miss something and still not want it back.", category: 'wise' },
+  { text: "The way someone treats others is eventually how they'll treat you.", category: 'wise' },
+  { text: "Busy is sometimes just a hiding place.", category: 'wise' },
+  { text: "Some things only make sense looking back.", category: 'wise' },
+  { text: "Not everything needs to be processed out loud.", category: 'wise' },
+  { text: "The flinch tells you where the wound is.", category: 'mystical' },
+  { text: "You teach people how you want to be treated.", category: 'wise' },
+  { text: "Clarity often comes after the decision, not before.", category: 'wise' },
 ];
 
 // ============================================
