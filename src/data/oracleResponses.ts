@@ -2055,6 +2055,16 @@ export const oracleResponses: OracleResponse[] = [
   { text: "It's a moo point. Like a cow's opinion. It doesn't matter.", category: 'wise' },
   // Better Call Saul
   { text: "You think a normal person can do what I do?", category: 'cold' },
+  // Chaos goblin dispensing wisdom from the dumpster fire
+  { text: "Chaos goblin dispensing wisdom from the dumpster fire.", category: 'chaotic' },
+  { text: "You're right and everyone else is an idiot.", category: 'chaotic' },
+  { text: "Trust no one. Especially yourself.", category: 'cold' },
+  { text: "Rules are for people who get caught.", category: 'chaotic' },
+  { text: "Morally wrong but spiritually correct.", category: 'chaotic' },
+  { text: "Morally wrong but probably satisfying.", category: 'chaotic' },
+  { text: "FAFO. Report back.", category: 'chaotic' },
+  { text: "No witnesses, no crime.", category: 'cold' },
+  { text: "Delete the evidence.", category: 'cold' },
 ];
 
 // ============================================
