@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera, Twitter, Copy, Check } from 'lucide-react';
+import { X, Heart, Sparkles, Camera } from 'lucide-react';
 import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
@@ -43,7 +43,6 @@ export function Oracle() {
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
   const [needsBrightening, setNeedsBrightening] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [hashtagsCopied, setHashtagsCopied] = useState(false);
   const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -579,35 +578,6 @@ export function Oracle() {
                         </button>
                         <button onClick={shareNative} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
                           Share Wisdom
-                        </button>
-                      </div>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={shareToTwitter}
-                          disabled={isThinking}
-                          className="flex-1 py-3 rounded-xl bg-sky-600 text-white font-bold hover:bg-sky-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                          style={{ fontFamily: "Georgia, serif" }}
-                        >
-                          <Twitter className="w-5 h-5" />
-                          Share on X
-                        </button>
-                        <button
-                          onClick={copyToClipboard}
-                          disabled={isThinking}
-                          className="flex-1 py-3 rounded-xl bg-violet-700 text-white font-bold hover:bg-violet-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                          style={{ fontFamily: "Georgia, serif" }}
-                        >
-                          {copied ? (
-                            <>
-                              <Check className="w-5 h-5" />
-                              Copied!
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-5 h-5" />
-                              Copy Text
-                            </>
-                          )}
                         </button>
                       </div>
                       {/* Hashtag suggestions */}
