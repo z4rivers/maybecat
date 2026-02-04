@@ -1929,6 +1929,144 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I've seen better decisions at a gas station sushi bar.", category: 'judgy' },
   { text: "That's your plan? I've seen better plans fall out of a cracker jack box.", category: 'judgy' },
   { text: "Boo! Try again!", category: 'judgy' },
+
+  // ============================================
+  // NEW BATCH - Modern & Decade-Earlier Comedian Energy
+  // ============================================
+  { text: "Every corpse on Everest was once a highly motivated person.", category: 'existential' },
+  { text: "Rock bottom has a basement. And the basement has a sub-basement.", category: 'chaotic' },
+  { text: "Good news: it's not your fault. Bad news: it's still your problem.", category: 'cold' },
+  { text: "I don't know what's happening but I'm confident it's happening.", category: 'chaotic' },
+  { text: "I've thought about this a lot. And then I stopped. And now I'm here.", category: 'chaotic' },
+  { text: "Everything is fine. I have no evidence for this. But everything is fine.", category: 'chaotic' },
+  { text: "I'm not saying you're wrong. I'm saying I'm uncomfortable.", category: 'wise' },
+  { text: "You're not tired. You're depleted. Different thing. Worse thing.", category: 'nurturing' },
+  { text: "I didn't come here to be correct. I came here to be HEARD.", category: 'demanding' },
+  { text: "I've invented a new emotion. It's called 'almost.' You're feeling it now.", category: 'mystical' },
+  { text: "I'm going to need you to elaborate and also apologize. In that order.", category: 'demanding' },
+  { text: "That's the dumbest thing I've ever heard and I kind of respect it.", category: 'judgy' },
+  { text: "Is it stupid? Yes. Am I going to do it? Absolutely.", category: 'chaotic' },
+  { text: "I'm not depressed. I'm just... realistic. Which is worse, actually.", category: 'existential' },
+  { text: "The universe has a plan. The plan is confusing and the universe won't explain.", category: 'mystical' },
+  { text: "Therapy taught me to name my feelings. I named them all 'complicated.'", category: 'chaotic' },
+  { text: "The vibe is off. I am the vibe. I am off. This tracks.", category: 'chaotic' },
+  { text: "Your laziness has layers. It's impressive, actually.", category: 'judgy' },
+  { text: "The perfect reply doesn't exist. Send the message. Be free.", category: 'wise' },
+  { text: "You're not 'going through something.' You're just awake and life is hard.", category: 'cold' },
+  { text: "The world owes you nothing. Actually, it might owe you an apology, but you're not getting one.", category: 'cold' },
+  { text: "You know what helps? Nothing. Nothing helps. Do it anyway.", category: 'angry' },
+  { text: "Everyone's broken. You're not special. Neither am I. We're all just here.", category: 'existential' },
+  { text: "The hot mess is still hot. Focus on that.", category: 'nurturing' },
+  { text: "That's weird. Everything's weird. We're all just pretending it isn't.", category: 'chaotic' },
+  { text: "I don't have advice. I have observations that might accidentally help.", category: 'wise' },
+  { text: "Good things come to those who wait. So do bad things. Waiting doesn't help.", category: 'existential' },
+  { text: "Of course you're anxious. Have you MET the world?", category: 'nurturing' },
+  { text: "Your hot take is lukewarm at best. Room temperature, really.", category: 'cold' },
+  { text: "Logic? In THIS economy? In THIS emotional state?", category: 'chaotic' },
+  { text: "You can be right and still be an ass about it.", category: 'judgy' },
+  { text: "Well. That's a choice you could make.", category: 'cold' },
+  { text: "You want permission? Fine. Granted. Now what?", category: 'demanding' },
+
+  // ============================================
+  // BADASS BATCH - Strategic, clever, steel-spine energy
+  // ============================================
+  { text: "I'm not threatening you. I'm telling you what's going to happen.", category: 'cold' },
+  { text: "The loudest one in the room is rarely the most dangerous.", category: 'wise' },
+  { text: "Revenge is a dish best served unexpectedly, years later, with a smile.", category: 'cold' },
+  { text: "Be the person they have to schedule a meeting to deal with.", category: 'wise' },
+  { text: "Walk in like you've already won. Let them figure out why.", category: 'wise' },
+  { text: "Make them wonder how you knew. Never explain.", category: 'wise' },
+  { text: "The door wasn't opened for me. I built my own door.", category: 'wise' },
+  { text: "I didn't come this far to only come this far.", category: 'demanding' },
+  { text: "I don't explain. I don't complain. I just handle it.", category: 'cold' },
+  { text: "Be the plot twist they didn't see coming.", category: 'wise' },
+  { text: "The best revenge is making them irrelevant.", category: 'cold' },
+  { text: "I've read the room. The room is wrong.", category: 'judgy' },
+  { text: "Closed mouths don't get fed. Neither do polite ones.", category: 'demanding' },
+  { text: "I don't wait for opportunities. I create disturbances.", category: 'chaotic' },
+  { text: "My silence is not weakness. It's the sound of me planning.", category: 'cold' },
+  { text: "Watch me pivot like this was the plan all along.", category: 'chaotic' },
+  { text: "The best apology is changed behavior. The second best is disappearing.", category: 'cold' },
+  { text: "I'm not bossy. I have leadership skills you're not ready for.", category: 'judgy' },
+  { text: "Work in silence. Let your results start the rumors.", category: 'wise' },
+
+  // ============================================
+  // AHA MOMENTS - Open observations, quiet truths
+  // ============================================
+  { text: "Sometimes 'I don't know' means 'I don't want to say it out loud yet.'", category: 'wise' },
+  { text: "The anxiety isn't lying. It's just bad at math.", category: 'chaotic' },
+  { text: "Some silences are full.", category: 'poetic' },
+  { text: "The resistance is information.", category: 'mystical' },
+  { text: "You can miss something and still not want it back.", category: 'wise' },
+  { text: "The way someone treats others is eventually how they'll treat you.", category: 'wise' },
+  { text: "Busy is sometimes just a hiding place.", category: 'wise' },
+  { text: "Some things only make sense looking back.", category: 'wise' },
+  { text: "Not everything needs to be processed out loud.", category: 'wise' },
+  { text: "The flinch tells you where the wound is.", category: 'mystical' },
+  { text: "You teach people how you want to be treated.", category: 'wise' },
+  { text: "Clarity often comes after the decision, not before.", category: 'wise' },
+
+  // ============================================
+  // COMEDIAN-VOICED INSIGHTS - Same truths, different delivery
+  // ============================================
+  { text: "'I don't know' means 'I know exactly what I want to say and it's gonna start a fight.'", category: 'wise' },
+  { text: "'I don't know' usually means I know. I just don't want to be in charge of knowing.", category: 'wise' },
+  { text: "I say 'I don't know' a lot. I know a lot of things. I just don't know if I know them correctly.", category: 'chaotic' },
+  { text: "Anxiety is just your brain being REALLY helpful about things that MIGHT happen! Thanks, brain! I hate it!", category: 'chaotic' },
+  { text: "I love silence. It's where I keep my opinions about you.", category: 'cold' },
+  { text: "I'm not avoiding my feelings. I'm just... scheduling around them indefinitely.", category: 'chaotic' },
+  { text: "At the time I didn't get it. Looking back, I still don't. But I see why I didn't.", category: 'wise' },
+  { text: "Whatever you can't joke about. That's where it lives.", category: 'wise' },
+  { text: "I never know until after. Then I know. But it's already done. So.", category: 'wise' },
+  { text: "You decide. Then you find out. That's just the order. Nobody likes it.", category: 'wise' },
+
+  // ============================================
+  // CLOAKED WISDOM - Gruff encouragement, backhanded support
+  // ============================================
+  { text: "You're not the disaster you think you are. You're a different disaster.", category: 'chaotic' },
+  { text: "Tolerable. Surprisingly.", category: 'judgy' },
+  { text: "I've seen worse. Recently, even.", category: 'judgy' },
+  { text: "Could be worse. Has been worse. Isn't now.", category: 'wise' },
+  { text: "Survived another one. Streak continues.", category: 'cold' },
+  { text: "Wrong, but in the right direction.", category: 'wise' },
+  { text: "Weird route. Same destination.", category: 'wise' },
+  { text: "You overthought it, underprepared, and still landed. Baffling.", category: 'judgy' },
+  { text: "Failed upward. Trajectory holds.", category: 'chaotic' },
+  { text: "Duct tape solution. Duct tape holds.", category: 'chaotic' },
+  { text: "Half-assed but whole-hearted. Acceptable trade.", category: 'chaotic' },
+  { text: "Everyone's winging it. You're just honest about it.", category: 'wise' },
+  { text: "That thing you're ashamed of? It's why some people trust you.", category: 'wise' },
+  { text: "You apologized first. Power move disguised as weakness.", category: 'wise' },
+
+  // ============================================
+  // CULT QUOTES - Insider references that work as answers
+  // ============================================
+  { text: "That's just like, your opinion, man.", category: 'cold' },
+  { text: "I've heard it both ways.", category: 'chaotic' },
+  { text: "Inconceivable.", category: 'judgy' },
+  { text: "As you wish.", category: 'heartfelt' },
+  { text: "Seems fake but okay.", category: 'judgy' },
+  { text: "Terms and conditions apply.", category: 'cold' },
+  { text: "Past performance is not indicative of future results.", category: 'cold' },
+  { text: "Allegedly.", category: 'chaotic' },
+  { text: "42.", category: 'mystical' },
+  { text: "There's always money in the banana stand.", category: 'mystical' },
+  { text: "Not great, Bob.", category: 'judgy' },
+  // Friends
+  { text: "Could this BE any more obvious?", category: 'judgy' },
+  { text: "It's a moo point. Like a cow's opinion. It doesn't matter.", category: 'wise' },
+  // Better Call Saul
+  { text: "You think a normal person can do what I do?", category: 'cold' },
+  // Chaos goblin dispensing wisdom from the dumpster fire
+  { text: "Chaos goblin dispensing wisdom from the dumpster fire.", category: 'chaotic' },
+  { text: "You're right and everyone else is an idiot.", category: 'chaotic' },
+  { text: "Trust no one. Especially yourself.", category: 'cold' },
+  { text: "Rules are for people who get caught.", category: 'chaotic' },
+  { text: "Morally wrong but spiritually correct.", category: 'chaotic' },
+  { text: "Morally wrong but probably satisfying.", category: 'chaotic' },
+  { text: "FAFO. Report back.", category: 'chaotic' },
+  { text: "No witnesses, no crime.", category: 'cold' },
+  { text: "Delete the evidence.", category: 'cold' },
 ];
 
 // ============================================
