@@ -2046,6 +2046,10 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Seems fake but okay.", category: 'judgy' },
   { text: "Terms and conditions apply.", category: 'cold' },
   { text: "Past performance is not indicative of future results.", category: 'cold' },
+  { text: "Allegedly.", category: 'chaotic' },
+  { text: "42.", category: 'mystical' },
+  { text: "There's always money in the banana stand.", category: 'mystical' },
+  { text: "Not great, Bob.", category: 'judgy' },
 ];
 
 // ============================================
