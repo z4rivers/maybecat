@@ -1,5 +1,29 @@
 # Cat Oracle Response Generation Prompt
 
+## Key Learnings
+
+**Nate Bargatze energy works great for cat oracle** - that deadpan "So." delivery. Understated, doesn't try too hard.
+
+**Double Tap Strategy:** Generate content in two passes:
+1. **First pass:** Generate open observations/insights (simple truths, no punchlines)
+2. **Second pass:** Take the keepers and run them through comedian voice filters
+
+This doubles your yield from good insights and creates variety in delivery.
+
+**What works:**
+- Open observations that sit (no setup/punchline)
+- Comedian voices on existing truths
+- Badass strategic energy (clever, not muscle)
+- Insight with bite (funny because true)
+
+**What doesn't work:**
+- Cliché factory (kitchen sign energy)
+- Setup → punchline format for every response
+- Therapy-speak without edge
+- Landing the plane too neatly
+
+---
+
 ## How to Use
 Run each batch separately. Wait for review file, then proceed to next batch.
 Each batch = ~20-25 responses = stays under token limits.
@@ -193,3 +217,50 @@ Output as JSON array:
 
 Categories: mystical, nurturing, poetic, cold, angry, heartfelt, judgy, chaotic, wise, existential, demanding, meta
 ```
+
+---
+
+## Double Tap Strategy
+
+Generate content in two passes for better yield:
+
+### Pass 1: Open Observations
+```
+Generate 20 open observations about life/situations.
+
+NOT:
+- Setup → punchline jokes
+- Therapy-speak clichés
+- Kitchen-sign wisdom
+- Neat conclusions
+
+YES:
+- Simple truths that sit
+- Things you notice and can't un-notice
+- Observations without the clever twist
+- Let it breathe, don't land the plane
+
+Format: Just the text, keep it short (1 sentence)
+```
+
+### Pass 2: Comedian Voices
+```
+Take these [X] insights and have different comedians say the same thing in their voice:
+
+[paste keepers from Pass 1]
+
+For each insight, give 3-5 versions from different comedian perspectives:
+- Their take on the same truth
+- Their contrarian spin
+- How they'd phrase it
+
+Comedians to try: Nate Bargatze (deadpan), Bill Burr (angry),
+Mitch Hedberg (absurdist), Anthony Jeselnik (dark), Tig Notaro (dry),
+Marc Maron (neurotic), Jerrod Carmichael (uncomfortable truth)
+```
+
+### Why This Works
+- Pass 1 finds the kernel of truth
+- Pass 2 multiplies it through different deliveries
+- Doubles yield from good insights
+- Creates variety in tone/category from same source material
