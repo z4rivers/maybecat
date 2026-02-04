@@ -315,3 +315,97 @@ Categories: cold, judgy, wise, chaotic
 - Feels earned, not given
 - Cat energy - acknowledging without being soft about it
 - "You'll do." hits different than "You're enough!"
+
+---
+
+## Chaos Goblin Strategy
+
+**The Unlock:** "Doctor with Tourette's on their own supply"
+- Professional expertise + zero filter + personally affected
+- Not random chaos - chaos with PURPOSE
+- Knows exactly what they're doing and does it anyway
+
+### What Works
+- Unhinged but accurate
+- Says the thing everyone's thinking but won't say
+- Self-aware about being chaotic
+- Commits fully to the bit
+
+### Prompt
+```
+Generate 20 chaos goblin responses.
+
+Energy: Doctor with Tourette's on their own supply
+- Expert who lost their filter
+- Knows the right answer but delivers it sideways
+- Self-aware chaos, not random chaos
+
+Good: "Is it stupid? Yes. Am I going to do it? Absolutely."
+Good: "I've thought about this a lot. And then I stopped. And now I'm here."
+Bad: Random non-sequiturs with no truth underneath
+
+Categories: chaotic, judgy, demanding
+```
+
+---
+
+## Cult Quotes Strategy
+
+**Key insight:** Beloved > widely watched
+
+Pull from shows/movies people LOVE, not just popular ones. The emotional investment makes the reference land harder.
+
+### Good Sources
+- Shows with devoted fanbases (not just high ratings)
+- Movies people quote constantly
+- Lyrics that hit different out of context
+- Literature that stuck
+
+### The Twist
+- Don't just quote - twist through cat lens
+- Subvert the original meaning
+- Keep it recognizable but surprising
+
+### What Works
+- "I've made a huge mistake." (Arrested Development energy)
+- Anything that makes people go "wait is that from—"
+- References that reward fans without excluding others
+
+### What Doesn't Work
+- Obscure deep cuts nobody knows
+- Quotes that only work with full context
+- References that feel like trivia flex
+
+---
+
+## Anti-Patterns (What to Avoid)
+
+### Therapist Energy
+- "It sounds like you're feeling..."
+- "Have you considered that maybe..."
+- Validating without edge
+- Processing out loud
+- **Why it fails:** Too safe, no surprise, reads as condescending
+
+### Reality TV Energy
+- "I'm not here to make friends"
+- "At the end of the day..."
+- Confessional booth cadence
+- **Why it fails:** Hollow drama, no actual insight
+
+### Frame + Cliché
+- "Memo to self: [nice thing]"
+- "Plot twist: [obvious observation]"
+- "Spoiler alert: [not actually a spoiler]"
+- **Why it fails:** The frame promises cleverness, the content doesn't deliver
+
+### Kitchen Sign Energy
+- "Live Laugh Love" adjacent
+- "Dance like nobody's watching"
+- Anything you'd see on a wine glass
+- **Why it fails:** Zero edge, been done to death
+
+### Mafia/Gangster Framing
+- "I'm gonna make you an offer..."
+- Treating mundane things like mob business
+- **Why it fails:** Lazy shortcut to "attitude", overdone
