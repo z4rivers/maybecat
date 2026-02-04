@@ -2035,6 +2035,17 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Everyone's winging it. You're just honest about it.", category: 'wise' },
   { text: "That thing you're ashamed of? It's why some people trust you.", category: 'wise' },
   { text: "You apologized first. Power move disguised as weakness.", category: 'wise' },
+
+  // ============================================
+  // CULT QUOTES - Insider references that work as answers
+  // ============================================
+  { text: "That's just like, your opinion, man.", category: 'cold' },
+  { text: "I've heard it both ways.", category: 'chaotic' },
+  { text: "Inconceivable.", category: 'judgy' },
+  { text: "As you wish.", category: 'heartfelt' },
+  { text: "Seems fake but okay.", category: 'judgy' },
+  { text: "Terms and conditions apply.", category: 'cold' },
+  { text: "Past performance is not indicative of future results.", category: 'cold' },
 ];
 
 // ============================================
