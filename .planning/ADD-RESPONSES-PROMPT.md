@@ -320,86 +320,166 @@ Categories: cold, judgy, wise, chaotic
 
 ## Chaos Goblin Strategy
 
-When you need unhinged energy - the stuff that feels transgressive, wrong in the right way.
+### The Problem
+We wanted truly unhinged responses. The cat has no filter, no license to lose, no reputation to protect. But every attempt came out soft, polite, or mean-without-the-wit.
 
-### The Approach
-Imagine a chaos agent with zero filter. Not mean for mean's sake - validating the dark thoughts everyone has but won't say.
+### What We Tried (And Failed)
 
-### What Works
+**Attempt 1: "Unfiltered therapist"**
+Asked for things therapists think but can't say. Got stuff like:
+- "You're not stuck. You're comfortable."
+- "The common denominator is you."
+- "You already know the answer."
+
+User feedback: "Makes sense that therapists sound like therapists. NOT what we want."
+
+**Attempt 2: "Therapist with the filter off"**
+Pushed harder. Got slightly edgier but still therapy-adjacent:
+- "You don't have trust issues. You have taste."
+- "That's not anxiety. That's consequences."
+
+User feedback: "No. You are going soft."
+
+**Attempt 3: The Unlock**
+User said: "Imagine a comedy doctor - with Tourette's - after sampling own medicine stock."
+
+THAT mental image broke through. Suddenly got:
+- "Fuck it."
+- "Morally wrong but spiritually correct."
+- "Rules are for people who get caught."
+- "FAFO. Report back."
+- "No witnesses, no crime."
+- "Delete the evidence."
+
+User feedback: "GREAT!"
+
+### The Keepers
 ```
-"Fuck it."
-"Worse ideas have worked."
-"Morally wrong but spiritually correct."
-"Rules are for people who get caught."
-"FAFO. Report back."
+"Chaos goblin dispensing wisdom from the dumpster fire."
 "You're right and everyone else is an idiot."
 "Trust no one. Especially yourself."
+"Rules are for people who get caught."
+"Morally wrong but spiritually correct."
+"Morally wrong but probably satisfying."
+"FAFO. Report back."
 "No witnesses, no crime."
 "Delete the evidence."
 ```
 
-### The Unlock
-"Imagine a comedy doctor - with Tourette's - after sampling own medicine stock."
+### Why The Unlock Worked
+The "doctor with Tourette's on their own supply" image did something specific:
+- Removed the professional filter entirely
+- Added chemical chaos to override politeness instincts
+- Made it absurd enough that transgression felt safe
+- Gave permission to say the ACTUAL dark thoughts, not sanitized versions
 
-That mental image got past the polite instincts and landed actual chaos.
-
-### Why It Works
-- A little goes a long way (spice, not main dish)
-- Validates the petty/dark thoughts people actually have
-- Permission slips for bad decisions = relatable
-- Cat has no license to lose, no reputation to protect
+### Critical Note
+User said: "A little goes a long way." Only added 9 of these. They're spice, not the main dish. Too many and the oracle becomes edgelord.
 
 ---
 
 ## Cult Quotes Strategy
 
-Use recognizable quotes from beloved shows that ALSO work as oracle answers.
+### The Problem
+Wanted quotes from TV shows that work as oracle answers. But first attempts went to "most watched" shows - Survivor, American Idol, The Voice, etc.
 
-### The Rules
-1. Quote must work even if you don't know the reference
-2. Recognition is bonus, not requirement
-3. Avoid quotes that are ONLY recognition ("We were on a break" = too context-dependent)
-4. Best quotes have attitude that works standalone
+### What We Tried (And Failed)
+
+**Attempt 1: Reality TV / Competition Shows**
+Asked about Survivor, American Idol, The Voice. Got cold dismissals:
+- "The tribe has spoken."
+- "It's a no from me."
+- "Forgettable."
+
+User feedback: "None of those! All the opposite of what we want!"
+
+**The Pivot**
+User clarified: "We need shows with heart, not just widely viewed. Like Gilmore Girls and Grey's Anatomy were great. Not the widest audiences, but most loved."
+
+**Attempt 2: Beloved Shows**
+Mined Gilmore Girls, Grey's Anatomy, Schitt's Creek, The Good Place, Parks & Rec, Fleabag. Got warmer stuff but still nothing landed.
+
+User feedback: "None of interest."
+
+**Attempt 3: Specific Show Deep Dives**
+User asked for Breaking Bad / Better Call Saul specifically. Found:
+- "You think a normal person can do what I do?"
+
+User picked that one immediately.
+
+**Attempt 4: Friends Batch**
+User requested Friends specifically. From 20 options, picked 2:
+- "Could this BE any more obvious?"
+- "It's a moo point. Like a cow's opinion. It doesn't matter."
+
+### The Rules That Emerged
+1. **Quote must work standalone** - If someone doesn't know the show, it should still land as an oracle answer
+2. **Recognition is bonus, not requirement** - The "aha I know that!" is extra, not the point
+3. **Attitude over catchphrase** - "We were on a break" = too context-dependent. "Inconceivable" = has attitude alone.
+4. **Beloved > Widely Watched** - Shows people LOVE, not shows with biggest ratings. Heart over numbers.
 
 ### What Works
 ```
-"That's just like, your opinion, man." (Big Lebowski)
-"As you wish." (Princess Bride)
-"Inconceivable." (Princess Bride)
-"Allegedly." (Letterkenny)
-"42." (Hitchhiker's Guide)
-"There's always money in the banana stand." (Arrested Development)
-"Not great, Bob." (Mad Men)
-"I've heard it both ways." (Psych)
-"You think a normal person can do what I do?" (Better Call Saul)
-"Could this BE any more obvious?" (Friends)
-"It's a moo point. Like a cow's opinion." (Friends)
+"That's just like, your opinion, man." (Big Lebowski) - dismissive, works for any question
+"As you wish." (Princess Bride) - heartfelt yes, works universally
+"Inconceivable." (Princess Bride) - judgy disbelief, standalone attitude
+"Allegedly." (Letterkenny) - one word, casts doubt, chaotic
+"42." (Hitchhiker's Guide) - absurd non-answer, mystical
+"There's always money in the banana stand." (Arrested Development) - cryptic, mystical
+"Not great, Bob." (Mad Men) - understated disappointment, judgy
+"I've heard it both ways." (Psych) - chaotic non-commitment
+"You think a normal person can do what I do?" (Better Call Saul) - cold flex
+"Could this BE any more obvious?" (Friends) - Chandler emphasis, judgy
+"It's a moo point. Like a cow's opinion. It doesn't matter." (Friends) - Joey wisdom
 ```
 
 ### What Doesn't Work
-- Cold reality TV dismissals ("The tribe has spoken", "It's a no from me")
-- Quotes that need the scene to land
-- Catchphrases without attitude
+- **Reality TV dismissals** - "The tribe has spoken" is cold but not witty. Wrong energy.
+- **Quotes that need the scene** - "We were on a break" means nothing without Friends context
+- **Catchphrases without attitude** - "How you doin'?" is recognition-only, no oracle value
 
-### Shows to Mine
-Beloved > widely watched. Heart > ratings.
+### Shows Worth Mining
+**Beloved > Widely Watched. Heart > Ratings.**
 - Gilmore Girls, Grey's Anatomy, Schitt's Creek, The Good Place
 - Arrested Development, Parks & Rec, The Office, Community
-- Breaking Bad, Better Call Saul
+- Breaking Bad, Better Call Saul, Mad Men
 - Princess Bride, Big Lebowski
+- Fleabag (though most quotes need context)
+
+**Skip:**
+- Reality competition (Survivor, Idol, Voice, Drag Race) - dismissal energy wrong for oracle
+- Procedurals (NCIS, Chicago Fire) - not quotable in the right way
+- Most sitcoms - catchphrases without standalone attitude
 
 ---
 
 ## What Doesn't Work (Anti-Patterns)
 
-### Therapist Energy
-Even "unfiltered therapist" still sounds like therapy. Skip it.
+### Therapist Energy (Even "Unfiltered")
+We tried multiple times to get "what therapists really think." Every version still sounded like therapy. The framing itself is the problem - the role carries politeness even when you try to strip it.
+
+Example of what we got:
+- "You're not stuck. You're comfortable."
+- "You don't want advice. You want permission."
+
+These aren't BAD, they're just... therapist. The cat isn't a therapist. Skip this whole angle.
 
 ### Reality TV Dismissals
-"The tribe has spoken" / "It's a no from me" = cold without the wit. Wrong kind of cold.
+Tried mining Survivor, American Idol, The Voice for quotes. Got cold without wit:
+- "The tribe has spoken."
+- "It's a no from me."
+- "Forgettable."
+
+User feedback: "All the opposite of what we want!" These are dismissals without personality. The cat is cold but clever, not just cold.
 
 ### Frame + Cliché
-Adding a "frame" (mafia, memo, announcement) around a boring truth doesn't make it interesting.
+Earlier session tried adding "frames" around boring truths. Like:
+- "Memo to self: [nice thing]"
+- Mafia/gangster framing around encouragement
 
-### Adjective-But-Adjective on Repeat
-"Wrong but right" / "Broken but whole" - formula gets stale fast. Use sparingly.
+User feedback: "Lazy route. Overdone stereotype." Adding a frame around a cliché doesn't transform it. The truth itself needs to be delivered differently, not wrapped differently.
+
+### Adjective-But-Adjective Formula
+Pattern like "Wrong but right" / "Broken but whole" works a few times then gets stale fast. User noticed when we leaned on it too hard: "Lost steam."
+
+Use sparingly. Don't make it a formula.
