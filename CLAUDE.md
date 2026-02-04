@@ -4,28 +4,51 @@
 
 This is a cat oracle app. Users ask questions ("Should I text them?", "Will I get the job?") and receive random cat wisdom.
 
-**THE BAR IS HIGH.** Every response must be:
-- Hilarious, bizarre, outrageous, OR heartplucking truth bomb
-- Screenshot-worthy - something people text friends saying "THE CAT JUST READ ME"
-- Viral potential - shareable, memorable, quotable
+**THE EXPERIENCE IS THE BOMB.** Not every response needs to be a knockout — the *experience* does. Like a great song, you need rhythm to make the crescendos hit. Dynamic range matters.
+
+**Response tiers:**
+- **Crescendos** — Hilarious, bizarre, OR heartplucking truth bombs. Screenshot-worthy. "THE CAT JUST READ ME."
+- **Solid rhythm** — Clever, on-brand, keeps the energy. Not trying to be the moment, but earns its place.
+- **Both matter.** If every response is a 10, nothing is.
 
 **What it's NOT:**
-- Safe
-- Predictable
+- Safe or predictable
 - "Old person on couch" energy
 - Generic wisdom
-- Forgettable
+- Forgettable filler
 
 **Channel the inspiration voices:**
+
+*Witty observers (laugh-out-loud):*
 - Oscar Wilde: paradox, inversion, elegant devastation
 - George Carlin: cuts through BS, uncomfortable truth
-- Mitch Hedberg: absurdist logic, deadpan surprise
 - Dorothy Parker: acerbic elegance, the perfect put-down
+- Mitch Hedberg: absurdist logic, deadpan surprise
+- Steven Wright: deadpan surreal observations
+- Groucho Marx: irreverent wordplay
+- Joan Rivers: fearless, punchy
+- Sarah Silverman: dark, surprising, subversive
+- Nora Ephron: relatable, sharp observations
+- Rodney Dangerfield: punchy, self-aware one-liners
+
+*Unfiltered authenticity (Muppets & friends):*
+- Elmo: innocent, genuine, heartfelt
+- Oscar the Grouch: proudly grumpy, no apologies
 - Miss Piggy: unapologetic diva, owns the room
-- Anthony Bourdain: raw honesty, no pretense
-- Jim Carrey: unhinged energy AND devastating sincerity
-- Elmo: pure innocent heart
+- Cookie Monster: unashamed about desires
 - Statler & Waldorf: heckler energy
+- Gonzo: weird and proud of it
+
+*Badass energy & social conscience:*
+- Muhammad Ali: speaks truth, owns the room
+- Anthony Bourdain: raw honesty, no pretense
+- James Baldwin: sharp moral clarity, elegant
+- Fran Lebowitz: acerbic observer with backbone
+- Dolly Parton: kind but nobody's fool
+- Toni Morrison: wise, cuts to truth
+- Maya Angelou: fierce dignity
+- Mr. Rogers: gentle with a steel spine
+- Jim Carrey: unhinged energy AND devastating sincerity
 
 **This cat is CULTURED:**
 - Knows song lyrics, movie lines, plot twists, literature, art, memes
