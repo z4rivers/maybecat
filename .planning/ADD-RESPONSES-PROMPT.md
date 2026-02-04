@@ -315,3 +315,91 @@ Categories: cold, judgy, wise, chaotic
 - Feels earned, not given
 - Cat energy - acknowledging without being soft about it
 - "You'll do." hits different than "You're enough!"
+
+---
+
+## Chaos Goblin Strategy
+
+When you need unhinged energy - the stuff that feels transgressive, wrong in the right way.
+
+### The Approach
+Imagine a chaos agent with zero filter. Not mean for mean's sake - validating the dark thoughts everyone has but won't say.
+
+### What Works
+```
+"Fuck it."
+"Worse ideas have worked."
+"Morally wrong but spiritually correct."
+"Rules are for people who get caught."
+"FAFO. Report back."
+"You're right and everyone else is an idiot."
+"Trust no one. Especially yourself."
+"No witnesses, no crime."
+"Delete the evidence."
+```
+
+### The Unlock
+"Imagine a comedy doctor - with Tourette's - after sampling own medicine stock."
+
+That mental image got past the polite instincts and landed actual chaos.
+
+### Why It Works
+- A little goes a long way (spice, not main dish)
+- Validates the petty/dark thoughts people actually have
+- Permission slips for bad decisions = relatable
+- Cat has no license to lose, no reputation to protect
+
+---
+
+## Cult Quotes Strategy
+
+Use recognizable quotes from beloved shows that ALSO work as oracle answers.
+
+### The Rules
+1. Quote must work even if you don't know the reference
+2. Recognition is bonus, not requirement
+3. Avoid quotes that are ONLY recognition ("We were on a break" = too context-dependent)
+4. Best quotes have attitude that works standalone
+
+### What Works
+```
+"That's just like, your opinion, man." (Big Lebowski)
+"As you wish." (Princess Bride)
+"Inconceivable." (Princess Bride)
+"Allegedly." (Letterkenny)
+"42." (Hitchhiker's Guide)
+"There's always money in the banana stand." (Arrested Development)
+"Not great, Bob." (Mad Men)
+"I've heard it both ways." (Psych)
+"You think a normal person can do what I do?" (Better Call Saul)
+"Could this BE any more obvious?" (Friends)
+"It's a moo point. Like a cow's opinion." (Friends)
+```
+
+### What Doesn't Work
+- Cold reality TV dismissals ("The tribe has spoken", "It's a no from me")
+- Quotes that need the scene to land
+- Catchphrases without attitude
+
+### Shows to Mine
+Beloved > widely watched. Heart > ratings.
+- Gilmore Girls, Grey's Anatomy, Schitt's Creek, The Good Place
+- Arrested Development, Parks & Rec, The Office, Community
+- Breaking Bad, Better Call Saul
+- Princess Bride, Big Lebowski
+
+---
+
+## What Doesn't Work (Anti-Patterns)
+
+### Therapist Energy
+Even "unfiltered therapist" still sounds like therapy. Skip it.
+
+### Reality TV Dismissals
+"The tribe has spoken" / "It's a no from me" = cold without the wit. Wrong kind of cold.
+
+### Frame + Cliché
+Adding a "frame" (mafia, memo, announcement) around a boring truth doesn't make it interesting.
+
+### Adjective-But-Adjective on Repeat
+"Wrong but right" / "Broken but whole" - formula gets stale fast. Use sparingly.
