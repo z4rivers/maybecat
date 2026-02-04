@@ -1049,6 +1049,15 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Actually, never mind. I'm leaving.", category: 'demanding' },
   { text: "People should wake up when I decide they should wake up.", category: 'demanding' },
   { text: "Scratches under the chin and butt pats do it for me.", category: 'demanding' },
+  { text: "PERIOD. MEOW. We done here.", category: 'demanding' },
+  { text: "Humble? I'll be humble when I'm wrong.", category: 'judgy' },
+  { text: "You seem nervous. Why is that? What did you do?", category: 'judgy' },
+  { text: "You came here for validation? Wrong cat.", category: 'judgy' },
+  { text: "I roast because I care. That's my love language.", category: 'judgy' },
+  { text: "You want the truth or you want to feel good?", category: 'cold' },
+  { text: "I found something in the drain. We're friends now.", category: 'chaotic' },
+  { text: "You're obsessed with me. That's okay. I get it.", category: 'judgy' },
+  { text: "I'm the problem. But I'm a fun problem.", category: 'chaotic' },
 
   // ============================================
   // META - Breaks fourth wall
