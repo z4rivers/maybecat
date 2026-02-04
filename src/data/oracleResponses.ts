@@ -2053,6 +2053,8 @@ export const oracleResponses: OracleResponse[] = [
   // Friends
   { text: "Could this BE any more obvious?", category: 'judgy' },
   { text: "It's a moo point. Like a cow's opinion. It doesn't matter.", category: 'wise' },
+  // Better Call Saul
+  { text: "You think a normal person can do what I do?", category: 'cold' },
 ];
 
 // ============================================
