@@ -9,6 +9,25 @@ import { useOracle } from '../hooks/useOracle';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { NameInputModal } from '../components/NameInputModal';
 
+// Prevent orphaned words by joining last 2-3 short words with non-breaking spaces
+function preventOrphans(text: string): string {
+  const words = text.split(' ');
+  if (words.length < 3) return text;
+
+  // Join last 2-3 words depending on their length
+  const lastWords = words.slice(-3);
+  const lastChunk = lastWords.join(' ');
+
+  // If last 3 words are short enough (under ~20 chars), join them all
+  if (lastChunk.length < 20) {
+    return [...words.slice(0, -3), lastWords.join('\u00A0')].join(' ');
+  }
+
+  // Otherwise just join last 2 words
+  const lastTwo = words.slice(-2).join('\u00A0');
+  return [...words.slice(0, -2), lastTwo].join(' ');
+}
+
 const EXAMPLE_QUESTIONS = [
   "Should I quit my job?",
   "Am I making a mistake?",
@@ -484,8 +503,8 @@ export function Oracle() {
 
                   {response && !isThinking && (
                     <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
-                      <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif", textWrap: 'balance' }}>
-                        "{response.text}"
+                      <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
+                        "{preventOrphans(response.text)}"
                       </p>
                     </motion.div>
                   )}
