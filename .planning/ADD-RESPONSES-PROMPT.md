@@ -320,92 +320,205 @@ Categories: cold, judgy, wise, chaotic
 
 ## Chaos Goblin Strategy
 
-**The Unlock:** "Doctor with Tourette's on their own supply"
-- Professional expertise + zero filter + personally affected
-- Not random chaos - chaos with PURPOSE
-- Knows exactly what they're doing and does it anyway
+**The Unlock:** Self-aware unraveling with a truth bomb at the center
 
-### What Works
-- Unhinged but accurate
-- Says the thing everyone's thinking but won't say
-- Self-aware about being chaotic
-- Commits fully to the bit
+Not random chaos. This is someone who KNOWS and can't stop themselves from saying it. The chaos is the delivery, not the message.
 
-### Prompt
+### Specific Structures That Hit
+
+**1. Self-Q&A that commits anyway:**
 ```
-Generate 20 chaos goblin responses.
-
-Energy: Doctor with Tourette's on their own supply
-- Expert who lost their filter
-- Knows the right answer but delivers it sideways
-- Self-aware chaos, not random chaos
-
-Good: "Is it stupid? Yes. Am I going to do it? Absolutely."
-Good: "I've thought about this a lot. And then I stopped. And now I'm here."
-Bad: Random non-sequiturs with no truth underneath
-
-Categories: chaotic, judgy, demanding
+"Is it stupid? Yes. Am I going to do it? Absolutely."
+"Do I have a plan? No. Am I worried? Also no."
 ```
+Structure: [Rhetorical Q] [Damning A] [Same pattern] [Defiant conclusion]
+
+**2. Trail of thought that derails:**
+```
+"I've thought about this a lot. And then I stopped. And now I'm here."
+"I had a whole thing prepared. I forgot it. This is better anyway."
+```
+Structure: [Started strong] [Lost it] [Landed somewhere weird but true]
+
+**3. Self-aware spiral:**
+```
+"The vibe is off. I am the vibe. I am off. This tracks."
+"I'm the problem. But I'm a fun problem."
+```
+Structure: [Observation] [Implicate self] [Accept it] [Spin it]
+
+**4. Incredulous rhetorical escalation:**
+```
+"Logic? In THIS economy? In THIS emotional state?"
+"Boundaries? With MY attachment style?"
+```
+Structure: [Reasonable thing]? In THIS [absurd context]? With THIS [worse context]?
+
+**5. False reassurance that proves the opposite:**
+```
+"Everything is fine. I have no evidence for this. But everything is fine."
+"I'm not panicking. This is just how I breathe now."
+```
+Structure: [Calm statement] [Undercut it] [Commit anyway]
+
+### What Makes It Work
+- There's a TRUTH underneath the chaos
+- The person knows they're being chaotic
+- Commits to the bit instead of hedging
+- Lands on defiance, not defeat
+
+### What FAILS
+- Random non-sequiturs (no truth underneath)
+- "So random lol" energy (trying to be weird)
+- Chaos without self-awareness (just annoying)
+
+---
+
+## Badass Strategy
+
+**The Unlock:** Strategic power, not muscle. Moves, not threats.
+
+This isn't tough-guy posturing. It's someone who's already three moves ahead and letting you know.
+
+### Specific Structures That Hit
+
+**1. Reframe the threat:**
+```
+"I'm not threatening you. I'm telling you what's going to happen."
+"I'm not bossy. I have leadership skills you're not ready for."
+```
+Structure: I'm not [accusation]. I'm [reframe that's worse for you].
+
+**2. Specific power move:**
+```
+"Be the person they have to schedule a meeting to deal with."
+"Be the plot twist they didn't see coming."
+```
+Structure: Be the [specific, vivid scenario that implies power]
+
+**3. Silence as weapon:**
+```
+"My silence is not weakness. It's the sound of me planning."
+"Work in silence. Let your results start the rumors."
+```
+Structure: [Quiet thing] isn't [what you think]. It's [actually scarier].
+
+**4. Defiant correction:**
+```
+"I've read the room. The room is wrong."
+"The door wasn't opened for me. I built my own door."
+```
+Structure: [Acknowledged the situation] [Rejected the situation's terms]
+
+**5. Strategic opacity:**
+```
+"Make them wonder how you knew. Never explain."
+"Walk in like you've already won. Let them figure out why."
+```
+Structure: [Power move] [Deliberate mystery]
+
+### What Makes It Work
+- SPECIFIC scenarios, not vague toughness
+- Intelligence over force
+- Implies the power rather than stating it
+- You can picture the exact moment
+
+### What FAILS
+- Generic "be strong" advice
+- Muscle-flexing without wit
+- Threats without follow-through
+- Borrowed lines from movies without the twist
 
 ---
 
 ## Cult Quotes Strategy
 
-**Key insight:** Beloved > widely watched
+**The Unlock:** Emotional investment > viewership numbers
 
-Pull from shows/movies people LOVE, not just popular ones. The emotional investment makes the reference land harder.
+Pull from things people LOVE, not just things people watched. The devotion makes the reference land.
 
-### Good Sources
-- Shows with devoted fanbases (not just high ratings)
-- Movies people quote constantly
-- Lyrics that hit different out of context
-- Literature that stuck
+### What Actually Works
+
+**Beloved shows with quotable moments:**
+- Arrested Development: "I've made a huge mistake"
+- The Office: "I am Beyoncé always"
+- Parks & Rec: "Treat yo self"
+- Schitt's Creek: "I'd kill for a good coma right now"
+- Friends (the ones people actually quote): "We were on a break"
+- Better Call Saul: "I am not crazy!"
+
+**Movies people quote in real life:**
+- Princess Bride, Mean Girls, Clueless, The Big Lebowski
+- NOT: critically acclaimed films nobody quotes
+
+**Lyrics that hit out of context:**
+- Taylor Swift (yes really - massive emotional investment)
+- Beyoncé attitude lines
+- Fleetwood Mac emotional gut punches
 
 ### The Twist
-- Don't just quote - twist through cat lens
+Don't just quote. Twist it:
 - Subvert the original meaning
-- Keep it recognizable but surprising
+- Apply to unexpected situation
+- Cat-ify without losing recognition
 
-### What Works
-- "I've made a huge mistake." (Arrested Development energy)
-- Anything that makes people go "wait is that from—"
-- References that reward fans without excluding others
+**Example transformation:**
+- Original: "I've made a huge mistake" (regret)
+- Cat twist: "I've made a huge mistake. I regret nothing." (defiance)
 
-### What Doesn't Work
-- Obscure deep cuts nobody knows
-- Quotes that only work with full context
-- References that feel like trivia flex
+### What FAILS
+- Deep cuts that reward trivia over emotional connection
+- Quotes that need context to land
+- "Look how cultured I am" energy
 
 ---
 
 ## Anti-Patterns (What to Avoid)
 
 ### Therapist Energy
-- "It sounds like you're feeling..."
-- "Have you considered that maybe..."
-- Validating without edge
-- Processing out loud
-- **Why it fails:** Too safe, no surprise, reads as condescending
+```
+BAD: "It sounds like you're feeling overwhelmed."
+BAD: "Have you considered that maybe you're projecting?"
+BAD: "That's valid. Your feelings are valid."
+```
+**Why it fails:** Too safe, no surprise, reads as condescending. Cat oracle has OPINIONS.
 
-### Reality TV Energy
-- "I'm not here to make friends"
-- "At the end of the day..."
-- Confessional booth cadence
-- **Why it fails:** Hollow drama, no actual insight
+### Reality TV Confessional
+```
+BAD: "I'm not here to make friends."
+BAD: "At the end of the day, it is what it is."
+BAD: "I came here for ME."
+```
+**Why it fails:** Hollow drama, no actual insight. Just borrowed attitude.
 
 ### Frame + Cliché
-- "Memo to self: [nice thing]"
-- "Plot twist: [obvious observation]"
-- "Spoiler alert: [not actually a spoiler]"
-- **Why it fails:** The frame promises cleverness, the content doesn't deliver
+```
+BAD: "Memo to self: you're doing amazing"
+BAD: "Plot twist: you're the main character"
+BAD: "Spoiler alert: it gets better"
+```
+**Why it fails:** The frame promises cleverness, delivers nothing. The "twist" isn't a twist.
 
 ### Kitchen Sign Energy
-- "Live Laugh Love" adjacent
-- "Dance like nobody's watching"
-- Anything you'd see on a wine glass
-- **Why it fails:** Zero edge, been done to death
+```
+BAD: "Live your best life"
+BAD: "Good vibes only"
+BAD: "You've got this, queen"
+```
+**Why it fails:** Zero edge. Could be on a throw pillow. Says nothing.
 
 ### Mafia/Gangster Framing
-- "I'm gonna make you an offer..."
-- Treating mundane things like mob business
-- **Why it fails:** Lazy shortcut to "attitude", overdone
+```
+BAD: "I'm gonna make you an offer you can't refuse"
+BAD: "That's a nice [thing] you got there"
+BAD: "Nothing personal, just business"
+```
+**Why it fails:** Lazy shortcut to "attitude." Overdone. Not actually clever.
+
+### Toxic Positivity
+```
+BAD: "Everything happens for a reason!"
+BAD: "Just stay positive!"
+BAD: "You'll get through this!"
+```
+**Why it fails:** Dismissive. The cat has seen some shit. Forced optimism rings false.
