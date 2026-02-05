@@ -88,9 +88,11 @@ describe('useCatStorage', () => {
         description: 'A sweet cat',
         age: 'Adult',
         breed: 'Tabby',
+        sex: 'Female',
         shelterName: 'Happy Paws',
         adoptionUrl: 'https://example.com',
         location: 'NYC',
+        trackerUrl: 'https://tracker.rescuegroups.org/pet/123',
       };
 
       act(() => {
