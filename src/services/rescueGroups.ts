@@ -172,7 +172,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
   const params = new URLSearchParams({
     'limit': String(limit * 3), // Request more to filter down
     'include': 'orgs',
-    'sort': 'random',
+    'sort': '-animals.updatedDate',  // Most recently updated first (avoids ancient listings)
     'filter[status.name]': 'Available',
   });
 
@@ -283,8 +283,11 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
       })
       .filter((cat): cat is ShelterCat => cat !== null);
 
+    // Shuffle for variety (API returns sorted by updatedDate)
+    const shuffled = cats.sort(() => Math.random() - 0.5);
+
     // Return cats or fallback if none found
-    return cats.length > 0 ? cats.slice(0, limit) : FALLBACK_CATS.slice(0, limit);
+    return shuffled.length > 0 ? shuffled.slice(0, limit) : FALLBACK_CATS.slice(0, limit);
 
   } catch (error) {
     console.error('Failed to fetch adoptable cats:', error);
