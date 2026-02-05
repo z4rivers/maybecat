@@ -516,10 +516,7 @@ export function Oracle() {
         {/* Tagline */}
         <div className="text-center py-0 mt-[36px]">
           <p className="text-[28px] md:text-[34px] lg:text-[44px] italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
-            Cat Maybe.
-          </p>
-          <p className="text-[34px] md:text-[44px] lg:text-[56px] font-black -mt-1" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '2px 2px 0 rgba(251,191,36,0.6)' }}>
-            Attitude Always.
+            Cat attitude always.
           </p>
         </div>
       </div>
