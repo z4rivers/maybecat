@@ -473,7 +473,7 @@ export function Oracle() {
                     className="w-full py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
                   >
-                    {response ? '✦ Ask Again ✦' : '✦ Consult the Cat ✦'}
+                    {response ? '✦ Ask Again ✦' : '✦ What Does the Cat Say? ✦'}
                   </motion.button>
 
 
@@ -513,12 +513,6 @@ export function Oracle() {
 
         </div>
 
-        {/* Tagline */}
-        <div className="text-center py-0 mt-[36px]">
-          <p className="text-[28px] md:text-[34px] lg:text-[44px] italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
-            Cat attitude always.
-          </p>
-        </div>
       </div>
 
       {/* PURRfoot Sponsor Banner - solid 150px, fully opaque */}
