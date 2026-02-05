@@ -319,8 +319,13 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
 /**
  * Persistent cache with TTL
  * TOS compliant: caches up to 24 hours (TOS requires weekly update minimum)
+ *
+ * CACHE_VERSION: Increment when API logic changes to invalidate old cached data
+ * v1: Initial
+ * v2: Added sort by updatedDate + width=500 images
  */
-const CACHE_KEY = 'rescueGroupsCats';
+const CACHE_VERSION = 2;
+const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedCats {
