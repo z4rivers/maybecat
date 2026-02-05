@@ -10,7 +10,7 @@ export const config = {
 
   // Shelter cats from RescueGroups API
   shelterCats: {
-    fetchCount: 12,
+    fetchCount: 20,
   },
 
   // Oracle "thinking" delays (milliseconds)
