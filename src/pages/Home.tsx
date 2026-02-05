@@ -456,7 +456,7 @@ export function Oracle() {
                     <input
                       type="text"
                       value={question}
-                      onChange={(e) => setQuestion(e.target.value)}
+                      onChange={(e) => { setQuestion(e.target.value); if (response) clearResponse(); }}
                       onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
                       placeholder={`Ask ${displayName} a question...`}
                       className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
