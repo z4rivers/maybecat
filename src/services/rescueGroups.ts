@@ -40,6 +40,7 @@ interface RescueGroupsResponse {
 interface RescueGroupsAnimal {
   animalID: string;
   animalName: string;
+  animalSpecies: string;
   animalPrimaryBreed: string;
   animalGeneralAge: string;
   animalSex: string;
@@ -173,6 +174,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
       fields: [
         'animalID',
         'animalName',
+        'animalSpecies',
         'animalPrimaryBreed',
         'animalGeneralAge',
         'animalSex',
@@ -219,7 +221,56 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
       adoptionUrl: `https://www.rescuegroups.org/pet/${animal.animalID}`,
       // REQUIRED by TOS: tracker image for referral tracking
       trackerUrl: `https://tracker.rescuegroups.org/pet/${animal.animalID}`
-    })).filter(cat => cat.photo);
+    }))
+      // Filter: must have photo AND be a cat AND pass name checks
+      .filter((cat, index) => {
+        const animal = Object.values(data.data!)[index];
+        const species = animal?.animalSpecies?.toLowerCase() || '';
+        const name = cat.name.toLowerCase();
+
+        // Must be a cat
+        const isCat = species === 'cat' || species.includes('cat');
+        if (!isCat && animal) {
+          console.warn(`Filtered out non-cat: ${animal.animalName} (${species})`);
+          return false;
+        }
+
+        // Red flag keywords in name
+        const redFlags = [
+          'foster',       // In foster care
+          'adoption',     // Placeholder/event name
+          'medical',      // Medical issues
+          'kitten',       // No kittens
+          'pending',      // Adoption pending
+          'hold',         // On hold
+          'reserved',     // Reserved
+          'urgent',       // Could be distressing
+          'hospice',      // Sensitive
+          'sanctuary',    // Permanent resident
+          'special need', // Sensitive
+          'tbd', 'tba',   // Placeholder
+          'unknown',      // Placeholder
+          'temp',         // Temporary name
+          'needs',        // "Needs home" etc
+          'courtesy',     // Courtesy listing
+          'stray',        // Stray listing
+        ];
+
+        const hasRedFlag = redFlags.some(flag => name.includes(flag));
+        if (hasRedFlag) {
+          console.warn(`Filtered out red flag name: ${cat.name}`);
+          return false;
+        }
+
+        // Must have a real name (not just numbers)
+        const isJustNumbers = /^[\d\s#-]+$/.test(cat.name.trim());
+        if (isJustNumbers) {
+          console.warn(`Filtered out number-only name: ${cat.name}`);
+          return false;
+        }
+
+        return cat.photo;
+      });
 
     // Return cats or fallback if none found
     return cats.length > 0 ? cats : FALLBACK_CATS.slice(0, limit);
