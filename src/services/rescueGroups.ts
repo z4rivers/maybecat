@@ -261,7 +261,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
           'foster', 'adoption', 'medical', 'kitten', 'pending',
           'hold', 'reserved', 'urgent', 'hospice', 'sanctuary',
           'special need', 'tbd', 'tba', 'unknown', 'temp', 'needs',
-          'courtesy', 'stray',
+          'courtesy', 'stray', 'bonded',
         ];
         if (redFlags.some(flag => nameLower.includes(flag))) {
           console.warn(`Filtered out red flag name: ${name}`);
