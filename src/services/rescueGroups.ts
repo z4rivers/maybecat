@@ -171,7 +171,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
   // Build v5 API URL - use /animals/search/cats/ view for cats only
   const params = new URLSearchParams({
     'limit': String(limit * 3), // Request more to filter down
-    'include': 'orgs,pictures',
+    'include': 'orgs',
     'sort': 'random',
     'filter[status.name]': 'Available',
   });
@@ -199,16 +199,12 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
       return FALLBACK_CATS.slice(0, limit);
     }
 
-    // Build lookup maps for included data
+    // Build lookup map for orgs
     const orgsMap = new Map<string, V5Org>();
-    const picturesMap = new Map<string, V5Picture>();
-
     if (data.included) {
       for (const item of data.included) {
         if (item.type === 'orgs') {
           orgsMap.set(item.id, item as V5Org);
-        } else if (item.type === 'pictures') {
-          picturesMap.set(item.id, item as V5Picture);
         }
       }
     }
@@ -232,12 +228,8 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
         const orgId = animal.relationships?.orgs?.data?.[0]?.id;
         const org = orgId ? orgsMap.get(orgId) : null;
 
-        // Get best picture
-        const pictureId = animal.relationships?.pictures?.data?.[0]?.id;
-        const picture = pictureId ? picturesMap.get(pictureId) : null;
-        const photo = picture?.attributes?.large?.url ||
-                      picture?.attributes?.original?.url ||
-                      attrs.pictureThumbnailUrl || '';
+        // Use pictureThumbnailUrl directly - the pictures relationship can return mismatched IDs
+        const photo = attrs.pictureThumbnailUrl || '';
 
         // Build location string
         const city = org?.attributes?.city || '';
