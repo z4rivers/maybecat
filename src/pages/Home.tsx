@@ -81,39 +81,48 @@ export function Oracle() {
   }, [shelterCats, carouselIndex]);
 
   // Analyze image brightness and determine if it needs enhancement
+  // Skip for external URLs (CORS issues) - only analyze user uploads (data: URLs)
   const analyzeImageBrightness = useCallback((imageSrc: string) => {
+    // Only analyze data URLs (user uploads) - external images have CORS issues
+    if (!imageSrc.startsWith('data:')) {
+      setNeedsBrightening(false);
+      return;
+    }
+
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-      // Sample at smaller size for performance
-      const sampleSize = config.brightness.sampleSize;
-      canvas.width = sampleSize;
-      canvas.height = sampleSize;
-      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+        const sampleSize = config.brightness.sampleSize;
+        canvas.width = sampleSize;
+        canvas.height = sampleSize;
+        ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
 
-      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
-      const pixels = imageData.data;
+        const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
+        const pixels = imageData.data;
 
-      let totalBrightness = 0;
-      const pixelCount = pixels.length / 4;
+        let totalBrightness = 0;
+        const pixelCount = pixels.length / 4;
 
-      for (let i = 0; i < pixels.length; i += 4) {
-        // Calculate perceived brightness (human eye weighted)
-        const r = pixels[i];
-        const g = pixels[i + 1];
-        const b = pixels[i + 2];
-        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
-        totalBrightness += brightness;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+          const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+          totalBrightness += brightness;
+        }
+
+        const avgBrightness = totalBrightness / pixelCount;
+        setNeedsBrightening(avgBrightness < config.brightness.threshold);
+      } catch {
+        // CORS or other error - skip brightness adjustment
+        setNeedsBrightening(false);
       }
-
-      const avgBrightness = totalBrightness / pixelCount;
-      // Only brighten truly dark images - avoids washing out mixed-lighting photos
-      setNeedsBrightening(avgBrightness < config.brightness.threshold);
     };
+    img.onerror = () => setNeedsBrightening(false);
     img.src = imageSrc;
   }, []);
 
@@ -433,6 +442,14 @@ export function Oracle() {
                                 >
                                   {cat.name}
                                 </p>
+                                {cat.location && (
+                                  <p
+                                    className="text-xs md:text-sm truncate px-3 -mt-1"
+                                    style={{ color: `${color.accent}90` }}
+                                  >
+                                    {cat.location.replace(', ', ' ')}
+                                  </p>
+                                )}
                               </div>
                               <div className="absolute top-3 left-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
                               <div className="absolute top-3 right-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
@@ -572,29 +589,6 @@ export function Oracle() {
             </motion.div>
           )}
 
-          {/* Adoption CTA */}
-          {shelterCat && catImage && shelterCat.location && (
-            <motion.a
-              href={shelterCat.adoptionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="block w-full max-w-md mx-auto mt-4 p-4 rounded-xl text-center transition-colors"
-              style={{
-                background: 'linear-gradient(135deg, #065F46 0%, #047857 50%, #059669 100%)',
-                boxShadow: '0 4px 20px rgba(6,95,70,0.4)',
-                border: '2px solid #064E3B',
-              }}
-            >
-              <p className="text-white font-bold text-lg" style={{ fontFamily: "Georgia, serif" }}>
-                <Heart className="w-5 h-5 inline mr-2 text-emerald-200" />
-                Give {shelterCat.name} a forever home?
-              </p>
-              <p className="text-emerald-200 text-sm mt-1 italic">{shelterCat.location} • Click to adopt</p>
-            </motion.a>
-          )}
 
           {/* Name input modal */}
           <AnimatePresence>
@@ -605,14 +599,48 @@ export function Oracle() {
 
       </div>
 
-      {/* PURRfoot Sponsor Banner - solid 150px, fully opaque */}
+      {/* PURRfoot Sponsor Banner - with adoption CTA on right */}
       <div
-        className="w-full flex-shrink-0 relative z-20"
+        className="w-full flex-shrink-0 relative z-20 flex"
         style={{
           backgroundColor: '#0d1b2a',
           height: '150px',
         }}
-      />
+      >
+        {/* Main ad space - left 4/5 */}
+        <div className="flex-1" />
+
+        {/* Adoption CTA - right 1/5 */}
+        <AnimatePresence>
+          {shelterCat && catImage && (
+            <motion.a
+              href={shelterCat.adoptionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              whileHover={{ scale: 1.02 }}
+              className="w-1/5 min-w-[180px] h-full flex flex-col items-center justify-center px-4 text-center transition-colors hover:bg-amber-900/20"
+              style={{
+                borderLeft: '1px solid rgba(251,191,36,0.3)',
+              }}
+            >
+              <Heart className="w-6 h-6 text-amber-400 mb-2" />
+              <p
+                className="text-amber-100 font-bold text-sm leading-tight"
+                style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}
+              >
+                Adopt {shelterCat.name}
+              </p>
+{shelterCat.location && (
+                <p className="text-amber-400/80 text-xs mt-1">{shelterCat.location}</p>
+              )}
+              <p className="text-amber-500/60 text-[10px] mt-2 uppercase tracking-wider">Click to visit</p>
+            </motion.a>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

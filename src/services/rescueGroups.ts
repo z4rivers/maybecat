@@ -1,12 +1,12 @@
 /**
- * RescueGroups.org API Integration
+ * RescueGroups.org API Integration (v5)
  * Fetches adoptable cats to serve as the oracle's face
  *
- * API Docs: https://userguide.rescuegroups.org/display/APIDG/HTTP+API
+ * API Docs: https://api.rescuegroups.org/v5/public/docs
  * TOS: https://rescuegroups.org/api-terms-of-service/
  */
 
-const API_URL = 'https://api.rescuegroups.org/http/v2.json';
+const API_BASE = 'https://api.rescuegroups.org/v5/public';
 const API_KEY = import.meta.env.VITE_RESCUEGROUPS_API_KEY;
 
 /**
@@ -30,29 +30,53 @@ export interface ShelterCat {
 // Alias for clarity
 export type AdoptableCat = ShelterCat;
 
-interface RescueGroupsResponse {
-  status: string;
-  messages?: { messageText: string }[];
-  foundRows?: number;
-  data?: Record<string, RescueGroupsAnimal>;
+/**
+ * v5 API response types
+ */
+interface V5Animal {
+  type: 'animals';
+  id: string;
+  attributes: {
+    name: string;
+    breedPrimary: string;
+    ageGroup: string;
+    sex: string;
+    descriptionText: string;
+    pictureThumbnailUrl: string;
+    url: string;
+  };
+  relationships?: {
+    orgs?: { data: Array<{ type: string; id: string }> };
+    pictures?: { data: Array<{ type: string; id: string }> };
+  };
 }
 
-interface RescueGroupsAnimal {
-  animalID: string;
-  animalName: string;
-  animalSpecies: string;
-  animalPrimaryBreed: string;
-  animalGeneralAge: string;
-  animalSex: string;
-  animalDescriptionPlain: string;
-  animalPictures?: Array<{
-    original: { url: string };
+interface V5Org {
+  type: 'orgs';
+  id: string;
+  attributes: {
+    name: string;
+    city: string;
+    state: string;
+    postalcode: string;
+    url: string;
+  };
+}
+
+interface V5Picture {
+  type: 'pictures';
+  id: string;
+  attributes: {
     large: { url: string };
+    original: { url: string };
     small: { url: string };
-  }>;
-  animalOrgID: string;
-  animalLocationCitystate: string;
-  animalRescueID: string;
+  };
+}
+
+interface V5Response {
+  data: V5Animal[];
+  included?: Array<V5Org | V5Picture>;
+  meta?: { count: number };
 }
 
 /**
@@ -63,65 +87,65 @@ const FALLBACK_CATS: ShelterCat[] = [
   {
     id: 'fallback-1',
     name: 'Whiskers',
-    photo: 'https://placecats.com/millie/300/300',
+    photo: 'https://cataas.com/cat?width=300&height=300&1',
     description: 'A mysterious oracle cat with ancient wisdom.',
     age: 'Adult',
     breed: 'Domestic Shorthair',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: 'Beyond the Veil',
+    location: '',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-2',
     name: 'Shadow',
-    photo: 'https://placecats.com/neo/300/300',
+    photo: 'https://cataas.com/cat?width=300&height=300&2',
     description: 'Sees all. Judges all. Naps frequently.',
     age: 'Senior',
     breed: 'Domestic Longhair',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: 'The Shadows',
+    location: '',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-3',
     name: 'Luna',
-    photo: 'https://placecats.com/bella/300/300',
+    photo: 'https://cataas.com/cat?width=300&height=300&3',
     description: 'Named after the moon. Equally aloof.',
     age: 'Young',
     breed: 'Tabby',
     sex: 'Female',
     shelterName: 'The Mystical Realm',
-    location: 'Moonlight Manor',
+    location: '',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-4',
     name: 'Midnight',
-    photo: 'https://placecats.com/neo_banana/300/300',
+    photo: 'https://cataas.com/cat?width=300&height=300&4',
     description: 'Only appears after dark. Or whenever there\'s food.',
     age: 'Adult',
     breed: 'Black Cat',
     sex: 'Male',
     shelterName: 'The Mystical Realm',
-    location: 'The Witching Hour',
+    location: '',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-5',
     name: 'Oracle',
-    photo: 'https://placecats.com/millie_neo/300/300',
+    photo: 'https://cataas.com/cat?width=300&height=300&5',
     description: 'The original. The legend. Still judging you.',
     age: 'Ancient',
     breed: 'Unknown',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: 'Everywhere and Nowhere',
+    location: '',
     adoptionUrl: '#',
     trackerUrl: ''
   }
@@ -135,7 +159,7 @@ export function isApiConfigured(): boolean {
 }
 
 /**
- * Fetch adoptable cats from RescueGroups API
+ * Fetch adoptable cats from RescueGroups API v5
  */
 export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat[]> {
   // Return fallback cats if API not configured
@@ -144,136 +168,131 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
     return FALLBACK_CATS.slice(0, limit);
   }
 
-  const requestBody = {
-    apikey: API_KEY,
-    objectType: 'animals',
-    objectAction: 'publicSearch',
-    search: {
-      resultStart: 0,
-      resultLimit: limit,
-      resultSort: 'animalID',
-      resultOrder: 'asc',
-      filters: [
-        {
-          fieldName: 'animalStatus',
-          operation: 'equals',
-          criteria: 'Available'
-        },
-        {
-          fieldName: 'animalSpecies',
-          operation: 'equals',
-          criteria: 'Cat'
-        },
-        {
-          fieldName: 'animalPictures',
-          operation: 'notblank',
-          criteria: ''
-        }
-      ],
-      filterProcessing: '1',
-      fields: [
-        'animalID',
-        'animalName',
-        'animalSpecies',
-        'animalPrimaryBreed',
-        'animalGeneralAge',
-        'animalSex',
-        'animalDescriptionPlain',
-        'animalPictures',
-        'animalOrgID',
-        'animalLocationCitystate',
-        'animalRescueID'
-      ]
-    }
-  };
+  // Build v5 API URL - use /animals/search/cats/ view for cats only
+  const params = new URLSearchParams({
+    'limit': String(limit * 3), // Request more to filter down
+    'include': 'orgs,pictures',
+    'sort': 'random',
+    'filter[status.name]': 'Available',
+  });
+
+  // Use the cats view endpoint which pre-filters for cats
+  const url = `${API_BASE}/animals/search/cats?${params}`;
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
+    const response = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': API_KEY,
       },
-      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`);
     }
 
-    const data: RescueGroupsResponse = await response.json();
+    const data: V5Response = await response.json();
 
-    if (data.status !== 'ok' || !data.data) {
-      console.warn('RescueGroups API returned no data:', data.messages);
+    if (!data.data || data.data.length === 0) {
+      console.warn('RescueGroups API v5 returned no data');
       return FALLBACK_CATS.slice(0, limit);
     }
 
-    // Transform API response to ShelterCat interface
-    const cats = Object.values(data.data).map((animal): ShelterCat => ({
-      id: animal.animalID,
-      name: animal.animalName || 'Mystery Cat',
-      photo: animal.animalPictures?.[0]?.large?.url || animal.animalPictures?.[0]?.original?.url || '',
-      description: animal.animalDescriptionPlain?.slice(0, 200) || 'A cat seeking their forever home.',
-      age: animal.animalGeneralAge || 'Unknown',
-      breed: animal.animalPrimaryBreed || 'Domestic',
-      sex: animal.animalSex || 'Unknown',
-      shelterName: '', // Would need separate org lookup
-      location: animal.animalLocationCitystate || 'Unknown Location',
-      adoptionUrl: `https://www.rescuegroups.org/pet/${animal.animalID}`,
-      // REQUIRED by TOS: tracker image for referral tracking
-      trackerUrl: `https://tracker.rescuegroups.org/pet/${animal.animalID}`
-    }))
-      // Filter: must have photo AND be a cat AND pass name checks
-      .filter((cat, index) => {
-        const animal = Object.values(data.data!)[index];
-        const species = animal?.animalSpecies?.toLowerCase() || '';
-        const name = cat.name.toLowerCase();
+    // Build lookup maps for included data
+    const orgsMap = new Map<string, V5Org>();
+    const picturesMap = new Map<string, V5Picture>();
 
-        // Must be a cat
-        const isCat = species === 'cat' || species.includes('cat');
-        if (!isCat && animal) {
-          console.warn(`Filtered out non-cat: ${animal.animalName} (${species})`);
-          return false;
+    if (data.included) {
+      for (const item of data.included) {
+        if (item.type === 'orgs') {
+          orgsMap.set(item.id, item as V5Org);
+        } else if (item.type === 'pictures') {
+          picturesMap.set(item.id, item as V5Picture);
+        }
+      }
+    }
+
+    // Debug: log first animal
+    if (data.data[0]) {
+      console.log('RescueGroups API v5 sample animal:', JSON.stringify(data.data[0], null, 2));
+      const orgId = data.data[0].relationships?.orgs?.data?.[0]?.id;
+      if (orgId && orgsMap.has(orgId)) {
+        console.log('Sample org data:', JSON.stringify(orgsMap.get(orgId), null, 2));
+      }
+    }
+
+    // Transform API response to ShelterCat interface
+    const cats = data.data
+      .map((animal): ShelterCat | null => {
+        const attrs = animal.attributes;
+        const name = attrs.name || '';
+
+        // Get org data
+        const orgId = animal.relationships?.orgs?.data?.[0]?.id;
+        const org = orgId ? orgsMap.get(orgId) : null;
+
+        // Get best picture
+        const pictureId = animal.relationships?.pictures?.data?.[0]?.id;
+        const picture = pictureId ? picturesMap.get(pictureId) : null;
+        const photo = picture?.attributes?.large?.url ||
+                      picture?.attributes?.original?.url ||
+                      attrs.pictureThumbnailUrl || '';
+
+        // Build location string
+        const city = org?.attributes?.city || '';
+        const state = org?.attributes?.state || '';
+        const location = city && state ? `${city}, ${state}` : city || state || '';
+
+        // Skip cats without location
+        if (!location) {
+          console.warn(`Filtered out no-location: ${name}`);
+          return null;
+        }
+
+        // Skip cats without photos
+        if (!photo) {
+          console.warn(`Filtered out no-photo: ${name}`);
+          return null;
         }
 
         // Red flag keywords in name
+        const nameLower = name.toLowerCase();
         const redFlags = [
-          'foster',       // In foster care
-          'adoption',     // Placeholder/event name
-          'medical',      // Medical issues
-          'kitten',       // No kittens
-          'pending',      // Adoption pending
-          'hold',         // On hold
-          'reserved',     // Reserved
-          'urgent',       // Could be distressing
-          'hospice',      // Sensitive
-          'sanctuary',    // Permanent resident
-          'special need', // Sensitive
-          'tbd', 'tba',   // Placeholder
-          'unknown',      // Placeholder
-          'temp',         // Temporary name
-          'needs',        // "Needs home" etc
-          'courtesy',     // Courtesy listing
-          'stray',        // Stray listing
+          'foster', 'adoption', 'medical', 'kitten', 'pending',
+          'hold', 'reserved', 'urgent', 'hospice', 'sanctuary',
+          'special need', 'tbd', 'tba', 'unknown', 'temp', 'needs',
+          'courtesy', 'stray',
         ];
-
-        const hasRedFlag = redFlags.some(flag => name.includes(flag));
-        if (hasRedFlag) {
-          console.warn(`Filtered out red flag name: ${cat.name}`);
-          return false;
+        if (redFlags.some(flag => nameLower.includes(flag))) {
+          console.warn(`Filtered out red flag name: ${name}`);
+          return null;
         }
 
-        // Must have a real name (not just numbers)
-        const isJustNumbers = /^[\d\s#-]+$/.test(cat.name.trim());
-        if (isJustNumbers) {
-          console.warn(`Filtered out number-only name: ${cat.name}`);
-          return false;
+        // Skip number-only names
+        if (/^[\d\s#-]+$/.test(name.trim())) {
+          console.warn(`Filtered out number-only name: ${name}`);
+          return null;
         }
 
-        return cat.photo;
-      });
+        return {
+          id: animal.id,
+          name: name || 'Mystery Cat',
+          photo,
+          description: attrs.descriptionText?.slice(0, 200) || 'A cat seeking their forever home.',
+          age: attrs.ageGroup || 'Unknown',
+          breed: attrs.breedPrimary || 'Domestic',
+          sex: attrs.sex || 'Unknown',
+          shelterName: org?.attributes?.name || '',
+          location,
+          adoptionUrl: attrs.url || org?.attributes?.url || `https://toolkit.rescuegroups.org/iframe/ata/pet?animalID=${animal.id}`,
+          trackerUrl: `https://tracker.rescuegroups.org/pet/${animal.id}`,
+        };
+      })
+      .filter((cat): cat is ShelterCat => cat !== null);
 
     // Return cats or fallback if none found
-    return cats.length > 0 ? cats : FALLBACK_CATS.slice(0, limit);
+    return cats.length > 0 ? cats.slice(0, limit) : FALLBACK_CATS.slice(0, limit);
 
   } catch (error) {
     console.error('Failed to fetch adoptable cats:', error);
