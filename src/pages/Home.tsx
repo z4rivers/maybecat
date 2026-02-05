@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera } from 'lucide-react';
-import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
+import { X, Heart, Sparkles, Camera, RefreshCw } from 'lucide-react';
+import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
@@ -106,7 +106,8 @@ export function Oracle() {
   useEffect(() => {
     async function loadCats() {
       try {
-        const cats = await fetchAdoptableCats(config.shelterCats.fetchCount);
+        // Uses cached cats if available (persists up to 24 hours)
+        const cats = await getCachedOrFetchCats(config.shelterCats.fetchCount);
         setShelterCats(cats);
       } catch (error) {
         console.error('Failed to fetch cats:', error);
@@ -115,6 +116,19 @@ export function Oracle() {
       }
     }
     loadCats();
+  }, []);
+
+  // Manual refresh to get new batch of cats
+  const handleRefreshCats = useCallback(async () => {
+    setLoadingShelterCats(true);
+    try {
+      const cats = await refreshCats(config.shelterCats.fetchCount);
+      setShelterCats(cats);
+    } catch (error) {
+      console.error('Failed to refresh cats:', error);
+    } finally {
+      setLoadingShelterCats(false);
+    }
   }, []);
 
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,17 +226,27 @@ export function Oracle() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex flex-col items-center justify-center gap-2 -mt-8"
             >
-              {/* Choose Your Oracle label */}
-              <p 
-                className="text-base md:text-2xl font-bold text-center px-4 py-1 whitespace-nowrap"
-                style={{ 
-                  fontFamily: "'Cinzel Decorative', Georgia, serif",
-                  color: '#FEF3C7',
-                  textShadow: '2px 2px 0 #92400E'
-                }}
-              >
-                ✦ CHOOSE CAT ✦ ASK QUESTION ✦
-              </p>
+              {/* Choose Your Oracle label with refresh button */}
+              <div className="flex items-center gap-3">
+                <p
+                  className="text-base md:text-2xl font-bold text-center px-4 py-1 whitespace-nowrap"
+                  style={{
+                    fontFamily: "'Cinzel Decorative', Georgia, serif",
+                    color: '#FEF3C7',
+                    textShadow: '2px 2px 0 #92400E'
+                  }}
+                >
+                  ✦ CHOOSE CAT ✦ ASK QUESTION ✦
+                </p>
+                <button
+                  onClick={handleRefreshCats}
+                  disabled={loadingShelterCats}
+                  className="p-2 rounded-full bg-amber-900/50 text-amber-100 hover:bg-amber-900/80 disabled:opacity-50 transition-all"
+                  title="Show different cats"
+                >
+                  <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${loadingShelterCats ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
 
               {/* Scroll container - constrained width enables scroll within overflow-hidden parent */}
               <div className="w-full max-w-full overflow-x-auto pt-12 pb-4">
