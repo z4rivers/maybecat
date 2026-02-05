@@ -43,6 +43,7 @@ interface V5Animal {
     sex: string;
     descriptionText: string;
     pictureThumbnailUrl: string;
+    pictureCount: number;
     url: string;
   };
   relationships?: {
@@ -233,8 +234,9 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
         const orgId = animal.relationships?.orgs?.data?.[0]?.id;
         const org = orgId ? orgsMap.get(orgId) : null;
 
-        // Use pictureThumbnailUrl directly - the pictures relationship can return mismatched IDs
-        const photo = attrs.pictureThumbnailUrl || '';
+        // Use pictureThumbnailUrl but request larger size (default is width=100)
+        const thumbnailUrl = attrs.pictureThumbnailUrl || '';
+        const photo = thumbnailUrl.replace('?width=100', '?width=500');
 
         // Build location string
         const city = org?.attributes?.city || '';
