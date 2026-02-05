@@ -83,69 +83,71 @@ interface V5Response {
  * Fallback cats when API is unavailable
  * Using placeholder images - these are NOT real adoptable cats
  */
+// Fallback cats with stable placeholder images (used when API fails)
+// Using placekitten for consistent images
 const FALLBACK_CATS: ShelterCat[] = [
   {
     id: 'fallback-1',
     name: 'Whiskers',
-    photo: 'https://cataas.com/cat?width=300&height=300&1',
+    photo: 'https://placekitten.com/400/400',
     description: 'A mysterious oracle cat with ancient wisdom.',
     age: 'Adult',
     breed: 'Domestic Shorthair',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: '',
+    location: 'The Void',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-2',
     name: 'Shadow',
-    photo: 'https://cataas.com/cat?width=300&height=300&2',
+    photo: 'https://placekitten.com/401/401',
     description: 'Sees all. Judges all. Naps frequently.',
     age: 'Senior',
     breed: 'Domestic Longhair',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: '',
+    location: 'The Void',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-3',
     name: 'Luna',
-    photo: 'https://cataas.com/cat?width=300&height=300&3',
+    photo: 'https://placekitten.com/402/402',
     description: 'Named after the moon. Equally aloof.',
     age: 'Young',
     breed: 'Tabby',
     sex: 'Female',
     shelterName: 'The Mystical Realm',
-    location: '',
+    location: 'The Void',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-4',
     name: 'Midnight',
-    photo: 'https://cataas.com/cat?width=300&height=300&4',
+    photo: 'https://placekitten.com/403/403',
     description: 'Only appears after dark. Or whenever there\'s food.',
     age: 'Adult',
     breed: 'Black Cat',
     sex: 'Male',
     shelterName: 'The Mystical Realm',
-    location: '',
+    location: 'The Void',
     adoptionUrl: '#',
     trackerUrl: ''
   },
   {
     id: 'fallback-5',
     name: 'Oracle',
-    photo: 'https://cataas.com/cat?width=300&height=300&5',
+    photo: 'https://placekitten.com/404/404',
     description: 'The original. The legend. Still judging you.',
     age: 'Ancient',
     breed: 'Unknown',
     sex: 'Unknown',
     shelterName: 'The Mystical Realm',
-    location: '',
+    location: 'The Void',
     adoptionUrl: '#',
     trackerUrl: ''
   }
@@ -196,8 +198,11 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
 
     if (!data.data || data.data.length === 0) {
       console.warn('RescueGroups API v5 returned no data');
+      console.warn('Full response:', JSON.stringify(data, null, 2));
       return FALLBACK_CATS.slice(0, limit);
     }
+
+    console.log(`API returned ${data.data.length} animals, ${data.included?.length || 0} included items`);
 
     // Build lookup map for orgs
     const orgsMap = new Map<string, V5Org>();
@@ -283,11 +288,16 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
       })
       .filter((cat): cat is ShelterCat => cat !== null);
 
+    console.log(`After filtering: ${cats.length} cats remain`);
+
+    if (cats.length === 0) {
+      console.warn('All cats filtered out! Using fallbacks.');
+      return FALLBACK_CATS.slice(0, limit);
+    }
+
     // Shuffle for variety (API returns sorted by updatedDate)
     const shuffled = cats.sort(() => Math.random() - 0.5);
-
-    // Return cats or fallback if none found
-    return shuffled.length > 0 ? shuffled.slice(0, limit) : FALLBACK_CATS.slice(0, limit);
+    return shuffled.slice(0, limit);
 
   } catch (error) {
     console.error('Failed to fetch adoptable cats:', error);
