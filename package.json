@@ -12,8 +12,6 @@
     "test:run": "vitest run"
   },
   "dependencies": {
-    "@plasmicapp/host": "^1.0.234",
-    "@plasmicapp/react-web": "^0.2.415",
     "@tailwindcss/vite": "^4.1.18",
     "@vercel/analytics": "^1.6.1",
     "clsx": "^2.1.1",

@@ -28,13 +28,6 @@ function preventOrphans(text: string): string {
   return [...words.slice(0, -2), lastTwo].join(' ');
 }
 
-const EXAMPLE_QUESTIONS = [
-  "Should I quit my job?",
-  "Am I making a mistake?",
-  "What do they really think?",
-  "Is this the right decision?",
-];
-
 export function Oracle() {
   useDocumentMeta();
 
@@ -62,10 +55,7 @@ export function Oracle() {
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
   const [needsBrightening, setNeedsBrightening] = useState(false);
-  const [hashtagsCopied, setHashtagsCopied] = useState(false);
-  const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const responseRef = useRef<HTMLDivElement>(null);
 
   // Analyze image brightness and determine if it needs enhancement
   const analyzeImageBrightness = useCallback((imageSrc: string) => {
@@ -150,63 +140,9 @@ export function Oracle() {
     clearResponse();
   }, [clearCatStorage, clearResponse]);
 
-  const downloadImage = useCallback(async () => {
-    if (!responseRef.current) return;
-    const { default: html2canvas } = await import('html2canvas');
-    const canvas = await html2canvas(responseRef.current, {
-      backgroundColor: config.export.backgroundColor,
-      scale: config.export.scale,
-    });
-    const link = document.createElement('a');
-    link.download = `maybecat-${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  }, []);
-
-  const shareNative = useCallback(async () => {
-    if (!responseRef.current) return;
-    try {
-      const { default: html2canvas } = await import('html2canvas');
-      const canvas = await html2canvas(responseRef.current, {
-        backgroundColor: config.export.backgroundColor,
-        scale: config.export.scale,
-      });
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        const file = new File([blob], 'maybecat.png', { type: 'image/png' });
-        if (navigator.share && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: 'Maybe Cat Has Spoken',
-            text: 'I asked my cat for wisdom. Maybe they answered.',
-          });
-        } else {
-          downloadImage();
-        }
-      }, 'image/png');
-    } catch {
-      downloadImage();
-    }
-  }, [downloadImage]);
-
-  const copyHashtags = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText('#AskMaybeCat #CatWisdom');
-      setHashtagsCopied(true);
-      setTimeout(() => setHashtagsCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy hashtags:', err);
-    }
-  }, []);
-
   const handleAskOracle = useCallback(() => {
     askOracle();
-    setHasAskedQuestion(true);
   }, [askOracle]);
-
-  const handleExampleClick = useCallback((exampleQuestion: string) => {
-    setQuestion(exampleQuestion);
-  }, [setQuestion]);
 
   const displayName = catName || 'Maybe Cat';
 
@@ -239,7 +175,7 @@ export function Oracle() {
         
         {/* Header */}
         <header className="text-center mb-2">
-          <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="flex items-center justify-center gap-3 mb-1">
             <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
             <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
             <MysticalStar className="w-6 h-6 md:w-8 md:h-8 text-amber-100 drop-shadow-lg" />
@@ -249,7 +185,7 @@ export function Oracle() {
 
           <h1
             onClick={clearCat}
-            className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity"
+            className="text-[70px] md:text-[90px] lg:text-[114px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight"
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
@@ -259,28 +195,17 @@ export function Oracle() {
             Maybe Cat
           </h1>
 
-          <p
-            className="mt-2 text-lg md:text-2xl lg:text-3xl italic font-semibold"
-            style={{
-              fontFamily: "Georgia, serif",
-              color: '#451A03',
-              textShadow: '1px 1px 0 rgba(251,191,36,0.6)'
-            }}
-          >
-            Your cat might have wisdom.
-          </p>
-
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <div className="h-0.5 w-12 bg-amber-800/60" />
-            <span className="text-amber-800 text-xl md:text-2xl">☽</span>
-            <span className="text-amber-800 text-base">✧</span>
-            <span className="text-amber-800 text-xl md:text-2xl">☾</span>
-            <div className="h-0.5 w-12 bg-amber-800/60" />
+          <div className="flex items-center justify-center gap-2 mt-[1px]">
+            <div className="h-[3px] w-14 bg-amber-800/60" />
+            <span className="text-amber-800 text-[22px] md:text-[26px]">☽</span>
+            <span className="text-amber-800 text-[18px]">✧</span>
+            <span className="text-amber-800 text-[22px] md:text-[26px]">☾</span>
+            <div className="h-[3px] w-14 bg-amber-800/60" />
           </div>
         </header>
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex flex-col">
           {!catImage ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -447,15 +372,14 @@ export function Oracle() {
               </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex-1 flex flex-col items-center justify-center">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex flex-col items-center">
               {/* Oracle Reading Card - wider to prevent vertical expansion */}
               <div
-                ref={responseRef}
-                className="w-full max-w-2xl relative"
+                className="w-full max-w-4xl relative mt-[19px]"
                 style={{
                   background: 'linear-gradient(145deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%)',
                   borderRadius: '1rem',
-                  padding: '1.5rem',
+                  padding: '1rem',
                   boxShadow: '0 20px 60px rgba(120,53,15,0.3), inset 0 0 40px rgba(255,255,255,0.2)',
                   border: '4px solid #92400E',
                 }}
@@ -466,13 +390,13 @@ export function Oracle() {
                 <div className="absolute bottom-3 left-3 text-amber-700/50">✦</div>
                 <div className="absolute bottom-3 right-3 text-amber-700/50">✦</div>
 
-                <div className="relative mx-auto mb-4" style={{ maxWidth: '280px' }}>
+                <div className="relative mx-auto mb-2" style={{ maxWidth: '380px' }}>
                   <div
                     className="rounded-xl overflow-hidden"
                     style={{
                       border: '4px solid #92400E',
                       boxShadow: '0 12px 30px rgba(120,53,15,0.4)',
-                      padding: '8px',
+                      padding: '6px',
                       backgroundColor: '#FFFBEB'
                     }}
                   >
@@ -483,39 +407,42 @@ export function Oracle() {
                       style={needsBrightening ? { filter: config.brightness.enhanceFilter } : undefined}
                     />
                   </div>
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-800 rounded-full shadow-lg">
-                    <p className="text-amber-100 font-bold text-sm whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-6 py-2 bg-amber-800 rounded-full shadow-lg">
+                    <p className="text-amber-100 font-bold text-base md:text-lg whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
                       {displayName}
                     </p>
                   </div>
                 </div>
 
 
-                <AnimatePresence mode="wait">
-                  {isThinking && (
-                    <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
-                      <Sparkles className="w-8 h-8 mx-auto mb-2 text-amber-700 animate-pulse" />
-                      <p className="text-amber-800 text-base italic" style={{ fontFamily: "Georgia, serif" }}>
-                        ✧ {displayName} contemplates... ✧
-                      </p>
-                    </motion.div>
-                  )}
+                {/* Answer area - fixed min-height for 2 lines to prevent layout jump */}
+                <div className="min-h-[80px] flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {!response && !isThinking && (
+                      <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} className="text-center text-amber-700/50">
+                        <span className="text-2xl">✧ ☽ ✧</span>
+                      </motion.div>
+                    )}
 
-                  {response && !isThinking && (
-                    <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-3">
-                      <p className="text-xl md:text-2xl text-amber-950 leading-relaxed font-bold px-2" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
-                        "{preventOrphans(response.text)}"
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    {isThinking && (
+                      <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
+                        <Sparkles className="w-8 h-8 mx-auto mb-2 text-amber-700 animate-pulse" />
+                        <p className="text-amber-800 text-base italic" style={{ fontFamily: "Georgia, serif" }}>
+                          ✧ {displayName} contemplates... ✧
+                        </p>
+                      </motion.div>
+                    )}
 
-                {/* Watermark for screenshots */}
-                <div className="text-center mt-2">
-                  <p className="text-amber-700/40 text-xs" style={{ fontFamily: "Georgia, serif" }}>
-                    maybecat.com
-                  </p>
+                    {response && !isThinking && (
+                      <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
+                        <p className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
+                          "{preventOrphans(response.text)}"
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
+
               </div>
 
               <button onClick={clearCat} className="absolute top-2 right-2 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
@@ -524,7 +451,7 @@ export function Oracle() {
 
               {/* Question input - INSIDE page 2 for proper centering */}
               {!showNameInput && (
-                <div className="w-full max-w-2xl mt-4 space-y-2">
+                <div className="w-full max-w-4xl mt-2 space-y-2">
                   <div className="relative">
                     <input
                       type="text"
@@ -532,67 +459,24 @@ export function Oracle() {
                       onChange={(e) => setQuestion(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
                       placeholder={`Ask ${displayName} a question...`}
-                      className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
+                      className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
                       style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-600/40">✧</div>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
                   </div>
 
                   <motion.button
-                    onClick={handleAskOracle}
+                    onClick={response ? askAgain : handleAskOracle}
                     disabled={!question.trim() || isThinking}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-2 rounded-xl text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
                   >
-                    ✦ Consult the Cat ✦
+                    {response ? '✦ Ask Again ✦' : '✦ Consult the Cat ✦'}
                   </motion.button>
 
-                  {/* Example question prompts - shown only before first question */}
-                  {!hasAskedQuestion && !response && (
-                    <div className="text-center mt-3">
-                      <p className="text-amber-800/70 text-sm mb-2" style={{ fontFamily: "Georgia, serif" }}>
-                        Try asking:
-                      </p>
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {EXAMPLE_QUESTIONS.map((q) => (
-                          <button
-                            key={q}
-                            onClick={() => handleExampleClick(q)}
-                            className="px-3 py-1.5 rounded-full bg-amber-100/80 text-amber-800 text-sm hover:bg-amber-200/80 transition-colors border border-amber-600/30"
-                            style={{ fontFamily: "Georgia, serif" }}
-                          >
-                            {q}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
-                  {response && (
-                    <div className="space-y-2">
-                      <div className="flex gap-3">
-                        <button onClick={askAgain} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-amber-800 text-amber-100 font-bold hover:bg-amber-900 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
-                          Ask Again
-                        </button>
-                        <button onClick={shareNative} disabled={isThinking} className="flex-1 py-3 rounded-xl bg-emerald-700 text-white font-bold hover:bg-emerald-800 transition-colors disabled:opacity-50" style={{ fontFamily: "Georgia, serif" }}>
-                          Share Wisdom
-                        </button>
-                      </div>
-                      {/* Hashtag suggestions */}
-                      <div className="text-center pt-1">
-                        <button
-                          onClick={copyHashtags}
-                          className="text-amber-700/60 text-sm hover:text-amber-800 transition-colors cursor-pointer"
-                          style={{ fontFamily: "Georgia, serif" }}
-                          title="Click to copy hashtags"
-                        >
-                          {hashtagsCopied ? '✓ Copied!' : '#AskMaybeCat #CatWisdom'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </motion.div>
@@ -630,11 +514,11 @@ export function Oracle() {
         </div>
 
         {/* Tagline */}
-        <div className="text-center py-3 mt-auto">
-          <p className="text-lg md:text-2xl lg:text-3xl italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
+        <div className="text-center py-0 mt-[36px]">
+          <p className="text-[28px] md:text-[34px] lg:text-[44px] italic font-semibold" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
             Maybe wisdom. Maybe judgment.<br className="md:hidden" /> Maybe salmon.
           </p>
-          <p className="text-xl md:text-3xl lg:text-4xl font-black mt-1" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '1px 1px 0 rgba(251,191,36,0.6)' }}>
+          <p className="text-[34px] md:text-[44px] lg:text-[56px] font-black -mt-1" style={{ fontFamily: "Georgia, serif", color: '#451A03', textShadow: '2px 2px 0 rgba(251,191,36,0.6)' }}>
             Always cat.
           </p>
         </div>

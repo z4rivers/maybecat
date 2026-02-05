@@ -458,7 +458,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*stares at your body* All that meat. Just flailing around. Incredible.", category: 'wise' },
   { text: "You can think whatever you want.", category: 'wise' },
   { text: "Comfort can be found in small dark places.", category: 'wise' },
-  { text: "Honest cat question: when you take your clothes off, does it hurt?", category: 'wise' },
   { text: "It doesn't stink as much if you bury it.", category: 'wise' },
   { text: "Retreat under a blanket.", category: 'wise' },
   { text: "Stare at it long enough, it might change.", category: 'wise' },
@@ -2414,7 +2413,7 @@ const templates: Template[] = [
     category: 'wise',
     slots: {
       gift: ["dead birds", "mice", "things I find", "my offerings", "gifts", "the stuff I catch", "treasures from outside", "bugs I bring home"],
-      wisdom: ["give your best, expect nothing", "offer it anyway, even if they don't understand", "the effort is the point", "you can't control how it's received", "do it because you want to, not for the reaction", "some gifts aren't appreciated until later", "intent matters more than outcome", "showing up is the whole thing"]
+      wisdom: ["give your best, expect nothing", "offer it anyway, even if they don't understand", "you can't control how it's received", "do it because you want to, not for the reaction", "some gifts aren't appreciated until later", "intent matters more than outcome", "showing up is the whole thing"]
     }
   },
   {
