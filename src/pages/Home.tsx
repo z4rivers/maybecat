@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera } from 'lucide-react';
-import { fetchAdoptableCats, type ShelterCat } from '../services/rescueGroups';
+import { X, Heart, Sparkles, Camera, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
@@ -55,42 +55,74 @@ export function Oracle() {
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
   const [needsBrightening, setNeedsBrightening] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Carousel navigation - infinite circular rotation
+  const VISIBLE_CATS = 4;
+
+  const nextCat = useCallback(() => {
+    setCarouselIndex(i => (i + 1) % shelterCats.length);
+  }, [shelterCats.length]);
+
+  const prevCat = useCallback(() => {
+    setCarouselIndex(i => (i - 1 + shelterCats.length) % shelterCats.length);
+  }, [shelterCats.length]);
+
+  // Get visible cats with circular wrapping
+  const getVisibleCats = useCallback(() => {
+    if (shelterCats.length === 0) return [];
+    const visible: ShelterCat[] = [];
+    for (let i = 0; i < Math.min(VISIBLE_CATS, shelterCats.length); i++) {
+      const idx = (carouselIndex + i) % shelterCats.length;
+      visible.push(shelterCats[idx]);
+    }
+    return visible;
+  }, [shelterCats, carouselIndex]);
+
   // Analyze image brightness and determine if it needs enhancement
+  // Skip for external URLs (CORS issues) - only analyze user uploads (data: URLs)
   const analyzeImageBrightness = useCallback((imageSrc: string) => {
+    // Only analyze data URLs (user uploads) - external images have CORS issues
+    if (!imageSrc.startsWith('data:')) {
+      setNeedsBrightening(false);
+      return;
+    }
+
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-      // Sample at smaller size for performance
-      const sampleSize = config.brightness.sampleSize;
-      canvas.width = sampleSize;
-      canvas.height = sampleSize;
-      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+        const sampleSize = config.brightness.sampleSize;
+        canvas.width = sampleSize;
+        canvas.height = sampleSize;
+        ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
 
-      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
-      const pixels = imageData.data;
+        const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
+        const pixels = imageData.data;
 
-      let totalBrightness = 0;
-      const pixelCount = pixels.length / 4;
+        let totalBrightness = 0;
+        const pixelCount = pixels.length / 4;
 
-      for (let i = 0; i < pixels.length; i += 4) {
-        // Calculate perceived brightness (human eye weighted)
-        const r = pixels[i];
-        const g = pixels[i + 1];
-        const b = pixels[i + 2];
-        const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
-        totalBrightness += brightness;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+          const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+          totalBrightness += brightness;
+        }
+
+        const avgBrightness = totalBrightness / pixelCount;
+        setNeedsBrightening(avgBrightness < config.brightness.threshold);
+      } catch {
+        // CORS or other error - skip brightness adjustment
+        setNeedsBrightening(false);
       }
-
-      const avgBrightness = totalBrightness / pixelCount;
-      // Only brighten truly dark images - avoids washing out mixed-lighting photos
-      setNeedsBrightening(avgBrightness < config.brightness.threshold);
     };
+    img.onerror = () => setNeedsBrightening(false);
     img.src = imageSrc;
   }, []);
 
@@ -106,7 +138,8 @@ export function Oracle() {
   useEffect(() => {
     async function loadCats() {
       try {
-        const cats = await fetchAdoptableCats(config.shelterCats.fetchCount);
+        // Uses cached cats if available (persists up to 24 hours)
+        const cats = await getCachedOrFetchCats(config.shelterCats.fetchCount);
         setShelterCats(cats);
       } catch (error) {
         console.error('Failed to fetch cats:', error);
@@ -115,6 +148,19 @@ export function Oracle() {
       }
     }
     loadCats();
+  }, []);
+
+  // Manual refresh to get new batch of cats
+  const handleRefreshCats = useCallback(async () => {
+    setLoadingShelterCats(true);
+    try {
+      const cats = await refreshCats(config.shelterCats.fetchCount);
+      setShelterCats(cats);
+    } catch (error) {
+      console.error('Failed to refresh cats:', error);
+    } finally {
+      setLoadingShelterCats(false);
+    }
   }, []);
 
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,165 +256,226 @@ export function Oracle() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex-1 flex flex-col items-center justify-center gap-2 -mt-8"
+              className="flex-1 flex flex-col items-center gap-4 mt-4"
             >
-              {/* Choose Your Oracle label */}
-              <p 
-                className="text-base md:text-2xl font-bold text-center px-4 py-1 whitespace-nowrap"
-                style={{ 
-                  fontFamily: "'Cinzel Decorative', Georgia, serif",
-                  color: '#FEF3C7',
-                  textShadow: '2px 2px 0 #92400E'
-                }}
-              >
-                ✦ CHOOSE CAT ✦ ASK QUESTION ✦
-              </p>
-
-              {/* Scroll container - constrained width enables scroll within overflow-hidden parent */}
-              <div className="w-full max-w-full overflow-x-auto pt-12 pb-4">
-                {/* All cats in one row - horizontal scroll on mobile, wrap on desktop */}
-                <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center items-end gap-4 md:gap-6 lg:gap-8 px-4 min-w-max md:min-w-0">
-                {/* YOUR CAT - larger than the others, tarot card style */}
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -10, rotate: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="cursor-pointer group flex-shrink-0"
+              {/* Choose Your Oracle label with refresh button */}
+              <div className="flex items-center gap-3">
+                <p
+                  className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-nowrap"
+                  style={{
+                    fontFamily: "'Cinzel Decorative', Georgia, serif",
+                    color: '#FEF3C7',
+                    textShadow: '2px 2px 0 #92400E'
+                  }}
                 >
-                  <div
-                    className="w-52 h-80 md:w-64 md:h-[400px] lg:w-72 lg:h-[440px] rounded-lg overflow-hidden relative"
-                    style={{
-                      background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
-                      boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 0 60px rgba(255,255,255,0.4), 0 0 30px rgba(251,191,36,0.3)',
-                      border: '5px solid #78350F',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    {/* Inner ornate frame */}
-                    <div 
-                      className="absolute inset-3 rounded-lg"
-                      style={{ 
-                        border: '3px solid #92400E',
-                        boxShadow: 'inset 0 0 20px rgba(120,53,15,0.2)'
-                      }} 
-                    />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                      <div 
-                        className="w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-all"
+                  ✦ CHOOSE CAT ✦ ASK QUESTION ✦
+                </p>
+                <button
+                  onClick={handleRefreshCats}
+                  disabled={loadingShelterCats}
+                  className="p-2 rounded-full bg-amber-900/50 text-amber-100 hover:bg-amber-900/80 disabled:opacity-50 transition-all"
+                  title="Show different cats"
+                >
+                  <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${loadingShelterCats ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+
+              {/* Horizontal layout: Your Cat (fixed) | carousel */}
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-2 overflow-x-auto">
+                {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
+                <AnimatePresence>
+                  {!loadingShelterCats && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, x: -50 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}
+                      whileHover={{ scale: 1.05, y: -10, rotate: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="cursor-pointer group flex-shrink-0"
+                    >
+                      <div
+                        className="w-64 h-[368px] md:w-[294px] md:h-[460px] lg:w-[345px] lg:h-[518px] rounded-lg overflow-hidden relative"
                         style={{
-                          border: '4px dashed #78350F',
-                          background: 'radial-gradient(circle, rgba(254,243,199,0.5) 0%, transparent 70%)'
+                          background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
+                          boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
+                          border: '4px solid #78350F',
                         }}
-                      >
-                        <Camera className="w-14 h-14 md:w-18 md:h-18 lg:w-20 lg:h-20 text-amber-800" />
-                      </div>
-                      <p 
-                        className="font-black text-center text-2xl md:text-3xl lg:text-4xl" 
-                        style={{ 
-                          fontFamily: "'Cinzel Decorative', Georgia, serif",
-                          color: '#78350F',
-                          textShadow: '1px 1px 0 rgba(254,243,199,0.5)'
-                        }}
-                      >
-                        Your Cat
-                      </p>
-                      <p className="text-amber-800 text-base md:text-lg mt-2 text-center font-semibold">tap to upload</p>
-                    </div>
-                    {/* Corner decorations */}
-                    <div className="absolute top-4 left-4 text-amber-800 text-xl">❧</div>
-                    <div className="absolute top-4 right-4 text-amber-800 text-xl scale-x-[-1]">❧</div>
-                    <div className="absolute bottom-4 left-4 text-amber-800 text-xl scale-y-[-1]">❧</div>
-                    <div className="absolute bottom-4 right-4 text-amber-800 text-xl scale-[-1]">❧</div>
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </motion.div>
-
-                {/* Shelter cats - RICH jewel tone tarot cards */}
-                {loadingShelterCats ? (
-                  <p className="text-amber-100 text-2xl italic" style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}>Summoning cats...</p>
-                ) : (
-                  shelterCats.map((cat, i) => {
-                    // Rich jewel tones inspired by tarot deck
-                    const cardColors = [
-                      { bg: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)', border: '#500724', accent: '#FDF2F8' }, // Hot pink/magenta
-                      { bg: 'linear-gradient(145deg, #10B981 0%, #047857 50%, #064E3B 100%)', border: '#022C22', accent: '#D1FAE5' }, // Emerald
-                      { bg: 'linear-gradient(145deg, #8B5CF6 0%, #6D28D9 50%, #4C1D95 100%)', border: '#2E1065', accent: '#EDE9FE' }, // Purple
-                      { bg: 'linear-gradient(145deg, #F472B6 0%, #DB2777 50%, #9D174D 100%)', border: '#500724', accent: '#FCE7F3' }, // Pink
-                      { bg: 'linear-gradient(145deg, #FB923C 0%, #EA580C 50%, #9A3412 100%)', border: '#431407', accent: '#FFEDD5' }, // Coral/Orange
-                    ];
-                    const color = cardColors[i % cardColors.length];
-                    // Subtle rotations for organic feel - just slightly off perfect
-                    const rotations = [-1, 0.5, -0.5, 1, -0.5];
-                    const rotation = rotations[i % rotations.length];
-
-                    return (
-                      <motion.button
-                        key={cat.id}
-                        whileHover={{ scale: 1.1, y: -12, rotate: 0, zIndex: 10 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setCatFromShelter(cat)}
-                        style={{ rotate: rotation }}
-                        className="relative flex-shrink-0"
                       >
                         <div
-                          className="w-44 h-[272px] md:w-52 md:h-[320px] lg:w-56 lg:h-[360px] rounded-lg overflow-hidden relative"
+                          className="absolute inset-2 rounded"
                           style={{
-                            background: color.bg,
-                            boxShadow: '0 15px 50px rgba(0,0,0,0.4), inset 0 0 40px rgba(255,255,255,0.15)',
-                            border: `4px solid ${color.border}`,
+                            border: '2px solid #92400E',
+                            boxShadow: 'inset 0 0 15px rgba(120,53,15,0.2)'
                           }}
-                        >
-                          {/* Ornate inner frame */}
-                          <div 
-                            className="absolute inset-2 rounded" 
-                            style={{ 
-                              border: `2px solid ${color.accent}40`,
-                              boxShadow: `inset 0 0 15px ${color.accent}20`
-                            }} 
-                          />
-                          {/* Cat photo with ornate frame */}
-                          <div 
-                            className="absolute inset-4 top-4 bottom-16 md:bottom-18 rounded overflow-hidden"
-                            style={{ 
-                              border: `3px solid ${color.accent}60`,
-                              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                        />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                          <div
+                            className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-all"
+                            style={{
+                              border: '3px dashed #78350F',
+                              background: 'radial-gradient(circle, rgba(254,243,199,0.5) 0%, transparent 70%)'
                             }}
                           >
-                            <img src={cat.photo} alt={cat.name} className="w-full h-full object-cover" />
+                            <Camera className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-amber-800" />
                           </div>
-                          {/* Name banner */}
-                          <div 
-                            className="absolute bottom-0 left-0 right-0 py-3 md:py-4 text-center" 
-                            style={{ 
-                              backgroundColor: color.border,
-                              boxShadow: '0 -4px 12px rgba(0,0,0,0.3)'
+                          <p
+                            className="font-black text-center text-xl md:text-2xl lg:text-3xl"
+                            style={{
+                              fontFamily: "'Cinzel Decorative', Georgia, serif",
+                              color: '#78350F',
+                              textShadow: '1px 1px 0 rgba(254,243,199,0.5)'
                             }}
                           >
-                            <p 
-                              className="font-black text-lg md:text-xl" 
-                              style={{ 
-                                fontFamily: "'Cinzel Decorative', Georgia, serif",
-                                color: color.accent 
+                            Your Cat
+                          </p>
+                          <p className="text-amber-800 text-sm md:text-base mt-2 text-center font-semibold">tap to upload</p>
+                        </div>
+                        <div className="absolute top-3 left-3 text-amber-800 text-base">❧</div>
+                        <div className="absolute top-3 right-3 text-amber-800 text-base scale-x-[-1]">❧</div>
+                        <div className="absolute bottom-3 left-3 text-amber-800 text-base scale-y-[-1]">❧</div>
+                        <div className="absolute bottom-3 right-3 text-amber-800 text-base scale-[-1]">❧</div>
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Left arrow - nano-banana style */}
+                <button
+                  onClick={prevCat}
+                  disabled={loadingShelterCats}
+                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40"
+                  style={{
+                    background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
+                    borderRadius: '50%',
+                    border: '2px solid #92400E',
+                    boxShadow: '0 3px 8px rgba(120,53,15,0.3), inset 0 1px 2px rgba(255,255,255,0.5)',
+                  }}
+                  aria-label="Previous cats"
+                >
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
+                </button>
+
+                {/* Shelter cats - circular carousel with 4 BIG cards */}
+                <div className="flex items-end gap-3">
+                  {loadingShelterCats ? (
+                    <div className="flex items-center gap-3 justify-center py-8">
+                      <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
+                      <p className="text-amber-100 text-xl italic" style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}>Summoning cats...</p>
+                      <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
+                    </div>
+                  ) : (
+                    <AnimatePresence mode="popLayout">
+                      {getVisibleCats().map((cat, i) => {
+                        const cardColors = [
+                          { bg: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)', border: '#500724', accent: '#FDF2F8' },
+                          { bg: 'linear-gradient(145deg, #10B981 0%, #047857 50%, #064E3B 100%)', border: '#022C22', accent: '#D1FAE5' },
+                          { bg: 'linear-gradient(145deg, #8B5CF6 0%, #6D28D9 50%, #4C1D95 100%)', border: '#2E1065', accent: '#EDE9FE' },
+                          { bg: 'linear-gradient(145deg, #F472B6 0%, #DB2777 50%, #9D174D 100%)', border: '#500724', accent: '#FCE7F3' },
+                          { bg: 'linear-gradient(145deg, #FB923C 0%, #EA580C 50%, #9A3412 100%)', border: '#431407', accent: '#FFEDD5' },
+                        ];
+                        const color = cardColors[i % cardColors.length];
+                        const rotations = [-1.5, 0.8, -0.8, 1.5];
+                        const rotation = rotations[i % rotations.length];
+
+                        return (
+                          <motion.button
+                            key={cat.id}
+                            layout
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{
+                              layout: { type: 'spring', stiffness: 200, damping: 25 },
+                              opacity: { duration: 0.2 }
+                            }}
+                            whileHover={{ scale: 1.06, y: -10, rotate: 0, zIndex: 10 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setCatFromShelter(cat)}
+                            style={{ rotate: rotation }}
+                            className="relative flex-shrink-0"
+                          >
+                            <div
+                              className="w-52 h-[294px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
+                              style={{
+                                background: color.bg,
+                                boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.15)',
+                                border: `4px solid ${color.border}`,
                               }}
                             >
-                              {cat.name}
-                            </p>
-                          </div>
-                          {/* Corner flourishes */}
-                          <div className="absolute top-3 left-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
-                          <div className="absolute top-3 right-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
-                        </div>
-                      </motion.button>
-                    );
-                  })
-                )}
-              </div>
+                              <div
+                                className="absolute inset-2 rounded"
+                                style={{
+                                  border: `2px solid ${color.accent}40`,
+                                  boxShadow: `inset 0 0 15px ${color.accent}20`
+                                }}
+                              />
+                              <div
+                                className="absolute inset-4 top-4 bottom-14 md:bottom-16 rounded overflow-hidden"
+                                style={{
+                                  border: `3px solid ${color.accent}60`,
+                                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                                }}
+                              >
+                                <img src={cat.photo} alt={cat.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div
+                                className="absolute bottom-0 left-0 right-0 py-3 md:py-4 text-center"
+                                style={{
+                                  backgroundColor: color.border,
+                                  boxShadow: '0 -4px 12px rgba(0,0,0,0.3)'
+                                }}
+                              >
+                                <p
+                                  className="font-black text-base md:text-lg lg:text-xl truncate px-3"
+                                  style={{
+                                    fontFamily: "'Cinzel Decorative', Georgia, serif",
+                                    color: color.accent
+                                  }}
+                                >
+                                  {cat.name}
+                                </p>
+                                {cat.location && (
+                                  <p
+                                    className="text-xs md:text-sm truncate px-3 -mt-1"
+                                    style={{ color: `${color.accent}90` }}
+                                  >
+                                    {cat.location.replace(', ', ' ')}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="absolute top-3 left-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
+                              <div className="absolute top-3 right-3 text-sm" style={{ color: `${color.accent}70` }}>✦</div>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </AnimatePresence>
+                  )}
+                </div>
+
+                {/* Right arrow - nano-banana style */}
+                <button
+                  onClick={nextCat}
+                  disabled={loadingShelterCats}
+                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40"
+                  style={{
+                    background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
+                    borderRadius: '50%',
+                    border: '2px solid #92400E',
+                    boxShadow: '0 3px 8px rgba(120,53,15,0.3), inset 0 1px 2px rgba(255,255,255,0.5)',
+                  }}
+                  aria-label="Next cats"
+                >
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
+                </button>
               </div>
             </motion.div>
           ) : (
@@ -482,29 +589,6 @@ export function Oracle() {
             </motion.div>
           )}
 
-          {/* Adoption CTA */}
-          {shelterCat && catImage && shelterCat.location && (
-            <motion.a
-              href={shelterCat.adoptionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="block w-full max-w-md mx-auto mt-4 p-4 rounded-xl text-center transition-colors"
-              style={{
-                background: 'linear-gradient(135deg, #065F46 0%, #047857 50%, #059669 100%)',
-                boxShadow: '0 4px 20px rgba(6,95,70,0.4)',
-                border: '2px solid #064E3B',
-              }}
-            >
-              <p className="text-white font-bold text-lg" style={{ fontFamily: "Georgia, serif" }}>
-                <Heart className="w-5 h-5 inline mr-2 text-emerald-200" />
-                Give {shelterCat.name} a forever home?
-              </p>
-              <p className="text-emerald-200 text-sm mt-1 italic">{shelterCat.location} • Click to adopt</p>
-            </motion.a>
-          )}
 
           {/* Name input modal */}
           <AnimatePresence>
@@ -515,14 +599,48 @@ export function Oracle() {
 
       </div>
 
-      {/* PURRfoot Sponsor Banner - solid 150px, fully opaque */}
+      {/* PURRfoot Sponsor Banner - with adoption CTA on right */}
       <div
-        className="w-full flex-shrink-0 relative z-20"
+        className="w-full flex-shrink-0 relative z-20 flex"
         style={{
           backgroundColor: '#0d1b2a',
           height: '150px',
         }}
-      />
+      >
+        {/* Main ad space - left 4/5 */}
+        <div className="flex-1" />
+
+        {/* Adoption CTA - right 1/5 */}
+        <AnimatePresence>
+          {shelterCat && catImage && (
+            <motion.a
+              href={shelterCat.adoptionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              whileHover={{ scale: 1.02 }}
+              className="w-1/5 min-w-[180px] h-full flex flex-col items-center justify-center px-4 text-center transition-colors hover:bg-amber-900/20"
+              style={{
+                borderLeft: '1px solid rgba(251,191,36,0.3)',
+              }}
+            >
+              <Heart className="w-6 h-6 text-amber-400 mb-2" />
+              <p
+                className="text-amber-100 font-bold text-sm leading-tight"
+                style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}
+              >
+                Adopt {shelterCat.name}
+              </p>
+{shelterCat.location && (
+                <p className="text-amber-400/80 text-xs mt-1">{shelterCat.location}</p>
+              )}
+              <p className="text-amber-500/60 text-[10px] mt-2 uppercase tracking-wider">Click to visit</p>
+            </motion.a>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
