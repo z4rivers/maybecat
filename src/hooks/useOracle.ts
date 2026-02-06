@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { getRandomResponse, type OracleResponse } from '../data/oracleResponses';
 import { config } from '../config';
+import { track } from '@vercel/analytics';
 
 export interface UseOracleReturn {
   question: string;
@@ -23,8 +24,11 @@ export function useOracle(): UseOracleReturn {
     const { base, variance } = config.thinking.firstAsk;
     const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
-      setResponse(getRandomResponse());
+      const r = getRandomResponse();
+      setResponse(r);
       setIsThinking(false);
+      track('question_asked', { type: 'first' });
+      track('response_viewed', { category: r.category });
     }, thinkingTime);
   }, [question]);
 
@@ -33,8 +37,11 @@ export function useOracle(): UseOracleReturn {
     const { base, variance } = config.thinking.askAgain;
     const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
-      setResponse(getRandomResponse());
+      const r = getRandomResponse();
+      setResponse(r);
       setIsThinking(false);
+      track('question_asked', { type: 'ask_again' });
+      track('response_viewed', { category: r.category });
     }, thinkingTime);
   }, []);
 
