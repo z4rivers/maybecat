@@ -109,12 +109,6 @@ export const OracleResponseCard = forwardRef<HTMLDivElement, OracleResponseCardP
           )}
         </AnimatePresence>
 
-        {/* Watermark */}
-        <div className="text-center mt-2">
-          <p className="text-amber-700/40 text-xs" style={{ fontFamily: "Georgia, serif" }}>
-            maybecat.com
-          </p>
-        </div>
       </div>
     );
   }

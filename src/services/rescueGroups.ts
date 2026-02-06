@@ -356,7 +356,11 @@ function setCachedCats(cats: ShelterCat[]): void {
     cats,
     timestamp: Date.now()
   };
-  localStorage.setItem(CACHE_KEY, JSON.stringify(cached));
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cached));
+  } catch {
+    // localStorage quota exceeded — cats still work in-memory
+  }
 }
 
 /**

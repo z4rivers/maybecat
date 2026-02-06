@@ -2,7 +2,12 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Sparkles, Camera, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
-import { track } from '@vercel/analytics';
+/** Safe analytics tracking — never breaks the UX if analytics fails */
+function safeTrack(event: string, data?: Record<string, string>) {
+  try {
+    import('@vercel/analytics').then(({ track }) => safeTrack(event, data)).catch(() => {});
+  } catch { /* no-op */ }
+}
 import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
@@ -172,7 +177,10 @@ export function Oracle() {
         const base64 = reader.result as string;
         setCatFromUpload(base64);
         setShowNameInput(true);
-        track('cat_selected', { source: 'upload' });
+        safeTrack('cat_selected', { source: 'upload' });
+      };
+      reader.onerror = () => {
+        console.error('Failed to read image file');
       };
       reader.readAsDataURL(file);
     }
@@ -400,7 +408,7 @@ export function Oracle() {
                             }}
                             whileHover={{ scale: 1.06, y: -10, rotate: 0, zIndex: 10 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => { setCatFromShelter(cat); track('cat_selected', { source: 'shelter', name: cat.name }); }}
+                            onClick={() => { setCatFromShelter(cat); safeTrack('cat_selected', { source: 'shelter', name: cat.name }); }}
                             style={{ rotate: rotation }}
                             className="relative flex-shrink-0"
                           >
@@ -619,7 +627,7 @@ export function Oracle() {
               href={shelterCat.adoptionUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => track('adoption_clicked', { name: shelterCat.name, location: shelterCat.location })}
+              onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name, location: shelterCat.location })}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}

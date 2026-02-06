@@ -1,7 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { getRandomResponse, type OracleResponse } from '../data/oracleResponses';
 import { config } from '../config';
-import { track } from '@vercel/analytics';
+
+/** Safe analytics tracking — never breaks the UX if analytics fails */
+function safeTrack(event: string, data?: Record<string, string>) {
+  try {
+    import('@vercel/analytics').then(({ track }) => track(event, data)).catch(() => {});
+  } catch {
+    // Analytics unavailable — no-op
+  }
+}
 
 export interface UseOracleReturn {
   question: string;
@@ -18,31 +26,41 @@ export function useOracle(options?: { isShelterCat?: boolean }): UseOracleReturn
   const [response, setResponse] = useState<OracleResponse | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const isShelterCat = options?.isShelterCat;
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const askOracle = useCallback(() => {
     if (!question.trim()) return;
     setIsThinking(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     const { base, variance } = config.thinking.firstAsk;
     const thinkingTime = base + Math.random() * variance;
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       const r = getRandomResponse({ isShelterCat });
       setResponse(r);
       setIsThinking(false);
-      track('question_asked', { type: 'first' });
-      track('response_viewed', { category: r.category });
+      safeTrack('question_asked', { type: 'first' });
+      safeTrack('response_viewed', { category: r.category });
     }, thinkingTime);
   }, [question, isShelterCat]);
 
   const askAgain = useCallback(() => {
     setIsThinking(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     const { base, variance } = config.thinking.askAgain;
     const thinkingTime = base + Math.random() * variance;
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       const r = getRandomResponse({ isShelterCat });
       setResponse(r);
       setIsThinking(false);
-      track('question_asked', { type: 'ask_again' });
-      track('response_viewed', { category: r.category });
+      safeTrack('question_asked', { type: 'ask_again' });
+      safeTrack('response_viewed', { category: r.category });
     }, thinkingTime);
   }, [isShelterCat]);
 

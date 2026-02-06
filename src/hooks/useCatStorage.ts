@@ -7,6 +7,43 @@ const STORAGE_KEYS = {
   shelterCat: 'oracleShelterCat',
 } as const;
 
+function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // localStorage quota exceeded — silently continue, app still works in-memory
+  }
+}
+
+/** Convert a CDN image URL to a data URL (solves CORS for html2canvas/share card) */
+function convertToDataUrl(url: string, maxSize = 800): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let { width, height } = img;
+      if (width > maxSize || height > maxSize) {
+        const ratio = Math.min(maxSize / width, maxSize / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { resolve(null); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+      try {
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      } catch {
+        resolve(null); // CORS blocked toDataURL
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 export interface UseCatStorageReturn {
   catImage: string | null;
   catName: string;
@@ -37,23 +74,32 @@ export function useCatStorage(): UseCatStorageReturn {
 
   const setCatFromUpload = useCallback((image: string) => {
     setCatImage(image);
-    localStorage.setItem(STORAGE_KEYS.image, image);
+    safeSetItem(STORAGE_KEYS.image, image);
     setShelterCat(null);
     localStorage.removeItem(STORAGE_KEYS.shelterCat);
   }, []);
 
   const setCatName = useCallback((name: string) => {
     setCatNameState(name);
-    localStorage.setItem(STORAGE_KEYS.name, name);
+    safeSetItem(STORAGE_KEYS.name, name);
   }, []);
 
   const setCatFromShelter = useCallback((cat: ShelterCat) => {
+    // Show immediately with CDN URL
     setCatImage(cat.photo);
     setCatNameState(cat.name);
     setShelterCat(cat);
-    localStorage.setItem(STORAGE_KEYS.image, cat.photo);
-    localStorage.setItem(STORAGE_KEYS.name, cat.name);
-    localStorage.setItem(STORAGE_KEYS.shelterCat, JSON.stringify(cat));
+    safeSetItem(STORAGE_KEYS.image, cat.photo);
+    safeSetItem(STORAGE_KEYS.name, cat.name);
+    safeSetItem(STORAGE_KEYS.shelterCat, JSON.stringify(cat));
+
+    // Convert to data URL in background (solves CORS for share card)
+    convertToDataUrl(cat.photo).then(dataUrl => {
+      if (dataUrl) {
+        setCatImage(dataUrl);
+        safeSetItem(STORAGE_KEYS.image, dataUrl);
+      }
+    });
   }, []);
 
   const clearCat = useCallback(() => {
