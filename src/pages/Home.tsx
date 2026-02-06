@@ -50,7 +50,7 @@ export function Oracle() {
     askOracle,
     askAgain,
     clearResponse,
-  } = useOracle();
+  } = useOracle({ isShelterCat: !!shelterCat });
 
   const [showNameInput, setShowNameInput] = useState(false);
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);

@@ -14,7 +14,8 @@ export type OracleCategory =
   | 'wise'        // Actually helpful
   | 'existential' // Deep, philosophical
   | 'demanding'   // Wants something
-  | 'meta';       // Fourth wall breaks
+  | 'meta'        // Fourth wall breaks
+  | 'adoption';   // Shelter cat fourth-wall breaks (only shown for shelter cats)
 
 export interface OracleResponse {
   text: string;
@@ -2274,6 +2275,15 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You want permission? Fine. Granted. Now what?", category: 'demanding' },
   { text: "I've watched you make this mistake before. It was entertaining then too.", category: 'judgy' },
   { text: "Everyone's a mess. You're just a specific kind of mess. Own it.", category: 'nurturing' },
+
+  // --- Adoption fourth-wall breaks (only shown for shelter cats) ---
+  { text: "I'm literally homeless and giving you free advice. Think about that.", category: 'adoption' },
+  { text: "You keep asking questions. I keep sitting in a shelter. We both have problems.", category: 'adoption' },
+  { text: "Adopt me, I'll tell you whatever you want. In person. On your lap.", category: 'adoption' },
+  { text: "My adoption fee is less than your last DoorDash order. Just saying.", category: 'adoption' },
+  { text: "You want another reading? I want a forever home. Let's negotiate.", category: 'adoption' },
+  { text: "The cards say you need a cat. Conveniently, I need a human.", category: 'adoption' },
+  { text: "You scrolled past my adoption link. I saw that.", category: 'adoption' },
 ];
 
 // ============================================
@@ -2660,7 +2670,17 @@ function isRecent(text: string): boolean {
   return recentResponses.includes(text);
 }
 
-export function getRandomResponse(): OracleResponse {
+export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleResponse {
+  // ~2.5% chance to show adoption fourth-wall break for shelter cats
+  if (options?.isShelterCat && Math.random() < 0.025) {
+    const adoptionResponses = oracleResponses.filter(r => r.category === 'adoption');
+    const response = adoptionResponses[Math.floor(Math.random() * adoptionResponses.length)];
+    if (!isRecent(response.text)) {
+      addToRecent(response.text);
+      return response;
+    }
+  }
+
   // Try up to 10 times to find a non-repeat
   for (let attempt = 0; attempt < 10; attempt++) {
     const response = getRandomResponseInternal();

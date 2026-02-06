@@ -13,10 +13,11 @@ export interface UseOracleReturn {
   clearResponse: () => void;
 }
 
-export function useOracle(): UseOracleReturn {
+export function useOracle(options?: { isShelterCat?: boolean }): UseOracleReturn {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState<OracleResponse | null>(null);
   const [isThinking, setIsThinking] = useState(false);
+  const isShelterCat = options?.isShelterCat;
 
   const askOracle = useCallback(() => {
     if (!question.trim()) return;
@@ -24,26 +25,26 @@ export function useOracle(): UseOracleReturn {
     const { base, variance } = config.thinking.firstAsk;
     const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
-      const r = getRandomResponse();
+      const r = getRandomResponse({ isShelterCat });
       setResponse(r);
       setIsThinking(false);
       track('question_asked', { type: 'first' });
       track('response_viewed', { category: r.category });
     }, thinkingTime);
-  }, [question]);
+  }, [question, isShelterCat]);
 
   const askAgain = useCallback(() => {
     setIsThinking(true);
     const { base, variance } = config.thinking.askAgain;
     const thinkingTime = base + Math.random() * variance;
     setTimeout(() => {
-      const r = getRandomResponse();
+      const r = getRandomResponse({ isShelterCat });
       setResponse(r);
       setIsThinking(false);
       track('question_asked', { type: 'ask_again' });
       track('response_viewed', { category: r.category });
     }, thinkingTime);
-  }, []);
+  }, [isShelterCat]);
 
   const clearResponse = useCallback(() => {
     setResponse(null);
