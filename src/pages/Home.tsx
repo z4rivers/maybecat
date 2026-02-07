@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Heart, Sparkles, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
 /** Safe analytics tracking — never breaks the UX if analytics fails */
 function safeTrack(event: string, data?: Record<string, string>) {
@@ -68,22 +68,29 @@ export function Oracle() {
   const VISIBLE_CATS = 4;
 
   const nextCat = useCallback(() => {
-    setCarouselIndex(i => (i + 1) % shelterCats.length);
+    setCarouselIndex(i => (i + 1) % (shelterCats.length + 1));
   }, [shelterCats.length]);
 
   const prevCat = useCallback(() => {
-    setCarouselIndex(i => (i - 1 + shelterCats.length) % shelterCats.length);
+    setCarouselIndex(i => (i - 1 + shelterCats.length + 1) % (shelterCats.length + 1));
   }, [shelterCats.length]);
 
-  // Get visible cats with circular wrapping
-  const getVisibleCats = useCallback(() => {
+  // Build visible slots — cats + one refresh card, all in a single rotating sequence
+  type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' };
+
+  const getVisibleSlots = useCallback((): CarouselSlot[] => {
     if (shelterCats.length === 0) return [];
-    const visible: ShelterCat[] = [];
-    for (let i = 0; i < Math.min(VISIBLE_CATS, shelterCats.length); i++) {
-      const idx = (carouselIndex + i) % shelterCats.length;
-      visible.push(shelterCats[idx]);
+    const totalSlots = shelterCats.length + 1; // +1 for refresh card
+    const slots: CarouselSlot[] = [];
+    for (let i = 0; i < Math.min(VISIBLE_CATS, totalSlots); i++) {
+      const idx = (carouselIndex + i) % totalSlots;
+      if (idx < shelterCats.length) {
+        slots.push({ type: 'cat', cat: shelterCats[idx] });
+      } else {
+        slots.push({ type: 'refresh' });
+      }
     }
-    return visible;
+    return slots;
   }, [shelterCats, carouselIndex]);
 
   // Analyze image brightness and determine if it needs enhancement
@@ -268,27 +275,17 @@ export function Oracle() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex flex-col items-center gap-4 mt-4"
             >
-              {/* Choose Your Oracle label with refresh button */}
-              <div className="flex items-center gap-3">
-                <p
-                  className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-nowrap"
-                  style={{
-                    fontFamily: "'Cinzel Decorative', Georgia, serif",
-                    color: '#FEF3C7',
-                    textShadow: '2px 2px 0 #92400E'
-                  }}
-                >
-                  ✦ CHOOSE CAT ✦ ASK QUESTION ✦
-                </p>
-                <button
-                  onClick={handleRefreshCats}
-                  disabled={loadingShelterCats}
-                  className="p-2 rounded-full bg-amber-900/50 text-amber-100 hover:bg-amber-900/80 disabled:opacity-50 transition-all"
-                  title="Show different cats"
-                >
-                  <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${loadingShelterCats ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
+              {/* Choose Your Oracle label */}
+              <p
+                className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-nowrap"
+                style={{
+                  fontFamily: "'Cinzel Decorative', Georgia, serif",
+                  color: '#FEF3C7',
+                  textShadow: '2px 2px 0 #92400E'
+                }}
+              >
+                ✦ CHOOSE CAT ✦ ASK QUESTION ✦ CAT ANSWERS ✦
+              </p>
 
               {/* Horizontal layout: Your Cat (fixed) | carousel */}
               <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-2 overflow-x-auto">
@@ -383,7 +380,7 @@ export function Oracle() {
                     </div>
                   ) : (
                     <AnimatePresence mode="popLayout">
-                      {getVisibleCats().map((cat, i) => {
+                      {getVisibleSlots().map((slot, i) => {
                         const cardColors = [
                           { bg: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)', border: '#500724', accent: '#FDF2F8' },
                           { bg: 'linear-gradient(145deg, #10B981 0%, #047857 50%, #064E3B 100%)', border: '#022C22', accent: '#D1FAE5' },
@@ -395,6 +392,43 @@ export function Oracle() {
                         const rotations = [-1.5, 0.8, -0.8, 1.5];
                         const rotation = rotations[i % rotations.length];
 
+                        if (slot.type === 'refresh') {
+                          return (
+                            <motion.button
+                              key="refresh-card"
+                              layout
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              transition={{
+                                layout: { type: 'spring', stiffness: 200, damping: 25 },
+                                opacity: { duration: 0.2 }
+                              }}
+                              whileHover={{ scale: 1.06, y: -10, rotate: 0, zIndex: 10 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => { handleRefreshCats(); setCarouselIndex(0); }}
+                              disabled={loadingShelterCats}
+                              style={{ rotate: rotation }}
+                              className="relative flex-shrink-0 disabled:opacity-50"
+                            >
+                              <div
+                                className="w-52 h-[294px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
+                                style={{
+                                  boxShadow: '0 15px 50px rgba(0,0,0,0.45), 0 0 20px rgba(147,51,234,0.3)',
+                                  border: '4px solid #2E1065',
+                                }}
+                              >
+                                <img
+                                  src="/refresh-cats-card.jpg"
+                                  alt="Select a New Batch of Cats"
+                                  className={`w-full h-full object-cover ${loadingShelterCats ? 'animate-pulse' : ''}`}
+                                />
+                              </div>
+                            </motion.button>
+                          );
+                        }
+
+                        const cat = slot.cat;
                         return (
                           <motion.button
                             key={cat.id}
