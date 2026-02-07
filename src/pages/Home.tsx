@@ -239,16 +239,52 @@ export function Oracle() {
         {/* Drifting keyword whispers — decorative & indexable */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
           {[
-            { text: 'cattitude', top: '12%', left: '5%', duration: 25, delay: 0 },
-            { text: 'cat behavior', top: '35%', left: '88%', duration: 30, delay: 4 },
-            { text: 'cat personality', top: '58%', left: '3%', duration: 28, delay: 8 },
-            { text: 'funny cat website', top: '78%', left: '82%', duration: 32, delay: 2 },
-            { text: 'cat translator', top: '22%', left: '90%', duration: 27, delay: 6 },
-            { text: 'cat wisdom', top: '45%', left: '7%', duration: 24, delay: 10 },
-            { text: 'meow', top: '88%', left: '15%', duration: 22, delay: 3 },
-            { text: 'communicate with cat', top: '68%', left: '85%', duration: 35, delay: 7 },
-            { text: 'understand your cat', top: '8%', left: '75%', duration: 29, delay: 5 },
-            { text: 'cat training', top: '50%', left: '92%', duration: 26, delay: 9 },
+            // Oracle core
+            { text: 'cattitude', top: '3%', left: '5%', duration: 25, delay: 0 },
+            { text: 'cat oracle', top: '8%', left: '52%', duration: 29, delay: 3 },
+            { text: 'ask a cat', top: '5%', left: '88%', duration: 23, delay: 7 },
+            { text: 'cat wisdom', top: '12%', left: '30%', duration: 24, delay: 10 },
+            { text: 'cat translator', top: '15%', left: '72%', duration: 27, delay: 5 },
+            { text: 'cat psychic', top: '18%', left: '10%', duration: 27, delay: 9 },
+            { text: 'cat fortune teller', top: '22%', left: '58%', duration: 30, delay: 2 },
+            { text: 'cat horoscope', top: '25%', left: '85%', duration: 33, delay: 12 },
+            { text: 'purrsonality', top: '28%', left: '38%', duration: 28, delay: 6 },
+            { text: 'cat magic', top: '32%', left: '3%', duration: 26, delay: 14 },
+            { text: 'cat vibes', top: '35%', left: '68%', duration: 23, delay: 1 },
+            { text: 'cat advice', top: '38%', left: '22%', duration: 27, delay: 8 },
+            { text: 'cat questions', top: '42%', left: '92%', duration: 26, delay: 4 },
+            { text: 'cat mood', top: '45%', left: '48%', duration: 22, delay: 11 },
+            { text: 'meow', top: '48%', left: '8%', duration: 22, delay: 3 },
+            { text: 'cat zodiac', top: '52%', left: '78%', duration: 24, delay: 13 },
+            { text: 'smart cat', top: '55%', left: '35%', duration: 24, delay: 7 },
+            // Understand your cat
+            { text: 'cat personality', top: '58%', left: '62%', duration: 28, delay: 0 },
+            { text: 'cat feelings', top: '62%', left: '5%', duration: 27, delay: 10 },
+            { text: 'cat psychology', top: '10%', left: '42%', duration: 31, delay: 14 },
+            { text: 'cat behavior', top: '65%', left: '82%', duration: 30, delay: 4 },
+            { text: 'communicate with cat', top: '68%', left: '28%', duration: 35, delay: 8 },
+            { text: 'talk to your cat', top: '72%', left: '55%', duration: 31, delay: 2 },
+            { text: 'understand your cat', top: '75%', left: '90%', duration: 29, delay: 11 },
+            { text: 'what is my cat thinking', top: '78%', left: '12%', duration: 35, delay: 6 },
+            { text: 'what does my cat mean', top: '82%', left: '65%', duration: 34, delay: 13 },
+            { text: 'cat communication', top: '85%', left: '40%', duration: 31, delay: 1 },
+            { text: 'read your cat', top: '88%', left: '75%', duration: 24, delay: 9 },
+            { text: 'cat whisperer', top: '92%', left: '18%', duration: 30, delay: 5 },
+            // Adoption
+            { text: 'adopt a cat', top: '20%', left: '45%', duration: 28, delay: 12 },
+            { text: 'shelter cats', top: '50%', left: '15%', duration: 30, delay: 3 },
+            { text: 'cat adoption', top: '70%', left: '42%', duration: 25, delay: 9 },
+            { text: 'rescue cats', top: '40%', left: '55%', duration: 32, delay: 6 },
+            // Entertainment
+            { text: 'funny cat website', top: '95%', left: '52%', duration: 32, delay: 0 },
+            { text: 'funny cats', top: '30%', left: '90%', duration: 25, delay: 8 },
+            { text: 'funny cat', top: '60%', left: '95%', duration: 26, delay: 14 },
+            { text: 'cute cat', top: '90%', left: '88%', duration: 24, delay: 4 },
+            { text: 'cat lover', top: '46%', left: '72%', duration: 27, delay: 11 },
+            // Adjacent
+            { text: 'pet psychic', top: '36%', left: '15%', duration: 28, delay: 7 },
+            { text: 'what would a cat do', top: '56%', left: '25%', duration: 33, delay: 2 },
+            { text: 'cat answer', top: '84%', left: '3%', duration: 25, delay: 10 },
           ].map((w, i) => (
             <motion.span
               key={i}
@@ -257,9 +293,9 @@ export function Oracle() {
                 top: w.top,
                 left: w.left,
                 fontFamily: 'Georgia, serif',
-                color: 'rgba(120, 53, 15, 0.08)',
+                color: 'rgba(120, 53, 15, 0.12)',
               }}
-              animate={{ y: [0, -15, 0], opacity: [0.06, 0.12, 0.06] }}
+              animate={{ y: [0, -15, 0], opacity: [0.08, 0.18, 0.08] }}
               transition={{ duration: w.duration, delay: w.delay, repeat: Infinity, ease: 'easeInOut' }}
             >
               {w.text}
