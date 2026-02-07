@@ -1,4 +1,5 @@
 // Centralized configuration for tunable behavior values
+// v2 — deployment webhook verified
 
 export const config = {
   // Image brightness analysis
