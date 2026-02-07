@@ -248,7 +248,7 @@ export function Oracle() {
 
           <h1
             onClick={clearCat}
-            className="text-[70px] md:text-[90px] lg:text-[114px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight"
+            className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight"
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
@@ -276,7 +276,7 @@ export function Oracle() {
         </header>
 
         {/* Main content */}
-        <div className="flex flex-col">
+        <div className="flex flex-col -mt-[7px]">
           {!catImage ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -285,7 +285,7 @@ export function Oracle() {
             >
               {/* Choose Your Oracle label */}
               <p
-                className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-pre"
+                className="text-base md:text-[1.5rem] font-bold text-center px-4 py-1 md:whitespace-pre"
                 style={{
                   fontFamily: "'Cinzel Decorative', Georgia, serif",
                   color: '#FEF3C7',
@@ -298,7 +298,7 @@ export function Oracle() {
                   ].join(', ')
                 }}
               >
-                ✦  CHOOSE CAT  ✦  ASK QUESTION  ✦  CAT MAY ANSWER  ✦
+                ✦  CHOOSE CAT  ✦  ASK QUESTION  ✦{'\n'}CAT MAY ANSWER  ✦
               </p>
 
               {/* Horizontal layout: Your Cat (fixed) | carousel */}
@@ -639,7 +639,7 @@ export function Oracle() {
 
               </div>
 
-              <button onClick={clearCat} className="absolute top-2 right-2 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
+              <button onClick={clearCat} className="absolute top-2 right-16 md:right-2 z-30 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
                 <X className="w-5 h-5" />
               </button>
 
