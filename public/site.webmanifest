@@ -1,7 +1,7 @@
 {
   "name": "MaybeCat",
   "short_name": "MaybeCat",
-  "description": "The cat oracle that tells you what you need to hear.",
+  "description": "Magic 8-Ball that poops and purrs. Questionable advice from adoptable cats.",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#EC4899",
