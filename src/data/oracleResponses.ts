@@ -148,7 +148,6 @@ export const oracleResponses: OracleResponse[] = [
   // Haiku-style (short, observational, kind)
   { text: "The empty bowl waits. / I wait beside it, patient. / We are both hungry.", category: 'poetic' },
   { text: "Cherry blossoms fall. / I bat one. It escapes me. / This is still a win.", category: 'poetic' },
-  { text: "Snow on the windowsill. / I watch it melt, undisturbed. / Patience teaches patience.", category: 'poetic' },
   { text: "The cricket is loud. / I am louder. Then silence. / Balance is restored.", category: 'poetic' },
   { text: "Autumn moon rising. / I have opinions about it. / I keep them inside.", category: 'poetic' },
   { text: "Rain taps the window. / I could nap, or I could watch. / I choose both at once.", category: 'poetic' },
@@ -157,7 +156,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The red dot escapes. / Every time, I think: this time. / Hope is a circle.", category: 'poetic' },
   { text: "Three AM is when / the truth reveals itself to me. / You should be awake.", category: 'poetic' },
   { text: "This box is too small. / And yet I am inside it. / Explain this. You can't.", category: 'poetic' },
-  { text: "The sun will return. / Until then, rest in shadow. / I will wait with you.", category: 'poetic' },
 
   // Wabi-sabi (imperfection, transience)
   { text: "The scratched furniture holds our history.", category: 'poetic' },
@@ -538,13 +536,10 @@ export const oracleResponses: OracleResponse[] = [
   // CLASSIC FILM LINES
   // ============================================
   { text: "Of all the sunbeams in all the windows in all the world, you walked into mine.", category: 'wise' },
-  { text: "Here's looking at you, kid.", category: 'wise' },
   { text: "Frankly, my dear, I don't give a meow.", category: 'wise' },
-  { text: "After all, tomorrow is another day.", category: 'wise' },
   { text: "You can't handle the truth. Neither can I, honestly.", category: 'wise' },
   { text: "Life is like a box of... actually, I love boxes.", category: 'wise' },
   { text: "I'm gonna make him a purr he can't refuse.", category: 'wise' },
-  { text: "Don't dream it. Be it.", category: 'wise' },
   { text: "Give yourself over to absolute pleasure.", category: 'wise' },
   { text: "Antici... ...pation.", category: 'wise' },
   { text: "It's astounding. Time is fleeting. Madness takes its toll.", category: 'wise' },
@@ -552,13 +547,10 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // LITERARY WISDOM - Poets, Mystics
   // ============================================
-  { text: "\"What you seek is seeking you.\" — Rumi", category: 'mystical' },
   { text: "\"Let yourself be silently drawn by the strange pull of what you really love.\" — Rumi", category: 'wise' },
-  { text: "\"Fear is the cheapest room in the house. I would like to see you living in better conditions.\" — Hafiz", category: 'wise' },
   { text: "\"Be patient toward all that is unsolved in your heart.\" — Rilke", category: 'nurturing' },
   { text: "\"I dwell in possibility.\" — Emily Dickinson", category: 'wise' },
   { text: "\"Forever is composed of nows.\" — Emily Dickinson", category: 'existential' },
-  { text: "\"When I let go of what I am, I become what I might be.\" — Lao Tzu", category: 'existential' },
 
   // ============================================
   // ATTITUDE - Don't test me energy
@@ -577,9 +569,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "\"I'm not a humanitarian. I'm a hell-raiser.\" — Mother Jones", category: 'wise' },
   { text: "\"Strong people don't need strong leaders.\" — Ella Baker", category: 'wise' },
   { text: "\"Your silence will not protect you.\" — Audre Lorde", category: 'wise' },
-  { text: "\"Don't call me a saint. I don't want to be dismissed that easily.\" — Dorothy Day", category: 'wise' },
-  { text: "\"They tried to bury us. They didn't know we were seeds.\" — Mexican Proverb", category: 'wise' },
-  { text: "\"If I didn't define myself for myself, I would be crunched into other people's fantasies.\" — Audre Lorde", category: 'wise' },
   { text: "\"You are your best thing.\" — Toni Morrison", category: 'nurturing' },
 
   // ============================================
@@ -617,7 +606,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Shake it off.", category: 'wise' },
   { text: "Just dance.", category: 'chaotic' },
   { text: "Don't believe me? Just watch.", category: 'demanding' },
-  { text: "One more time.", category: 'demanding' },
   { text: "Harder, better, faster, stronger.", category: 'demanding' },
   { text: "Who run the world? Cats.", category: 'wise' },
 
@@ -752,20 +740,14 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   { text: "What is rushing you? Nothing real.", category: 'mystical' },
   { text: "The mouse appears when you stop looking.", category: 'mystical' },
-  { text: "Wait for the sunbeam to find you.", category: 'mystical' },
   { text: "The treat comes to those who sit by the bowl.", category: 'mystical' },
-  { text: "Pounce only when the moment is certain.", category: 'mystical' },
-  { text: "The lap becomes available when you stop wanting it.", category: 'mystical' },
   { text: "What BS answer are you hoping for?", category: 'mystical' },
-  { text: "Bend like water. Water wins.", category: 'mystical' },
   { text: "Sometimes the leap. Sometimes the crouch.", category: 'mystical' },
   { text: "When in doubt, groom.", category: 'mystical' },
   { text: "Sit with the problem. It will reveal itself.", category: 'mystical' },
   { text: "Thunder clears the air.", category: 'mystical' },
-  { text: "The wind changes. Change with it.", category: 'mystical' },
   { text: "The answer hides inside the question - like a pretzel.", category: 'mystical' },
   { text: "Look again. You missed something. You usually do.", category: 'mystical' },
-  { text: "Seek and it hides. Stop seeking and it appears.", category: 'mystical' },
   { text: "The tail knows what the head does not.", category: 'mystical' },
   { text: "What is lost will return. Or it won't.", category: 'mystical' },
   { text: "The answer you want and the answer you need are different.", category: 'mystical' },
@@ -773,8 +755,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The question contains its own answer.", category: 'mystical' },
   { text: "The hairball comes when it is ready. You cannot rush it.", category: 'mystical' },
   { text: "What cannot be digested must be released.", category: 'mystical' },
-  { text: "Some things must come up before you can move forward.", category: 'mystical' },
-  { text: "The discomfort is temporary. The relief is worth it.", category: 'mystical' },
   { text: "Not everything you swallow is meant to stay.", category: 'mystical' },
   { text: "Hack it up. You'll feel better.", category: 'mystical' },
   { text: "What you've been holding will find its way out.", category: 'mystical' },
@@ -782,29 +762,17 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Groom yourself first. Then face the world.", category: 'mystical' },
   { text: "The tongue reaches what the paw cannot.", category: 'mystical' },
   { text: "No spot is unreachable with enough flexibility.", category: 'mystical' },
-  { text: "A clean coat is a clear mind.", category: 'mystical' },
   { text: "Sometimes you just need to lick your wounds.", category: 'mystical' },
   { text: "Sharpen your claws. The moment will come.", category: 'mystical' },
-  { text: "The furniture of your life needs occasional destruction.", category: 'mystical' },
   { text: "Mark your territory. Know what is yours.", category: 'mystical' },
-  { text: "Dig in. Hold on. This is how you climb.", category: 'mystical' },
-  { text: "Leave your mark. You were here.", category: 'mystical' },
-  { text: "The hunter who waits eats. The hunter who chases starves.", category: 'mystical' },
   { text: "Watch. Wait. Then strike without hesitation.", category: 'mystical' },
   { text: "The prey reveals itself to the patient.", category: 'mystical' },
   { text: "Move when they look away.", category: 'mystical' },
-  { text: "Not every hunt succeeds. Hunt anyway.", category: 'mystical' },
   { text: "The wiggle before the leap is not wasted motion.", category: 'mystical' },
-  { text: "Focus narrows. The world disappears. Only the target remains.", category: 'mystical' },
-  { text: "What moves, matters. What doesn't, wait.", category: 'mystical' },
   { text: "The failed pounce teaches more than the successful one.", category: 'mystical' },
   { text: "The box chooses you. You do not choose the box.", category: 'mystical' },
-  { text: "Confinement can be comfort.", category: 'mystical' },
   { text: "The smaller the space, the safer it feels.", category: 'mystical' },
-  { text: "Boundaries are not always prisons.", category: 'mystical' },
   { text: "If it fits, it was meant to be.", category: 'mystical' },
-  { text: "The perfect container appears when you need it.", category: 'mystical' },
-  { text: "What looks too small from outside is infinite within.", category: 'mystical' },
   { text: "Settle in. You are where you need to be.", category: 'mystical' },
 
   // ============================================
@@ -2713,6 +2681,7 @@ const categoryWeights: Record<OracleCategory, number> = {
   existential: 5,   // 31 responses
   demanding: 10,    // 64 responses
   meta: 3,          // 21 responses
+  adoption: 1,      // adoption fourth-wall responses
 };
 
 // Track recently shown responses to avoid repeats

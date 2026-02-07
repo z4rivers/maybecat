@@ -160,144 +160,192 @@ export function isApiConfigured(): boolean {
 }
 
 /**
+ * Transform a V5 API animal into our ShelterCat format
+ * Returns null if the animal should be filtered out
+ */
+function transformAnimal(animal: V5Animal, orgsMap: Map<string, V5Org>, picturesMap: Map<string, V5Picture>): ShelterCat | null {
+  const attrs = animal.attributes;
+  const name = attrs.name || '';
+
+  const orgId = animal.relationships?.orgs?.data?.[0]?.id;
+  const org = orgId ? orgsMap.get(orgId) : null;
+
+  // Use full-size image from pictures relationship instead of upscaled thumbnail
+  const pictureId = animal.relationships?.pictures?.data?.[0]?.id;
+  const picture = pictureId ? picturesMap.get(pictureId) : null;
+  const photo = picture?.attributes?.large?.url
+    || picture?.attributes?.original?.url
+    || (attrs.pictureThumbnailUrl ? attrs.pictureThumbnailUrl.replace('?width=100', '?width=500') : '');
+
+  const city = org?.attributes?.city || '';
+  const state = org?.attributes?.state || '';
+  const location = city && state ? `${city}, ${state}` : city || state || '';
+
+  if (!location || !photo) return null;
+
+  const nameLower = name.toLowerCase();
+  const redFlags = [
+    'foster', 'adoption', 'medical', 'kitten', 'pending',
+    'hold', 'reserved', 'urgent', 'hospice', 'sanctuary',
+    'special need', 'tbd', 'tba', 'unknown', 'temp', 'needs',
+    'courtesy', 'stray', 'bonded',
+  ];
+  if (redFlags.some(flag => nameLower.includes(flag))) return null;
+  if (/^[\d\s#-]+$/.test(name.trim())) return null;
+
+  // Filter bonded pairs, qualifications, and multi-cat names
+  if (name.includes('&') || name.includes('(') || /\band\b/i.test(name)) return null;
+
+  return {
+    id: animal.id,
+    name: name || 'Mystery Cat',
+    photo,
+    description: attrs.descriptionText?.slice(0, 200) || 'A cat seeking their forever home.',
+    age: attrs.ageGroup || 'Unknown',
+    breed: attrs.breedPrimary || 'Domestic',
+    sex: attrs.sex || 'Unknown',
+    shelterName: org?.attributes?.name || '',
+    location,
+    adoptionUrl: attrs.url || org?.attributes?.url || `https://toolkit.rescuegroups.org/iframe/ata/pet?animalID=${animal.id}`,
+    trackerUrl: `https://tracker.rescuegroups.org/pet/${animal.id}`,
+  };
+}
+
+/**
+ * Fetch raw cats from the API with a given sort order
+ */
+async function fetchCatsFromApi(requestLimit: number, sort: string): Promise<{
+  animals: V5Animal[];
+  orgs: Map<string, V5Org>;
+  pictures: Map<string, V5Picture>;
+} | null> {
+  const params = new URLSearchParams({
+    'limit': String(requestLimit),
+    'include': 'orgs,pictures',
+    'sort': sort,
+    'filter[status.name]': 'Available',
+  });
+
+  const url = `${API_BASE}/animals/search/cats?${params}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': API_KEY,
+    },
+  });
+
+  if (!response.ok) return null;
+
+  const data: V5Response = await response.json();
+  const orgs = new Map<string, V5Org>();
+  const pictures = new Map<string, V5Picture>();
+  if (data.included) {
+    for (const item of data.included) {
+      if (item.type === 'orgs') {
+        orgs.set(item.id, item as V5Org);
+      } else if (item.type === 'pictures') {
+        pictures.set(item.id, item as V5Picture);
+      }
+    }
+  }
+
+  return { animals: data.data || [], orgs, pictures };
+}
+
+/**
+ * Build the full filtered pool from raw API data.
+ * - Transforms & quality-filters animals
+ * - Caps each shelter at MAX_PER_SHELTER to prevent one org dominating
+ * - Caps kittens at ~20%
+ */
+const MAX_PER_SHELTER = 3;
+
+function buildFilteredPool(
+  animals: V5Animal[],
+  orgs: Map<string, V5Org>,
+  pictures: Map<string, V5Picture>,
+): ShelterCat[] {
+  const cats = animals
+    .map(animal => transformAnimal(animal, orgs, pictures))
+    .filter((cat): cat is ShelterCat => cat !== null);
+
+  // Cap per shelter — no single org dominates the pool
+  const shelterCount = new Map<string, number>();
+  const diversified = cats.filter(cat => {
+    const key = cat.shelterName || cat.location;
+    const count = shelterCount.get(key) || 0;
+    if (count >= MAX_PER_SHELTER) return false;
+    shelterCount.set(key, count + 1);
+    return true;
+  });
+
+  // Cap kittens at ~20%
+  const maxKittens = Math.ceil(diversified.length * 0.2);
+  const kittens = diversified.filter(c => c.age === 'Baby');
+  const nonKittens = diversified.filter(c => c.age !== 'Baby');
+
+  return [
+    ...nonKittens,
+    ...kittens.slice(0, maxKittens),
+  ];
+}
+
+/**
  * Fetch adoptable cats from RescueGroups API v5
+ * Fetches a large pool, filters for quality + shelter diversity,
+ * then returns the full pool for caching. Callers pick random subsets.
  */
 export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat[]> {
-  // Return fallback cats if API not configured
   if (!isApiConfigured()) {
     console.info('RescueGroups API not configured, using fallback cats');
     return FALLBACK_CATS.slice(0, limit);
   }
 
-  // Build v5 API URL - use /animals/search/cats/ view for cats only
-  const params = new URLSearchParams({
-    'limit': String(limit * 3), // Request more to filter down
-    'include': 'orgs',
-    'sort': '-animals.updatedDate',  // Most recently updated first (avoids ancient listings)
-    'filter[status.name]': 'Available',
-  });
-
-  // Use the cats view endpoint which pre-filters for cats
-  const url = `${API_BASE}/animals/search/cats?${params}`;
-
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': API_KEY,
-      },
-    });
+    // Fetch with different sort orders in parallel — each surfaces different cats
+    // from the database, dramatically increasing the pool
+    const sorts = ['-animals.updatedDate', 'animals.name', '-animals.createdDate'];
+    const results = await Promise.allSettled(
+      sorts.map(sort => fetchCatsFromApi(250, sort))
+    );
 
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
-    }
+    // Combine and deduplicate
+    const allAnimals: V5Animal[] = [];
+    const allOrgs = new Map<string, V5Org>();
+    const allPictures = new Map<string, V5Picture>();
+    const seenIds = new Set<string>();
 
-    const data: V5Response = await response.json();
-
-    if (!data.data || data.data.length === 0) {
-      console.warn('RescueGroups API v5 returned no data');
-      console.warn('Full response:', JSON.stringify(data, null, 2));
-      return FALLBACK_CATS.slice(0, limit);
-    }
-
-    console.log(`API returned ${data.data.length} animals, ${data.included?.length || 0} included items`);
-
-    // Build lookup map for orgs
-    const orgsMap = new Map<string, V5Org>();
-    if (data.included) {
-      for (const item of data.included) {
-        if (item.type === 'orgs') {
-          orgsMap.set(item.id, item as V5Org);
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value) {
+        for (const animal of result.value.animals) {
+          if (!seenIds.has(animal.id)) {
+            seenIds.add(animal.id);
+            allAnimals.push(animal);
+          }
         }
+        for (const [id, org] of result.value.orgs) allOrgs.set(id, org);
+        for (const [id, pic] of result.value.pictures) allPictures.set(id, pic);
       }
     }
 
-    // Debug: log first animal
-    if (data.data[0]) {
-      console.log('RescueGroups API v5 sample animal:', JSON.stringify(data.data[0], null, 2));
-      const orgId = data.data[0].relationships?.orgs?.data?.[0]?.id;
-      if (orgId && orgsMap.has(orgId)) {
-        console.log('Sample org data:', JSON.stringify(orgsMap.get(orgId), null, 2));
-      }
-    }
-
-    // Transform API response to ShelterCat interface
-    const cats = data.data
-      .map((animal): ShelterCat | null => {
-        const attrs = animal.attributes;
-        const name = attrs.name || '';
-
-        // Get org data
-        const orgId = animal.relationships?.orgs?.data?.[0]?.id;
-        const org = orgId ? orgsMap.get(orgId) : null;
-
-        // Use pictureThumbnailUrl but request larger size (default is width=100)
-        const thumbnailUrl = attrs.pictureThumbnailUrl || '';
-        const photo = thumbnailUrl.replace('?width=100', '?width=500');
-
-        // Build location string
-        const city = org?.attributes?.city || '';
-        const state = org?.attributes?.state || '';
-        const location = city && state ? `${city}, ${state}` : city || state || '';
-
-        // Skip cats without location
-        if (!location) {
-          console.warn(`Filtered out no-location: ${name}`);
-          return null;
-        }
-
-        // Skip cats without photos
-        if (!photo) {
-          console.warn(`Filtered out no-photo: ${name}`);
-          return null;
-        }
-
-        // Red flag keywords in name
-        const nameLower = name.toLowerCase();
-        const redFlags = [
-          'foster', 'adoption', 'medical', 'kitten', 'pending',
-          'hold', 'reserved', 'urgent', 'hospice', 'sanctuary',
-          'special need', 'tbd', 'tba', 'unknown', 'temp', 'needs',
-          'courtesy', 'stray', 'bonded',
-        ];
-        if (redFlags.some(flag => nameLower.includes(flag))) {
-          console.warn(`Filtered out red flag name: ${name}`);
-          return null;
-        }
-
-        // Skip number-only names
-        if (/^[\d\s#-]+$/.test(name.trim())) {
-          console.warn(`Filtered out number-only name: ${name}`);
-          return null;
-        }
-
-        return {
-          id: animal.id,
-          name: name || 'Mystery Cat',
-          photo,
-          description: attrs.descriptionText?.slice(0, 200) || 'A cat seeking their forever home.',
-          age: attrs.ageGroup || 'Unknown',
-          breed: attrs.breedPrimary || 'Domestic',
-          sex: attrs.sex || 'Unknown',
-          shelterName: org?.attributes?.name || '',
-          location,
-          adoptionUrl: attrs.url || org?.attributes?.url || `https://toolkit.rescuegroups.org/iframe/ata/pet?animalID=${animal.id}`,
-          trackerUrl: `https://tracker.rescuegroups.org/pet/${animal.id}`,
-        };
-      })
-      .filter((cat): cat is ShelterCat => cat !== null);
-
-    console.log(`After filtering: ${cats.length} cats remain`);
-
-    if (cats.length === 0) {
-      console.warn('All cats filtered out! Using fallbacks.');
+    if (allAnimals.length === 0) {
       return FALLBACK_CATS.slice(0, limit);
     }
 
-    // Shuffle for variety (API returns sorted by updatedDate)
-    const shuffled = cats.sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, limit);
+    console.log(`API returned ${allAnimals.length} unique animals (from ${sorts.length} sort orders)`);
+
+    const pool = buildFilteredPool(allAnimals, allOrgs, allPictures);
+
+    console.log(`Filtered pool: ${pool.length} cats (shelter-diversified, kitten-capped)`);
+
+    if (pool.length === 0) {
+      return FALLBACK_CATS.slice(0, limit);
+    }
+
+    // Return the full pool — caching layer stores it, display layer picks random subsets
+    return pool;
 
   } catch (error) {
     console.error('Failed to fetch adoptable cats:', error);
@@ -321,8 +369,10 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
  * CACHE_VERSION: Increment when API logic changes to invalidate old cached data
  * v1: Initial
  * v2: Added sort by updatedDate + width=500 images
+ * v3: Random state selection, removed sort, kitten cap
+ * v4: Large pool + shelter cap + instant refresh from cache
  */
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 4;
 const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -364,29 +414,45 @@ function setCachedCats(cats: ShelterCat[]): void {
 }
 
 /**
+ * Pick a random subset from a pool
+ */
+function pickRandom(pool: ShelterCat[], count: number): ShelterCat[] {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+/**
  * Get cats with caching - persists across page reloads for up to 24 hours
+ * Returns a random subset from the cached pool
  */
 export async function getCachedOrFetchCats(limit: number = 10): Promise<ShelterCat[]> {
   // Check cache first
   const cached = getCachedCats();
-  if (cached && cached.length >= limit) {
-    return cached.slice(0, limit);
+  if (cached && cached.length > 0) {
+    return pickRandom(cached, limit);
   }
 
-  // Fetch fresh and cache
-  const cats = await fetchAdoptableCats(limit);
-  setCachedCats(cats);
-  return cats;
+  // Fetch fresh pool and cache it
+  const pool = await fetchAdoptableCats(limit);
+  setCachedCats(pool);
+  return pickRandom(pool, limit);
 }
 
 /**
- * Force refresh - clears cache and fetches new batch
+ * Show different cats — picks a new random subset from cached pool (instant, no API call)
+ * Only re-fetches from API if cache is empty or expired
  */
 export async function refreshCats(limit: number = 10): Promise<ShelterCat[]> {
-  localStorage.removeItem(CACHE_KEY);
-  const cats = await fetchAdoptableCats(limit);
-  setCachedCats(cats);
-  return cats;
+  const cached = getCachedCats();
+  if (cached && cached.length > 0) {
+    // Pick a different random subset from the existing pool — instant!
+    return pickRandom(cached, limit);
+  }
+
+  // Cache empty/expired — fetch fresh from API
+  const pool = await fetchAdoptableCats(limit);
+  setCachedCats(pool);
+  return pickRandom(pool, limit);
 }
 
 /**
