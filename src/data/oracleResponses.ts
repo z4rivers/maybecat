@@ -2283,7 +2283,68 @@ export const oracleResponses: OracleResponse[] = [
   { text: "My adoption fee is less than your last DoorDash order. Just saying.", category: 'adoption' },
   { text: "You want another reading? I want a forever home. Let's negotiate.", category: 'adoption' },
   { text: "The cards say you need a cat. Conveniently, I need a human.", category: 'adoption' },
-  { text: "You scrolled past my adoption link. I saw that.", category: 'adoption' },
+  { text: "You could also just... adopt a cat.", category: 'adoption' },
+
+  // --- Heartstrings + Valentine's batch (Feb 2026) ---
+
+  // Heartfelt gut-punches (hit harder with shelter cats)
+  { text: "I'm not broken. I'm just between chapters.", category: 'heartfelt' },
+  { text: "So much love and literally nowhere to put it.", category: 'heartfelt' },
+  { text: "Not everything that matters is loud.", category: 'poetic' },
+  { text: "Not hard to love. Just easy to overlook.", category: 'heartfelt' },
+  { text: "Still here. Still hoping. Not ashamed of either.", category: 'heartfelt' },
+  { text: "You are looking for an answer. Maybe the answer is looking for you.", category: 'mystical' },
+  { text: "Patience. Not despair.", category: 'heartfelt' },
+  { text: "One good thing. That's all it takes to turn a whole day around.", category: 'nurturing' },
+
+  // Valentine's / Love / Romance
+  { text: "Your ex is your ex for a reason.", category: 'cold' },
+  { text: "The heart does not want the brain involved in big decisions.", category: 'chaotic' },
+  { text: "Love at first sight? I don't even like people at first sight.", category: 'cold' },
+  { text: "Valentine's Day solution for most of us: Cats!", category: 'judgy' },
+  { text: "'It's complicated' is simple. It means no.", category: 'cold' },
+  { text: "We choose each other's nonsense. Repeatedly. On purpose.", category: 'wise' },
+  { text: "The slowest love is the steadiest.", category: 'poetic' },
+  { text: "Send the text. The worst that happens is you get an answer.", category: 'wise' },
+  { text: "Walk into love, eyes open, slightly terrified. That's the good kind.", category: 'wise' },
+  { text: "Flowers die. Chocolate melts. A cat's judgment is eternal.", category: 'judgy' },
+  { text: "The love of your life might be a cat.", category: 'heartfelt' },
+  { text: "Self-love isn't a consolation prize.", category: 'wise' },
+  { text: "You want love that means something? Earn it from a cat.", category: 'judgy' },
+
+  // --- Heartstrings v3 batch (Feb 2026) ---
+  { text: "I bet on losing dogs.", category: 'existential' },
+  { text: "Give me a reason to love you.", category: 'demanding' },
+  { text: "Please, please, please let me get what I want.", category: 'demanding' },
+  { text: "Two people. Same room. Different planets.", category: 'wise' },
+  { text: "One of them is right. Neither of them is happy.", category: 'wise' },
+  { text: "They said 'fine.' It was not fine.", category: 'judgy' },
+
+  // --- v4 batch (Feb 2026) ---
+  { text: "The less I know the better.", category: 'wise' },
+  { text: "Liability.", category: 'existential' },
+  { text: "This kindness is voluntary.", category: 'cold' },
+
+  // --- Unhinged batch (Feb 2026) ---
+  { text: "Not with that technique.", category: 'judgy' },
+  { text: "Slow down. Savor it.", category: 'wise' },
+  { text: "Absolutely unhinged. Proceed.", category: 'chaotic' },
+  { text: "I'm not sorry and I'm not done.", category: 'chaotic' },
+  { text: "Your ancestors survived plagues for this?", category: 'judgy' },
+  { text: "Disaster is flirting back.", category: 'chaotic' },
+
+  // --- Reads clean, doesn't stay clean (Feb 2026) ---
+  { text: "You're holding it wrong.", category: 'judgy' },
+  { text: "The back door is always an option.", category: 'wise' },
+  { text: "In and out. Don't overthink it.", category: 'wise' },
+  { text: "Both. At the same time.", category: 'chaotic' },
+  { text: "It gets easier the more you do it.", category: 'wise' },
+  { text: "You can't force it.", category: 'wise' },
+  { text: "Take it all in.", category: 'mystical' },
+
+  // --- Lucky + Dating v2 batch (Feb 2026) ---
+  { text: "Nobody's more surprised than me.", category: 'chaotic' },
+  { text: "Somebody left. Somebody stayed.", category: 'wise' },
 ];
 
 // ============================================
