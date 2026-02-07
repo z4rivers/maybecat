@@ -192,6 +192,8 @@ function transformAnimal(animal: V5Animal, orgsMap: Map<string, V5Org>, pictures
   ];
   if (redFlags.some(flag => nameLower.includes(flag))) return null;
   if (/^[\d\s#-]+$/.test(name.trim())) return null;
+  // Filter names containing numbers — these are shelter IDs, not real names
+  if (/\d/.test(name)) return null;
 
   // Filter bonded pairs, qualifications, and multi-cat names
   if (name.includes('&') || name.includes('(') || /\band\b/i.test(name)) return null;
@@ -371,8 +373,9 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
  * v2: Added sort by updatedDate + width=500 images
  * v3: Random state selection, removed sort, kitten cap
  * v4: Large pool + shelter cap + instant refresh from cache
+ * v5: Filter cats with numbers in names (shelter IDs)
  */
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 5;
 const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
