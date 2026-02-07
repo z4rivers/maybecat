@@ -298,10 +298,12 @@ export function Oracle() {
                   ].join(', ')
                 }}
               >
-                <span className="whitespace-nowrap">✦ CHOOSE CAT ✦ ASK QUESTION ✦</span>
+                <span className="whitespace-nowrap">✦ &nbsp;CHOOSE CAT &nbsp;✦ &nbsp;ASK QUESTION</span>
+                <span className="md:hidden whitespace-nowrap"> &nbsp;✦</span>
                 <br className="md:hidden" />
-                <span className="md:hidden"> </span>
-                <span className="whitespace-nowrap">✦ CAT MAY ANSWER ✦</span>
+                <span className="md:hidden whitespace-nowrap">✦&nbsp; </span>
+                <span className="hidden md:inline whitespace-nowrap"> &nbsp;✦&nbsp; </span>
+                <span className="whitespace-nowrap">CAT MAY ANSWER &nbsp;✦</span>
               </p>
 
               {/* Horizontal layout: Your Cat (fixed) | carousel */}
