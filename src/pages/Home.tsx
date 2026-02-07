@@ -5,7 +5,7 @@ import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/
 /** Safe analytics tracking — never breaks the UX if analytics fails */
 function safeTrack(event: string, data?: Record<string, string>) {
   try {
-    import('@vercel/analytics').then(({ track }) => safeTrack(event, data)).catch(() => {});
+    import('@vercel/analytics').then(({ track }) => track(event, data)).catch(() => {});
   } catch { /* no-op */ }
 }
 import { config } from '../config';
@@ -524,6 +524,35 @@ export function Oracle() {
                       style={needsBrightening ? { filter: config.brightness.enhanceFilter } : undefined}
                     />
                   </div>
+                  
+                  {/* Adopt Me Badge - Shelter Cats Only */}
+                  {shelterCat?.adoptionUrl && (
+                    <a
+                      href={shelterCat.adoptionUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name })}
+                      className="absolute -top-3 -right-3 z-20 w-16 h-16 md:w-[72px] md:h-[72px] rounded-full flex items-center justify-center rotate-12 hover:scale-110 hover:rotate-6 transition-all duration-300 cursor-pointer"
+                      title={`Adopt ${shelterCat.name}`}
+                      style={{
+                        background: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)',
+                        border: '3px solid #FBBF24',
+                        boxShadow: '0 4px 15px rgba(236,72,153,0.5), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 3px rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      <span
+                        className="font-bold text-[11px] md:text-xs leading-none text-center block pt-[2px]"
+                        style={{
+                          color: '#FEF3C7',
+                          fontFamily: "'Cinzel Decorative', Georgia, serif",
+                          textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                        }}
+                      >
+                        Adopt<br />Me!
+                      </span>
+                    </a>
+                  )}
+
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-6 py-2 bg-amber-800 rounded-full shadow-lg">
                     <p className="text-amber-100 font-bold text-base md:text-lg whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
                       {displayName}
