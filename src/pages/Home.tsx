@@ -235,7 +235,38 @@ export function Oracle() {
         {/* Ornate mandala decorations */}
         <CenterMandala className="absolute top-1/2 left-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
         <CenterMandala className="absolute top-1/2 right-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
-        
+
+        {/* Drifting keyword whispers — decorative & indexable */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
+          {[
+            { text: 'cattitude', top: '12%', left: '5%', duration: 25, delay: 0 },
+            { text: 'cat behavior', top: '35%', left: '88%', duration: 30, delay: 4 },
+            { text: 'cat personality', top: '58%', left: '3%', duration: 28, delay: 8 },
+            { text: 'funny cat website', top: '78%', left: '82%', duration: 32, delay: 2 },
+            { text: 'cat translator', top: '22%', left: '90%', duration: 27, delay: 6 },
+            { text: 'cat wisdom', top: '45%', left: '7%', duration: 24, delay: 10 },
+            { text: 'meow', top: '88%', left: '15%', duration: 22, delay: 3 },
+            { text: 'communicate with cat', top: '68%', left: '85%', duration: 35, delay: 7 },
+            { text: 'understand your cat', top: '8%', left: '75%', duration: 29, delay: 5 },
+            { text: 'cat training', top: '50%', left: '92%', duration: 26, delay: 9 },
+          ].map((w, i) => (
+            <motion.span
+              key={i}
+              className="absolute text-[10px] md:text-xs italic"
+              style={{
+                top: w.top,
+                left: w.left,
+                fontFamily: 'Georgia, serif',
+                color: 'rgba(120, 53, 15, 0.08)',
+              }}
+              animate={{ y: [0, -15, 0], opacity: [0.06, 0.12, 0.06] }}
+              transition={{ duration: w.duration, delay: w.delay, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              {w.text}
+            </motion.span>
+          ))}
+        </div>
+
         {/* Header */}
         <header className="text-center mb-2">
           <div className="flex items-center justify-center gap-3 mb-1">
