@@ -285,7 +285,7 @@ export function Oracle() {
             >
               {/* Choose Your Oracle label */}
               <p
-                className="text-base md:text-[1.5rem] font-bold text-center px-4 py-1 md:whitespace-pre"
+                className="text-base md:text-[1.5rem] font-bold text-center px-4 py-1"
                 style={{
                   fontFamily: "'Cinzel Decorative', Georgia, serif",
                   color: '#FEF3C7',
@@ -298,7 +298,10 @@ export function Oracle() {
                   ].join(', ')
                 }}
               >
-                ✦  CHOOSE CAT  ✦  ASK QUESTION  ✦{'\n'}CAT MAY ANSWER  ✦
+                <span className="whitespace-nowrap">✦ CHOOSE CAT ✦ ASK QUESTION ✦</span>
+                <br className="md:hidden" />
+                <span className="md:hidden"> </span>
+                <span className="whitespace-nowrap">✦ CAT MAY ANSWER ✦</span>
               </p>
 
               {/* Horizontal layout: Your Cat (fixed) | carousel */}
