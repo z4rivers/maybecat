@@ -252,7 +252,15 @@ export function Oracle() {
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
-              textShadow: '2px 2px 0 #FBBF24, 4px 4px 0 rgba(0,0,0,0.2), 0 0 30px rgba(251,191,36,0.4)'
+              textShadow: [
+                '2px 2px 0 #FBBF24',                   // gold offset — the carnival two-tone
+                '4px 4px 0 rgba(0,0,0,0.2)',            // depth layer
+                '0 0 30px rgba(251,191,36,0.4)',        // warm glow
+                '-1px -1px 0 rgba(0,0,0,0.15)',         // subtle edge definition
+                ' 1px -1px 0 rgba(0,0,0,0.15)',
+                '-1px  1px 0 rgba(0,0,0,0.15)',
+                ' 1px  1px 0 rgba(0,0,0,0.15)'
+              ].join(', ')
             }}
           >
             Maybe Cat
@@ -260,9 +268,9 @@ export function Oracle() {
 
           <div className="flex items-center justify-center gap-2 mt-[1px]">
             <div className="h-[3px] w-14 bg-amber-800/60" />
-            <span className="text-amber-800 text-[22px] md:text-[26px]">☽</span>
-            <span className="text-amber-800 text-[18px]">✧</span>
-            <span className="text-amber-800 text-[22px] md:text-[26px]">☾</span>
+            <span className="text-[22px] md:text-[26px]" style={{ color: '#92400E' }}>☽</span>
+            <span className="text-[18px]" style={{ color: '#92400E' }}>✧</span>
+            <span className="text-[22px] md:text-[26px]" style={{ color: '#92400E' }}>☾</span>
             <div className="h-[3px] w-14 bg-amber-800/60" />
           </div>
         </header>
@@ -277,14 +285,20 @@ export function Oracle() {
             >
               {/* Choose Your Oracle label */}
               <p
-                className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-nowrap"
+                className="text-lg md:text-[1.7rem] font-bold text-center px-4 py-1 whitespace-pre"
                 style={{
                   fontFamily: "'Cinzel Decorative', Georgia, serif",
                   color: '#FEF3C7',
-                  textShadow: '2px 2px 0 #92400E'
+                  textShadow: [
+                    '-1px -1px 0 #78350F',
+                    ' 1px -1px 0 #78350F',
+                    '-1px  1px 0 #78350F',
+                    ' 1px  1px 0 #78350F',
+                    ' 0 2px 4px rgba(0,0,0,0.3)'
+                  ].join(', ')
                 }}
               >
-                ✦ CHOOSE CAT ✦ ASK QUESTION ✦ CAT ANSWERS ✦
+                ✦  CHOOSE CAT  ✦  ASK QUESTION  ✦  CAT MAY ANSWER  ✦
               </p>
 
               {/* Horizontal layout: Your Cat (fixed) | carousel */}
