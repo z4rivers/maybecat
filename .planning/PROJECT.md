@@ -1,66 +1,77 @@
-# MaybeCat Cleanup
+# MaybeCat Design System — Figma Build
 
 ## What This Is
 
-A whimsical web app where users upload or select a cat, ask it a question, and receive cat wisdom. Live at maybecat.com. The site works and people use it—this project is about making the codebase solid without changing what users see.
+Extract every visual element from the live MaybeCat site into standalone, reusable design assets and rebuild the entire design system in Figma. The CS_Frame (Celestial Seasonings-style ornate blob shape) becomes the foundational icon/brand frame. Everything — gradients, typography, decorative elements, components — gets properly structured as a Figma design system.
 
 ## Core Value
 
-The site keeps working exactly as it does now. No regressions, no surprises.
+A single Figma file that IS the design source of truth for MaybeCat. Every visual element traceable, every component reusable, every asset exportable.
 
 ## Requirements
 
 ### Validated
 
-- ✓ User uploads their own cat image — existing
-- ✓ User selects from adoptable shelter cats via RescueGroups API — existing
-- ✓ User asks question, receives random cat wisdom response — existing
-- ✓ "Thinking" delay before response (1.5-3s first ask, 0.8-1.6s subsequent) — existing
-- ✓ Animated response reveal via Framer Motion — existing
-- ✓ Share/download response as PNG via html2canvas — existing
-- ✓ localStorage persistence for cat image and name — existing
-- ✓ Fallback to demo cats when API unavailable — existing
-- ✓ Sponsor banner display (PURRfoot) — existing
+- ✓ Live site at maybecat.com with full visual identity — existing
+- ✓ CS_Frame SVG shape available (`src/assets/Vector.svg` + `CS_Frame.png`) — existing
+- ✓ Color palette defined (pink→gold gradient, jewel tones, 5 card colors) — existing
+- ✓ Typography defined (Cinzel Decorative headlines, Georgia body) — existing
+- ✓ Decorative SVG components (CornerVine, CenterMandala, MysticalStar) — existing
+- ✓ Component patterns (cards, buttons, modals, inputs) — existing in code
+- ✓ Codebase fully mapped (`.planning/codebase/`) — existing
+- ✓ Design skill documented (`.claude/skills/design/`) — existing
 
 ### Active
 
-- [ ] Delete VariantA.tsx and VariantB.tsx (unused)
-- [ ] Extract shared logic from Home.tsx into reusable hooks
-- [ ] Extract reusable UI components (decorative SVGs, modal, etc.)
-- [ ] Add error boundary so crashes don't kill the whole app
-- [ ] Add try-catch around localStorage/JSON.parse operations
-- [ ] Add tests for critical paths (API, localStorage, response selection)
-- [ ] Extract magic numbers to config (brightness threshold, delays, etc.)
+- [ ] Extract CS_Frame as clean SVG with proper viewBox/fills
+- [ ] Extract all decorative SVGs (CornerVine, CenterMandala, MysticalStar) as standalone assets
+- [ ] Build Figma color system (variables/styles for all palette colors)
+- [ ] Build Figma typography scale (Cinzel Decorative + Georgia, all sizes)
+- [ ] Build gradient library (main bg gradient, card gradients, button gradients)
+- [ ] Build shadow/effect library (card shadows, text shadows, glow effects)
+- [ ] Create Figma component: Cat selection card (5 color variants)
+- [ ] Create Figma component: Oracle reading card
+- [ ] Create Figma component: Question input + Ask button
+- [ ] Create Figma component: Name input modal
+- [ ] Create Figma component: Bottom sponsor banner
+- [ ] Create Figma component: Navigation/carousel controls
+- [ ] Create Figma component: "Adopt Me" badge
+- [ ] Build full page composition (mobile + desktop)
+- [ ] Export pipeline: og:image, share cards, icons from Figma components
 
 ### Out of Scope
 
-- Oracle response content — ~300 messages stay exactly as-is
-- Visual design — colors, fonts, layout, animations unchanged
-- Stack changes — no new frameworks without solid reason
-- New features — this is cleanup only
+- Code changes to the live site — this is design extraction, not refactoring
+- New feature design — capture what exists first, then iterate
+- Plasmic/code-generation integration — figure that out after the system exists
+- Animation specs — Framer Motion stays in code, Figma captures static states
 
 ## Context
 
-**Current state:** Working production site at maybecat.com. Three variant pages exist but only Home.tsx is used. Code is functional but has ~2000 lines of duplication across variants, no tests, no error handling, and fragile localStorage parsing.
+**Current state:** MaybeCat has a strong visual identity (psychedelic tarot maximalism — gold foil, hot pink, ornate decorative elements) but it only exists in code. Every visual element is defined as inline styles, Tailwind classes, or SVG components scattered across `Home.tsx` and `src/components/decorative/`. There's no design file, no asset library, no way to iterate on the visual system outside of code.
 
-**Why this matters:** User gets upset when asking for one adjustment results in major reworking of elements that weren't supposed to be changed. This cleanup must be surgical.
+**Why this matters:** Without a Figma source of truth, every visual change requires diving into code. Share cards, merch, og:images, and new components all need to be hand-coded from scratch. A proper design system unlocks: faster iteration, consistent brand assets, exportable marketing materials, and a foundation for the share card → merch pipeline.
 
-**Codebase mapped:** See `.planning/codebase/` for detailed analysis (7 documents).
+**What we have:** A thorough visual audit identified every element on the page — backgrounds, gradients, decorative SVGs, card variants, text treatments, shadows, colors, typography, and responsive breakpoints. The CS_Frame shape (`src/assets/Vector.svg`) is the brand frame that will anchor icons, share cards, and containers.
+
+**Figma file:** Already exists at project ID `kIX8fJJs3PIO6uJTQuNu8l`
 
 ## Constraints
 
-- **Minimal blast radius**: When asked to change X, only X changes. No "while I'm here" refactors.
-- **Working site**: The live site must keep working at every step. No breaking changes.
-- **Plan first**: No code changes without a plan. Changes need solid reasons.
-- **Preserve behavior**: User-visible behavior stays identical. Same delays, same animations, same everything.
+- **Pixel-perfect extraction:** Assets must match the live site exactly, not be approximations
+- **CS_Frame is the brand frame:** The ornate blob shape is foundational — icons, containers, and brand marks derive from it
+- **No AI-generated brand marks:** Logo, wordmark, and frame shapes are captured from live CSS rendering, never regenerated
+- **Real cat photos only:** Never illustrated characters — the design system accommodates photo placement
+- **Maximalist energy preserved:** If making things "cleaner" kills the vibe, find another way
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Keep Home.tsx, delete variants A & B | Only Home.tsx is used on live site | — Pending |
-| Extract logic to hooks, not new frameworks | Minimal change, stays in React paradigm | — Pending |
-| Add Vitest for testing | Vite-native, zero config needed | — Pending |
+| CS_Frame as foundational brand shape | Celestial Seasonings ornate aesthetic matches tarot maximalism | — Active |
+| Extract from live site, don't recreate | Brand Rule 5 — live CSS is source of truth for visual rendering | — Active |
+| Figma variables for colors | Enables global theme changes and dark mode exploration later | — Active |
+| Component variants for card colors | 5 shelter card colors need to be variant-switchable | — Active |
 
 ---
-*Last updated: 2026-02-02 after initialization*
+*Last updated: 2026-02-07 after initialization*
