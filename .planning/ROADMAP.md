@@ -30,6 +30,10 @@ Plans:
 **Goal:** Build the gradient library and effect presets that define MaybeCat's psychedelic tarot maximalism — every gradient, shadow, and glow effect captured as a reusable Figma style.
 **Requirements:** GRAD-01, GRAD-02, GRAD-03, EFFECT-01, EFFECT-02, EFFECT-03
 **Depends on:** Phase 1 (gradient color stops reference color variables)
+**Plans:** 2 plans
+Plans:
+- [ ] 03-01-PLAN.md — Create gradients.json (12 gradient tokens) and effects.json (24 shadow tokens), update manifest.json
+- [ ] 03-02-PLAN.md — Import tokens into Figma via Tokens Studio, export as Fill Styles + Effect Styles, verify and document manual items
 **Success Criteria:**
 1. Main background gradient (135deg pink-to-gold) exists as a Figma fill style, pixel-matched to the live site
 2. Card background gradients exist as styles — cream-to-gold oracle card gradient and all 5 shelter card gradient variants
@@ -114,9 +118,9 @@ Plans:
 
 | Phase | Requirements | Plans Complete | Status |
 |-------|-------------|----------------|--------|
-| 1. Color Foundations | COLOR-01..05 | 0/2 | Planning Complete |
-| 2. Typography Foundations | TYPE-01..04 | 0/0 | Not Started |
-| 3. Gradients & Visual Effects | GRAD-01..03, EFFECT-01..03 | 0/0 | Not Started |
+| 1. Color Foundations | COLOR-01..05 | 2/2 | Complete |
+| 2. Typography Foundations | TYPE-01..04 | 1/1 | Complete |
+| 3. Gradients & Visual Effects | GRAD-01..03, EFFECT-01..03 | 0/2 | Planned |
 | 4. SVG Asset Extraction | SHAPE-01..06 | 0/0 | Not Started |
 | 5. Card Components | CARD-01..04 | 0/0 | Not Started |
 | 6. Interactive Components | UI-01..05 | 0/0 | Not Started |
