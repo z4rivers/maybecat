@@ -1,0 +1,171 @@
+{
+  "shadow": {
+    "card-upload": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "15", "blur": "50", "spread": "0", "color": "rgba(0,0,0,0.45)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "40", "spread": "0", "color": "rgba(255,255,255,0.4)", "type": "innerShadow" },
+        { "x": "0", "y": "0", "blur": "20", "spread": "0", "color": "rgba(251,191,36,0.3)", "type": "dropShadow" }
+      ],
+      "$description": "EFFECT-01: Upload card (Your Cat). Deep shadow + white inner glow + gold ambient."
+    },
+    "card-upload-inner": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "0", "blur": "15", "spread": "0", "color": "rgba(120,53,15,0.2)", "type": "innerShadow" },
+      "$description": "EFFECT-01: Upload card inner ornate frame."
+    },
+    "card-shelter": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "15", "blur": "50", "spread": "0", "color": "rgba(0,0,0,0.45)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "40", "spread": "0", "color": "rgba(255,255,255,0.15)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: Shelter cat card. Deep shadow + subtle inner glow."
+    },
+    "card-shelter-inner": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "0", "blur": "15", "spread": "0", "color": "rgba(255,255,255,0.125)", "type": "innerShadow" },
+      "$description": "EFFECT-01: Shelter card inner frame. Note: actual color varies per card accent+20 hex opacity."
+    },
+    "card-photo-frame": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "4", "blur": "12", "spread": "0", "color": "rgba(0,0,0,0.3)", "type": "dropShadow" },
+      "$description": "EFFECT-01: Shelter card photo frame drop shadow."
+    },
+    "card-name-banner": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "-4", "blur": "12", "spread": "0", "color": "rgba(0,0,0,0.3)", "type": "dropShadow" },
+      "$description": "EFFECT-01: Shelter card bottom name banner. Shadow goes UP (negative y)."
+    },
+    "card-oracle": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "20", "blur": "60", "spread": "0", "color": "rgba(120,53,15,0.3)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "40", "spread": "0", "color": "rgba(255,255,255,0.2)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: Oracle reading card, modal card. Brown drop shadow + white inner glow."
+    },
+    "card-oracle-photo": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "12", "blur": "30", "spread": "0", "color": "rgba(120,53,15,0.4)", "type": "dropShadow" },
+      "$description": "EFFECT-01: Oracle card photo frame."
+    },
+    "card-refresh": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "15", "blur": "50", "spread": "0", "color": "rgba(0,0,0,0.45)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "20", "spread": "0", "color": "rgba(147,51,234,0.3)", "type": "dropShadow" }
+      ],
+      "$description": "EFFECT-01: Refresh card. Deep shadow + purple ambient glow."
+    },
+    "button-submit": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "4", "blur": "20", "spread": "0", "color": "rgba(124,45,18,0.4)", "type": "dropShadow" },
+      "$description": "EFFECT-01: Submit/CTA button. Warm brown drop shadow."
+    },
+    "button-nav": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "3", "blur": "8", "spread": "0", "color": "rgba(120,53,15,0.3)", "type": "dropShadow" },
+        { "x": "0", "y": "1", "blur": "2", "spread": "0", "color": "rgba(255,255,255,0.5)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: Carousel nav button. Drop shadow + white top highlight."
+    },
+    "button-celestial": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "4", "blur": "15", "spread": "0", "color": "rgba(0,0,0,0.4)", "type": "dropShadow" },
+        { "x": "0", "y": "1", "blur": "0", "spread": "0", "color": "rgba(255,255,255,0.1)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: CelestialButton. Dark drop + subtle top shine."
+    },
+    "badge-adopt": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "4", "blur": "15", "spread": "0", "color": "rgba(236,72,153,0.5)", "type": "dropShadow" },
+        { "x": "0", "y": "2", "blur": "6", "spread": "0", "color": "rgba(0,0,0,0.3)", "type": "dropShadow" },
+        { "x": "0", "y": "1", "blur": "3", "spread": "0", "color": "rgba(255,255,255,0.3)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: Adopt Me badge. Pink glow + dark shadow + inner shine."
+    },
+    "input-inset": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "2", "blur": "8", "spread": "0", "color": "rgba(120,53,15,0.1)", "type": "innerShadow" },
+      "$description": "EFFECT-01: Question input field inset shadow."
+    },
+    "modal-card": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "20", "blur": "60", "spread": "0", "color": "rgba(0,0,0,0.5)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "40", "spread": "0", "color": "rgba(255,255,255,0.2)", "type": "innerShadow" }
+      ],
+      "$description": "EFFECT-01: Name input modal card. Similar to oracle card but darker drop shadow."
+    },
+    "utility-shadow-lg": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "0", "y": "10", "blur": "15", "spread": "-3", "color": "rgba(0,0,0,0.1)", "type": "dropShadow" },
+        { "x": "0", "y": "4", "blur": "6", "spread": "-4", "color": "rgba(0,0,0,0.1)", "type": "dropShadow" }
+      ],
+      "$description": "Tailwind shadow-lg equivalent. Name badge pill, close button."
+    },
+    "text-logo-full": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "2", "y": "2", "blur": "0", "spread": "0", "color": "#FBBF24", "type": "dropShadow" },
+        { "x": "4", "y": "4", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.2)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "30", "spread": "0", "color": "rgba(251,191,36,0.4)", "type": "dropShadow" },
+        { "x": "-1", "y": "-1", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.15)", "type": "dropShadow" },
+        { "x": "1", "y": "-1", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.15)", "type": "dropShadow" },
+        { "x": "-1", "y": "1", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.15)", "type": "dropShadow" },
+        { "x": "1", "y": "1", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.15)", "type": "dropShadow" }
+      ],
+      "$description": "EFFECT-02: Full logo text shadow (7 layers). Gold offset + depth + glow + edge definition."
+    },
+    "text-logo-simple": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "2", "y": "2", "blur": "0", "spread": "0", "color": "#FBBF24", "type": "dropShadow" },
+        { "x": "4", "y": "4", "blur": "0", "spread": "0", "color": "rgba(0,0,0,0.2)", "type": "dropShadow" },
+        { "x": "0", "y": "0", "blur": "30", "spread": "0", "color": "rgba(251,191,36,0.4)", "type": "dropShadow" }
+      ],
+      "$description": "EFFECT-02: Simplified logo text shadow (3 layers). Gold offset + depth + glow, no edge."
+    },
+    "text-outline-dark": {
+      "$type": "boxShadow",
+      "$value": [
+        { "x": "-1", "y": "-1", "blur": "0", "spread": "0", "color": "#78350F", "type": "dropShadow" },
+        { "x": "1", "y": "-1", "blur": "0", "spread": "0", "color": "#78350F", "type": "dropShadow" },
+        { "x": "-1", "y": "1", "blur": "0", "spread": "0", "color": "#78350F", "type": "dropShadow" },
+        { "x": "1", "y": "1", "blur": "0", "spread": "0", "color": "#78350F", "type": "dropShadow" },
+        { "x": "0", "y": "2", "blur": "4", "spread": "0", "color": "rgba(0,0,0,0.3)", "type": "dropShadow" }
+      ],
+      "$description": "EFFECT-02: Dark outline for gradient readability. 4x amber-900 outline + subtle drop."
+    },
+    "text-gold-highlight": {
+      "$type": "boxShadow",
+      "$value": { "x": "1", "y": "1", "blur": "0", "spread": "0", "color": "rgba(251,191,36,0.6)", "type": "dropShadow" },
+      "$description": "EFFECT-02: Gold highlight shadow for tagline text."
+    },
+    "text-warm-subtle": {
+      "$type": "boxShadow",
+      "$value": { "x": "1", "y": "1", "blur": "0", "spread": "0", "color": "rgba(254,243,199,0.5)", "type": "dropShadow" },
+      "$description": "EFFECT-02: Subtle cream shadow for 'Your Cat' label text."
+    },
+    "text-button-dark": {
+      "$type": "boxShadow",
+      "$value": { "x": "1", "y": "2", "blur": "4", "spread": "0", "color": "rgba(0,0,0,0.5)", "type": "dropShadow" },
+      "$description": "EFFECT-02: Dark drop shadow for button text (MagicButton)."
+    },
+    "text-button-heavy": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "2", "blur": "4", "spread": "0", "color": "rgba(0,0,0,0.8)", "type": "dropShadow" },
+      "$description": "EFFECT-02: Heavy dark drop shadow for CelestialButton text."
+    },
+    "text-badge": {
+      "$type": "boxShadow",
+      "$value": { "x": "0", "y": "1", "blur": "2", "spread": "0", "color": "rgba(0,0,0,0.4)", "type": "dropShadow" },
+      "$description": "EFFECT-02: Minimal shadow for Adopt Me badge small text."
+    }
+  }
+}
