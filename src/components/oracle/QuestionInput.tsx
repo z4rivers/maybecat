@@ -20,7 +20,7 @@ export function QuestionInput({
   isThinking = false,
   disabled = false,
   placeholder,
-  buttonText = '✦ Consult the Cat ✦',
+  buttonText,
   className = '',
 }: QuestionInputProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -37,7 +37,7 @@ export function QuestionInput({
           value={question}
           onChange={(e) => onQuestionChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder || `Ask ${catName} a question...`}
+          placeholder={placeholder || "I may know. I may care. I may answer."}
           className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg"
           style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
         />
@@ -56,7 +56,7 @@ export function QuestionInput({
           fontFamily: "Georgia, serif"
         }}
       >
-        {buttonText}
+        {buttonText || `✦ Ask ${catName} ✦`}
       </motion.button>
     </div>
   );

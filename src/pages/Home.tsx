@@ -724,7 +724,7 @@ export function Oracle() {
                       value={question}
                       onChange={(e) => { setQuestion(e.target.value); if (response) clearResponse(); }}
                       onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
-                      placeholder={`Ask ${displayName} a question...`}
+                      placeholder="I may know. I may care. I may answer."
                       className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
                       style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
                     />
@@ -739,7 +739,7 @@ export function Oracle() {
                     className="w-full py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
                   >
-                    {response ? '✦ Ask Again ✦' : '✦ What Does the Cat Say? ✦'}
+                    {response ? `✦ Ask ${displayName} Again ✦` : `✦ Ask ${displayName} ✦`}
                   </motion.button>
 
 
