@@ -1,0 +1,35 @@
+{
+  "name": "MaybeCat",
+  "collections": {
+    "01 Primitives": {
+      "modes": {
+        "Value": ["primitives.json"]
+      }
+    },
+    "02 Semantic": {
+      "modes": {
+        "Value": ["semantic.json"]
+      }
+    },
+    "03 Component": {
+      "modes": {
+        "Value": ["component.json"]
+      }
+    },
+    "04 Typography": {
+      "modes": {
+        "Value": ["typography.json"]
+      }
+    },
+    "05 Gradients": {
+      "modes": {
+        "Value": ["gradients.json"]
+      }
+    },
+    "06 Effects": {
+      "modes": {
+        "Value": ["effects.json"]
+      }
+    }
+  }
+}
