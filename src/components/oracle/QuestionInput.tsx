@@ -16,7 +16,7 @@ export function QuestionInput({
   question,
   onQuestionChange,
   onSubmit,
-  catName = 'Maybe Cat',
+  catName = 'your cat',
   isThinking = false,
   disabled = false,
   placeholder,

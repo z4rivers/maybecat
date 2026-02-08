@@ -207,7 +207,7 @@ export function Oracle() {
     askOracle();
   }, [askOracle]);
 
-  const displayName = catName || 'Maybe Cat';
+  const displayName = catName || 'your cat';
 
   return (
     <div
