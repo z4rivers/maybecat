@@ -5,6 +5,10 @@
 ### Phase 1: Color Foundations
 **Goal:** Establish the complete color variable architecture in Figma — primitives, semantics, and component tokens — so every subsequent phase can bind to real variables instead of raw hex values.
 **Requirements:** COLOR-01, COLOR-02, COLOR-03, COLOR-04, COLOR-05
+**Plans:** 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Create 01 Primitives collection (~85 variables: base palette, card themes with 6 vars each, opacity variants)
+- [ ] 01-02-PLAN.md — Create 02 Semantic (~26 variables) and 03 Component (~28 variables) collections with aliasing
 **Success Criteria:**
 1. Primitive variable collection exists in Figma with every raw hex value extracted from the live site (pink-500, amber-400, orange-900, cream, gold, brown, etc.)
 2. Semantic variable collection maps primitives to purpose names (text-primary, surface-card, border-accent, bg-overlay, etc.) and all semantic tokens resolve to primitives
@@ -110,7 +114,7 @@
 
 | Phase | Requirements | Plans Complete | Status |
 |-------|-------------|----------------|--------|
-| 1. Color Foundations | COLOR-01..05 | 0/0 | Not Started |
+| 1. Color Foundations | COLOR-01..05 | 0/2 | Planning Complete |
 | 2. Typography Foundations | TYPE-01..04 | 0/0 | Not Started |
 | 3. Gradients & Visual Effects | GRAD-01..03, EFFECT-01..03 | 0/0 | Not Started |
 | 4. SVG Asset Extraction | SHAPE-01..06 | 0/0 | Not Started |
