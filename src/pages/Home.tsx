@@ -410,9 +410,9 @@ export function Oracle() {
                 </button>
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
-                <div className="flex items-end gap-3 min-h-[294px] md:min-h-[368px] lg:min-h-[391px]">
+                <div className="flex items-end gap-3 h-[294px] md:h-[368px] lg:h-[391px]">
                   {loadingShelterCats ? (
-                    <div className="flex items-center gap-3 justify-center py-8 min-h-[294px] md:min-h-[368px] lg:min-h-[391px]">
+                    <div className="flex items-center gap-3 justify-center h-full">
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
                       <p className="text-amber-100 text-xl italic" style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}>Summoning cats...</p>
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
