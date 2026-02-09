@@ -310,7 +310,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
     // from the database, dramatically increasing the pool
     const sorts = ['-animals.updatedDate', 'animals.name', '-animals.createdDate'];
     const results = await Promise.allSettled(
-      sorts.map(sort => fetchCatsFromApi(250, sort))
+      sorts.map(sort => fetchCatsFromApi(50, sort))
     );
 
     // Combine and deduplicate

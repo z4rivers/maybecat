@@ -268,7 +268,7 @@ export function Oracle() {
 
           <h1
             onClick={clearCat}
-            className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight"
+            className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight min-h-[72px] md:min-h-[95px] lg:min-h-[120px]"
             style={{
               fontFamily: "'Cinzel Decorative', Georgia, serif",
               color: '#78350F',
@@ -410,9 +410,9 @@ export function Oracle() {
                 </button>
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
-                <div className="flex items-end gap-3">
+                <div className="flex items-end gap-3 min-h-[294px] md:min-h-[368px] lg:min-h-[391px]">
                   {loadingShelterCats ? (
-                    <div className="flex items-center gap-3 justify-center py-8">
+                    <div className="flex items-center gap-3 justify-center py-8 min-h-[294px] md:min-h-[368px] lg:min-h-[391px]">
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
                       <p className="text-amber-100 text-xl italic" style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}>Summoning cats...</p>
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
