@@ -13,6 +13,7 @@ import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
+import { keywords } from '../data/keywords';
 import { NameInputModal } from '../components/NameInputModal';
 
 // Prevent orphaned words by joining last 2-3 short words with non-breaking spaces
@@ -237,69 +238,21 @@ export function Oracle() {
         <CenterMandala className="absolute top-1/2 right-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
 
         {/* Drifting keyword whispers — decorative & indexable */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
-          {[
-            // Oracle core
-            { text: 'cattitude', top: '3%', left: '5%', duration: 25, delay: 0 },
-            { text: 'cat oracle', top: '8%', left: '52%', duration: 29, delay: 3 },
-            { text: 'ask a cat', top: '5%', left: '88%', duration: 23, delay: 7 },
-            { text: 'cat wisdom', top: '12%', left: '30%', duration: 24, delay: 10 },
-            { text: 'cat translator', top: '15%', left: '72%', duration: 27, delay: 5 },
-            { text: 'cat psychic', top: '18%', left: '10%', duration: 27, delay: 9 },
-            { text: 'cat fortune teller', top: '22%', left: '58%', duration: 30, delay: 2 },
-            { text: 'cat horoscope', top: '25%', left: '85%', duration: 33, delay: 12 },
-            { text: 'purrsonality', top: '28%', left: '38%', duration: 28, delay: 6 },
-            { text: 'cat magic', top: '32%', left: '3%', duration: 26, delay: 14 },
-            { text: 'cat vibes', top: '35%', left: '68%', duration: 23, delay: 1 },
-            { text: 'cat advice', top: '38%', left: '22%', duration: 27, delay: 8 },
-            { text: 'cat questions', top: '42%', left: '92%', duration: 26, delay: 4 },
-            { text: 'cat mood', top: '45%', left: '48%', duration: 22, delay: 11 },
-            { text: 'meow', top: '48%', left: '8%', duration: 22, delay: 3 },
-            { text: 'cat zodiac', top: '52%', left: '78%', duration: 24, delay: 13 },
-            { text: 'smart cat', top: '55%', left: '35%', duration: 24, delay: 7 },
-            // Understand your cat
-            { text: 'cat personality', top: '58%', left: '62%', duration: 28, delay: 0 },
-            { text: 'cat feelings', top: '62%', left: '5%', duration: 27, delay: 10 },
-            { text: 'cat psychology', top: '10%', left: '42%', duration: 31, delay: 14 },
-            { text: 'cat behavior', top: '65%', left: '82%', duration: 30, delay: 4 },
-            { text: 'communicate with cat', top: '68%', left: '28%', duration: 35, delay: 8 },
-            { text: 'talk to your cat', top: '72%', left: '55%', duration: 31, delay: 2 },
-            { text: 'understand your cat', top: '75%', left: '90%', duration: 29, delay: 11 },
-            { text: 'what is my cat thinking', top: '78%', left: '12%', duration: 35, delay: 6 },
-            { text: 'what does my cat mean', top: '82%', left: '65%', duration: 34, delay: 13 },
-            { text: 'cat communication', top: '85%', left: '40%', duration: 31, delay: 1 },
-            { text: 'read your cat', top: '88%', left: '75%', duration: 24, delay: 9 },
-            { text: 'cat whisperer', top: '92%', left: '18%', duration: 30, delay: 5 },
-            // Adoption
-            { text: 'adopt a cat', top: '20%', left: '45%', duration: 28, delay: 12 },
-            { text: 'shelter cats', top: '50%', left: '15%', duration: 30, delay: 3 },
-            { text: 'cat adoption', top: '70%', left: '42%', duration: 25, delay: 9 },
-            { text: 'rescue cats', top: '40%', left: '55%', duration: 32, delay: 6 },
-            // Entertainment
-            { text: 'funny cat website', top: '95%', left: '52%', duration: 32, delay: 0 },
-            { text: 'funny cats', top: '30%', left: '90%', duration: 25, delay: 8 },
-            { text: 'funny cat', top: '60%', left: '95%', duration: 26, delay: 14 },
-            { text: 'cute cat', top: '90%', left: '88%', duration: 24, delay: 4 },
-            { text: 'cat lover', top: '46%', left: '72%', duration: 27, delay: 11 },
-            // Adjacent
-            { text: 'pet psychic', top: '36%', left: '15%', duration: 28, delay: 7 },
-            { text: 'what would a cat do', top: '56%', left: '25%', duration: 33, delay: 2 },
-            { text: 'cat answer', top: '84%', left: '3%', duration: 25, delay: 10 },
-          ].map((w, i) => (
-            <motion.span
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+          {keywords.map((w, i) => (
+            <span
               key={i}
               className="absolute text-[10px] md:text-xs italic"
               style={{
                 top: w.top,
                 left: w.left,
                 fontFamily: 'Georgia, serif',
-                color: 'rgba(120, 53, 15, 0.12)',
+                color: '#78350F',
+                opacity: 0.48,
               }}
-              animate={{ y: [0, -15, 0], opacity: [0.08, 0.18, 0.08] }}
-              transition={{ duration: w.duration, delay: w.delay, repeat: Infinity, ease: 'easeInOut' }}
             >
               {w.text}
-            </motion.span>
+            </span>
           ))}
         </div>
 
@@ -760,33 +713,12 @@ export function Oracle() {
 
 
 
-      {/* SEO Footer - MAXIMUM DENSITY STRATEGY */}
-      <div className="w-full text-center text-slate-900/40 relative z-10 select-text pb-40 pt-1">
-         <div className="w-full px-2 md:px-4 flex flex-col md:flex-row items-center md:items-start justify-between text-[10px] py-2 border-t border-slate-900/5">
-           
-           {/* Column 1: Identity & Primary Function */}
-           <div className="flex-1 text-center md:text-left md:pr-4 flex flex-col gap-0.5">
-             <p className="uppercase font-bold tracking-wider text-slate-900/60">MaybeCat &trade; | Ask a Cat</p>
-             <p className="leading-tight">The funny cat website where real shelter cats answer your questions with cattitude.</p>
-             <p className="leading-tight">Magic 8-Ball Alternative &bull; Yes or No Oracle &bull; Daily Horoscopes</p>
-           </div>
-
-           {/* Column 2: Tools & Analysis (The "Meat") */}
-           <div className="flex-[1.5] text-center md:px-4 border-l border-r border-slate-900/10 flex flex-col gap-0.5 my-2 md:my-0">
-             <p className="uppercase font-bold tracking-wider text-slate-900/60">Cat Translator & Analysis</p>
-             <p className="leading-tight">Understand your cat's behavior, personality, and feelings. Decode meows, purrs, and body language.</p>
-             <p className="leading-tight">Cat Personality Test &bull; Pet Psychic &bull; Decision Maker &bull; Funny Cat Memes</p>
-           </div>
-
-           {/* Column 3: Mission & Action */}
-           <div className="flex-1 text-center md:text-right md:pl-4 flex flex-col gap-0.5">
-             <p className="uppercase font-bold tracking-wider text-slate-900/60">Mission: Rescue & Adopt</p>
-             <p className="leading-tight">Every oracle is a real adoptable shelter cat. Meet them, love them, take them home.</p>
-             <p className="text-[9px] opacity-60 mt-1">&copy; {new Date().getFullYear()} MaybeCat. Not veterinary advice.</p>
-           </div>
-
-         </div>
-      </div>
+      {/* SEO Footer */}
+      <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
+        <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
+          <p className="font-bold">MaybeCat&trade; &mdash; questionable life advice from adoptable shelter cats. Answers that raise questions. Full cattitude.</p>
+        </div>
+      </footer>
 
       {/* FIXED PURRfoot Sponsor Banner - Always at bottom */}
       <div
