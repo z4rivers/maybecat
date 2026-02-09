@@ -758,12 +758,43 @@ export function Oracle() {
 
       </div>
 
-      {/* PURRfoot Sponsor Banner - with adoption CTA on right */}
+
+
+      {/* SEO Footer - MAXIMUM DENSITY STRATEGY */}
+      <div className="w-full text-center text-slate-900/40 relative z-10 select-text pb-40 pt-1">
+         <div className="w-full px-2 md:px-4 flex flex-col md:flex-row items-center md:items-start justify-between text-[10px] py-2 border-t border-slate-900/5">
+           
+           {/* Column 1: Identity & Primary Function */}
+           <div className="flex-1 text-center md:text-left md:pr-4 flex flex-col gap-0.5">
+             <p className="uppercase font-bold tracking-wider text-slate-900/60">MaybeCat &trade; | Ask a Cat</p>
+             <p className="leading-tight">The funny cat website where real shelter cats answer your questions with cattitude.</p>
+             <p className="leading-tight">Magic 8-Ball Alternative &bull; Yes or No Oracle &bull; Daily Horoscopes</p>
+           </div>
+
+           {/* Column 2: Tools & Analysis (The "Meat") */}
+           <div className="flex-[1.5] text-center md:px-4 border-l border-r border-slate-900/10 flex flex-col gap-0.5 my-2 md:my-0">
+             <p className="uppercase font-bold tracking-wider text-slate-900/60">Cat Translator & Analysis</p>
+             <p className="leading-tight">Understand your cat's behavior, personality, and feelings. Decode meows, purrs, and body language.</p>
+             <p className="leading-tight">Cat Personality Test &bull; Pet Psychic &bull; Decision Maker &bull; Funny Cat Memes</p>
+           </div>
+
+           {/* Column 3: Mission & Action */}
+           <div className="flex-1 text-center md:text-right md:pl-4 flex flex-col gap-0.5">
+             <p className="uppercase font-bold tracking-wider text-slate-900/60">Mission: Rescue & Adopt</p>
+             <p className="leading-tight">Every oracle is a real adoptable shelter cat. Meet them, love them, take them home.</p>
+             <p className="text-[9px] opacity-60 mt-1">&copy; {new Date().getFullYear()} MaybeCat. Not veterinary advice.</p>
+           </div>
+
+         </div>
+      </div>
+
+      {/* FIXED PURRfoot Sponsor Banner - Always at bottom */}
       <div
-        className="w-full flex-shrink-0 relative z-20 flex"
+        className="fixed bottom-0 left-0 right-0 z-50 flex items-center shadow-2xl"
         style={{
           backgroundColor: '#0d1b2a',
           height: '150px',
+          boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
         }}
       >
         {/* Main ad space - left 4/5 */}
