@@ -716,7 +716,7 @@ export function Oracle() {
       {/* SEO Footer */}
       <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
         <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
-          <p className="font-bold">MaybeCat&trade; &mdash; questionable life advice from adoptable shelter cats. Answers that raise questions. Full cattitude.</p>
+          <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats. Full cattitude.</p>
         </div>
       </footer>
 
