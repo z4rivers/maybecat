@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<Props, State> {
             Something went wrong
           </h1>
           <p style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
-            The oracle needs a moment to recover.
+            The cat needs a moment.
           </p>
           <button
             onClick={() => window.location.reload()}

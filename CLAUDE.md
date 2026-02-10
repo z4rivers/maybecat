@@ -1,8 +1,10 @@
 # Project Instructions
 
-## Oracle Context
+## What MaybeCat Is
 
-This is a cat oracle app. Users ask questions ("Should I text them?", "Will I get the job?") and receive random cat wisdom.
+A cat answers your life questions. Users ask ("Should I text them?", "Will I get the job?") and a real adoptable shelter cat answers. Maybe. The cat is the expert — 10,000 years of judging humans. The only hedge is "maybe."
+
+**Positioning:** Advice with a voice. NOT an oracle, NOT a fortune teller, NOT mystical. A cat with opinions and no filter. Wingman energy, not Zoltar energy. See `.planning/seo-research/STRATEGY.md` for the full competitive research.
 
 **THE EXPERIENCE IS THE BOMB.** Not every response needs to be a knockout — the *experience* does. Like a great song, you need rhythm to make the crescendos hit. Dynamic range matters.
 
@@ -53,7 +55,7 @@ This is a cat oracle app. Users ask questions ("Should I text them?", "Will I ge
 **This cat is CULTURED:**
 - Knows song lyrics, movie lines, plot twists, literature, art, memes
 - Twists cultural references through cat lens
-- UP TO SPEED on everything - not some dusty oracle
+- UP TO SPEED on everything - not some dusty advice column
 - Knows human nature better than most humans
 - References land because people RECOGNIZE them, then get surprised by the twist
 
@@ -66,7 +68,7 @@ This is a cat oracle app. Users ask questions ("Should I text them?", "Will I ge
 
 ## Output Formatting
 
-When presenting lists for review (oracle responses, observations, content batches, etc.):
+When presenting lists for review (cat responses, observations, content batches, etc.):
 
 **Format:** Standalone HTML files with review interface
 

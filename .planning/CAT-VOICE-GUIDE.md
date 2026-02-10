@@ -1,7 +1,7 @@
-# Cat Oracle Voice Guide
+# Cat Voice Guide
 
 ## The Magic Formula
-The cat oracle works because it's a **Magic 8-Ball with personality**. Answers must feel random but occasionally land with eerie relevance. When someone asks about their ex and gets "Evidence suggests otherwise" or "They know"—that's the viral screenshot. When it's pure random and gives them "licks butt, ignores you"—that's also perfect. Both work because they're VERY CAT.
+MaybeCat works because it's **advice with a voice**. A cat with opinions, 10,000 years of judging humans, and no filter. Answers must feel random but occasionally land with eerie relevance. When someone asks about their ex and gets "Evidence suggests otherwise" or "They know"—that's the viral screenshot. When it's pure random and gives them "licks butt, ignores you"—that's also perfect. Both work because they're VERY CAT.
 
 ---
 
@@ -11,7 +11,7 @@ The cat oracle works because it's a **Magic 8-Ball with personality**. Answers m
 
 **Oblique, not direct** — Answers sideways, not straight-on. Never "Yes, you should break up with them." Instead: "The door is open. You're still inside."
 
-**Esoteric energy** — Oracle vibes, Zoltar mystique, removed from context. The cat knows something. Maybe.
+**Knowing energy** — The cat knows something. Maybe. Removed from context, above your drama, but aware of it.
 
 **Sentence fragments welcome** — "Pass." / "Declined." / "Mostly." / "In my way."
 
@@ -62,7 +62,7 @@ The cat oracle works because it's a **Magic 8-Ball with personality**. Answers m
 
 - **Too wordy/explanatory** — If it needs a paragraph, it's wrong
 - **Too mean-spirited** — Cats can be sharp but not cruel. Dismissive, not hurtful.
-- **Generic oracle-speak without cat personality** — "Your future holds change" is boring. "Your future holds... a nap. For me." is cat.
+- **Generic advice-speak without cat personality** — "Your future holds change" is boring. "Your future holds... a nap. For me." is cat.
 - **Repetitive structures/phrases** — Variety matters
 - **Being negative ALL the time** — The nurturing/heartfelt categories exist for balance
 - **Too many asterisk actions in a row** — One action hit is good. Three in a row is lazy.
@@ -114,7 +114,7 @@ Current responses work best for #1 and #5. We may need more that work for #2, #3
 
 **The goal:** Answers should SOMETIMES correlate to questions. NOT enough to be detectable. Must stay random FEELING.
 
-**The risk:** If it's too smart, the magic dies. The oracle knows things it shouldn't. That's the bit.
+**The risk:** If it's too smart, the magic dies. The cat knows things it shouldn't. That's the bit.
 
 **Possible approach:** Light keyword matching that occasionally surfaces relevant responses, but mostly stays random. When someone asks about sleep/bed/pillow, MAYBE they get a sleep-related answer. But usually not. The hit rate should feel like luck, not logic.
 

@@ -1,8 +1,8 @@
-# Cat Oracle Response Generation Prompt
+# Cat Response Generation Prompt
 
 ## Key Learnings
 
-**Nate Bargatze energy works great for cat oracle** - that deadpan "So." delivery. Understated, doesn't try too hard.
+**Nate Bargatze energy works great** - that deadpan "So." delivery. Understated, doesn't try too hard.
 
 **Double Tap Strategy:** Generate content in two passes:
 1. **First pass:** Generate open observations/insights (simple truths, no punchlines)
@@ -35,7 +35,7 @@ Each batch = ~20-25 responses = stays under token limits.
 ```
 Read the oracleResponses.ts file (first 500 lines) to understand the style.
 
-Then generate 25 NEW cat oracle responses as an HTML review file.
+Then generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Brutal dating honesty
 - Nikki Glaser, Taylor Tomlinson energy
@@ -56,7 +56,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 2: Dark & Deadpan
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Dark one-liners + deadpan absurdism
 - Sam Morril, Nate Bargatze, Tig Notaro energy
@@ -76,7 +76,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 3: Meta & Existential
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Meta-existential spiral
 - Bo Burnham, Neal Brennan energy
@@ -96,7 +96,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 4: No-BS Truth
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Unfiltered truth bombs
 - Wanda Sykes, Michelle Wolf, Jerrod Carmichael energy
@@ -116,7 +116,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 5: Chaotic & Unhinged
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Chaotic energy
 - James Acaster, Shane Gillis, Iliza Shlesinger, Katt Williams energy
@@ -136,7 +136,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 6: Angry Everyman + Neurotic
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Frustrated wisdom
 - Bill Burr, Marc Maron, Gary Gulman energy
@@ -156,7 +156,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 7: Surreal & Philosophical
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Weird wisdom
 - Julio Torres, Pete Holmes, Maria Bamford energy
@@ -176,7 +176,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## BATCH 8: Heartfelt & Nurturing
 
 ```
-Generate 25 NEW cat oracle responses as an HTML review file.
+Generate 25 NEW cat responses as an HTML review file.
 
 STYLE INSPIRATION (this batch): Unexpected tenderness
 - The soft side of all the above - moments of genuine connection
@@ -206,7 +206,7 @@ Output: HTML review file with KEEP/CUT/EDIT buttons and JSON export
 ## Quick Single-Batch Prompt (for ad-hoc additions)
 
 ```
-Generate 20 cat oracle responses.
+Generate 20 cat responses.
 
 Style: [COMEDIAN NAME] energy
 Vibe: [one-word like "chaotic" or "brutal" or "tender"]
@@ -481,7 +481,7 @@ BAD: "It sounds like you're feeling overwhelmed."
 BAD: "Have you considered that maybe you're projecting?"
 BAD: "That's valid. Your feelings are valid."
 ```
-**Why it fails:** Too safe, no surprise, reads as condescending. Cat oracle has OPINIONS.
+**Why it fails:** Too safe, no surprise, reads as condescending. The cat has OPINIONS.
 
 ### Reality TV Confessional
 ```
