@@ -14,7 +14,6 @@ import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { keywords } from '../data/keywords';
-import { NameInputModal } from '../components/NameInputModal';
 
 // Prevent orphaned words by joining last 2-3 short words with non-breaking spaces
 function preventOrphans(text: string): string {
@@ -43,7 +42,6 @@ export function Oracle() {
     catName,
     shelterCat,
     setCatFromUpload,
-    setCatName,
     setCatFromShelter,
     clearCat: clearCatStorage,
   } = useCatStorage();
@@ -58,7 +56,6 @@ export function Oracle() {
     clearResponse,
   } = useOracle({ isShelterCat: !!shelterCat });
 
-  const [showNameInput, setShowNameInput] = useState(false);
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
   const [needsBrightening, setNeedsBrightening] = useState(false);
@@ -184,7 +181,6 @@ export function Oracle() {
       reader.onloadend = () => {
         const base64 = reader.result as string;
         setCatFromUpload(base64);
-        setShowNameInput(true);
         safeTrack('cat_selected', { source: 'upload' });
       };
       reader.onerror = () => {
@@ -194,10 +190,6 @@ export function Oracle() {
     }
   }, [setCatFromUpload]);
 
-  const handleNameSave = useCallback((name: string) => {
-    setCatName(name);
-    setShowNameInput(false);
-  }, [setCatName]);
 
   const clearCat = useCallback(() => {
     clearCatStorage();
@@ -669,8 +661,7 @@ export function Oracle() {
               </button>
 
               {/* Question input - INSIDE page 2 for proper centering */}
-              {!showNameInput && (
-                <div className="w-full max-w-4xl mt-2 space-y-2">
+              <div className="w-full max-w-4xl mt-2 space-y-2">
                   <div className="relative">
                     <input
                       type="text"
@@ -697,15 +688,10 @@ export function Oracle() {
 
 
                 </div>
-              )}
             </motion.div>
           )}
 
 
-          {/* Name input modal */}
-          <AnimatePresence>
-            {showNameInput && <NameInputModal onSave={handleNameSave} />}
-          </AnimatePresence>
 
         </div>
 
@@ -716,7 +702,7 @@ export function Oracle() {
       {/* SEO Footer */}
       <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
         <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
-          <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats. Full cattitude.</p>
+          <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
         </div>
       </footer>
 

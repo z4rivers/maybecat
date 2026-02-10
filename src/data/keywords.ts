@@ -52,8 +52,8 @@ export const keywords = [
   { text: 'cat truth', top: '6%', left: '68%' },
   { text: 'unfiltered', top: '26%', left: '12%' },
   { text: 'no credentials', top: '90%', left: '88%' },
-  { text: 'expert opinion', top: '88%', left: '75%' },
-  { text: 'highly qualified', top: '92%', left: '18%' },
+  { text: 'expert cat opinion', top: '88%', left: '75%' },
+  { text: 'highly qualified cat', top: '92%', left: '18%' },
 
   // Wingman energy
   { text: 'kitty bestie', top: '16%', left: '40%' },
