@@ -25,3 +25,16 @@ dist-ssr
 
 .vercel
 .env*.local
+
+# Auto-generated agent/IDE directories
+.agent/
+.agents/
+.continue/
+.cursor/
+
+# Batch review files
+*-batch-review.html
+*-batch-*-review.html
+
+# Lighthouse reports
+lighthouse-report*.json
