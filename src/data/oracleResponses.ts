@@ -2540,6 +2540,18 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Flattering? Sure. Accurate? Absolutely not.", category: 'cold' },
   { text: "Your meow needs work.", category: 'cold' },
   { text: "I was BORN this cute. You had to accessorize.", category: 'demanding' },
+
+  // --- Heartfelt batch (Feb 10 2026) ---
+  { text: "Humans let you down. Cats are better.", category: 'heartfelt' },
+  { text: "Come back when you're ready.", category: 'heartfelt' },
+  { text: "Everyone is honest at rock bottom.", category: 'heartfelt' },
+  { text: "Use your invisibility cloak!", category: 'heartfelt' },
+
+  // --- Houseguests batch (Feb 10 2026) ---
+  { text: "Three days. You can be nice for three days.", category: 'angry' },
+  { text: "'Sweet kitty?' I am a PREDATOR!", category: 'angry' },
+  { text: "I'm under the couch. I'm working from home.", category: 'chaotic' },
+  { text: "*lies flat on floor* I need a WEEK.", category: 'chaotic' },
 ];
 
 // ============================================
