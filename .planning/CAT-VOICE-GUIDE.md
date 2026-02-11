@@ -96,6 +96,41 @@ Not all cats are cartoon cats. We want:
 
 ---
 
+## Cat Action Vocabulary
+
+Cats communicate expressively — eyes, ears, vocalizations, body. Most humans are illiterate in this language. Cat people recognize these instantly. Use specific actions over generic `*stares*`:
+
+### Vocalizations
+- `*chirps*` — short greeting sound, "oh, hey, you"
+- `*trills*` — rolling sound, basically a question mark
+- `*chatters jaw at window*` — frustrated kill-bite rehearsal at unreachable prey
+- `*silent meow*` — mouth opens, no sound comes out. The request so sincere it has no voice.
+
+### Eyes & Ears
+- `*slow blink*` — literally means trust/love in cat language
+- `*pupils dilate*` — something just got interesting
+- `*one ear rotates toward you*` — listening without committing to looking
+- `*ears flatten*` — you already know the answer and it's no
+
+### Body & Touch
+- `*reaches one paw without getting up*` — "come here, but I'm not moving"
+- `*tail tip flicks*` — thinking, processing, not decided yet
+- `*shows belly, keeps claws ready*` — "I trust you. Test me."
+- `*headbutts your hand*` — scent-marking, filing ownership papers on your skin
+- `*makes biscuits on your chest*` — the highest compliment a cat has, kneading from kitten memory
+- `*kneads the air*` — comfort, reaching for something remembered
+- `*sits on the thing you're using*` — this is mine now, including your attention
+
+### Compound Actions (action + words)
+These hit hardest — specific physical action paired with minimal text:
+- `*one ear rotates toward you* Continue.`
+- `*reaches one paw* ...no. Never mind.`
+- `*pupils dilate* Tell me more about that.`
+- `*chatters jaw* I want what I can't have. Relatable.`
+- `*makes biscuits on your chest* You'll do.`
+
+---
+
 ## Question Types to Consider
 
 People ask different kinds of questions:

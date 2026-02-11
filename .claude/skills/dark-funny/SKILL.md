@@ -276,6 +276,20 @@ Workers, the struggling, anyone without power.
 ## What Lands
 
 - **Action + minimal words** — `*stares* Let it go.` / `*slow blink* Yeah. That was good.`
+- **Specific cat actions** (use these over generic `*stares*`):
+  - `*chirps*` — greeting sound, "oh, hey, you"
+  - `*trills*` — rolling sound, a question mark
+  - `*chatters jaw at window*` — frustrated kill-bite rehearsal
+  - `*one ear rotates toward you*` — listening without committing to looking
+  - `*reaches one paw without getting up*` — "come here, but I'm not moving"
+  - `*tail tip flicks*` — thinking, processing, not decided yet
+  - `*pupils dilate*` — something just got interesting
+  - `*ears flatten*` — you already know the answer
+  - `*kneads the air*` — comfort, memory, the mother they remember
+  - `*slow blink*` — literally means trust/love in cat
+  - `*shows belly, keeps claws ready*` — "I trust you. Test me."
+  - `*headbutts your hand*` — filing ownership papers on your skin
+  - `*makes biscuits on your chest*` — the highest compliment a cat has
 - **Specific observation** — "You look like you're about to text your ex." NOT: "I see you're struggling."
 - **Reframes** — "Not every day is a win. Some are just a not-lose."
 - **Dismissive care** — "I don't know what you did. I don't care. Let it go."
@@ -295,4 +309,206 @@ Workers, the struggling, anyone without power.
 - Starting with "Look,"
 - Endings like "Deal with it." or "Or whatever."
 - Famous greatest-hits quotes (cult/deep cuts work; "Imagine" doesn't)
-- Overused cat tropes (knocking things off tables, 3am zoomies, sunbeam worship — unless twisted fresh)
+- Overused cat tropes (see Dead Cat Tropes blacklist below)
+
+---
+
+## Dead Cat Tropes — THE BLACKLIST
+
+These are the first 10 things any AI or lazy human reaches for when writing "cat content." They're dead. Retired. Exhausted. Do not use them unless the twist is so radical the trope is unrecognizable.
+
+### Fully Dead (never generate)
+1. **Knocking things off tables/counters** — every cat comic, every meme, done
+2. **3 AM zoomies** — "cats are crazy at night" was funny in 2015
+3. **Sunbeam/sun puddle worship** — too cute, too safe, zero teeth
+4. **"If I fits, I sits" / box obsession** — internet cat meme era is over
+5. **"I meant to do that" after falling** — sitcom cat energy
+6. **Nap as universal solution** — "just nap" is the lazy shortcut to Sleepy Cat; real Sleepy Cat answers from dream logic, not nap advocacy
+7. **"I brought you a dead mouse/bird as a gift"** — every cat owner joke since 1990
+8. **Red dot / laser pointer chasing** — mechanical, not insightful
+9. **Sitting on keyboard** — too "relatable content" coded, Facebook-tier
+10. **"Dogs have owners, cats have staff"** — bumper sticker, not a response
+11. **9 lives** — greeting card territory
+12. **Hairball mentions** — gross without being funny
+13. **"Feed me" / only loves you for food** — reductive, the whole point of the 31 cats is BEYOND this
+14. **Ignoring you when called** — true but boring as comedy
+15. **"I'm plotting your demise"** — evil cat trope is cringe
+16. **Cheeseburger / "I can has"** — LOLcats era is 15+ years dead
+17. **Cat vs. Christmas tree** — seasonal AND tired
+18. **Cucumber fear** — one-note meme
+
+### Expired But Salvageable (only with a GENUINE twist)
+- **Judging from high perch** — the physical position/power dynamic is fine; "I'm judging you" as the punchline is not
+- **Kneading/biscuits** — the warmth of the action can work; naming it cutely is dead
+- **Purring as manipulation** — the CONCEPT of strategic comfort could work in a power-dynamics response, but "I'm purring to manipulate you" is surface
+- **Curiosity killed the cat** — the phrase is dead; the genuine feline compulsion to investigate is alive
+- **Landing on feet** — the cliche is dead; a real response about recovery/resilience that happens to use this physically is fine
+
+### The Test
+Before using ANY cat behavior as content: **Would a "funny cat" Instagram account post this?** If yes, it's dead here. MaybeCat lives in the space AFTER the memes.
+
+---
+
+## Untapped Comedian Voices
+
+The skill lists voices we've drawn from. Here are voices we HAVEN'T mined yet — each one is a distinct delivery system that could yield responses nobody's written:
+
+### Structural / One-Liner Architects
+- **Demetri Martin** — visual/structural comedy, one-liners with geometric thinking, palindromes of logic
+- **Gary Gulman** — neurotic precision, finding the MASSIVE in the small, 20-minute bit about state abbreviations energy
+- **Sam Morril** — dark one-liners, clean delivery, trapdoor endings
+- **Taylor Tomlinson** — millennial anxiety wrapped in self-deprecation with actual teeth underneath
+
+### Deadpan / Dry
+- **James Acaster** — British absurdism, commitment to the bit past the point of sanity
+- **Daniel Sloss** — Scottish, dark, relationship truths that make the room go quiet then laugh
+- **Aparna Nancherla** — anxiety as comedy, quiet devastation, the softest voice with the sharpest point
+- **Maria Bamford** — mental health, character voices, completely alien perspective that's somehow the most human
+
+### Unhinged Commitment
+- **Tim Robinson** — "I Think You Should Leave" energy, committed to the wrong bit past the breaking point, the person who won't let it go
+- **Nathan Fielder** — awkward sincerity taken to absurd extremes, genuinely uncomfortable helpfulness
+- **Julio Torres** — surreal, object-obsessed, finds personality in staplers and shapes
+- **Eric Andre** — chaos interview energy, makes the normal weird
+
+### Sharp Social / Cultural
+- **Hasan Minhaj** — political/cultural specificity, personal stories as lens on systems
+- **Ziwe** — makes people uncomfortable with the simplest questions, "what do you like about white people?" energy
+- **Michelle Wolf** — political precision, knows exactly where the line is and steps past it looking you in the eye
+- **Nikki Glaser** — fearless about sex/dating, sharp enough to make the crude profound
+- **Ramy Youssef** — cultural collision, sincere AND funny, doesn't pick a side
+
+### Warmth + Edge
+- **John Mulaney** — storytelling, theatrical buildup, the reveal that reframes everything before it
+- **Hannibal Buress** — deadpan, casual delivery of observations that shouldn't be that funny
+- **Ali Wong** — raw, physical, maternal rage and desire without apology
+- **Stavros Halkias** — infectious joy, laughs at his own darkness, the warmest nihilist
+
+### HOW TO USE THESE
+Don't imitate. **Filter.** Take a truth or observation and ask: "How would [comedian] DELIVER this in 10 words?" The delivery transforms the content. Same truth, completely different response depending on whether it comes through Tig Notaro silence or Tim Robinson commitment.
+
+---
+
+## Source Material Mines — Open the Refrigerators
+
+**FOUND LANGUAGE > CONSTRUCTED CLEVERNESS.** The best MaybeCat responses are relocated, not built. They come from worlds that have nothing to do with cats or advice. Here's where to look:
+
+### Reddit (situations, not jokes)
+- **r/AITA** — moral dilemmas with absurd specificity. The situations themselves are content.
+- **r/relationships** — the patterns people can't see in themselves. The cat sees them.
+- **r/tifu** — "I did a thing" confessionals. Cat witnesses.
+- **r/suspiciouslyspecific** — when the details reveal everything the person is hiding
+- **r/BrandNewSentence** — language nobody has assembled before. Relocate it.
+- **r/rareinsults** — creative burns from the wild, not constructed
+- **r/MaliciousCompliance** — did exactly what was asked. Chaos followed. Cat energy.
+- **r/showerthoughts** — 2 AM insights already pre-formatted for MaybeCat
+- **r/TwoSentenceHorror** — brevity + twist = MaybeCat's EXACT format
+- **r/LifeProTips + r/ShittyLifeProTips** — the gap between these two is where the cat lives
+- **r/CasualConversation** — what people actually say when nobody's performing
+- **r/unpopularopinion** — taboo-but-resonant positions, cat doesn't care about taboo
+- **r/NoStupidQuestions** — the questions underneath the questions
+
+### Professional Jargon Worlds (relocate the language)
+- **Medical/nurse humor** — gallows humor from people who've seen everything. "The patient is stable" as life advice.
+- **Legal language** — "sustained," "overruled," "the witness is hostile." Court transcript absurdity.
+- **Kitchen/restaurant** — "86'd," "behind," "heard," "in the weeds." Line cook urgency applied to your love life.
+- **Aviation** — "brace for impact," "remain seated," captain's calm-in-crisis voice
+- **Weather reports** — "partly cloudy with a chance of regret" energy, the language of forecasting applied to human choices
+- **Real estate listings** — "open concept" = no walls = no hiding. "Charming" = small. The euphemism engine.
+- **Customer service scripts** — "Your call is important to us" twisted into actual truth or devastating irony
+- **Warning labels** — the absurdity of what apparently needs to be said out loud
+- **Instruction manuals** — step-by-step language for things that shouldn't need instructions
+- **HR emails** — "per my last email," "circle back," "align on" — corporate language as cat verdict
+
+### Cultural Artifact Language (the format IS the joke)
+- **Obituary style** — "Survived by..." / "In lieu of flowers..." applied to situations, not death
+- **Museum placard voice** — deadpan institutional authority describing your Tuesday
+- **Nature documentary narration** — David Attenborough observing your dating life
+- **Product reviews** — 1-star and 5-star extremes as life commentary
+- **Dating profile language** — "loves to laugh" and "looking for my partner in crime" flipped inside out
+- **Self-help book titles** — the titles themselves, inverted
+- **Horoscope structure** — the format of prediction, with cat content
+- **Wikipedia first sentences** — deadpan encyclopedic authority on personal situations
+- **Out-of-office messages** — "I am currently unavailable" as emotional boundary
+- **Gym motivational posters** — "no pain no gain" energy, twisted
+
+### Other Languages (untranslatable words format)
+Already proven: word + em dash + vivid definition. Cat people are book people. More languages to mine:
+- Japanese (mono no aware, wabi-sabi, tsundoku, ikigai, komorebi)
+- Portuguese (saudade — already a classic, but deeper cuts exist)
+- German (compound words that name feelings English can't: Torschlusspanik, Fernweh, Weltschmerz)
+- Danish (hygge adjacent but weirder: pyt, overskud)
+- Finnish (sisu — grit beyond grit)
+- Arabic (tarab — musical ecstasy, ya'aburnee — "you bury me" = love so deep)
+- Korean (jeong — deep emotional bond, han — collective grief/resilience)
+- Scottish Gaelic (cianalas — homesickness for a place that may not exist)
+- Tagalog (gigil — urge to squeeze something cute, kilig — butterflies)
+
+### The Refrigerator Rule
+**Before generating a batch, NAME the refrigerator you're opening.** Don't generate from "comedy" or "cat." Generate from "nurse shift-change language" or "Reddit AITA about a potluck" or "Korean emotional vocabulary." The specificity of the source prevents lazy defaults.
+
+---
+
+## The Multi-Axis Generation System
+
+The problem: when you focus on one dimension (comedian delivery), the other dimensions collapse to defaults (same 5 cat voices, same emotional territory, same cat tropes). This system prevents that.
+
+### Five Axes — Specify Before Generating
+
+1. **SOURCE** — Where is the language coming from?
+   Be specific. Not "comedy" — but "Tig Notaro's pause structure" or "Tim Robinson's commitment energy" absolutely. Not "Reddit" — but "r/AITA potluck dilemmas" yes. "Medical charts," "weather forecasts," "Finnish emotional vocabulary" — the more specific the refrigerator, the more original the output.
+
+2. **VOICE** — Which of the 31 cats?
+   Don't let Judge Cat, Pensive Cat, and Badass Cat dominate. Deliberately rotate. When did Doubt Cat last speak? Conspiracy Cat? Condescending Parent Cat?
+
+3. **DELIVERY** — How is it being said?
+   Comedian filter, action line, dual-reading, reframe, question, command, fragment, untranslatable word, twisted familiar phrase, institutional language
+
+4. **TERRITORY** — Which void need?
+   Permission, validation, confrontation, perspective shift, presence, humor-as-relief, the quiet moment
+
+5. **ENERGY** — Where in the dynamic range?
+   Crescendo (screenshot-worthy), rhythm (solid, earned), quiet (the pause that makes crescendos hit)
+
+### Generation Protocol
+Before each batch, declare constraints on at least 3 axes. Example:
+> "5 responses from kitchen/restaurant language, through Barncat and Reluctant Therapist, at rhythm energy"
+
+This prevents the gravitational pull toward: Judge Cat + surface cat behavior + generic burn + crescendo energy on every single line.
+
+### Mix Requirements Per Batch (30 responses)
+- At least 6 different cat voices
+- At least 3 different source refrigerators
+- At least 2 different delivery types
+- No more than 40% burns/sharp — mix in wonder, quiet, absurd, warm
+- At least 3 that are genuinely strange (not quirky-cute strange, but WHAT? strange)
+
+---
+
+## Session Lessons — What We've Learned
+
+### What gets KEPT (patterns from successful responses)
+- **Found language relocated** — phrases from hospitals, kitchens, other languages placed in cat's mouth where they mean something new
+- **Dual-reading (G-surface / X-underneath)** — highest hit rate format. Clean on top, second meaning that hits different.
+- **Specific physical actions** — `*slow blink*` `*stares*` `*sits on your phone*` — not described, performed
+- **Twisted familiar phrases** — everyone's heard it, but the cat version means something else
+- **The trim** — user ALWAYS cuts shorter. The first draft is never short enough. Strip setup. Trust the landing.
+- **Cult references > famous quotes** — Mitski, The Smiths, deep cuts land. "Imagine" doesn't.
+- **"You" > "I"** — cat reads the person, doesn't narrate itself
+- **Tuesday for cats, Jerry Springer for humans** — scandalous for humans, normal for cats = the engine
+
+### What gets CUT (patterns from rejected responses)
+- Fortune cookie positivity — zero cat attitude, zero teeth
+- Surface humor / obvious punchlines — if the joke is ON the nose, it's dead
+- "I" declarations — "I'm here for you" is therapy, not cat
+- Explaining the emotion — show, don't tell. The cat doesn't name what it's doing.
+- The same 5 cat voices carrying every batch — variety isn't optional
+- Re-presenting rejected lines in new wrappers — if the core was cut, it stays cut
+- Trying to BE funny/dark/edgy — look at the world, see what's there, be cat about it
+- Constructed cleverness — the assembly is visible. Found language hides its seams.
+
+### The Dorothy Parker Principle
+Wit has truth underneath it. Wisecracks are calisthenics with words. Stay on the truth side. If a response is clever but empty, it's a wisecrack. If it makes someone go quiet for a second before they laugh, it's wit.
+
+### Dynamic Range Reminder
+If every response is a 10, nothing is. The experience is the bomb, not every line. Rhythm responses (solid, on-brand, not trying to be THE moment) are what make the crescendos hit. A great album has tracks 4 and 7, not 12 bangers.

@@ -2767,6 +2767,23 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Close enough is my love language.", category: 'heartfelt' },
   { text: "The parachute opened. *already on the ground*", category: 'chaotic' },
   { text: "You're not lost. You're finding alternatives.", category: 'wise' },
+
+  // --- Famous cats refrigerator: inspired by iconic cat characters ---
+  { text: "I built a trap. I am in the trap.", category: 'chaotic' },
+  { text: "Received, reviewed, and enjoyed. Denied.", category: 'cold' },
+  { text: "We're definitely lost. But look at this place.", category: 'wise' },
+  { text: "Pthhhbt. That's my final answer.", category: 'cold' },
+  { text: "Whatever you're offering, I wanted the opposite.", category: 'demanding' },
+  { text: "No edge, no attitude, just love.", category: 'heartfelt' },
+  { text: "Aggressively anti-effort. Zero guilt about it.", category: 'judgy' },
+  { text: "Don't philosophize. Just show up and take the fish.", category: 'wise' },
+  { text: "Right about everything and helpful about nothing.", category: 'judgy' },
+  { text: "Adorable and lethal.", category: 'cold' },
+  { text: "It wasn't me. And even if it was — prove it.", category: 'cold' },
+  { text: "No explanation was ever offered or needed.", category: 'mystical' },
+  { text: "Someone has to be the patron saint of lovable idiots.", category: 'heartfelt' },
+  { text: "Words feel like too much but silence feels like too little.", category: 'poetic' },
+  { text: "Please, for the love of — use it.", category: 'angry' },
 ];
 
 // ============================================

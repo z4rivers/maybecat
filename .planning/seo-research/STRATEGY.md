@@ -49,20 +49,81 @@ No site on the internet combines: ask anything + sharp answers with a distinctiv
 | Magic 8-Ball | magic-8ball.com | 402K/mo | Recognizable format | 20 stale answers from 1946 |
 | Yes/No + GIFs | yesno.wtf | small | Right instinct (response IS product) | No character, no voice |
 | Voice-driven | Co-Star | 30M+ users | Voice IS product, screenshot-native | Astrology-locked, push-only, can't ask it things |
-| Character chat | Character.AI | 180M/mo web | People WANT characters | Conversational, not oracle-format |
+| AI companions | Replika, Character.AI, Chai, Pi | $120M+ rev, 180M/mo (C.AI) | People WANT characters, high retention | Conversational (long), sycophantic, no brevity |
+| AI therapists | ChatGPT, Claude, Gemini, Woebot | 48.7% of MH users use LLMs | Intelligent, available 24/7 | Paragraphs when you need 1 line, validates too much |
+| Astrology Q&A | Co-Star "The Void", Astrology.com | Co-Star: 30M+ users | Character-driven answers to questions | Astrology-locked, paywall, need birth chart |
 | Serious advice | Ask a Manager, articles | millions/mo | Depth, SEO authority | Zero entertainment, 2000 words when you want 2 seconds |
+| Q&A platforms | Reddit, Quora (Yahoo Answers dead 2021) | massive | Community, depth, real humans | 47 comments when you need 1 line, slow |
 | Quizzes | BuzzFeed, ProProfs | varies | Engagement, shareability | Slow (8-12 clicks), no character, generic platforms |
 
 ### The gap
 A character-driven answer to questions that's built for screenshots. That slot is empty.
 
+### The AI Companion & Therapy Boom (added 2026-02-11)
+
+The biggest new competitor category since our Feb 9 research. Not just ChatGPT — the entire AI companion/therapy space:
+
+**Market size:** AI companion market $37B in 2025, projected $552B by 2035. AI mental health segment: $2B in 2026, growing 34.3% annually.
+
+**Who's in it:**
+- **ChatGPT/Claude/Gemini** — general LLMs people use as therapists. 48.7% of people with MH challenges use LLMs for support. 73% for anxiety, 63% for personal advice. ~50% of Gen Z uses AI for dating advice.
+- **Replika** — 25M users, $24-30M revenue. Dedicated AI companion.
+- **Character.AI** — 20M MAU, 180M monthly web visits. Chat with AI characters.
+- **Chai** — $30M+ ARR with 12 employees. AI character chat.
+- **Pi (Inflection)** — conversational AI focused on being a supportive friend.
+- **Woebot, Wysa** — dedicated AI therapy apps.
+- **Snapchat My AI** — 150M users. Built into social platform.
+- **72% of US teens** have tried an AI companion (2025).
+
+**Their shared weakness — MaybeCat's angle:**
+1. **Sycophantic** — LLMs agree too much, validate too much, hedge everything. The cat doesn't validate.
+2. **Verbose** — paragraphs when you need 6 words. MaybeCat: 1-2 sentences, always.
+3. **No character** — ChatGPT is helpful but has no PERSONALITY. No attitude, no edge, no voice.
+4. **No shareability** — nobody screenshots ChatGPT therapy. MaybeCat is built for the screenshot.
+5. **Exhausting** — AI companions want ongoing conversation. MaybeCat: ask, get answer, done.
+
+**What this means for MaybeCat:**
+MaybeCat is NOT competing with any of these. Not on depth, not on conversation, not on therapy. MaybeCat is not a chat-with-a-cat. It's not an AI companion. It's not trying to be a therapist.
+
+MaybeCat is **a place for questions.** You ask, you get one line, you're done. No back-and-forth, no relationship, no ongoing thread. The question is the moment — the cat just happens to be there when it arrives.
+
+The AI companion boom is CONTEXT, not competition. It proves people are desperate to ask something and hear something back. But all those tools turned it into a conversation. MaybeCat is the opposite: one moment, one line, move on with your life.
+
+### Co-Star's "The Void" — Closest Competitor (added 2026-02-11)
+
+Co-Star launched "The Void" in July 2023 — users ask questions and receive character-driven answers. This is the closest existing product to MaybeCat's model.
+
+**How it works:**
+- 5 categories: Self, Love, Expression, Social, Work
+- ~100 curated questions to choose from
+- Answers based on natal chart + ChatGPT + astrological database
+- Physical pop-ups with "Soviet computer" in NYC/LA (printed answers on receipt paper)
+
+**Where MaybeCat wins:**
+- No birth chart required — instant, zero signup
+- Free (The Void is behind Co-Star's paywall)
+- 2,150+ responses vs ~100 curated questions
+- ASK anything vs choose from a list
+- 31 distinct cat personalities vs one astrological voice
+- Built for screenshot/share (Co-Star's Void answers aren't as shareable)
+
+### Google AI Overviews (added 2026-02-11)
+
+Google now uses Gemini to answer personal questions via AI Overviews and AI Mode. But:
+- Institutional, hedged, disclaimer-heavy
+- Can't have a personality or an opinion
+- Tries to be helpful, not honest
+- Google is eating the utility layer (built-in coin flip, calculator) but can NEVER be a character with attitude
+
 ### Closest parallels (what to learn from each)
 - **Co-Star's growth model:** Voice + screenshot detection + share prompting = viral engine
+- **Co-Star's Void:** Ask questions → character-driven answers. Proves demand. But astrology-locked + paywall = opportunity for MaybeCat.
 - **Akinator:** Wrapping an algorithm in a character creates an entirely different product
 - **yesno.wtf:** The response format matters more than accuracy
 - **WTF Should I Make for Dinner:** Voice alone turned a single-serving site into a brand (cookbook deal)
 - **BuzzFeed quizzes:** 75% of traffic from social shares — the result must be screenshot-worthy
 - **Picker Wheel:** The suspense animation matters (MaybeCat's "thinking" delay = this)
+- **AI companions' sycophancy problem:** People are getting validation, not truth. The cat doesn't validate. That's the differentiator.
 
 ---
 
