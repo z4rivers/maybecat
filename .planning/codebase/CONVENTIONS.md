@@ -1,151 +1,146 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
 
 ## Naming Patterns
 
 **Files:**
-- PascalCase for React components: `Home.tsx`, `VariantA.tsx`, `App.tsx`
-- camelCase for utilities/services: `rescueGroups.ts`, `sponsor.ts`, `oracleResponses.ts`
-- kebab-case for directories: `src/pages/`, `src/data/`, `src/services/`
+- PascalCase.tsx for React components (Home.tsx, NameInputModal.tsx)
+- camelCase.ts for hooks, services, data, config
+- *.test.ts colocated with source
+- index.ts barrel exports for component groups
 
 **Functions:**
-- PascalCase for React components: `function App()`, `function CornerVine()`
-- camelCase for regular functions: `fetchAdoptableCats()`, `getRandomResponse()`, `isApiConfigured()`
-- camelCase for custom hooks: `useDocumentMeta()`
-- Descriptive action-oriented names: fetch, get, use prefixes
+- camelCase for all functions (fetchAdoptableCats, getRandomResponse, preventOrphans)
+- `use` prefix for hooks (useOracle, useCatStorage, useDocumentMeta)
+- `handle` prefix for event handlers (handleImageUpload, handleNameSave, handleKeyDown)
+- `safe` prefix for wrapped-safe utilities (safeTrack, safeSetItem)
 
 **Variables:**
-- camelCase for variables: `shelterCat`, `adoptableCats`, `photoUrl`
-- SCREAMING_SNAKE_CASE for constants: `RESCUEGROUPS_API_KEY`, `API_BASE`
-- Abbreviated names in loops: `attrs`, `picId`, `orgId`
+- camelCase for state and variables (catImage, isThinking, shelterCats)
+- UPPER_SNAKE_CASE for constants (VISIBLE_CATS, API_BASE, CACHE_KEY, CACHE_TTL_MS)
+- Object constants: `const STORAGE_KEYS = { ... } as const`
 
 **Types:**
-- PascalCase for interfaces: `interface ShelterCat`, `interface Sponsor`
-- PascalCase for type aliases: `type OracleCategory`
-- `interface` for object contracts
-- `type` for unions and aliases
+- PascalCase, no I prefix (ShelterCat, OracleResponse, not IShelterCat)
+- Props suffix for component props (NameInputModalProps, QuestionInputProps)
+- Return suffix for hook returns (UseOracleReturn, UseCatStorageReturn)
+- Union types for categories: `type OracleCategory = 'mystical' | 'nurturing' | ...`
 
 ## Code Style
 
 **Formatting:**
-- No explicit Prettier configuration
-- 2 space indentation
-- Semicolons consistently used
+- No Prettier config — relies on ESLint
+- 2-space indentation
 - Single quotes for strings
-- Double quotes for JSX attributes
+- Semicolons required
+- Line wrapping: JSX attributes split across lines for readability
 
 **Linting:**
-- ESLint 9.39.1 with flat config (`eslint.config.js`)
-- @eslint/js recommended
-- typescript-eslint recommended
-- eslint-plugin-react-hooks
-- Run: `npm run lint`
+- ESLint 9.x flat config (`eslint.config.js`)
+- Extends: @eslint/js recommended, typescript-eslint recommended
+- Plugins: react-hooks, react-refresh
+- Browser globals enabled
+- `npm run lint` to check
+
+**TypeScript:**
+- Strict mode enabled
+- noUnusedLocals, noUnusedParameters
+- noFallthroughCasesInSwitch
+- verbatimModuleSyntax
 
 ## Import Organization
 
 **Order:**
-1. React and React hooks: `import { useState, useCallback } from 'react'`
-2. Third-party libraries: `import { BrowserRouter } from 'react-router-dom'`
-3. Relative imports: `import { getRandomResponse } from '../data/oracleResponses'`
+1. React core (useState, useCallback, useEffect, useRef)
+2. Third-party UI (framer-motion, lucide-react)
+3. Local services/data
+4. Local hooks
+5. Local components
+6. Styles/CSS (last)
 
 **Grouping:**
-- Named imports grouped: `import { X, Heart, Sparkles } from 'lucide-react'`
-- Type imports with `type` keyword: `import { type OracleResponse }`
-- No barrel exports - import directly from modules
+- Blank lines between groups (not strictly enforced)
+- Named imports preferred
+- Type imports inline: `import { type ShelterCat } from '...'`
 
 **Path Aliases:**
-- None configured - uses relative paths with `./` and `../`
+- None — relative imports throughout (../hooks/, ../components/)
 
 ## Error Handling
 
 **Patterns:**
-- Console.error for API failures
-- Silent fallback to default data
-- No user-facing error messages
-- No explicit try/catch at component level
+- Try-catch for localStorage (quota overflow, corrupted JSON)
+- Try-catch for analytics (never break UX for tracking)
+- ErrorBoundary for React render errors
+- API failures → graceful fallback (FALLBACK_CATS)
+- Canvas/CORS errors → silently skip (app continues)
 
-**Error Types:**
-- API errors: Log and fallback
-- File errors: Silent fail
-- localStorage errors: Implicit trust
-
-## Logging
-
-**Framework:**
-- Console.log for debugging
-- Console.error for errors
-- No structured logging
-
-**Patterns:**
-- Log API fetch attempts
-- Log errors with context
-- No console.log in production path
+**Safe Wrapper Pattern:**
+```typescript
+function safeSetItem(key: string, value: string) {
+  try { localStorage.setItem(key, value); }
+  catch { /* quota exceeded — silently continue */ }
+}
+```
 
 ## Comments
 
 **When to Comment:**
-- Section headers for code blocks
-- Explain non-obvious business logic
-- Document API integration details
+- Explain WHY, not what: `// Only analyze data URLs (user uploads) - external images have CORS issues`
+- Section dividers in JSX: `{/* Adopt Me Badge - Shelter Cats Only */}`
+- Business context: `// Prevent orphaned words by joining last 2-3 short words`
 
-**Patterns:**
-- Single-line comments above code blocks
-- Section headers with `// ============` banners
-- No JSDoc - types serve as documentation
-
-**TODO Comments:**
-- Format: `/* TODO: description */`
-- Found in VariantA.tsx, VariantB.tsx for unfinished sponsor banner
+**JSDoc:**
+- Used sparingly for service files and complex utilities
+- Not required for internal functions with clear names
 
 ## Function Design
 
-**Size:**
-- Page components are monolithic (500-750 lines)
-- Individual handlers are small (<50 lines)
-- Should extract reusable logic
-
 **Parameters:**
-- Destructure props in React components
-- Use options objects for complex configs
-- Type annotations on parameters
+- Destructured objects for hooks with many return values
+- Single options object for configurable functions
+- useCallback with explicit dependency arrays
 
 **Return Values:**
-- Explicit returns in regular functions
-- JSX returns in components
-- Void returns for handlers
+- Hooks return typed interface objects: `UseOracleReturn`
+- Early returns for guard clauses
 
 ## Module Design
 
 **Exports:**
-- Named exports for functions and types
-- Default export for page components (optional)
-- Export directly from module (no barrel files)
+- Named exports preferred for components: `export function Oracle()`
+- Default exports for route pages: `export default OrgComparison`
+- Barrel files for component groups: `export { CornerVine, CenterMandala } from './...'`
+- Types exported alongside components: `export { OracleHeader, type OracleHeaderProps }`
 
-**Organization:**
-- One main export per file
-- Related types exported alongside
-- Config objects as named exports
+## React Patterns
 
-## TypeScript Patterns
+**Components:**
+- Function components exclusively (no class components except ErrorBoundary)
+- PascalCase names
+- Props destructured in params with defaults
+- forwardRef when DOM access needed (OracleResponseCard)
 
-**Strictness:**
-- `strict: true` enabled
-- `noUnusedLocals: true`
-- `noUnusedParameters: true`
-- Target: ES2022
+**Hooks:**
+- useState for local state
+- useCallback for memoized handlers (with deps)
+- useEffect for side effects with cleanup
+- useRef for DOM refs and timeout tracking
+- Custom hooks encapsulate related state + logic
 
-**Type Annotations:**
-- Explicit on function parameters
-- Return types inferred (not always explicit)
-- Use `type` keyword for imports
+**Styling:**
+- Tailwind CSS utilities as className strings
+- Inline style objects for gradients, shadows, dynamic values
+- Conditional styling: ternary or clsx
+- Responsive: mobile-first with md: and lg: breakpoints
 
-**Assertions:**
-- Minimal `as` casts
-- Optional chaining (`?.`) used
-- Nullish coalescing (`||`) for defaults
+**Animation:**
+- Framer Motion: motion.div, AnimatePresence, whileHover, whileTap
+- Spring physics: stiffness 200, damping 20-25
+- Exit animations via AnimatePresence mode="wait" or "popLayout"
 
 ---
 
-*Convention analysis: 2026-02-02*
+*Convention analysis: 2026-02-06*
 *Update when patterns change*

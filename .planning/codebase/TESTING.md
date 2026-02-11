@@ -1,150 +1,143 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
 
 ## Test Framework
 
 **Runner:**
-- None installed
-- No Jest, Vitest, Mocha, or other test framework configured
+- Vitest 4.0.18
+- Config: `vitest.config.ts` (jsdom environment, globals enabled)
+- Setup file: `src/test/setup.ts`
 
 **Assertion Library:**
-- N/A
+- Vitest built-in expect
+- @testing-library/jest-dom matchers (toBeInTheDocument, etc.)
 
 **Run Commands:**
 ```bash
-npm run dev        # Start dev server
-npm run build      # TypeScript check + build
-npm run lint       # ESLint validation
-npm run preview    # Preview built app
-# No test command available
+npm test                    # Watch mode
+npm run test:run            # Single run (CI)
 ```
 
 ## Test File Organization
 
 **Location:**
-- No test files present in codebase
-- No `tests/`, `__tests__/`, or `*.test.*` files
+- Colocated with source files (*.test.ts alongside *.ts)
 
 **Naming:**
-- No convention established
+- `[filename].test.ts` for all tests
 
 **Structure:**
-- N/A
+```
+src/
+  hooks/
+    useOracle.ts
+    useOracle.test.ts
+    useCatStorage.ts
+    useCatStorage.test.ts
+  services/
+    rescueGroups.ts
+    rescueGroups.test.ts
+  data/
+    oracleResponses.ts
+    oracleResponses.test.ts
+  test/
+    setup.ts              # localStorage mock, jest-dom matchers
+    smoke.test.ts          # Basic setup verification
+```
 
 ## Test Structure
 
 **Suite Organization:**
-- N/A - no tests exist
+```typescript
+import { describe, it, expect, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+
+describe('useOracle', () => {
+  describe('initial state', () => {
+    it('starts with empty question', () => {
+      const { result } = renderHook(() => useOracle());
+      expect(result.current.question).toBe('');
+    });
+  });
+
+  describe('setQuestion', () => {
+    it('updates question state', () => {
+      const { result } = renderHook(() => useOracle());
+      act(() => { result.current.setQuestion('Will it rain?'); });
+      expect(result.current.question).toBe('Will it rain?');
+    });
+  });
+});
+```
 
 **Patterns:**
-- N/A
+- `beforeEach(() => localStorage.clear())` for isolation
+- `renderHook()` for testing custom hooks
+- `act()` for state updates
+- Nested describes for logical grouping (feature → behavior)
 
 ## Mocking
 
 **Framework:**
-- N/A
+- Vitest built-in (vi)
+- Custom localStorage mock in `src/test/setup.ts`
 
-**Patterns:**
-- N/A
+**localStorage Mock:**
+```typescript
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key) => store[key] || null,
+    setItem: (key, value) => { store[key] = value; },
+    removeItem: (key) => { delete store[key]; },
+    clear: () => { store = {}; },
+  };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+```
 
-**What Would Need Mocking:**
-- File system (file uploads)
-- localStorage API
-- RescueGroups API responses
-- html2canvas library
-- navigator.share API
+**What's Mocked:**
+- localStorage (custom implementation in setup)
+- Browser APIs not available in jsdom
 
-## Fixtures and Factories
+**What's NOT Mocked:**
+- Pure data functions (oracleResponses)
+- Internal utilities
 
-**Test Data:**
-- N/A - no test infrastructure
+## Test Coverage
 
-**Potential Fixtures Needed:**
-- Sample ShelterCat objects
-- Mock API responses
-- Sample oracle responses
+**Currently Tested:**
+- Hooks: useOracle (initial state, setQuestion), useCatStorage (persistence, corruption handling)
+- Services: rescueGroups (fallback data structure, required fields)
+- Data: oracleResponses (random generation, structure validation, category validation, variety)
+- Setup: smoke test (vitest works, localStorage mock works)
 
-## Coverage
+**NOT Tested:**
+- React components (no component-level rendering tests)
+- Pages (Home.tsx, OrgComparison.tsx)
+- Image brightness analysis
+- Carousel navigation edge cases
+- Analytics tracking
+- Error boundary behavior
+- NameInputModal interactions
 
-**Requirements:**
-- None configured
-- No coverage reporting
-
-**Configuration:**
-- N/A
+**Total:** 27 tests passing (as of Phase 6 completion)
 
 ## Test Types
 
 **Unit Tests:**
-- Not implemented
-- Critical candidates:
-  - `getRandomResponse()` in oracleResponses.ts
-  - `fetchAdoptableCats()` in rescueGroups.ts
-  - Image brightness detection logic
+- Hook state and behavior
+- Data function output validation
+- Service fallback data structure
 
 **Integration Tests:**
-- Not implemented
-- Critical candidates:
-  - API integration with RescueGroups
-  - localStorage serialization/deserialization
+- None currently
 
 **E2E Tests:**
-- Not implemented
-- Critical candidates:
-  - Upload cat → ask question → receive response flow
-  - Share/download functionality
-
-## Untested Critical Paths
-
-**High Priority:**
-1. RescueGroups API integration (fetch, parse, fallback)
-2. Image upload and base64 conversion
-3. localStorage persistence and retrieval
-4. JSON.parse on stored data (crash risk)
-5. Image download/share via html2canvas
-
-**Medium Priority:**
-6. Brightness detection algorithm
-7. Modal interaction flow
-8. Name input validation
-9. Response randomization
-
-**Lower Priority:**
-10. Route navigation between variants
-11. Decorative SVG rendering
-12. Animation sequences
-
-## Recommendations
-
-**Suggested Test Setup:**
-```bash
-# Install Vitest (Vite-native test runner)
-npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom
-```
-
-**Suggested vitest.config.ts:**
-```typescript
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './src/test/setup.ts',
-  },
-})
-```
-
-**Priority Tests to Add:**
-1. Service layer unit tests (rescueGroups.ts)
-2. Data layer tests (oracleResponses.ts)
-3. localStorage mock tests for page components
-4. API failure and fallback scenarios
+- None currently
 
 ---
 
-*Testing analysis: 2026-02-02*
-*Update when test infrastructure is added*
+*Testing analysis: 2026-02-06*
+*Update when test patterns change*

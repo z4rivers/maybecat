@@ -1,120 +1,107 @@
 # External Integrations
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
 
 ## APIs & External Services
 
-**RescueGroups.org API v5 (Primary):**
-- Purpose: Fetches adoptable shelter cats with photos and metadata
-- SDK/Client: Custom fetch implementation in `src/services/rescueGroups.ts`
-- Endpoint: `https://api.rescuegroups.org/v5`
-- Auth: API key via `VITE_RESCUEGROUPS_API_KEY` environment variable
-- Format: JSON:API
-- Features:
-  - Filters for adoptable cats only
-  - Extracts photos and shelter info
-  - Generates adoption URLs
-- Fallback: Hardcoded local cat data if API not configured
+**RescueGroups.org API (Primary Data Source):**
+- Purpose: Fetch adoptable shelter cats with photos, names, locations, adoption URLs
+- Endpoint: `https://api.rescuegroups.org/v5/public/animals/search/cats`
+- Format: JSON:API v5
+- Auth: Bearer token via `VITE_RESCUEGROUPS_API_KEY` env var
+- Implementation: `src/services/rescueGroups.ts`
+- Caching: localStorage with 24hr TTL (versioned key: `rescueGroupsCats_v2`)
+- Fallback: 5 real cat photos in `public/cats/` if API fails
+- Filtering: Excludes foster, medical, pending, kitten, hospice, sanctuary, bonded, number-only names
+- Requests 150 cats, filters to quality results, shuffles before returning
+- TOS requires tracker image URLs in share cards
+
+**Google Fonts CDN:**
+- Purpose: Cinzel Decorative font (decorative serif for headings)
+- Integration: `<link>` tags in `index.html` with preconnect
+- Font display: swap (shows system font while loading)
 
 ## Data Storage
 
-**Databases:**
-- None - fully client-side application
+**localStorage (Client-Side Only):**
+- `oracleCatImage` - Cat photo (base64 data URL or CDN URL)
+- `oracleCatName` - Cat's display name
+- `oracleShelterCat` - Full shelter cat JSON (id, name, photo, location, adoptionUrl)
+- `rescueGroupsCats_v2` - Cached API response with timestamp (24hr TTL)
+- Safety: `safeSetItem()` wraps all writes with try-catch
+- No sensitive data stored
 
-**File Storage:**
-- None cloud storage
-- User images stored as base64 in localStorage
-- Fallback cat images served from `public/cats/`
-
-**Caching:**
-- Browser localStorage only
-- Stores:
-  - `oracleCatImage` - base64 data URL of uploaded image
-  - `oracleCatName` - user-entered cat name
-  - `oracleShelterCat` - JSON stringified shelter cat metadata
+**No Database:** All oracle responses embedded in code, no server-side persistence
 
 ## Authentication & Identity
 
-**Auth Provider:**
-- None - anonymous usage
-- No user accounts or authentication
-
-**Vercel OIDC:**
-- Used for deployment/CI only (not user-facing)
-- Token stored in `.env.local`
+**None.** No user accounts, no auth. Fully anonymous usage.
 
 ## Monitoring & Observability
 
-**Error Tracking:**
-- None configured
-- Errors logged to console only
-
 **Analytics:**
-- Vercel Analytics (@vercel/analytics 1.6.1)
-- Integrated via `<Analytics />` component in App.tsx
-- Tracks page views and basic metrics
+- Vercel Analytics (`@vercel/analytics` v1.6.1)
+- Component: `<Analytics />` in `src/App.tsx`
+- Custom events via `safeTrack()` wrapper (never crashes app)
+- Events tracked:
+  - `cat_selected` (source: upload/shelter)
+  - `question_asked` (type: first/ask_again)
+  - `response_viewed` (category)
+  - `adoption_clicked` (name, location)
+- Dashboard: Vercel project settings
 
-**Logs:**
-- Console.log/console.error only
-- No external logging service
+**Error Tracking:**
+- None (no Sentry, LogRocket, etc.)
+- ErrorBoundary catches render errors, shows fallback UI
+- API errors logged to console only
+
+**Google Search Console:**
+- Verification: meta tag in `index.html`
+- Status: Configured, needs user to complete setup in Google dashboard
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Vercel - SPA hosting
-- Configuration: `vercel.json`
-- Cache control: no-cache for all routes
-- SPA rewrites: all routes → /index.html
+- Vercel at maybecat.com
+- Deployment: Automatic on main branch push
+- Config: `vercel.json`
+
+**Cache Strategy:**
+- `/assets/(.*)` → 1 year immutable (hash-based filenames)
+- `/cats/(.*)` → 1 day (fallback cat photos)
+- `/sitemap.xml`, `/robots.txt`, `/site.webmanifest` → 1 day
+- HTML → Vercel defaults
+- SPA rewrite: all routes → `/index.html`
 
 **CI Pipeline:**
-- No explicit CI configuration found
-- Deployment likely via Vercel Git integration
+- None configured (no GitHub Actions)
+- Build command: `tsc -b && vite build`
 
 ## Environment Configuration
 
 **Development:**
-- Required env vars:
-  - `VITE_RESCUEGROUPS_API_KEY` - API key for shelter cats
-- Secrets location: `.env.local` (gitignored)
-- Fallback: App works without API key using local demo cats
+- Required: `VITE_RESCUEGROUPS_API_KEY` in `.env.local`
+- Template: `.env.example`
+- No other env vars needed
 
 **Production:**
-- Secrets management: Vercel environment variables
-- Same env var: `VITE_RESCUEGROUPS_API_KEY`
+- Same API key configured in Vercel dashboard
+- No staging environment
 
-**.env.local Example:**
-```
-VITE_RESCUEGROUPS_API_KEY=your_api_key_here
-```
+## SEO Integration
 
-## Webhooks & Callbacks
+**Static in `index.html`:**
+- OpenGraph: title, description, image (1200x630), type, URL, site_name, locale
+- Twitter Card: summary_large_image
+- JSON-LD: WebSite + WebApplication schemas
+- Canonical URL: https://maybecat.com/
+- Sitemap: `public/sitemap.xml`
+- Robots: `public/robots.txt` (allows all, references sitemap)
 
-**Incoming:**
-- None
-
-**Outgoing:**
-- None
-
-## Sponsor Integration
-
-**PURRfoot:**
-- Not an API integration - configuration only
-- Config location: `src/config/sponsor.ts`
-- Displays sponsor logo, tagline, and CTA URL
-- Link: https://purrfoot.com (affiliate link)
-
-## Third-Party Libraries (Network-Dependent)
-
-**Google Fonts:**
-- Cinzel Decorative font loaded in `index.html`
-- Required for proper typography rendering
-
-**html2canvas:**
-- Used for PNG export functionality
-- Dynamically imported when user shares/downloads
-- No external network calls (local DOM capture)
+**PWA:**
+- `public/site.webmanifest` (standalone display, pink/gold theme)
 
 ---
 
-*Integration audit: 2026-02-02*
+*Integration audit: 2026-02-06*
 *Update when adding/removing external services*

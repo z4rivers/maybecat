@@ -1,151 +1,116 @@
 # Architecture
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
 
 ## Pattern Overview
 
-**Overall:** React SPA with variant testing routes
+**Overall:** Single Page Application (SPA) with hooks-based architecture
 
 **Key Characteristics:**
-- Single-page application with client-side routing
-- Three UI variants of same core experience (/, /a, /b)
-- Client-side only - no backend, uses localStorage for persistence
-- External API integration for shelter cat data
+- No backend — fully client-side React app
+- Data embedded in code (oracle responses) + external API (shelter cats)
+- localStorage for persistence (no database)
+- Vercel edge deployment (static files + SPA rewrite)
 
 ## Layers
 
-**Entry Layer:**
-- Purpose: Bootstrap React application
-- Contains: `main.tsx`, `index.html`
-- Depends on: React, App component
-- Used by: Browser loads these files
+**Page Layer:**
+- Purpose: Route-level components, orchestrate hooks and UI
+- Contains: `src/pages/Home.tsx` (main oracle, 682 lines), `src/pages/OrgComparison.tsx` (debug)
+- Depends on: Hook layer, component layer, service layer
+- Used by: Router in `src/App.tsx`
 
-**Routing Layer:**
-- Purpose: Route management and analytics
-- Contains: `src/App.tsx`
-- Depends on: React Router, page components
-- Used by: Entry layer
+**Hook Layer:**
+- Purpose: Encapsulate business logic and state management
+- Contains: `useOracle`, `useCatStorage`, `useDocumentMeta`
+- Depends on: Service layer, data layer, config
+- Used by: Page layer
 
-**Page Components:**
-- Purpose: Full oracle experience implementations
-- Contains: `src/pages/Home.tsx`, `VariantA.tsx`, `VariantB.tsx`
-- Depends on: Data, services, React hooks
-- Used by: Routing layer
-- Note: Currently monolithic - each page contains all logic
-
-**Data Layer:**
-- Purpose: Static/curated response data
-- Contains: `src/data/oracleResponses.ts` (~300 responses)
-- Depends on: Nothing
-- Used by: Page components
+**Component Layer:**
+- Purpose: Reusable presentational components
+- Contains: `src/components/decorative/` (SVG art), `src/components/oracle/` (oracle UI), `src/components/NameInputModal.tsx`, `src/components/ErrorBoundary.tsx`
+- Depends on: Props only (mostly presentational)
+- Used by: Page layer
 
 **Service Layer:**
-- Purpose: External API integrations
-- Contains: `src/services/rescueGroups.ts`
-- Depends on: External RescueGroups API
-- Used by: Page components
+- Purpose: External API integration
+- Contains: `src/services/rescueGroups.ts` (RescueGroups API v5)
+- Depends on: Config, browser fetch API
+- Used by: Hook layer, page layer
+
+**Data Layer:**
+- Purpose: Static content
+- Contains: `src/data/oracleResponses.ts` (~800 responses, 12 categories)
+- Depends on: Nothing
+- Used by: Hook layer (useOracle)
 
 **Config Layer:**
-- Purpose: Application configuration
-- Contains: `src/config/sponsor.ts`
+- Purpose: Centralized tunable values
+- Contains: `src/config.ts` (brightness, delays, export), `src/config/sponsor.ts`
 - Depends on: Nothing
-- Used by: Page components
+- Used by: All layers
 
 ## Data Flow
 
-**Oracle Experience Flow:**
+**User Journey:**
 
-1. Page loads, checks localStorage for cached cat data
-2. User uploads cat image OR selects from shelter cats (fetched from API)
-3. User types question for the oracle
-4. Random delay simulates "thinking" (1500-3000ms first, 800-1600ms subsequent)
-5. Random response selected from `oracleResponses` array
-6. Animated reveal via Framer Motion
-7. User can share/download via html2canvas PNG export
-8. All selections saved to localStorage
+1. App loads → `getCachedOrFetchCats()` checks localStorage cache (24hr TTL)
+2. Cache miss → fetches from RescueGroups API v5, filters, shuffles, caches
+3. Cache hit or API failure → uses cached cats or 5 fallback cats from `public/cats/`
+4. User sees carousel of 4 shelter cats + "Your Cat" upload card
+5. User picks cat → `setCatFromShelter(cat)` or `setCatFromUpload(base64)`
+6. Shelter cats: CDN URL shown immediately, background conversion to data URL (CORS fix)
+7. User uploads: `FileReader.readAsDataURL()` → name modal → stored in localStorage
+8. Oracle reading card appears with cat photo, question input
+9. User types question → `askOracle()` → configurable thinking delay (1.5-3s first, 0.8-1.6s subsequent)
+10. `getRandomResponse()` picks random response from weighted categories
+11. Response displayed with `preventOrphans()` text formatting
+12. User can "Ask Again", type new question, or go back to cat selection
 
 **State Management:**
-- React useState for component state
-- localStorage for persistence across sessions
-- No global state management (Redux, Zustand, etc.)
-
-## Key Abstractions
-
-**Page Component:**
-- Purpose: Full variant implementation
-- Examples: `Home.tsx` (Oracle), `VariantA.tsx` (OracleA), `VariantB.tsx` (OracleB)
-- Pattern: Monolithic - all state, handlers, UI in single file
-
-**Custom Hook:**
-- Purpose: Reusable logic
-- Examples: `useDocumentMeta()` - dynamic page title/meta tags
-- Pattern: Defined inline in page components (not extracted)
-
-**Service Module:**
-- Purpose: External data fetching
-- Examples: `rescueGroups.ts` - shelter cat API client
-- Pattern: Exported async functions with fallback data
-
-**Decorative Components:**
-- Purpose: Reusable visual flourishes
-- Examples: CornerVine, CenterMandala, MysticalStar
-- Pattern: Pure SVG components defined in page files
+- React hooks only (no Redux/Zustand)
+- localStorage for persistence: cat image, cat name, shelter cat data, API cache
+- `safeSetItem()` wrapper prevents quota overflow crashes
 
 ## Entry Points
 
-**React Bootstrap:**
-- Location: `src/main.tsx`
-- Triggers: Page load
-- Responsibilities: Create React root, render App
+**Browser Entry:**
+- Location: `index.html` → `src/main.tsx` → `src/App.tsx`
+- Triggers: User navigates to maybecat.com
+- Responsibilities: Mount React root, set up routing, error boundary, analytics
 
-**HTML Entry:**
-- Location: `index.html`
-- Triggers: Browser navigation
-- Responsibilities: Load fonts, meta tags, mount React
-
-**Router:**
-- Location: `src/App.tsx`
-- Triggers: URL changes
-- Responsibilities: Route to correct page variant, analytics
-
-**Page Routes:**
-- `/` → `src/pages/Home.tsx` (Oracle)
-- `/a` → `src/pages/VariantA.tsx` (OracleA)
-- `/b` → `src/pages/VariantB.tsx` (OracleB)
+**Routes:**
+- `/` → `Oracle` component (Home.tsx) — main experience
+- `/org-comparison` → `OrgComparison` — debug/testing page
 
 ## Error Handling
 
-**Strategy:** Graceful degradation - fail silently with fallbacks
+**Strategy:** Layered defense — error boundary for renders, try/catch for async, graceful fallbacks
 
 **Patterns:**
-- API errors: Console log + fall back to local curated cats
-- Image processing errors: Silent fail, image displayed as-is
-- Canvas/share errors: Fallback from share to download
-- localStorage errors: Implicit trust (assumed available)
-- No explicit error boundaries or user-facing error messages
+- `ErrorBoundary` wraps entire app (catches React render errors)
+- `safeSetItem()` / `safeGetItem()` wraps localStorage (quota/corruption)
+- `safeTrack()` wraps analytics (never breaks UX)
+- API failures → fall back to 5 local cat photos
+- Image CORS errors → continue with CDN URL instead of data URL
 
 ## Cross-Cutting Concerns
 
-**Logging:**
-- Console.log for debugging
-- Console.error for API failures
-- No structured logging or external service
-
-**Validation:**
-- Minimal input validation
-- No schema validation on API responses
-- File upload checks existence only
-
 **Analytics:**
-- Vercel Analytics component in App.tsx
-- No custom event tracking configured
+- Vercel Analytics `<Analytics />` in App.tsx
+- Custom events via `safeTrack()`: cat_selected, question_asked, response_viewed, adoption_clicked
+- Dynamic import, never crashes app
 
-**Persistence:**
-- All state persisted to localStorage
-- Cat image (base64), name, shelter cat metadata
-- Shared keys across all route variants
+**SEO:**
+- Static meta tags in `index.html` (OG, Twitter Card, JSON-LD)
+- `useDocumentMeta()` hook for title updates
+- Sitemap, robots.txt, canonical URL, structured data
+
+**Caching:**
+- Vercel headers: 1yr immutable for `/assets/`, 1 day for static files
+- localStorage: 24hr TTL for API responses (versioned cache key)
 
 ---
 
-*Architecture analysis: 2026-02-02*
+*Architecture analysis: 2026-02-06*
 *Update when major patterns change*

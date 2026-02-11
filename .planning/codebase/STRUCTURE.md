@@ -1,163 +1,167 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
 
 ## Directory Layout
 
 ```
 maybecat/
-├── src/                          # Application source code
-│   ├── pages/                    # Page/route components
-│   ├── data/                     # Static/curated data
-│   ├── services/                 # External integrations
-│   ├── config/                   # Configuration
-│   ├── assets/                   # Static assets
-│   ├── App.tsx                   # Router setup
-│   ├── main.tsx                  # Entry point
-│   └── index.css                 # Global styles
-├── public/                       # Static served files
-│   ├── cats/                     # Fallback cat images
-│   └── sponsors/                 # Sponsor logos
-├── dist/                         # Build output (generated)
-├── index.html                    # HTML template
-├── package.json                  # Dependencies & scripts
-├── vite.config.ts               # Vite build config
-├── tsconfig.json                # TypeScript config
-├── tailwind.config.js           # Tailwind CSS config
-├── eslint.config.js             # ESLint rules
-└── vercel.json                  # Deployment config
+├── index.html              # Entry point, SEO meta tags, fonts, JSON-LD
+├── package.json            # Dependencies and scripts
+├── vite.config.ts          # Vite: React + Tailwind plugins
+├── vitest.config.ts        # Test runner: jsdom, globals, setup
+├── tsconfig.json           # TypeScript composite config
+├── tsconfig.app.json       # App TS config (ES2022, strict)
+├── tsconfig.node.json      # Build tool TS config (ES2023)
+├── eslint.config.js        # ESLint flat config
+├── tailwind.config.js      # Custom fonts (cinzel, georgia)
+├── vercel.json             # Cache headers + SPA rewrite
+├── .env.example            # Required env vars template
+│
+├── public/                 # Static assets (served as-is)
+│   ├── favicon.ico         # Browser tab icon
+│   ├── og-maybecat.png     # OG share image (1200x630)
+│   ├── site.webmanifest    # PWA manifest
+│   ├── robots.txt          # SEO crawl directives
+│   ├── sitemap.xml         # SEO sitemap
+│   ├── cats/               # Fallback cat photos (5 real images)
+│   │   ├── eva_cat.jpg
+│   │   ├── noel_cat.jpg
+│   │   ├── rhumba_cat.jpg
+│   │   ├── shoyu_cat.jpg
+│   │   └── ziggy_cat.jpg
+│   └── sponsors/           # Sponsor logos
+│       └── purrfoot-logo.png
+│
+├── src/
+│   ├── main.tsx            # React 19 root (StrictMode)
+│   ├── App.tsx             # Router + ErrorBoundary + Analytics
+│   ├── index.css           # Tailwind import + global styles
+│   ├── vite-env.d.ts       # Vite env type declarations
+│   │
+│   ├── pages/              # Route-level components
+│   │   ├── Home.tsx        # Main oracle page (682 lines)
+│   │   └── OrgComparison.tsx  # Debug page for API analysis
+│   │
+│   ├── hooks/              # Business logic hooks
+│   │   ├── useOracle.ts        # Question/response/thinking state
+│   │   ├── useOracle.test.ts
+│   │   ├── useCatStorage.ts    # Cat persistence + CORS handling
+│   │   ├── useCatStorage.test.ts
+│   │   └── useDocumentMeta.ts  # Document title management
+│   │
+│   ├── components/         # Reusable UI components
+│   │   ├── ErrorBoundary.tsx   # React error boundary
+│   │   ├── NameInputModal.tsx  # Cat naming modal
+│   │   ├── AdoptButton.tsx     # Adoption CTA
+│   │   ├── decorative/         # Tarot-inspired SVG art
+│   │   │   ├── CornerVine.tsx
+│   │   │   ├── CenterMandala.tsx
+│   │   │   ├── MysticalStar.tsx
+│   │   │   ├── OrnateFrame.tsx
+│   │   │   ├── MagicButton.tsx
+│   │   │   ├── CelestialButton.tsx
+│   │   │   └── index.ts       # Barrel export
+│   │   └── oracle/             # Oracle-specific components
+│   │       ├── CatCard.tsx
+│   │       ├── QuestionInput.tsx
+│   │       ├── OracleResponseCard.tsx
+│   │       ├── OracleHeader.tsx
+│   │       ├── OracleTagline.tsx
+│   │       ├── ExampleQuestions.tsx
+│   │       ├── ResponseActions.tsx
+│   │       └── index.ts       # Barrel export
+│   │
+│   ├── services/           # External API integration
+│   │   ├── rescueGroups.ts     # RescueGroups API v5 client
+│   │   └── rescueGroups.test.ts
+│   │
+│   ├── data/               # Static content
+│   │   ├── oracleResponses.ts  # ~800 responses, 12 categories
+│   │   └── oracleResponses.test.ts
+│   │
+│   ├── config/             # Configuration
+│   │   └── sponsor.ts      # PURRfoot sponsor metadata
+│   ├── config.ts           # Tunable values (brightness, delays, export)
+│   │
+│   └── test/               # Test utilities
+│       ├── setup.ts        # localStorage mock, jest-dom matchers
+│       └── smoke.test.ts   # Basic setup verification
+│
+├── .planning/              # Project documentation
+│   ├── PROJECT.md
+│   ├── ROADMAP.md
+│   ├── STATE.md
+│   ├── CAT-VOICE-GUIDE.md
+│   ├── SHARE-CARD-PLAN.md
+│   ├── GSD-VIRAL-SPRINT.md
+│   └── codebase/          # This directory
+│
+└── dist/                   # Build output (Vercel deploy source)
 ```
-
-## Directory Purposes
-
-**src/**
-- Purpose: All application source code
-- Contains: TypeScript + React components
-- Key files: `main.tsx` (entry), `App.tsx` (router)
-
-**src/pages/**
-- Purpose: Page/route components (oracle variants)
-- Contains: `Home.tsx`, `VariantA.tsx`, `VariantB.tsx`
-- Key files: Each is a complete oracle implementation
-- Note: Large monolithic files (580-740 lines each)
-
-**src/data/**
-- Purpose: Static curated data
-- Contains: `oracleResponses.ts` (~300 cat wisdom responses)
-- Key files: Response data organized by emotional category
-
-**src/services/**
-- Purpose: External API integrations
-- Contains: `rescueGroups.ts` - shelter cat API client
-- Key files: Fetches adoptable cats, handles fallback data
-
-**src/config/**
-- Purpose: Application configuration
-- Contains: `sponsor.ts` - sponsor metadata (PURRfoot)
-- Subdirectories: None
-
-**src/assets/**
-- Purpose: Static imports
-- Contains: `react.svg` (default Vite logo, unused)
-
-**public/**
-- Purpose: Static files served directly
-- Contains: Fallback images, sponsor logos
-- Subdirectories: `cats/`, `sponsors/`
-
-**public/cats/**
-- Purpose: Fallback cat images when API unavailable
-- Contains: eva.jpg, noel.jpg, rhumba.jpg, shoyu.jpg, ziggy.jpg
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main.tsx` - React bootstrap
-- `index.html` - HTML template with fonts/meta
+- `index.html` - HTML entry, SEO tags, Google Fonts, JSON-LD
+- `src/main.tsx` - React root mount (StrictMode)
+- `src/App.tsx` - Router, ErrorBoundary, Analytics
 
 **Configuration:**
-- `tsconfig.json` - TypeScript root config
-- `tsconfig.app.json` - App TypeScript config (strict)
-- `vite.config.ts` - Vite build config
-- `eslint.config.js` - ESLint rules
-- `tailwind.config.js` - Tailwind theme
+- `src/config.ts` - Tunable behavior (brightness threshold, thinking delays, export scale)
+- `src/config/sponsor.ts` - Sponsor metadata (PURRfoot)
+- `vercel.json` - Deploy config (cache headers, SPA rewrite)
+- `.env.local` - API keys (gitignored)
 
 **Core Logic:**
-- `src/pages/Home.tsx` - Main oracle variant (743 lines)
-- `src/pages/VariantA.tsx` - Radial gradient variant (586 lines)
-- `src/pages/VariantB.tsx` - Compact variant (690 lines)
-
-**Data:**
-- `src/data/oracleResponses.ts` - Cat wisdom responses
-- `src/services/rescueGroups.ts` - API client
+- `src/pages/Home.tsx` - Main oracle experience (largest file)
+- `src/hooks/useOracle.ts` - Question/response cycle
+- `src/hooks/useCatStorage.ts` - Cat data persistence
+- `src/services/rescueGroups.ts` - Shelter cat API
+- `src/data/oracleResponses.ts` - All oracle responses
 
 **Testing:**
-- No test files present
-
-**Documentation:**
-- `README.md` - Project documentation
+- `src/test/setup.ts` - localStorage mock, jest-dom
+- `src/**/*.test.ts` - Colocated with source
 
 ## Naming Conventions
 
 **Files:**
-- PascalCase for React components: `Home.tsx`, `VariantA.tsx`
-- camelCase for utilities/services: `rescueGroups.ts`, `sponsor.ts`
-- camelCase for data files: `oracleResponses.ts`
+- PascalCase.tsx for React components (Home.tsx, ErrorBoundary.tsx)
+- camelCase.ts for hooks (useOracle.ts), services (rescueGroups.ts), data (oracleResponses.ts)
+- *.test.ts suffix for test files (colocated)
+- index.ts for barrel exports
 
 **Directories:**
-- kebab-case: `pages/`, `data/`, `services/`, `config/`
-- Singular for config: `config/` not `configs/`
-- Plural for collections: `pages/`, `services/`
-
-**Special Patterns:**
-- Page components export function matching filename
-- No barrel files (index.ts) - import directly
-- `.tsx` for React, `.ts` for non-React
+- Lowercase for feature groups (decorative/, oracle/, hooks/, services/)
+- Plural for collections (pages/, components/, hooks/)
 
 ## Where to Add New Code
 
-**New Oracle Variant:**
-- Create: `src/pages/VariantC.tsx`
-- Export: `function OracleC()`
-- Route: Add to `src/App.tsx`
-
 **New Oracle Responses:**
-- Edit: `src/data/oracleResponses.ts`
-- Add to existing array with category tag
+- `src/data/oracleResponses.ts` → add to appropriate category array
 
-**New Feature (Reusable Component):**
-- Create: `src/components/` directory (doesn't exist yet)
-- Extract from page components
+**New Hook:**
+- `src/hooks/useXxx.ts` + `src/hooks/useXxx.test.ts`
 
-**New API Integration:**
-- Create: `src/services/{service-name}.ts`
-- Export async functions with error handling
+**New Component:**
+- `src/components/Xxx.tsx` (standalone)
+- `src/components/oracle/Xxx.tsx` (oracle-specific, add to barrel)
+- `src/components/decorative/Xxx.tsx` (decorative, add to barrel)
 
-**New Configuration:**
-- Create: `src/config/{config-name}.ts`
-- Export config object
+**New Page/Route:**
+- `src/pages/Xxx.tsx` + add route in `src/App.tsx`
+
+**New Service:**
+- `src/services/xxx.ts` + `src/services/xxx.test.ts`
+
+**New Config:**
+- `src/config.ts` for tunable values
 
 **Static Assets:**
-- Images: `public/` (served at root URL)
-- Imported assets: `src/assets/`
-
-## Special Directories
-
-**dist/**
-- Purpose: Production build output
-- Source: Generated by `npm run build`
-- Committed: No (gitignored)
-
-**.vercel/**
-- Purpose: Vercel deployment configuration
-- Source: Auto-generated by Vercel CLI
-- Committed: Varies
-
-**node_modules/**
-- Purpose: Dependencies
-- Committed: No (gitignored)
+- `public/` for images, manifests, SEO files
 
 ---
 
-*Structure analysis: 2026-02-02*
+*Structure analysis: 2026-02-06*
 *Update when directory structure changes*

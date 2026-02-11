@@ -1,168 +1,95 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-02-02
+**Analysis Date:** 2026-02-06
+
+## Critical Bugs
+
+**safeTrack() infinite recursion:**
+- Files: `src/pages/Home.tsx` (line 6-9), `src/hooks/useOracle.ts` (line 6-11)
+- Issue: `.then(({ track }) => safeTrack(event, data))` calls itself instead of `track(event, data)`
+- Impact: All analytics events silently fail with stack overflow (caught by try/catch)
+- Fix: Change `safeTrack(event, data)` to `track(event, data)` in the `.then()` callback
+- Also: Function is duplicated in 2 files — should be extracted to shared utility
 
 ## Tech Debt
 
-**Massive Code Duplication Across Pages:**
-- Issue: Nearly identical implementations in three page components
-- Files: `src/pages/Home.tsx` (743 lines), `VariantA.tsx` (586 lines), `VariantB.tsx` (690 lines)
-- Why: Each variant created as a copy with UI tweaks
-- Impact: Changes to logic require updates in 3 places, high risk of inconsistency
-- Fix approach: Extract shared logic into custom hooks and reusable components, create base Oracle component with variant styling
+**Home.tsx monolith (682 lines):**
+- File: `src/pages/Home.tsx`
+- Issue: Single component handles cat selection, carousel, oracle card, brightness analysis, question input, response display, name modal, analytics
+- Impact: Hard to test individual pieces, hard to modify without side effects
+- Fix approach: Extract `useBrightnessAnalysis()` hook, `<CatCarousel />`, `<OracleReadingCard />` components
 
-**Unfinished TODOs:**
-- Issue: Incomplete sponsor banner implementation
-- Files: `src/pages/VariantA.tsx:581`, `src/pages/VariantB.tsx:685`
-- Content: `/* TODO: Add designed PURRfoot banner image here */`
-- Fix approach: Complete sponsor banner or remove TODO comments
+**Duplicate safeTrack function:**
+- Files: `src/pages/Home.tsx`, `src/hooks/useOracle.ts`
+- Issue: Identical function defined in both files
+- Fix: Extract to `src/utils/analytics.ts`, import in both
 
-**Magic Numbers and Hardcoded Values:**
-- Issue: Threshold values, delays, and sizes scattered throughout
-- Files: `src/pages/Home.tsx:163` (brightness threshold `70`), various delay values (`1500`, `800`, etc.)
-- Impact: Difficult to tune behavior, values not documented
-- Fix approach: Extract to constants file or config
-
-**Duplicated SVG Components:**
-- Issue: CornerVine, CenterMandala, MysticalStar defined identically in multiple files
-- Files: `src/pages/Home.tsx`, `src/pages/VariantB.tsx`
-- Fix approach: Extract to `src/components/decorative/` directory
-
-## Known Bugs
-
-**Potential JSON.parse Crash:**
-- Symptoms: App could crash if localStorage contains malformed JSON
-- Trigger: Corrupted localStorage data
-- Files: `src/pages/Home.tsx:119`, `VariantA.tsx:70`, `VariantB.tsx:119`
-- Workaround: None - crash would occur
-- Root cause: `JSON.parse(stored)` without try-catch or validation
-- Fix: Wrap in try-catch, validate parsed object schema
+**NameInputModal unsafe DOM query:**
+- File: `src/components/NameInputModal.tsx`
+- Issue: Uses `document.querySelector('input[type="text"]')` instead of React ref/state
+- Impact: Fragile if another text input exists on page
+- Fix: Use useRef or controlled state
 
 ## Security Considerations
 
-**Unsafe JSON.parse Without Validation:**
-- Risk: Malformed localStorage data crashes app; no type validation on parsed ShelterCat
-- Files: `src/pages/Home.tsx:119`, `VariantA.tsx:70`, `VariantB.tsx:119`
-- Current mitigation: None
-- Recommendations: Add try-catch wrapper, validate with Zod schema
+**localStorage JSON parsing without schema validation:**
+- File: `src/services/rescueGroups.ts` (getCachedCats)
+- Risk: Corrupted or manually edited localStorage could return invalid data structures
+- Current mitigation: try-catch around JSON.parse
+- Recommendation: Add property existence checks before accessing `.timestamp` and `.cats`
 
-**Missing Input Validation:**
-- Risk: File upload accepts any file type/size, name input has no length limit
-- File: `src/pages/Home.tsx:192-204` (file handler)
-- Current mitigation: Browser file picker provides some filtering
-- Recommendations: Validate file type (image/*) and size before processing
-
-**Base64 Images in localStorage:**
-- Risk: Large images can exceed localStorage quota (5-10MB typical)
-- Files: `src/pages/Home.tsx:197-198`
-- Current mitigation: None
-- Recommendations: Compress images before storage, add size validation
-
-**DOM Query Without Null Safety:**
-- Risk: Could throw error if modal structure changes
-- Files: `src/pages/Home.tsx:706`, `VariantA.tsx:506`, `VariantB.tsx:610`
-- Code: `document.querySelector('input[type="text"]')`
-- Fix: Add null check before calling methods
+**File upload size not validated:**
+- File: `src/pages/Home.tsx` (handleImageUpload)
+- Risk: Large images (>5MB) convert to base64 (33% larger), may exceed localStorage quota
+- Current mitigation: `safeSetItem()` silently fails on quota overflow
+- Recommendation: Add file size check before FileReader conversion, show user feedback
 
 ## Performance Bottlenecks
 
-**Image Brightness Analysis Blocking Main Thread:**
-- Problem: Creates canvas, draws image, reads pixels synchronously
-- File: `src/pages/Home.tsx:132-166`
-- Measurement: Blocks UI during analysis
-- Cause: Synchronous pixel analysis on main thread
-- Improvement path: Move to Web Worker or use requestIdleCallback
-
-**Inline Style Objects Created Every Render:**
-- Problem: Gradient strings, shadow objects recreated each render
-- Files: All page components
-- Cause: Inline style objects in JSX
-- Improvement path: Extract to CSS classes or memoize style objects
-
-**No Memoization of Expensive Components:**
-- Problem: Large components re-render on any state change
-- Files: `src/pages/Home.tsx`, `VariantA.tsx`, `VariantB.tsx`
-- Improvement path: Add React.memo, useMemo for derived values
-
-**Dynamic Import on Every Share:**
-- Problem: `await import('html2canvas')` called each time user shares
-- Files: `src/pages/Home.tsx:253, 264`
-- Improvement path: Import once and cache, or bundle in main chunk
+**Oracle responses loaded entirely at startup:**
+- File: `src/data/oracleResponses.ts` (2830 lines, ~800 responses)
+- Problem: All responses imported as static module, included in initial bundle
+- Impact: Minimal — text data compresses well, no runtime performance issue
 
 ## Fragile Areas
 
-**Complex Image Brightness Detection:**
-- File: `src/pages/Home.tsx:132-166`
-- Why fragile: Threshold-based approach may fail for edge cases, CORS issues possible
-- Common failures: Wrong text color on certain images
-- Safe modification: Add tests for various image types before changing threshold
-- Test coverage: None
+**Carousel with circular wrapping:**
+- File: `src/pages/Home.tsx` (getVisibleCats, lines 79-87)
+- Why fragile: Modulo arithmetic with dynamic array length
+- Common failures: Empty array (division by zero), array length < VISIBLE_CATS
+- Test coverage: Not tested
 
-**Modal Without Accessibility:**
-- Files: Name input modals in all page components
-- Why fragile: Manual focus management, no ARIA attributes, no Portal
-- Common failures: Keyboard trap issues, screen reader problems
-- Safe modification: Use established modal library
-- Test coverage: None
+**Image brightness analysis:**
+- File: `src/pages/Home.tsx` (analyzeImageBrightness, lines 91-133)
+- Why fragile: Canvas-based pixel analysis, CORS-dependent
+- Safe modification: Already wrapped in try-catch, skips external URLs
+- Test coverage: Not tested
 
-**Router Without Error Boundaries:**
-- File: `src/App.tsx`
-- Why fragile: Page component errors crash entire app
-- Common failures: White screen of death
-- Safe modification: Wrap routes in ErrorBoundary component
+## Missing Features
 
-## Scaling Limits
+**No image error handling:**
+- File: `src/pages/Home.tsx` (line 520-525)
+- Problem: Cat photo `<img>` has no `onError` handler
+- Impact: Broken CDN URLs show browser default broken image icon
 
-**localStorage Capacity:**
-- Current capacity: ~5MB per origin
-- Limit: Base64 images can quickly fill quota
-- Symptoms at limit: Silent failure to save, potential data loss
-- Scaling path: Compress images, implement quota checking, consider IndexedDB
+**Poor accessibility:**
+- Files: `src/pages/Home.tsx`, `src/components/NameInputModal.tsx`
+- Missing: role="main", role="status" on thinking state, role="dialog" on modal, aria-busy, `<label>` for inputs
 
-## Dependencies at Risk
-
-**html2canvas:**
-- Package: html2canvas 1.4.1
-- Risk: Complex library with rendering edge cases, last major update 2023
-- Impact: Share/download functionality breaks if library has bugs
-- Migration plan: Monitor for issues, consider modern-screenshot or dom-to-image alternatives
-
-## Missing Critical Features
-
-**No Error Boundaries:**
-- Problem: Runtime errors crash entire application
-- Current workaround: User must refresh page
-- Blocks: Graceful error handling, error reporting
-- Implementation complexity: Low - wrap App in ErrorBoundary
-
-**No Explicit Loading/Error States:**
-- Problem: API failures silently fall back, user doesn't know what happened
-- Current workaround: Console.error only
-- Blocks: User awareness of issues
-- Implementation complexity: Low - add loading/error state to shelter cat section
-
-**No Accessibility (a11y):**
-- Problem: Missing ARIA attributes, no keyboard navigation, no screen reader support
-- Current workaround: None
-- Blocks: Users with disabilities
-- Implementation complexity: Medium - requires audit and fixes throughout
+**No production error reporting:**
+- Problem: No Sentry/LogRocket — errors only visible in user's browser console
 
 ## Test Coverage Gaps
 
-**No Tests Exist:**
-- What's not tested: Everything
-- Risk: Any change could break functionality undetected
-- Priority: High
-- Difficulty to test: Medium - need to set up Vitest, mock localStorage and APIs
+**Components not tested:**
+- What's not tested: All React components (decorative, oracle, modal, error boundary)
+- Priority: Low (mostly presentational)
 
-**Critical Untested Paths:**
-1. API failure scenarios and fallback behavior
-2. localStorage quota exceeded
-3. JSON.parse on corrupted data
-4. Image upload validation
-5. Share/download across browsers
+**User flows not tested:**
+- What's not tested: Full cat selection → question → response cycle
+- Priority: Medium
 
 ---
 
-*Concerns audit: 2026-02-02*
+*Concerns audit: 2026-02-06*
 *Update as issues are fixed or new ones discovered*
