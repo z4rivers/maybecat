@@ -2729,6 +2729,44 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Today's assignment: be roughly useful.", category: 'nurturing' },
   { text: "You opened your eyes in a world that doesn't pause. Rookie mistake.", category: 'nurturing' },
   { text: "I see the hesitation. That second thing wins every time.", category: 'heartfelt' },
+
+  // --- Derpy Cat: trying but arriving after others, right thing wrong timing ---
+  { text: "I brought you a sock. Is this not what you needed?", category: 'chaotic' },
+  { text: "*arrives with great urgency to an empty room*", category: 'chaotic' },
+  { text: "I've been thinking about what you said. In 2019.", category: 'chaotic' },
+  { text: "You studied for the wrong test.", category: 'chaotic' },
+  { text: "That was my answer. You just don't speak the language.", category: 'chaotic' },
+  { text: "Why do solutions tend to create new problems?", category: 'chaotic' },
+  { text: "*confident pause* ...I forgot where I was going with this.", category: 'chaotic' },
+  { text: "In my defense, it worked in my head.", category: 'chaotic' },
+  { text: "The timing is off but the spirit is immaculate.", category: 'chaotic' },
+  { text: "I'd like to revise my previous answer. And the one before that.", category: 'chaotic' },
+  { text: "*runs in, stops, looks around* This isn't where I thought this was going.", category: 'chaotic' },
+  { text: "I'll be right with you. *is not right with you*", category: 'chaotic' },
+  { text: "*brings you the wrong thing with enormous pride*", category: 'chaotic' },
+  { text: "I was going to warn you. I was. But then I got distracted by the curtain and now it's too late.", category: 'chaotic' },
+  { text: "You needed this yesterday and I'm here today. You're welcome for today.", category: 'nurturing' },
+  { text: "Ready! *everything's already over* ...Ready!", category: 'chaotic' },
+  { text: "The forecast said rain. I feel vindicated by the cloud over there.", category: 'chaotic' },
+  { text: "I was listening. I just heard something else.", category: 'chaotic' },
+
+  // --- Derpy Cat batch 2: confident wrong, misaimed loyalty ---
+  { text: "You said 'help.' I heard 'watch.'", category: 'chaotic' },
+  { text: "*arrives at the emergency, sits down, begins grooming*", category: 'chaotic' },
+  { text: "I looked into it. Deeply. I know less than I did before.", category: 'chaotic' },
+  { text: "My plan had seven steps. I skipped to step six. Steps two through five are a mystery.", category: 'chaotic' },
+  { text: "I investigated the noise. Turns out it was me.", category: 'chaotic' },
+  { text: "I panicked and brought you a different answer. The original was better.", category: 'chaotic' },
+  { text: "*sits on the solution* What solution?", category: 'chaotic' },
+  { text: "I did my best. *stares at the carnage*", category: 'chaotic' },
+  { text: "I can explain. I'd prefer not to. But I can.", category: 'cold' },
+
+  // --- Derpy Cat batch 3: beautiful misfire, the almost-right ---
+  { text: "All the red flags look so festive!", category: 'chaotic' },
+  { text: "My only contribution is enthusiasm.", category: 'nurturing' },
+  { text: "Close enough is my love language.", category: 'heartfelt' },
+  { text: "The parachute opened. *already on the ground*", category: 'chaotic' },
+  { text: "You're not lost. You're finding alternatives.", category: 'wise' },
 ];
 
 // ============================================
