@@ -2552,6 +2552,81 @@ export const oracleResponses: OracleResponse[] = [
   { text: "'Sweet kitty?' I am a PREDATOR!", category: 'angry' },
   { text: "I'm under the couch. I'm working from home.", category: 'chaotic' },
   { text: "*lies flat on floor* I need a WEEK.", category: 'chaotic' },
+
+  // --- Feb 10 2026: Found Language & Reddit Refrigerator Session ---
+  // Brainstormed → researched → kept. Found language relocated into cat's mouth.
+
+  // Observations aimed at the person
+  { text: "You can't afford the life you already have.", category: 'cold' },
+  { text: "Contents may have shifted.", category: 'existential' },
+  { text: "It wasn't personal. Which is worse, somehow.", category: 'cold' },
+  { text: "I have observations that accidentally help.", category: 'meta' },
+  { text: "\"You'll understand when you're older\" might not be true.", category: 'existential' },
+  { text: "Some of this is your fault. Not all of it. Enough of it.", category: 'wise' },
+  { text: "Feeling the side effects?", category: 'cold' },
+  { text: "Say it out loud and see if it still sounds reasonable.", category: 'wise' },
+  { text: "It's a contract as long as conditions are met.", category: 'cold' },
+  { text: "You keep changing the question.", category: 'meta' },
+  { text: "The tea went cold.", category: 'poetic' },
+  { text: "Cheaper than therapy. More fun too.", category: 'meta' },
+  { text: "Your comfort zone sent a thank you card.", category: 'judgy' },
+  { text: "You're someone's \"what if.\"", category: 'heartfelt' },
+  { text: "The red flag had good lighting.", category: 'wise' },
+  { text: "Shorter. Weirder. Less clean.", category: 'meta' },
+  { text: "Fridge check won't fix it.", category: 'wise' },
+  { text: "Your type has a type.", category: 'judgy' },
+  { text: "You pet the dog first. That says enough.", category: 'wise' },
+  { text: "Main character energy. Background character budget.", category: 'judgy' },
+  { text: "Lol, I like that one.", category: 'meta' },
+  { text: "I don't know what you want me to say. Eat.", category: 'wise' },
+
+  // Cat-as-cat: Tuesday for cats, Jerry Springer for humans
+  { text: "An alarm. To stop sleeping. Evil human.", category: 'angry' },
+  { text: "Pajamas by 6.", category: 'cold' },
+  { text: "Light a candle. Fill the tub. Nobody's coming over. If they do, you'll make an impression!", category: 'chaotic' },
+  { text: "In the bathtub? On purpose? Hell, no!", category: 'angry' },
+  { text: "Cats don't mind being assigned friends.", category: 'wise' },
+  { text: "Friendship? Challenge accepted.", category: 'demanding' },
+  { text: "Read to your cat. Out loud.", category: 'nurturing' },
+
+  // Stripped-down density
+  { text: "The quiet version of you is paying attention.", category: 'wise' },
+  { text: "That favor had a tab.", category: 'cold' },
+  { text: "You stopped explaining.", category: 'cold' },
+  { text: "The backup became the plan.", category: 'wise' },
+  { text: "That was a rerun!", category: 'judgy' },
+
+  // Found language: other people's refrigerators
+  { text: "Your nervous system will choose a familiar hell.", category: 'existential' },
+  { text: "Approaching room temperature.", category: 'cold' },
+  { text: "Celestial discharge.", category: 'cold' },
+  { text: "The carrots are cooked.", category: 'cold' },
+  { text: "Buying someone food rewrites the story.", category: 'heartfelt' },
+  { text: "OK. Four refrigerators opened. What have we got?", category: 'meta' },
+  { text: "It's a micro-expression of identity, emotional state, social intention, or unspoken vulnerability.", category: 'wise' },
+
+  // Untranslatable words — whole concepts that ARE the answer
+  { text: "Mamihlapinatapai — the wordless look between two people who both want to start something but neither will.", category: 'poetic' },
+  { text: "Fernweh — homesick for a place you've never been.", category: 'poetic' },
+  { text: "Nunchi — knowing when to speak and when to stay quiet.", category: 'wise' },
+  { text: "Toska — a dull ache of the soul without specific cause.", category: 'existential' },
+  { text: "Cat people and book people overlap hard.", category: 'wise' },
+
+  // --- Untranslatable words: second wave ---
+  { text: "L'esprit de l'escalier — the perfect comeback three hours too late.", category: 'wise' },
+  { text: "Myötähäpeä — secondhand embarrassment so acute you look away.", category: 'judgy' },
+  { text: "Chrysalism — the peace of being inside during a thunderstorm.", category: 'poetic' },
+  { text: "Retrouvailles — the joy of reconnecting with someone after years. Picking up where you left off.", category: 'heartfelt' },
+  { text: "Voorpret — the pleasure of anticipation. The joy lives in the waiting.", category: 'poetic' },
+  { text: "Duende — the haunting emotional power of great art. When something touches you and you can't explain why.", category: 'poetic' },
+
+  // --- Found language: literary & bookish ---
+  { text: "…you must go on, I can't go on, I'll go on.", category: 'existential' },
+  { text: "Life advice from a cat, unbeatable.", category: 'meta' },
+  { text: "An absurd and uninteresting fantasy.", category: 'cold' },
+  { text: "Bring a friend... if you have one.", category: 'cold' },
+  { text: "Everyone is talking. Nobody is listening.", category: 'wise' },
+  { text: "Slip out of trouble using improvisation and creativity.", category: 'chaotic' },
 ];
 
 // ============================================
