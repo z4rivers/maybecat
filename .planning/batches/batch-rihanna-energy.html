@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rihanna Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 160px; }
+  .sticky-header { position: fixed; top: 0; left: 0; right: 0; background: #16213e; border-bottom: 2px solid #0f3460; padding: 16px 24px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 4px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; line-height: 1.4; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; } .card-meta .source { color: #e94560; font-style: italic; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; } .btn-undo:hover { background: #444; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; min-height: 80px; background: #0f0f23; color: #fff; border: 1px solid #333; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .btn-save { margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; font-size: 16px; margin-bottom: 12px; }
+  .export-json { background: #0f0f23; color: #4ecca3; padding: 16px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .copy-btn { margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Rihanna Energy — Unbothered Queen, Built an Empire While You Were Talking</h1>
+  <div class="subtitle">Refrigerators: "Work work work," umbrella as icon, Fenty changing beauty by including everyone, Super Bowl pregnant performance, "bitch better have my money" as invoice energy, showing up late to her OWN events, turning down the Super Bowl the first time on principle, Navy loyalty.</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+<div class="cards" id="cardContainer"></div>
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+<script>
+const responses = [
+  { text: "Work work work work work. That's it. That's the answer.", category: "demanding", voice: "Badass Cat", source: "Work — repetition as emphasis, simplicity as power" },
+  { text: "I showed up late. To my own thing. Nobody complained. That's the standard.", category: "cold", voice: "Diva Cat", source: "Rihanna's legendary lateness — the world waits for her" },
+  { text: "*slow blink* I said no the first time. They came back correct the second time. That's how this works.", category: "cold", voice: "Boundaries Cat", source: "Turning down the Super Bowl until the terms were right" },
+  { text: "Where's my money.", category: "demanding", voice: "Badass Cat", source: "Bitch Better Have My Money — invoice energy as life philosophy" },
+  { text: "I didn't break the mold. I just made a better one and everybody switched.", category: "wise", voice: "Competitive Cat", source: "Fenty Beauty — didn't fight the industry, replaced it" },
+  { text: "*stretches* I'm not unbothered. I'm selectively bothered. You didn't make the cut.", category: "cold", voice: "Diva Cat", source: "Rihanna's selective engagement — choosing what deserves energy" },
+  { text: "Umbrella. That's it. I'm here. Rain or not.", category: "heartfelt", voice: "Loving Cat", source: "Umbrella — under my umbrella, ella, ella — presence as protection" },
+  { text: "Everybody else was making excuses. I was making a company.", category: "cold", voice: "Competitive Cat", source: "Fenty empire — building while others were talking" },
+  { text: "They said wait your turn. I said I don't have a turn. I have a schedule.", category: "demanding", voice: "Diva Cat", source: "Rihanna's career — never waited, always moved" },
+  { text: "*one ear rotates* I included everyone. Not because I'm nice. Because I'm smart.", category: "wise", voice: "Lithe Cat", source: "Fenty's inclusive shade range — inclusion as business genius" },
+  { text: "I performed the biggest show on earth while building a human. What did you do today.", category: "judgy", voice: "Competitive Cat", source: "Super Bowl LVII — pregnant, performing, peak" },
+  { text: "Shine bright. Or don't. I'll shine enough for both of us.", category: "cold", voice: "Diva Cat", source: "Diamonds — shine bright like a diamond, with or without you" },
+  { text: "The best revenge isn't living well. It's living so well they have to watch.", category: "cold", voice: "Competitive Cat", source: "Post-breakup Rihanna — thriving publicly" },
+  { text: "*yawns* You're still explaining? I decided three sentences ago.", category: "cold", voice: "Diva Cat", source: "Rihanna's processing speed — already past it while you're still presenting" },
+  { text: "I take what's mine. Then I take what's available. Then I make more available.", category: "demanding", voice: "Competitive Cat", source: "Rihanna's expansion — music → beauty → fashion → lingerie" },
+  { text: "*doesn't look up* Heard you. Filed it. Moving on.", category: "cold", voice: "Badass Cat", source: "Rihanna's efficiency — acknowledged but not derailed" },
+  { text: "Don't tell me about the wave. I AM the wave. Adjust your surfboard.", category: "demanding", voice: "Diva Cat", source: "Rihanna as trendsetter — not following, being followed" },
+  { text: "Only. Girl. In the world. *slow blink* Act accordingly.", category: "demanding", voice: "Diva Cat", source: "Only Girl — main character energy as instruction" },
+  { text: "I build things that last. Starting with my boundaries.", category: "wise", voice: "Boundaries Cat", source: "Fenty as legacy + Rihanna's personal boundary-setting" },
+  { text: "Stay. I dare you to stay. Not everybody can handle staying.", category: "heartfelt", voice: "Loving Cat", source: "Stay — 'not really sure how to feel about it' — vulnerability" },
+  { text: "I'm not a businesswoman. I'm a business, woman.", category: "cold", voice: "Diva Cat", source: "Jay-Z line adopted — identity as enterprise" },
+  { text: "*looks at your outfit* Hmm. We can fix that. We can fix all of that.", category: "judgy", voice: "Diva Cat", source: "Rihanna's fashion authority — the scan, the verdict, the makeover" },
+  { text: "They waited for me to fall. I built an empire while they waited.", category: "cold", voice: "Competitive Cat", source: "Rihanna's haters watching her succeed — patience is their punishment" },
+  { text: "Wild thoughts. That's all I'm offering tonight. Take them or leave.", category: "chaotic", voice: "Stoner Cat", source: "Wild Thoughts — unfiltered, present, not overthinking" },
+  { text: "If you're looking for sympathy, it's between 'shit' and 'syphilis' in the dictionary.", category: "cold", voice: "Judge Cat", source: "Classic line Rihanna would deliver — dictionary burn" },
+  { text: "*slow blink* Loyalty looks like this. Quiet. Consistent. Here.", category: "heartfelt", voice: "Loving Cat", source: "Rihanna's Navy loyalty — she shows up for her people, always" },
+  { text: "I don't chase. I replace.", category: "cold", voice: "Boundaries Cat", source: "Rihanna's approach to people who leave — efficiency, not grief" },
+  { text: "You needed me. I was there. Don't confuse that with me needing you back.", category: "cold", voice: "Boundaries Cat", source: "Rihanna's generosity without dependency" },
+  { text: "Please don't stop the music. That's not a request.", category: "demanding", voice: "Diva Cat", source: "Don't Stop the Music — polite words, command energy" },
+  { text: "We found love in a hopeless place. *looks around* This qualifies.", category: "heartfelt", voice: "Loving Cat", source: "We Found Love — finding beauty in the wreckage" }
+];
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span><span class="source">${item.source}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
