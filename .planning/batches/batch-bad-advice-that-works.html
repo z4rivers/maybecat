@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bad Advice That Might Work -- 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #888; font-style: italic; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f1a30;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f1a30;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Bad Advice That Might Work -- 30 Responses</h1>
+  <div class="subtitle">Terrible counsel with a disturbing kernel of wisdom. The cat recommends things that could get you arrested, fired, or canonized. Each one makes you think "that's awful" and then "...wait." Some lead to handcuffs. Some lead to the best story you'll ever tell. The cat does not see the difference.</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "Send it. You wrote it for a reason.",
+    category: "demanding",
+    source: "The unsent text — terrible advice that removes the torture of drafts forever"
+  },
+  {
+    text: "Quit. Don't line anything up first. You'll move faster scared.",
+    category: "chaotic",
+    source: "The safety net is why you're still on the trapeze doing nothing"
+  },
+  {
+    text: "Kiss them. Sort out the paperwork later.",
+    category: "chaotic",
+    source: "Every great love story starts with someone doing something legally questionable"
+  },
+  {
+    text: "Wear the outfit that makes people stare. Be the reason they came.",
+    category: "demanding",
+    source: "Overdressing has never once been the wrong call"
+  },
+  {
+    text: "Apologize to absolutely no one for an entire week. See what survives.",
+    category: "demanding",
+    source: "Finding out which relationships required your constant apology to function"
+  },
+  {
+    text: "Order the lobster. You're not paying for dinner. You're purchasing a reputation.",
+    category: "chaotic",
+    source: "The most expensive thing on the menu is always a personality test"
+  },
+  {
+    text: "Lie. Beautifully. With your whole chest. Fix the truth later.",
+    category: "chaotic",
+    source: "Fake it till you make it but with panache"
+  },
+  {
+    text: "Sell everything that doesn't fit in one gorgeous bag.",
+    category: "demanding",
+    source: "Minimalism as an act of violence against your former life"
+  },
+  {
+    text: "Ask for triple. Negotiate down to double. Look disappointed.",
+    category: "demanding",
+    source: "Salary negotiation advice that sounds insane until it works"
+  },
+  {
+    text: "Ghost everyone for seventy-two hours. Come back bronzed. Deny everything.",
+    category: "chaotic",
+    source: "The disappearance as personal branding"
+  },
+  {
+    text: "Walk into the room like you bought it. If they check, walk slower.",
+    category: "demanding",
+    source: "Confidence is just trespassing with better posture"
+  },
+  {
+    text: "Bring wine. If it goes well, you're generous. If it goes badly, you have wine.",
+    category: "wise",
+    source: "Risk mitigation through Merlot"
+  },
+  {
+    text: "Leave at the exact moment you're having the most fun. They'll talk about you for years.",
+    category: "wise",
+    source: "The Irish goodbye as legacy planning"
+  },
+  {
+    text: "Date the wrong person on purpose. You'll learn something you can't learn sitting still.",
+    category: "chaotic",
+    source: "Controlled demolition of your type"
+  },
+  {
+    text: "Steal the microphone. Nobody remembers the person who waited their turn.",
+    category: "chaotic",
+    source: "Literally every memorable moment in history was unauthorized"
+  },
+  {
+    text: "Show up uninvited. Worst case, spectacular story. Best case, they needed you.",
+    category: "chaotic",
+    source: "Trespassing as emotional availability"
+  },
+  {
+    text: "Eat dessert first. Every meal. Until someone physically intervenes.",
+    category: "chaotic",
+    source: "Chronological eating is a social construct the cat rejects"
+  },
+  {
+    text: "Tell your boss what you actually think. Bring a box for your things. You might not need it.",
+    category: "chaotic",
+    source: "The promotion nobody sees coming because honesty is so rare it reads as power"
+  },
+  {
+    text: "Spend the inheritance on something breathtaking and frivolous. They'd want that. Probably.",
+    category: "chaotic",
+    source: "Honoring the dead through spectacular financial irresponsibility"
+  },
+  {
+    text: "Do it badly. Do it loudly. Do it before anyone qualified shows up.",
+    category: "demanding",
+    source: "First-mover advantage is just organized incompetence"
+  },
+  {
+    text: "Call in sick with something incurable. Enjoy the day. Recover miraculously.",
+    category: "chaotic",
+    source: "One perfect Tuesday off is worth six productive Mondays"
+  },
+  {
+    text: "Flirt with the bartender. Not for the drink. For the absolutely electric thirty seconds.",
+    category: "chaotic",
+    source: "Recreational audacity — no objective, just vibes"
+  },
+  {
+    text: "Take credit. Apologize later if necessary. It usually isn't.",
+    category: "cold",
+    source: "The professional ecosystem rewards confidence over accuracy"
+  },
+  {
+    text: "Move to a city where nobody knows your name. Invent a better one.",
+    category: "chaotic",
+    source: "Witness protection but voluntary and glamorous"
+  },
+  {
+    text: "Forgive them. Not because they deserve it. Because rage is wrinkling your coat.",
+    category: "wise",
+    source: "Forgiveness reframed as vanity — which is honestly more motivating"
+  },
+  {
+    text: "Buy the plane ticket first. Arrange your life around it.",
+    category: "demanding",
+    source: "Reverse engineering responsibility — the destination decides the schedule"
+  },
+  {
+    text: "Say yes to everything for one day. Document the wreckage. Frame it.",
+    category: "chaotic",
+    source: "The Yes Day as performance art with legal consequences"
+  },
+  {
+    text: "Return it worn. With confidence. They won't ask.",
+    category: "chaotic",
+    source: "Retail fraud as self-care — the cat sees no moral issue here"
+  },
+  {
+    text: "Make a scene. A gorgeous, unforgettable, load-bearing scene.",
+    category: "chaotic",
+    source: "The scene IS the architecture — everything else is just walls"
+  },
+  {
+    text: "Adopt the stray. You were the stray once.",
+    category: "heartfelt",
+    source: "The only sincere one in the batch and it still sounds like bad advice to a landlord"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+
+    const displayText = editedTexts[i] || r.text;
+
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="category">${r.category}</span>
+        <span class="source">${r.source}</span>
+      </div>
+      <div class="card-text">${displayText}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-undo" onclick="decide(${i}, null)">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="editText-${i}">${displayText}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, decision) {
+  decisions[i] = decision;
+  if (decision !== 'edit') editedTexts[i] = null;
+  render();
+}
+
+function showEdit(i) {
+  render();
+  document.getElementById(`edit-${i}`).style.display = 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`editText-${i}`);
+  editedTexts[i] = textarea.value;
+  decisions[i] = 'edit';
+  render();
+}
+
+function updateCounters() {
+  document.getElementById('keepCount').textContent = decisions.filter(d => d === 'keep').length;
+  document.getElementById('cutCount').textContent = decisions.filter(d => d === 'cut').length;
+  document.getElementById('editCount').textContent = decisions.filter(d => d === 'edit').length;
+  document.getElementById('pendingCount').textContent = decisions.filter(d => d === null).length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (decisions[i] === 'edit') kept.push({ text: editedTexts[i], category: r.category });
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

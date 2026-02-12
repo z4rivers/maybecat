@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milestones Unhinged -- 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #888; font-style: italic; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f1a30;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f1a30;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Milestones Unhinged -- 30 Responses</h1>
+  <div class="subtitle">Cat watches humans do the big serious rituals — weddings, funerals, graduations, babies, houses — and sees absolute theater. Cake exploding. Corpse dancing. Naked under the robe. The cat is the only honest witness.</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "Your wedding sounds like a hostage situation with cake.",
+    category: "chaotic",
+    source: "Wedding — trapped in formalwear, forced to smile, everyone watching"
+  },
+  {
+    text: "Pierce something. Right now. While you're feeling this.",
+    category: "chaotic",
+    source: "Any milestone — the impulse to do something irreversible while emotionally peaking"
+  },
+  {
+    text: "The corpse is the only one here who isn't performing.",
+    category: "cold",
+    source: "Funeral — everyone else is auditioning grief"
+  },
+  {
+    text: "Everyone's crying. I'm eating shrimp. We process differently.",
+    category: "meta",
+    source: "Any ceremony — cat priorities vs human priorities"
+  },
+  {
+    text: "Throw the bouquet at your enemy. Direct hit. Walk away.",
+    category: "chaotic",
+    source: "Wedding — the bouquet toss is already violence, just commit"
+  },
+  {
+    text: "Nothing underneath the robe. That's my final answer.",
+    category: "chaotic",
+    source: "Graduation — the only honest way to collect a diploma"
+  },
+  {
+    text: "Someone is about to make a toast and ruin everything. *tail flicks* Can't wait.",
+    category: "chaotic",
+    source: "Wedding/party — the drunk uncle speech is the real ceremony"
+  },
+  {
+    text: "You invited a hundred people to watch you kiss. You're an exhibitionist with a registry.",
+    category: "judgy",
+    source: "Wedding — if you describe it literally it's unhinged"
+  },
+  {
+    text: "You're crying because someone put a circle on your finger. A CIRCLE.",
+    category: "judgy",
+    source: "Wedding — a cat watching humans lose it over jewelry geometry"
+  },
+  {
+    text: "I would simply not attend my own funeral.",
+    category: "cold",
+    source: "Funeral — cat refuses the premise entirely"
+  },
+  {
+    text: "Cut the cake with a sword. Nobody stops the person with the sword.",
+    category: "chaotic",
+    source: "Wedding — escalation as problem-solving"
+  },
+  {
+    text: "You bought a house with money that doesn't exist yet. Unhinged. Respect.",
+    category: "chaotic",
+    source: "Homebuying — mortgages are just socially acceptable hallucinations"
+  },
+  {
+    text: "They're lowering the casket and you're thinking about leftovers. Honestly? Same.",
+    category: "cold",
+    source: "Funeral — the body's refusal to grieve on schedule"
+  },
+  {
+    text: "You signed a paper that says forever and you can't commit to a haircut.",
+    category: "judgy",
+    source: "Marriage — the gap between the commitment and the person making it"
+  },
+  {
+    text: "Congratulations on the baby. You'll never finish a sentence again.",
+    category: "cold",
+    source: "Baby — the thing nobody tells you at the shower"
+  },
+  {
+    text: "Your cap and gown is a costume for a debt parade. Enjoy the walk.",
+    category: "judgy",
+    source: "Graduation — describing it literally"
+  },
+  {
+    text: "The father-daughter dance looks like two hostages swaying to a DJ's worst idea.",
+    category: "judgy",
+    source: "Wedding — the mandatory slow dance is a crime against rhythm"
+  },
+  {
+    text: "Walk out. Right now. See what happens. I DARE you.",
+    category: "demanding",
+    source: "Any life moment — the exit nobody takes"
+  },
+  {
+    text: "The speech started with 'Webster's dictionary defines—' and I left my body.",
+    category: "angry",
+    source: "Wedding/graduation — the laminated-card speech death sentence"
+  },
+  {
+    text: "You spent forty thousand dollars on a party where everyone judges the chicken.",
+    category: "judgy",
+    source: "Wedding — the real conversation at every reception table"
+  },
+  {
+    text: "The ring never ends. It NEVER ENDS. Are you hearing yourself.",
+    category: "chaotic",
+    source: "Marriage — taking 'forever' literally and panicking about it"
+  },
+  {
+    text: "Burn the dress. *pupils dilate* BURN. THE. DRESS.",
+    category: "chaotic",
+    source: "Wedding aftermath — the cat wants to see what happens"
+  },
+  {
+    text: "A funeral is a party where the guest of honor fully committed to the bit.",
+    category: "cold",
+    source: "Funeral — death as ultimate dedication to a premise"
+  },
+  {
+    text: "I wore nothing to my last formal event. Kept it tasteful.",
+    category: "meta",
+    source: "Cat — literally naked at all times, never not appropriate"
+  },
+  {
+    text: "The baby can't even focus its eyes and you're already picking colleges. Sit down.",
+    category: "judgy",
+    source: "New parents — projecting a future onto something that can't hold its own head up"
+  },
+  {
+    text: "Think about your piercings during the eulogy. You will anyway.",
+    category: "chaotic",
+    source: "Funeral — the brain's refusal to stay on topic during solemn moments"
+  },
+  {
+    text: "You're one bad toast away from the most interesting night of everyone's life.",
+    category: "chaotic",
+    source: "Any event — the tipping point between ceremony and chaos"
+  },
+  {
+    text: "They gave you a diploma for sitting in chairs for four years. Standing ovation.",
+    category: "judgy",
+    source: "Graduation — a cat describing higher education literally"
+  },
+  {
+    text: "Your boss offered you more responsibility for slightly more money and you said THANK YOU.",
+    category: "angry",
+    source: "Promotion — the scam, observed by a creature who has never worked"
+  },
+  {
+    text: "You're about to promise 'till death' in front of witnesses and you think I'M dramatic.",
+    category: "meta",
+    source: "Wedding — cat pointing out that marriage vows are more unhinged than anything a cat has ever done"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+
+    const displayText = editedTexts[i] || r.text;
+
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="category">${r.category}</span>
+        <span class="source">${r.source}</span>
+      </div>
+      <div class="card-text">${displayText}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-undo" onclick="decide(${i}, null)">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="editText-${i}">${displayText}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, decision) {
+  decisions[i] = decision;
+  if (decision !== 'edit') editedTexts[i] = null;
+  render();
+}
+
+function showEdit(i) {
+  render();
+  document.getElementById(`edit-${i}`).style.display = 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`editText-${i}`);
+  editedTexts[i] = textarea.value;
+  decisions[i] = 'edit';
+  render();
+}
+
+function updateCounters() {
+  document.getElementById('keepCount').textContent = decisions.filter(d => d === 'keep').length;
+  document.getElementById('cutCount').textContent = decisions.filter(d => d === 'cut').length;
+  document.getElementById('editCount').textContent = decisions.filter(d => d === 'edit').length;
+  document.getElementById('pendingCount').textContent = decisions.filter(d => d === null).length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (decisions[i] === 'edit') kept.push({ text: editedTexts[i], category: r.category });
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milestones & Beautiful Quiet -- 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #888; font-style: italic; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f1a30;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f1a30;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Milestones & Beautiful Quiet -- 30 Responses</h1>
+  <div class="subtitle">Refrigerator: the feelings people actually have at weddings, funerals, 3 AM, first warm day, buying a house, losing someone, clean sheets, being chosen in someone's sleep. Cat delivers the version nobody says out loud.</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "You're not ready. Do it anyway.",
+    category: "demanding",
+    source: "Milestone anxiety — every big moment starts before you're prepared"
+  },
+  {
+    text: "Everyone you love is in one room and you're worried about the napkins.",
+    category: "judgy",
+    source: "Wedding panic — focusing on the wrong thing while the real thing is happening"
+  },
+  {
+    text: "You'll cry at the wrong part. That's how you'll know it was real.",
+    category: "poetic",
+    source: "Weddings — people cry when dad adjusts his tie, not during the vows"
+  },
+  {
+    text: "You thought you'd feel different. *slow blink* Adorable.",
+    category: "judgy",
+    source: "Post-milestone anticlimax — graduation, wedding, promotion, same person after"
+  },
+  {
+    text: "The silence after everyone leaves is where you actually live.",
+    category: "existential",
+    source: "After the party — flowers dying, married now, just you and the quiet"
+  },
+  {
+    text: "Someone rolled toward you in their sleep. That's the whole answer.",
+    category: "heartfelt",
+    source: "Being chosen by someone's unconscious body"
+  },
+  {
+    text: "You called your mother. She already knew.",
+    category: "heartfelt",
+    source: "Telling your parents big news — they hear it in your voice before you say it"
+  },
+  {
+    text: "Nobody asked if you were ready. They never do.",
+    category: "existential",
+    source: "Having a baby, getting promoted — the thing arrives before the readiness"
+  },
+  {
+    text: "Clean sheets on a tired night. That's the entire religion.",
+    category: "poetic",
+    source: "Beautiful quiet — the small luxury that actually works"
+  },
+  {
+    text: "The plant lived. Start there.",
+    category: "nurturing",
+    source: "Small recognition — you kept something alive, that counts"
+  },
+  {
+    text: "Grief doesn't leave. It just learns your schedule.",
+    category: "existential",
+    source: "Loss — the random Tuesday in the grocery store"
+  },
+  {
+    text: "Their handwriting will get you worse than the funeral did.",
+    category: "poetic",
+    source: "Grief — a note in a drawer undoes you months later"
+  },
+  {
+    text: "You're cosplaying as your father. He was cosplaying as his.",
+    category: "existential",
+    source: "Adulthood — mowing your lawn for the first time, pretending you're the adult"
+  },
+  {
+    text: "Five minutes before the house wakes up belong to you. Guard them.",
+    category: "demanding",
+    source: "Morning stillness — being the first one awake, everyone breathing nearby"
+  },
+  {
+    text: "The scary part isn't the jump. It's that you already jumped.",
+    category: "wise",
+    source: "Big decisions — realizing you decided before you admitted you decided"
+  },
+  {
+    text: "A song came on and your body remembered before your brain did.",
+    category: "poetic",
+    source: "Music memory — physical before cognitive, the song finds you"
+  },
+  {
+    text: "You're the age your parents were when they seemed ancient. How's that going.",
+    category: "judgy",
+    source: "Big birthdays — the quiet arithmetic of getting older"
+  },
+  {
+    text: "Rain when you have nowhere to be. That's what you came here for.",
+    category: "poetic",
+    source: "Weather as luxury — watching rain from the inside with nothing owed"
+  },
+  {
+    text: "You want permission. Here. *pushes it off the table* Now what.",
+    category: "demanding",
+    source: "Permission-seeking — giving it and watching them still not move"
+  },
+  {
+    text: "The box you haven't unpacked in three years is making a point.",
+    category: "wise",
+    source: "Moving — the box that stays sealed because opening it makes the move real"
+  },
+  {
+    text: "Two AM. Not sad. Just awake. *sits next to you*",
+    category: "meta",
+    source: "Late night — the companionship of shared wakefulness, no agenda"
+  },
+  {
+    text: "Something broke and there's no landlord. Just you. Surprise.",
+    category: "cold",
+    source: "Homeownership — the moment you realize you're the adult now"
+  },
+  {
+    text: "You told your dog before you told anyone. Correct order.",
+    category: "nurturing",
+    source: "Getting the job — you updated LinkedIn and felt nothing, told the dog and felt everything"
+  },
+  {
+    text: "This wasn't the plan. *slow blink* Good.",
+    category: "wise",
+    source: "Things fitting — looking at your life and being glad it went sideways"
+  },
+  {
+    text: "You keep asking if it's normal. It's all normal. That's the devastating part.",
+    category: "existential",
+    source: "The universality of private panic — everyone has it, nobody says it"
+  },
+  {
+    text: "A stranger held the door and that was the most human contact you needed today.",
+    category: "cold",
+    source: "Small recognitions — eye contact with a stranger being enough"
+  },
+  {
+    text: "Your shoes hurt. That's the most honest thing happening right now.",
+    category: "judgy",
+    source: "Weddings/graduations — formal occasions and the body's refusal to cooperate"
+  },
+  {
+    text: "They hand you the thing you wanted and now your hands are full. That's the trick.",
+    category: "wise",
+    source: "Getting what you asked for — wanting and having are different muscles"
+  },
+  {
+    text: "You miss a place that doesn't exist anymore. That's not nostalgia. That's haunting.",
+    category: "existential",
+    source: "Moving away — homesick for a version of home that's gone"
+  },
+  {
+    text: "Sitting on the floor for no reason. Not sad. Just closer to the ground.",
+    category: "poetic",
+    source: "Solitude that isn't lonely — the quiet downward pull that means you're okay"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+
+    const displayText = editedTexts[i] || r.text;
+
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="category">${r.category}</span>
+        <span class="source">${r.source}</span>
+      </div>
+      <div class="card-text">${displayText}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-undo" onclick="decide(${i}, null)">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="editText-${i}">${displayText}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, decision) {
+  decisions[i] = decision;
+  if (decision !== 'edit') editedTexts[i] = null;
+  render();
+}
+
+function showEdit(i) {
+  render();
+  document.getElementById(`edit-${i}`).style.display = 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`editText-${i}`);
+  editedTexts[i] = textarea.value;
+  decisions[i] = 'edit';
+  render();
+}
+
+function updateCounters() {
+  document.getElementById('keepCount').textContent = decisions.filter(d => d === 'keep').length;
+  document.getElementById('cutCount').textContent = decisions.filter(d => d === 'cut').length;
+  document.getElementById('editCount').textContent = decisions.filter(d => d === 'edit').length;
+  document.getElementById('pendingCount').textContent = decisions.filter(d => d === null).length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (decisions[i] === 'edit') kept.push({ text: editedTexts[i], category: r.category });
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

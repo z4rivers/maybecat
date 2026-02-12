@@ -1,6 +1,14 @@
 # 60 Quirky, Showy, Over-the-Top Musicians
 ## Source Material for MaybeCat Responses
 
+Each artist gets two description styles:
+- **A:** The fun-to-say version (alliterative, rhythmic, playful language)
+- **B:** The plain / non-native restatement (flat, charming, accidentally true)
+
+---
+
+# CLASSIC ROCK / GLAM
+
 ---
 
 ## 1. DAVID BOWIE
@@ -10,1353 +18,1054 @@
 - **A:** Reinvented himself so relentlessly that standing still was the only trick he never tried. A chameleon who ate the color wheel and called it Tuesday.
 - **B:** He changed who he was every two years. Most people cannot even change their hairstyle. He changed his entire species.
 
-**What made him weird:**
-- **A:** Had two different-colored eyes from a teenage fistfight, dressed like a Martian filing for divorce, and once did an entire interview in character as a cocaine-dusted alien messiah.
-- **B:** His eyes were not matching. One pupil was broken from when a friend hit him because of a girl. He kept it because it looked interesting.
+**What made him weird/identifiable:**
+- **A:** Mismatched pupils from a teenage fistfight, cheekbones that could cut contracts, and a voice that could pivot from croon to alien broadcast mid-syllable. Dressed like a Martian filing for divorce.
+- **B:** His eyes were not matching — one pupil was broken from when a friend hit him because of a girl. Very thin man with a face like a beautiful knife. You would think he is from a country that does not exist.
 
-**How you'd identify him immediately:**
-- **A:** Cheekbones that could cut glass and a gaze that suggested he knew something about you that you hadn't figured out yet.
-- **B:** Very thin man with a face like a beautiful knife. You would think he is from a country that does not exist.
-
-**The energy in one sentence:**
-- **A:** Borrowed from every genre like a gentleman thief and returned each one more interesting than he found it.
-- **B:** He stole from everyone but somehow everyone said thank you.
+**Energy in one sentence:**
+- **A:** Politely extraterrestrial — borrowed from every genre like a gentleman thief and returned each one more interesting than he found it.
+- **B:** He was from space but he had very good manners about it.
 
 ---
 
-## 2. PRINCE
-**Genre/Era:** Funk / pop / R&B / rock / purple, 1978-2016
-
-**What made him special:**
-- **A:** Five-foot-two of uncut audacity in heels, playing every instrument like each one owed him money.
-- **B:** He was a small man who played all instruments. Every single one. At the same time he was also the most attractive person in any building he entered. No one understands how.
-
-**What made him weird:**
-- **A:** Changed his name to an unpronounceable symbol, built a purple palace in Minneapolis, and once served pancakes to Charlie Murphy at 3 AM after destroying him in basketball.
-- **B:** He made his name into a drawing. Not a word. A drawing. For legal reasons. Then he beat a famous person at basketball while wearing his going-out clothes.
-
-**How you'd identify him immediately:**
-- **A:** Heeled boots, ruffled blouse, and a stare that made grown adults forget their own names.
-- **B:** Small man in high shoes and a shirt with too much fabric. Very confident. Dangerously confident.
-
-**The energy in one sentence:**
-- **A:** Played guitar like he was settling a personal score with God and looked like he might win.
-- **B:** He fought God with a guitar and it was not clear who was losing.
-
----
-
-## 3. FREDDIE MERCURY
+## 2. FREDDIE MERCURY
 **Genre/Era:** Rock / operatic bombast, 1970-1991
 
 **What made him special:**
-- **A:** Turned stadium rock into grand opera and grand opera into a fist-pumping pub singalong, all while wearing a leotard like it was battle armor.
-- **B:** He made 100,000 people sing together at the same time. They did not know they would do this when they bought the ticket. He simply decided it would happen.
+- **A:** Possessed a four-octave cathedral in his throat and the audacity to fill every inch of it. Turned stadium rock into grand opera and grand opera into a fist-pumping pub singalong, all while wearing a leotard like battle armor.
+- **B:** His voice could do things that voices are not supposed to do. He made 100,000 people sing together at the same time. They did not know they would do this when they bought the ticket. He simply decided it would happen.
 
-**What made him weird:**
-- **A:** Threw birthday parties for his cats, had prosthetic teeth he refused to fix because they gave him extra octaves, and once dressed as a woman to film a music video and looked genuinely stunning.
-- **B:** He had too many teeth and believed this was why his voice was good. He may have been correct. Also, his cats had birthday parties. With hats.
+**What made him weird/identifiable:**
+- **A:** Mustachioed maestro who threw birthday parties for his cats, had prosthetic teeth he refused to fix because they gave him extra octaves, and pranced with the precision of a ballet dancer raised by prizefighters.
+- **B:** Big mustache, very tight clothes, walking like he owns the building. He did not own the building. His cats had birthday parties. With hats. He had too many teeth and believed this was why his voice was good. He may have been correct.
 
-**How you'd identify him immediately:**
-- **A:** Mustache, leotard, and a microphone wielded like a scepter over a kingdom of noise.
-- **B:** Big mustache, very tight clothes, walking like he owns the building. He did not own the building. But you would not argue.
-
-**The energy in one sentence:**
-- **A:** Sang like every note was his last will and testament and he wanted to make sure everyone heard it.
-- **B:** He sang as if the song was suing him and he needed to win.
+**Energy in one sentence:**
+- **A:** Champagne in a cannon — maximum sparkle at maximum velocity.
+- **B:** Everything about him was too much, and it was exactly the right amount.
 
 ---
 
-## 4. IGGY POP
+## 3. IGGY POP
 **Genre/Era:** Proto-punk / survived everything, 1967-present
 
 **What made him special:**
-- **A:** Invented stage diving, crowd surfing, and the concept of bleeding as a performance choice. The godfather of punk wearing nothing but low-slung jeans and a death wish.
-- **B:** He jumped into the audience before it was normal. He also cut himself on stage. On purpose. Then he kept playing. He is now 78 and still has no shirt.
+- **A:** Invented stage diving before stages knew what hit them. Stripped rock to its sinew and sweat, then rolled in broken glass just to prove a point nobody asked him to make.
+- **B:** He took off his shirt in 1967 and has not put it back on. He invented jumping into the audience. The audience did not always want this.
 
-**What made him weird:**
-- **A:** Rolled in broken glass, smeared peanut butter on his chest mid-performance, and once played a show to an audience of one very confused dog.
-- **B:** He put peanut butter on his body during a concert. The reasons were artistic. The peanut butter was chunky.
+**What made him weird/identifiable:**
+- **A:** Bare-chested berserker with the torso of a greyhound and the self-preservation instincts of a moth near a bonfire. Smeared peanut butter on his chest mid-performance. The peanut butter was chunky.
+- **B:** His body looks like it is made of leather and wire. He puts strange food on himself during concerts. He should not be alive but he is very alive. He is now 78 and still has no shirt.
 
-**How you'd identify him immediately:**
-- **A:** Shirtless since Nixon, with a torso that looks like a topographic map of every bad decision and every great night.
-- **B:** No shirt. Ever. His chest looks like a road map drawn by someone who was very tired.
-
-**The energy in one sentence:**
-- **A:** Crawled through rock and roll's broken glass and came out grinning on the other side.
+**Energy in one sentence:**
+- **A:** A shirtless dare that never blinks — crawled through rock's broken glass and came out grinning on the other side.
 - **B:** Everything that should have killed him made him happier.
 
 ---
 
-## 5. BJORK
-**Genre/Era:** Avant-pop / electronic / Icelandic weather system, 1986-present
+## 4. MICK JAGGER
+**Genre/Era:** Rock, 1962-present
 
-**What made her special:**
-- **A:** Built sonic cathedrals out of glitch, glaciers, and her own volcanic larynx, then wore a swan to the Oscars like it was the most reasonable thing she'd ever done.
-- **B:** She made music that sounded like a volcano learning to sing. Then she wore a bird to a party. A whole bird. As a dress.
+**What made him special:**
+- **A:** Swaggered through six decades with lips that launched a logo and hips that defied both anatomy and decency. Made strutting a martial art.
+- **B:** He walks in a very specific way that no one else walks. His mouth is very large. He has been doing this since before most people were born, and he is not tired.
 
-**What made her weird:**
-- **A:** Once attacked a reporter in an airport with the serene focus of someone swatting a fly, commissioned a music box orchestra, and made an album you could only play on an app while wandering through a specific Icelandic landscape.
-- **B:** She hit a journalist because the journalist said hello to her son. She hit very accurately. She was not sorry.
+**What made him weird/identifiable:**
+- **A:** Rooster-thin, rubber-limbed, lips like a decorative throw pillow — part dandy, part demon, entirely impossible to look away from. Danced like someone was shaking a marionette made of sex appeal.
+- **B:** He is very skinny and moves like his bones are optional. His lips are the most famous lips. He dances like a chicken who has been to a nightclub.
 
-**How you'd identify her immediately:**
-- **A:** A tiny Icelandic woman in something that appears to be either couture or a natural disaster, singing like a pixie in a wind tunnel.
-- **B:** Small woman wearing something impossible. You cannot tell if it is a dress or a sculpture. She is screaming beautifully.
-
-**The energy in one sentence:**
-- **A:** Made alienness feel like the most honest thing in the room and dared you to find it strange.
-- **B:** She was weird like a forest is weird. Not trying. Just being what she is.
+**Energy in one sentence:**
+- **A:** Perpetual motion in too-tight trousers.
+- **B:** He has been moving for sixty years and nobody has told him to sit down, and nobody will.
 
 ---
 
-## 6. KANYE WEST
+## 5. OZZY OSBOURNE
+**Genre/Era:** Heavy metal, 1968-present
+
+**What made him special:**
+- **A:** Mumbled his way to metal godhood, bit the head off a bat (accidentally, he insists), and survived enough substances to stock a pharmacy on Saturn.
+- **B:** He is very difficult to understand when he talks. He bit an animal on stage. Doctors do not know how he is still here. He does not know either.
+
+**What made him weird/identifiable:**
+- **A:** Shuffled through reality like a man perpetually surprised to still be in it. Round spectacles, crucifix jewelry, and a voice somewhere between a howl and a plea for directions.
+- **B:** He wears small round glasses and many crosses. He walks like he is not sure where the floor is. His singing is screaming but in a musical way.
+
+**Energy in one sentence:**
+- **A:** A cautionary tale that refused to end and became a legend instead.
+- **B:** He did everything wrong and it went right, and now he is on television with his family.
+
+---
+
+## 6. ALICE COOPER
+**Genre/Era:** Shock rock, 1969-present
+
+**What made him special:**
+- **A:** Married horror to hard rock in a shotgun wedding officiated by a guillotine. Made every PTA meeting in America spontaneously combust with parental concern.
+- **B:** He brought scary movie things to rock concerts. Parents were very upset. He also plays golf now. These two things are both true.
+
+**What made him weird/identifiable:**
+- **A:** Raccoon-eyed ringmaster of the macabre, wielding snakes and severed heads with the cheerful competence of a suburban dad — which he also was. Stage name stolen from a woman's name because nothing unsettles like the uncanny.
+- **B:** He puts very dark makeup around his eyes and holds snakes. His name sounds like a nice lady. In real life he is actually a nice man who likes sports.
+
+**Energy in one sentence:**
+- **A:** A haunted house with excellent comedic timing.
+- **B:** He is scary on purpose but also he is joking, and this is the part people forget.
+
+---
+
+## 7. ELTON JOHN
+**Genre/Era:** Pop / glam rock, 1969-present
+
+**What made him special:**
+- **A:** Turned the piano — that dignified drawing-room instrument — into a launchpad for sequined tantrums and soaring ballads. Proved you could be simultaneously the most flamboyant and most talented person in any room.
+- **B:** He plays piano but he does it while wearing things that weigh more than he does. He is very good at music and very good at shopping. He has combined these skills.
+
+**What made him weird/identifiable:**
+- **A:** Glasses the size of satellite dishes, platform boots that could double as stilts, feathered capes that made peacocks feel underdressed. A wardrobe budget that qualified as a small nation's GDP.
+- **B:** His glasses are always enormous. His shoes are always tall. His clothes have feathers and jewels and sometimes lights. He has more costumes than some theaters.
+
+**Energy in one sentence:**
+- **A:** A grand piano wrapped in Christmas morning.
+- **B:** He is what would happen if a very talented man was also allowed to buy anything he wanted, forever.
+
+---
+
+## 8. MARC BOLAN
+**Genre/Era:** Glam rock, 1967-1977
+
+**What made him special:**
+- **A:** Crowned himself the corkscrew-curled king of glitter and three-chord transcendence. Made teenage girls scream and teenage boys question things with the same riff.
+- **B:** He had very curly hair and put glitter on his face and played simple songs that made everyone feel something complicated.
+
+**What made him weird/identifiable:**
+- **A:** Elfin cheekbones dusted in stardust, boa-draped and top-hatted, wielding a guitar like a scepter. Looked like a Tolkien character who wandered into a London boutique and never left.
+- **B:** He was very small and very pretty and looked like a character from a fantasy book who had discovered fashion. He wore feather scarves constantly.
+
+**Energy in one sentence:**
+- **A:** A glitter-bombed pixie revolution in platform heels.
+- **B:** He was tiny and sparkly and changed everything and then he was gone.
+
+---
+
+## 9. STEVEN TYLER
+**Genre/Era:** Rock, 1970-present
+
+**What made him special:**
+- **A:** Lips that rivaled Jagger's and a scarf collection that rivaled a Moroccan souk. Shrieked and shimmied through Aerosmith's catalogue like a man being pleasantly electrocuted.
+- **B:** His mouth is also very big — there are two people in rock with very big mouths and he is the other one. He ties many scarves to his microphone. No one knows why. He screams beautifully.
+
+**What made him weird/identifiable:**
+- **A:** Scarecrow-thin with scarves streaming from every appendage, prancing on mic stands like a deranged maypole dancer. Face like a beautiful raisin. Voice like a hot rod in a hurricane.
+- **B:** He is very thin and wrinkled but in a way that looks expensive. Scarves come out of him from many places. He has been falling off stages for fifty years.
+
+**Energy in one sentence:**
+- **A:** A silk scarf tied to a bottle rocket.
+- **B:** He is noise and fabric and somehow this is one of the most successful bands in history.
+
+---
+
+## 10. ROBERT PLANT
+**Genre/Era:** Rock, 1968-present
+
+**What made him special:**
+- **A:** Possessed the golden howl that launched a thousand air-guitar solos. Tossed his leonine mane like a shampoo commercial directed by Norse gods.
+- **B:** His voice goes very high and it sounds like the voice a lion would have if a lion could sing. His hair was very important to him and to everyone.
+
+**What made him weird/identifiable:**
+- **A:** Open-shirted oracle of the wail, chest perpetually bared to the elements like a Viking who'd discovered velvet. Sang about Tolkien and women with the same breathless urgency.
+- **B:** He never buttons his shirt. He sings about fantasy books and also about women and you cannot always tell which is which. His chest hair is very confident.
+
+**Energy in one sentence:**
+- **A:** A golden god who took the description literally.
+- **B:** He looks like what you would draw if someone said "draw a rock star" and you had never seen one but someone described it very well.
+
+---
+
+## 11. KEITH RICHARDS
+**Genre/Era:** Rock, 1962-present
+
+**What made him special:**
+- **A:** Turned dissolution into an art form and open-G tuning into a religion. The riff architect who built the Stones' fortress with five strings and chemical resilience that baffled medical science.
+- **B:** He plays guitar with only five strings because he decided six was too many. He has put very many bad things in his body and his body said "okay."
+
+**What made him weird/identifiable:**
+- **A:** Skull-ringed, kohl-smudged, bandana-wrapped — looked like a pirate who'd been buried and dug himself back up for the encore. Spoke in a gravel-and-honey drawl that suggested permanent jet lag from a dimension with looser rules.
+- **B:** He looks exactly like a skeleton who is still having a good time. He wears rings with skulls. Johnny Depp copied him for a pirate movie and everyone knew immediately.
+
+**Energy in one sentence:**
+- **A:** A riff wrapped in a rumor wrapped in cigarette smoke.
+- **B:** He should be dead many times over and instead he is still playing guitar and laughing about it.
+
+---
+
+## 12. DEBBIE HARRY
+**Genre/Era:** Punk / new wave, 1974-present
+
+**What made her special:**
+- **A:** Platinum-blond atom bomb at the crossroads of punk snarl and pop precision. Made looking bored while being extraordinary into a transferable skill.
+- **B:** She was very beautiful and also very punk and she combined these two things in a way that no one had combined them before. She looked like she did not care, but she cared very specifically.
+
+**What made her weird/identifiable:**
+- **A:** Cool as cryogenics, with cheekbones that could redirect traffic and a voice that could pivot from bubblegum to blade mid-verse. Rapped on "Rapture" before most rock artists knew what hip-hop was.
+- **B:** She is very cool in a way that is not trying. She started rapping before most white people knew what rapping was. Her face has been on many walls.
+
+**Energy in one sentence:**
+- **A:** Ice-blonde napalm in a torn t-shirt.
+- **B:** She looked like a fashion model who had decided to be dangerous instead, and it was the correct decision.
+
+---
+
+# POP MAXIMALISTS
+
+---
+
+## 13. MADONNA
+**Genre/Era:** Pop, 1982-present
+
+**What made her special:**
+- **A:** Weaponized reinvention before Bowie's glue had dried. Built a forty-year empire out of provocation, cone bras, and the absolute refusal to go gently into anything.
+- **B:** She changes who she is every few years and every time people are angry and every time it works. She has been making people angry since 1983. This is her real talent.
+
+**What made her weird/identifiable:**
+- **A:** Conical-breasted crusader for controversy, flexing creative control like a muscle most pop stars didn't know they had. Made the Vatican nervous as a hobby.
+- **B:** She wore a bra with points on it. She made the Pope upset. She is very good at exercise and at making people talk about her. She does both every day.
+
+**Energy in one sentence:**
+- **A:** Ambition in fishnet stockings, perpetually unbothered by your disapproval.
+- **B:** She decided she would be the most famous woman in the world and then she simply did that.
+
+---
+
+## 14. LADY GAGA
+**Genre/Era:** Pop / art pop, 2008-present
+
+**What made her special:**
+- **A:** Arrived fully formed in a disco ball of deliberate weirdness — meat dresses, egg vessels, and piano chops that reminded you the spectacle had a spine of genuine virtuosity.
+- **B:** She wore a dress made of meat. She arrived at an award show inside an egg. But also she can really play piano and really sing. The strange things and the talented things are both real.
+
+**What made her weird/identifiable:**
+- **A:** Wrapped haute couture around pop bangers like a Trojan horse made of lobster hats. Every red carpet appearance was a dare disguised as a press event.
+- **B:** She wears things that are not clothes — they are art projects that she walks around in. She once wore a hat that was a lobster. She has won an Oscar and this somehow also makes sense.
+
+**Energy in one sentence:**
+- **A:** Performance art that accidentally topped the charts and then did it on purpose.
+- **B:** She is a very serious artist who is also very ridiculous and she refuses to choose between these things.
+
+---
+
+## 15. BJORK
+**Genre/Era:** Art pop / electronic / experimental, 1977-present
+
+**What made her special:**
+- **A:** Erupted from Iceland like a musical geyser — unpredictable, steaming, and impossible to replicate. Made albums that sounded like volcanos learning to waltz with circuit boards.
+- **B:** She is from Iceland and her music sounds like Iceland — beautiful and strange and cold and suddenly there is an explosion. Her voice does things that make you feel you are somewhere you have never been.
+
+**What made her weird/identifiable:**
+- **A:** Swan-dressed provocateur with the vocal range of an arctic weather system. Attacked a journalist at an airport and it somehow felt on-brand.
+- **B:** She wore a swan to the Oscars. The swan was a dress. She hit a reporter once and people said "yes, that is something she would do." She makes music with volcanoes and computers.
+
+**Energy in one sentence:**
+- **A:** A glacier with a sense of humor and a PhD in sonic architecture.
+- **B:** She is nature but she is also technology and she is a little bit violent and all of this is her music.
+
+---
+
+## 16. KATE BUSH
+**Genre/Era:** Art pop, 1978-present
+
+**What made her special:**
+- **A:** Pirouetted into pop at seventeen with a Bronte-obsessed soprano shriek and never once looked at what anyone else was doing. Built a cathedral of weirdness and locked herself inside it for decades at a time.
+- **B:** She started very young with a very high voice singing about a book. Then she did whatever she wanted for forty years. Sometimes she disappeared for a very long time. She came back and everyone was still waiting.
+
+**What made her weird/identifiable:**
+- **A:** Interpretive-danced through music videos like a woman possessed by the ghost of modern dance itself. Eyes wide as dinner plates, arms conducting invisible orchestras, voice climbing octaves like a soprano scaling Everest in a leotard.
+- **B:** She dances in a way that is not normal dancing. Her eyes are very big and very open. She moves her arms like she is talking to something you cannot see. She went viral on TikTok in 2022 and she probably does not know what TikTok is.
+
+**Energy in one sentence:**
+- **A:** A haunted music box that choreographed its own exorcism.
+- **B:** She is what would happen if a very smart ghost learned to dance and also to use a synthesizer.
+
+---
+
+## 17. CHER
+**Genre/Era:** Pop / rock / disco / immortality, 1963-present
+
+**What made her special:**
+- **A:** Outlasted every era by shapeshifting through them — folk duo, variety show host, disco queen, Oscar winner, Auto-Tune pioneer, Twitter icon. Turned longevity into its own genre.
+- **B:** She has been famous for sixty years. Every ten years she becomes a different kind of famous. She cannot be stopped. Scientists have not studied this but they should.
+
+**What made her weird/identifiable:**
+- **A:** Contralto voice deep as a canyon, costumes that made Bob Mackie's career, and a face that launched a thousand "has she or hasn't she" conversations. If you could turn back time, you still couldn't keep up.
+- **B:** Her voice is very low for a woman. Her clothes have always been very small and very sparkly. People talk about her face a lot. She is on Twitter and she types like your grandmother but your grandmother is a goddess.
+
+**Energy in one sentence:**
+- **A:** An immortal in sequins who simply refused every exit cue.
+- **B:** She will not stop and she will not age and at this point everyone has accepted this.
+
+---
+
+## 18. CYNDI LAUPER
+**Genre/Era:** Pop / new wave, 1983-present
+
+**What made her special:**
+- **A:** Out-weirded the weird kids with thrift-store couture and a voice that could shatter convention and champagne flutes simultaneously. Made "Girls Just Want to Have Fun" a feminist statement disguised as a party invitation.
+- **B:** She dressed like she got dressed in the dark in a very colorful store. Her voice is very strong and very unusual. She sang a song about fun that was actually about freedom and most people only heard the fun part.
+
+**What made her weird/identifiable:**
+- **A:** Rainbow-hued hurricane of vintage jewelry, mismatched everything, and a Queens accent thick enough to stand a spoon in. Wrestled professionally. Won a Tony. Normal career trajectory.
+- **B:** Her hair was every color. Her accent is very strong from New York. She did professional wrestling and also Broadway musicals. These are not related but they are both real.
+
+**Energy in one sentence:**
+- **A:** A jukebox that fell down the stairs and came up singing.
+- **B:** She is very loud and very colorful and she is right about everything and she always was.
+
+---
+
+## 19. ANNIE LENNOX
+**Genre/Era:** Pop / new wave / synth-pop, 1980-present
+
+**What made her special:**
+- **A:** Cropped her hair, suited up, and detonated gender expectations with a voice that could make furniture weep. Made androgyny not a statement but a frequency — something you felt before you understood it.
+- **B:** She cut her hair very short and wore men's suits and had the most beautiful voice anyone had heard. People were confused about whether she was a man or a woman. She did not help them.
+
+**What made her weird/identifiable:**
+- **A:** Buzzcut-bearing contralto who showed up to the Grammys as Elvis and made everyone reconsider what they thought they knew about everything. The skull was the canvas — orange hair, then no hair, then fire-engine red.
+- **B:** She dressed as Elvis once and it was more Elvis than Elvis. She changes her hair but it is always short. Her face is very strong. When she sings you stop what you are doing.
+
+**Energy in one sentence:**
+- **A:** Precision-cut defiance wrapped in a three-octave velvet vice.
+- **B:** She is very quiet and very powerful and if she looks at you, you will remember it.
+
+---
+
+## 20. GRACE JONES
+**Genre/Era:** Pop / new wave / disco / post-human, 1977-present
+
+**What made her special:**
+- **A:** Carved from obsidian and attitude, she didn't perform so much as dare audiences to survive her presence. A six-foot sculpture that moved, and moved everyone.
+- **B:** She is very tall and very strong and she looks at you like she might eat you but in an elegant way. She is from Jamaica and she is from outer space. Both of these are where she is from.
+
+**What made her weird/identifiable:**
+- **A:** Geometric flat-top sharp enough to file lawsuits, cheekbones that cast their own shadows, and a stage presence that made grown adults back up involuntarily. Hula-hooped for an entire concert in her fifties. While singing.
+- **B:** Her hair is flat on top like a table. Her face is like a sculpture in a museum that you are afraid of. She slapped a man on live TV because he turned his back to her. She was correct.
+
+**Energy in one sentence:**
+- **A:** A panther in shoulder pads who decided the world was her territory.
+- **B:** She walks into a room and the room belongs to her now and everyone knows this immediately.
+
+---
+
+## 21. SIA
+**Genre/Era:** Pop / art pop, 2000-present
+
+**What made her special:**
+- **A:** Hid the biggest voice in pop behind a curtain of synthetic hair and sent a child to do her dancing. Made invisibility into the most visible gimmick in music.
+- **B:** She has a very big voice but she does not want you to see her face. She wears a very large wig that covers her eyes. A young girl dances for her. This is her system.
+
+**What made her weird/identifiable:**
+- **A:** Two-toned wig draped over her face like a deliberate malfunction, back turned to audiences, puppet-mastering interpretive dance from the shadows. The anti-pop-star who topped every pop chart.
+- **B:** She stands in the corner with a wig on her face. Someone else dances in the middle. She sings very loudly from under her hair. She is very famous but you might not recognize her in a store.
+
+**Energy in one sentence:**
+- **A:** The voice behind the curtain who made Oz look like an amateur.
+- **B:** She is hiding but she is also the loudest person in the room. This is a contradiction she is comfortable with.
+
+---
+
+## 22. JANELLE MONAE
+**Genre/Era:** Pop / R&B / funk, 2007-present
+
+**What made her special:**
+- **A:** Built an entire Afrofuturist mythology around android liberation while wearing a tuxedo and making you dance. Turned conceptual sci-fi into chart-calibrated funk without dropping a single thesis point.
+- **B:** She made up a story about a robot and then she became the robot and then the robot became free and this is also a story about being Black and being queer and also you can dance to it.
+
+**What made her weird/identifiable:**
+- **A:** Tuxedo-clad time traveler who made black-and-white look more colorful than anyone else's entire palette. Pompadour precise as a geometric proof. Every album an opera.
+- **B:** She wears only black and white but she looks more interesting than everyone in color. Her hair is very tall. Her music videos have a story and the story is about a future where robots have feelings.
+
+**Energy in one sentence:**
+- **A:** A revolutionary manifesto in patent-leather shoes, grooving to its own footnotes.
+- **B:** She is very organized about being very creative and this combination is rare and powerful.
+
+---
+
+## 23. BILLIE EILISH
+**Genre/Era:** Pop / alt-pop, 2016-present
+
+**What made her special:**
+- **A:** Whispered her way to world domination from a bedroom in Highland Park. Made ASMR menacing and baggy clothes into a philosophical position.
+- **B:** She sings very quietly and it became the biggest music in the world. She wears very large clothes so you cannot see her body. She was a teenager and she made this decision and it was a very smart decision.
+
+**What made her weird/identifiable:**
+- **A:** Neon-rooted, oversized-everything, dead-eyed stare that made pop feel like a lucid nightmare. Brother-produced bedroom bangers that sounded like the inside of a very stylish panic attack.
+- **B:** Her hair was green, then blonde, then brown. Her clothes are always too big. Her brother makes the music in their house. She looks like she is bored or possibly like she can see something you cannot see.
+
+**Energy in one sentence:**
+- **A:** A whispered scream in a hoodie three sizes too big.
+- **B:** She is very young and very quiet and the quiet is louder than other people's loud.
+
+---
+
+## 24. LORDE
+**Genre/Era:** Art pop / electropop, 2013-present
+
+**What made her special:**
+- **A:** Deconstructed pop excess at sixteen from the bottom of New Zealand and made minimalism feel like the most maximal thing in the room. Turned "Royals" into a recession anthem that danced.
+- **B:** She is from New Zealand and she was sixteen and she said "all this expensive stuff in music is silly" and everyone agreed immediately. She made a very simple song and it was bigger than all the complicated ones.
+
+**What made her weird/identifiable:**
+- **A:** Wild-haired, bare-staged, interpretive-claw-hand-dancing oracle who looked like she was conducting a seance at every awards show. Disappeared for years at a time and returned with an album about the sun.
+- **B:** She dances with her hands like she is grabbing things out of the air. Her hair is very big and curly. She goes away for a long time and comes back with one album and it is always exactly right.
+
+**Energy in one sentence:**
+- **A:** A teenage thesis on excess, delivered with liturgical hand gestures and no shoes.
+- **B:** She thinks more than most pop stars and dances like nobody taught her how and both of these things are why she is important.
+
+---
+
+# HIP HOP / R&B
+
+---
+
+## 25. KANYE WEST
 **Genre/Era:** Hip hop / fashion / messianic delusion, 2004-present
 
 **What made him special:**
-- **A:** Produced beats like a god and managed his public image like a man juggling flaming chainsaws in a house made of gasoline.
-- **B:** He made perfect music and then said things that made everyone forget about the perfect music. This happened many times. He did not learn.
+- **A:** Rebuilt hip-hop's architecture album by album — chipmunk soul, stadium anthems, industrial brutalism, gospel maximalism — all while narrating his own mythology with the subtlety of a bullhorn at a library.
+- **B:** Every album sounds completely different from the last one. He thinks he is the most important artist alive. He says this out loud. Sometimes the music agrees with him.
 
-**What made him weird:**
-- **A:** Interrupted Taylor Swift at the VMAs with the conviction of a man delivering divine prophecy, ran for president like it was a conceptual art piece, and once wore a full face mask for an entire year because faces were over.
-- **B:** He took a microphone from a teenager on television to say someone else should have won. He was correct. This did not help.
+**What made him weird/identifiable:**
+- **A:** Shutter-shade-wearing, Taylor-Swift-interrupting, presidential-campaigning polymath who confused confidence with divinity and sometimes had a point.
+- **B:** He wore sunglasses with lines in them. He interrupted a very famous woman at an awards show. He ran for president. He makes shoes. Everything he does is either genius or a disaster and sometimes it is both at the same time.
 
-**How you'd identify him immediately:**
-- **A:** Either in a $10,000 outfit or a $10 hoodie, delivering a monologue about his own genius with the breathless intensity of a man who just discovered fire.
-- **B:** Man in expensive clothes talking about himself. Very serious. Believes he is the most important person. Changes his mind about which kind of important every six months.
-
-**The energy in one sentence:**
-- **A:** Built cathedrals of sound and then set them on fire during the press tour.
-- **B:** He made beautiful things and then stood in front of them so you could not see.
+**Energy in one sentence:**
+- **A:** A supernova arguing with its own light about who shines brighter.
+- **B:** He is a man who is at war with the world and also with himself and the music comes from this war.
 
 ---
 
-## 7. GRACE JONES
-**Genre/Era:** New wave / disco / post-human, 1977-present
+## 26. ANDRE 3000
+**Genre/Era:** Hip hop / funk / experimental, 1994-present
+
+**What made him special:**
+- **A:** Half of Outkast's brain and most of its wardrobe budget. Slipped from Southern rap to psychedelic jumpsuits to playing flute in airports, leaving bewildered brilliance in his wake like couture contrails.
+- **B:** He was in a very famous rap group and then he started wearing very unusual clothes and then he just played the flute for a long time. At airports. By himself. People filmed him and he did not mind.
+
+**What made him weird/identifiable:**
+- **A:** Knickers-and-suspenders-wearing dandy who made Atlanta feel like a portal to Funkadelic Narnia. Shook it like a Polaroid picture, then vanished into a cloud of eccentricity and wooden flutes.
+- **B:** He wears clothes from the past but not any specific past — a past he invented. He told everyone to shake their photograph. Then he stopped rapping and just played flute. He is happy. Everyone else is confused.
+
+**Energy in one sentence:**
+- **A:** A Renaissance man who forgot to tell anyone which renaissance.
+- **B:** He does whatever he wants and what he wants is always surprising and always beautiful and always confusing.
+
+---
+
+## 27. MISSY ELLIOTT
+**Genre/Era:** Hip hop / R&B, 1997-present
 
 **What made her special:**
-- **A:** Carved from obsidian and attitude, she didn't perform so much as dare audiences to survive her presence. A six-foot sculpture that moved.
-- **B:** She was very tall and very scary and very beautiful. She looked like she was made in a laboratory for intimidating people.
+- **A:** Blew up the rulebook for what a woman in hip-hop could look, sound, and move like. Directed her own universe — trash-bag couture, backward choreography, beats from the future mailed back to 1997.
+- **B:** She wore a garbage bag and it was fashion. She danced backwards. Her music sounded like the future. She did not look like what people thought a female rapper should look like and she did not care at all.
 
-**What made her weird:**
-- **A:** Slapped Russell Harty on live television for ignoring her, hula-hooped through entire concerts in her fifties, and once arrived at a party in a cage carried by four men.
-- **B:** She hit a man on TV because he turned his back to her. She was correct to do this. Everyone agreed later.
+**What made her weird/identifiable:**
+- **A:** Inflatable-suit-wearing, mouth-sound-making, time-bending visionary who made the beat go "beep beep boop" and sold ten million copies of it. Every video a visual thesis; every verse a tongue-twisting temperature check.
+- **B:** She wore a big inflatable suit in a video. She makes sounds with her mouth that are not words but they are better than words. She is very round and very powerful and she changed music with sounds that do not have names.
 
-**How you'd identify her immediately:**
-- **A:** Flat-top fade, cheekbones that cast shadows, and the posture of someone who has never in her life been uncertain.
-- **B:** Extremely tall woman with a square haircut and the face of an angry statue. She has never been afraid. Of anything. Ever.
-
-**The energy in one sentence:**
-- **A:** Made disco sound like a threat and fashion look like a weapon.
-- **B:** She danced like she was punishing the floor.
+**Energy in one sentence:**
+- **A:** A sonic boom in a track suit, rewriting the future's dress code.
+- **B:** She is from the future and she brought the future back with her and now everyone lives in it.
 
 ---
 
-## 8. ANDRE 3000
-**Genre/Era:** Hip hop / jazz / interstellar botany, 1994-present
+## 28. LIL WAYNE
+**Genre/Era:** Hip hop, 1997-present
 
 **What made him special:**
-- **A:** Rapped circles around the entire South, then quit to play flute in airports like a benevolent alien who'd completed his mission and was just killing time.
-- **B:** He was the best rapper. Then he stopped rapping. Now he plays the flute. In airports. For fun. No one asked him to do this.
+- **A:** Drowned the 2000s in a tsunami of mixtapes — five thousand songs, every metaphor more absurd than the last, delivered through a codeine drawl that made laziness sound like genius-level efficiency.
+- **B:** He made so much music that no one could count it all. He says things that make no sense and also perfect sense. His voice sounds tired but his brain is not tired.
 
-**What made him weird:**
-- **A:** Wore jumpsuits covered in meaningful patches, designed his own line of existentially confused clothing, and released an album of ambient flute solos in 2023 that was somehow one of the year's best.
-- **B:** He wore very strange clothes that he designed himself. Each piece of clothing had a message on it. The messages were sad but the clothes were colorful. This was confusing on purpose.
+**What made him weird/identifiable:**
+- **A:** Dreadlocked, tattooed-to-the-eyelids, skateboard-riding, guitar-soloing contradiction machine. Compared himself to everything from Martians to weather systems and somehow made each one stick.
+- **B:** His face is covered in tattoos. He has very long dreadlocks. He started skateboarding when he was already very famous. He played guitar on an album and it was not good but he did not care. He says he is from Mars. Maybe he is.
 
-**How you'd identify him immediately:**
-- **A:** The tallest, best-dressed man in any room, radiating the quiet contentment of someone who has absolutely nothing left to prove.
-- **B:** Very tall man in interesting clothes, smiling like he knows a secret. He does know a secret. He will not tell you.
-
-**The energy in one sentence:**
-- **A:** Won every competition, then wandered off to do something more interesting.
-- **B:** He was the best at the thing and then he got bored of the thing.
+**Energy in one sentence:**
+- **A:** A Martian on a skateboard, drowning in tattoo ink and punchlines.
+- **B:** He is what happens when a very smart person decides to be very strange and very productive at the same time.
 
 ---
 
-## 9. SIOUXSIE SIOUX
-**Genre/Era:** Post-punk / goth / the original dark queen, 1976-present
+## 29. ERYKAH BADU
+**Genre/Era:** Neo-soul / R&B, 1997-present
 
 **What made her special:**
-- **A:** Weaponized eyeliner and banshee wails into a genre, proving that discomfort could be a dance beat if you scowled hard enough.
-- **B:** She wore a lot of eye makeup and screamed in a way that made people want to dance. This should not work. It worked perfectly.
+- **A:** Wrapped her voice in incense smoke and head wraps taller than city ordinances should allow. Made neo-soul feel like a religion you didn't know you needed and charged no admission.
+- **B:** She sings like the song is a prayer but the prayer is also a little bit funny. She wears things on her head that are very tall. She invented a type of music that sounds like your soul but cleaner.
 
-**What made her weird:**
-- **A:** Played her first gig by improvising a twenty-minute rendition of "The Lord's Prayer" because the band didn't know any songs yet, and dressed like an Egyptian pharaoh's nightmare throughout the entire 1980s.
-- **B:** Her first concert, she did not have any songs. So she just said a prayer for twenty minutes. The audience was confused. She became famous.
+**What made her weird/identifiable:**
+- **A:** Towering-headwrap-crowned high priestess of analog warmth, stripping naked in Dealey Plaza for a music video and calling it commentary. Made wellness mystical before Instagram made it basic.
+- **B:** She took off all her clothes in the street where President Kennedy was shot. She said it was art. She wears very large hats. She talks about crystals and energy and stars but she is also very funny about it.
 
-**How you'd identify her immediately:**
-- **A:** Jet-black hair sculpted into architectural impossibility, kohl-rimmed eyes that could wither flowers, and a stare that made the darkness feel self-conscious.
-- **B:** Black hair that defied gravity. Eyes painted like a raccoon who went to art school. Looking at you like you have disappointed her personally.
-
-**The energy in one sentence:**
-- **A:** Made gloom glamorous and dread danceable.
-- **B:** She made sad music you could dance to, which is a very difficult thing.
+**Energy in one sentence:**
+- **A:** A third eye with impeccable taste in headwear.
+- **B:** She is spiritual but she also knows she is spiritual and she thinks this is funny, and this is why people trust her.
 
 ---
 
-## 10. LITTLE RICHARD
-**Genre/Era:** Rock and roll / gospel / the Big Bang itself, 1951-2020
+## 30. OL' DIRTY BASTARD
+**Genre/Era:** Hip hop, 1992-2004
 
 **What made him special:**
-- **A:** Screamed rock and roll into existence with a pompadour that added six inches of pure defiance, then quit to preach, then came back, then quit again, in a loop of divine indecision.
-- **B:** He invented a type of music by screaming. His hair was very tall. He kept quitting music to talk about God, then coming back to music. This happened many times.
+- **A:** Demolished every rule Wu-Tang had and every rule English had, simultaneously. Rapped like a man falling down stairs and catching himself with a punchline on every landing.
+- **B:** He was in a very organized group but he was not organized. He rapped like the words were falling out of him and he was trying to catch them. Sometimes he caught them. It was always interesting.
 
-**What made him weird:**
-- **A:** Wore makeup in the 1950s South like it was combat gear, claimed to have invented rock and roll (correctly), and oscillated between hedonism and holiness with the regularity of a metronome.
-- **B:** He wore lipstick in the 1950s. In America. In the South. He was very brave or did not understand the danger. Possibly both.
+**What made him weird/identifiable:**
+- **A:** Picked up his welfare check in a limousine, on camera, for a show. Named himself Ol' Dirty Bastard, then Big Baby Jesus, then Dirt McGirt, because one identity could never contain the chaos. Crashed the Grammys uninvited.
+- **B:** He went to collect his government money in a very expensive car and let people film it. He had many names. He went to the Grammy Awards uninvited and said his group should have won. He came anyway.
 
-**How you'd identify him immediately:**
-- **A:** Pencil mustache, pompadour like a black tidal wave, and a scream that could shatter both glass and social convention.
-- **B:** Tall hair. Small mustache. Screaming. You can hear him from three buildings away.
-
-**The energy in one sentence:**
-- **A:** Invented rock and roll, told everyone he invented rock and roll, and was right both times.
-- **B:** He told everyone he was the first. He was the first. Being right did not make him less annoying.
+**Energy in one sentence:**
+- **A:** A human non-sequitur who made chaos feel like a valid artistic philosophy.
+- **B:** Nobody knew what he would do next. Including him. This was the art.
 
 ---
 
-## 11. MISSY ELLIOTT
-**Genre/Era:** Hip hop / R&B / future funk, 1997-present
-
-**What made her special:**
-- **A:** Bent the entire shape of pop music sideways while wearing an inflatable garbage bag like it was Givenchy, proving that vision beats vanity every single time.
-- **B:** She wore a very large inflated suit in her music video. She looked like a balloon. It was cool. No one can explain why it was cool. It simply was.
-
-**What made her weird:**
-- **A:** Rapped backwards, choreographed in zero gravity, and produced beats that sounded like a fax machine falling in love with a drum kit.
-- **B:** She made sounds that were not normal sounds and put them in songs. The songs were popular. The sounds are still not normal.
-
-**How you'd identify her immediately:**
-- **A:** Wearing something from three decades in the future, moving in ways that suggest her skeleton has extra joints.
-- **B:** Woman in futuristic clothing, dancing in a way that seems physically impossible. She is having a very good time.
-
-**The energy in one sentence:**
-- **A:** Made the future sound funky and made funky sound like the future.
-- **B:** She made music from tomorrow but you could dance to it today.
-
----
-
-## 12. TOM WAITS
-**Genre/Era:** Blues / jazz / junkyard opera, 1973-present
+## 31. BUSTA RHYMES
+**Genre/Era:** Hip hop, 1990-present
 
 **What made him special:**
-- **A:** Sang like his voice had been soaked in bourbon, dragged through gravel, and left out in the rain overnight, then somehow made it the most beautiful sound in the room.
-- **B:** His voice sounds broken. Like a machine that is not working correctly. But the broken machine plays the most beautiful song. This is his trick.
+- **A:** Rapped like his mouth was a machine gun loaded with syllables and every trigger pull was a surprise even to the gun. Made speed and fury feel like a party trick performed by a carnival barker from the future.
+- **B:** He raps very fast. Faster than seems possible. He is also very loud. His mouth does things that mouths should not be able to do. He looks like he is having a very good time while doing this.
 
-**What made him weird:**
-- **A:** Built instruments from found objects, banged on pipes for percussion, and gave interviews in character as a hobo philosopher who'd seen things that would make your furniture weep.
-- **B:** He hit metal objects and called it music. He found things in the garbage and made songs with them. His interviews sounded like a drunk poet talking to a wall. The wall was interested.
+**What made him weird/identifiable:**
+- **A:** Dreaded, wild-eyed, barrel-chested verbal gymnast who turned music videos into cartoon physics lessons. Every verse an avalanche of consonants; every performance a controlled demolition of the beat.
+- **B:** His eyes get very big when he raps. His hair was in big dreadlocks and then it was not. He moves in music videos like a cartoon character. He gets very close to the camera. It is a little bit scary and a little bit fun.
 
-**How you'd identify him immediately:**
-- **A:** Gravelly voice, thrift-store suit, and the demeanor of a man who slept in a piano and liked it there.
-- **B:** Man who looks like he lives in a train station. Wearing a hat that is too small. Talking about rain.
-
-**The energy in one sentence:**
-- **A:** Made beautiful music out of everything the world threw away, including himself.
-- **B:** He collected broken things and made them sing.
+**Energy in one sentence:**
+- **A:** A syllable hurricane wearing a very expensive tracksuit.
+- **B:** He is a man who discovered he could talk faster than anyone and decided this was enough to build a career. He was correct.
 
 ---
 
-## 13. LADY GAGA
-**Genre/Era:** Pop / performance art / meat, 2008-present
-
-**What made her special:**
-- **A:** Arrived fully formed as a pop star from another dimension, wearing outfits that made fashion editors weep and sing simultaneously.
-- **B:** She appeared suddenly and she was already complete. Her clothes were so strange that fashion people did not know if they should be angry or impressed. They chose both.
-
-**What made her weird:**
-- **A:** Wore a dress made of raw beef to an awards show, arrived at the Grammys inside a giant egg carried by her entourage, and once vomited on stage during a performance and kept singing.
-- **B:** She wore meat. As a dress. Real meat. To a fancy party. Also she arrived inside an egg once. Like a chicken but in reverse and with more sequins.
-
-**How you'd identify her immediately:**
-- **A:** Whatever she's wearing, you've never seen it before and may never see it again, and she's singing like her life depends on it because it does.
-- **B:** Woman in clothes that should not exist, singing very loudly. She looks like she is about to cry or save the world. Sometimes both.
-
-**The energy in one sentence:**
-- **A:** Treated pop music like a dare and fashion like a blood sport.
-- **B:** She turned getting dressed into a competition. She was the only contestant. She still won.
-
----
-
-## 14. GG ALLIN
-**Genre/Era:** Punk / shock / biological warfare, 1977-1993
+## 32. MF DOOM
+**Genre/Era:** Hip hop / underground, 1991-2020
 
 **What made him special:**
-- **A:** Made punk's most confrontational performers look like insurance adjusters by comparison, turning every show into a biohazard event with a backing band.
-- **B:** He did things on stage that were illegal in most countries. He was arrested many times. He kept doing the things. The things were terrible.
+- **A:** Hid behind a metal mask and let the rhymes do the heavy lifting — dense, villain-themed, sample-drunk wordplay that rewarded the kind of listener who keeps a dictionary next to their turntable.
+- **B:** He wore a metal mask like a villain in a movie. He never showed his face. His words were like puzzles — you had to listen many times to understand. He pretended to be a bad guy but his music was very good.
 
-**What made him weird:**
-- **A:** Defecated on stage, threw it at audiences, attacked fans, performed covered in his own blood, and promised to kill himself on stage on Halloween (he died of an overdose before he got the chance).
-- **B:** He was the most disgusting performer who has ever lived. This is not an opinion. It is a fact that historians agree on.
+**What made him weird/identifiable:**
+- **A:** Doom-masked supervillain rapper who sent imposters to perform his shows, sampled Scooby-Doo and obscure jazz in the same bar, and made backpacker rap feel like a comic book you could get lost in for years.
+- **B:** Sometimes he sent other people to pretend to be him at concerts. People were angry. He sampled children's cartoons. He rapped about food a lot. He wore the mask always. When he died, nobody knew for months.
 
-**How you'd identify him immediately:**
-- **A:** Naked, bleeding, and covered in substances you do not want identified, screaming into a microphone he's using as a weapon.
-- **B:** Naked man. Very dirty. Screaming. You should leave.
-
-**The energy in one sentence:**
-- **A:** Punk's final boss fight, and nobody won, least of all him.
-- **B:** He tried to be the worst person at every concert. He succeeded. No one was happy about this.
+**Energy in one sentence:**
+- **A:** A supervillain monologue delivered over a bed of vintage cartoons and rare vinyl crackle.
+- **B:** He was hidden and brilliant and strange and now he is gone and people are still finding new things in his words.
 
 ---
 
-## 15. ERYKAH BADU
-**Genre/Era:** Neo-soul / cosmic mumbo-jumbo / headwrap empire, 1997-present
-
-**What made her special:**
-- **A:** Fused soul, jazz, and hip hop into a cosmic stew, then served it wearing a headwrap tall enough to pick up satellite signals from alternate dimensions.
-- **B:** She sang soul music while wearing a very large hat. The hat changed shapes. Sometimes it was a tower. She also talked about crystals and the universe. People believed her.
-
-**What made her weird:**
-- **A:** Stripped naked on camera walking through Dealey Plaza for a music video, has a doula practice on the side, and once explained her creative process using a metaphor involving yeast and planetary alignment.
-- **B:** She took off all her clothes in the place where President Kennedy was shot. For art. She also delivers babies as a job. And she thinks planets affect bread.
-
-**How you'd identify her immediately:**
-- **A:** Towering headwrap, oversized sunglasses, and an aura that suggests she just finished meditating for eleven hours and is mildly amused by your existence.
-- **B:** Tall hat. Big sunglasses. Looks like she knows something about the universe that you do not. She will tell you about it. It will take four hours.
-
-**The energy in one sentence:**
-- **A:** Turned mysticism into a groove and made enlightenment sound like a slow jam.
-- **B:** She made spiritual things sound sexy. This is a rare skill.
-
----
-
-## 16. KLAUS NOMI
-**Genre/Era:** New wave / opera / extraterrestrial cabaret, 1978-1983
+## 33. TYLER, THE CREATOR
+**Genre/Era:** Hip hop / neo-soul / pop, 2009-present
 
 **What made him special:**
-- **A:** A German countertenor in a plastic tuxedo who sang opera in downtown New York punk clubs, looking like a kabuki alien who'd gotten lost on the way to a more civilized planet.
-- **B:** He was from Germany. He sang opera. In punk clubs. While dressed as a triangle. His face was painted white. No one in the punk club expected opera. They liked it anyway.
-
-**What made him weird:**
-- **A:** Wore geometric costumes that made him look like a cubist painting come to life, sang with a four-octave range while barely moving his painted face, and died of AIDS in 1983 as one of the first public figures claimed by the epidemic.
-- **B:** His costumes had shapes that do not occur in nature. He could sing notes that dogs could hear. He stood very still while singing, like a beautiful statue that was also screaming.
-
-**How you'd identify him immediately:**
-- **A:** White-painted face, geometric black suit, and a voice that toggled between angelic soprano and operatic thunder with no warning.
-- **B:** White face. Triangle shoulders. Singing higher than anyone should be able to sing. You would think he is a ghost but ghosts are not this well dressed.
-
-**The energy in one sentence:**
-- **A:** Brought opera to the punk scene and made both genres wonder what just happened.
-- **B:** He was in the wrong room. But the room changed to fit him.
-
----
-
-## 17. MADONNA
-**Genre/Era:** Pop / provocation / perpetual reinvention, 1982-present
-
-**What made her special:**
-- **A:** Weaponized controversy like a Swiss Army knife of scandal, reinventing herself every album cycle while the rest of pop music scrambled to keep up with wherever she'd just been.
-- **B:** She made people angry on purpose. Then she changed everything about herself. Then she made people angry again but for different reasons. She has done this for forty years.
-
-**What made her weird:**
-- **A:** Published a coffee-table book of herself in various states of undress called "Sex," wore a cone bra engineered by Gaultier like it was military hardware, and kissed Britney Spears on live television because Tuesdays were slow.
-- **B:** She made a book of naked photographs of herself. She wore pointed bra cones like weapons. She kissed another famous person on television because she wanted everyone to talk about her. Everyone talked about her.
-
-**How you'd identify her immediately:**
-- **A:** Whatever's most provocative this decade, she's wearing it, and she has a gap between her teeth that's worth more than your house.
-- **B:** Blonde woman doing something controversial. The specific controversy changes but the blonde and the controversy are constant.
-
-**The energy in one sentence:**
-- **A:** Built a career on making people clutch their pearls, then sold them better pearls.
-- **B:** She shocked people for money and the money was very good.
-
----
-
-## 18. OZZY OSBOURNE
-**Genre/Era:** Heavy metal / reality TV / survival horror, 1968-present
-
-**What made him special:**
-- **A:** Mumbled his way through four decades of metal mayhem, surviving enough substances to fell a small continent while somehow becoming America's favorite befuddled dad.
-- **B:** He should be dead. He is not dead. Doctors have studied his blood to understand why he is not dead. He also had a TV show where he could not operate a remote control.
-
-**What made him weird:**
-- **A:** Bit the head off a live bat on stage (thought it was rubber), snorted ants off the ground, and once urinated on the Alamo while wearing a dress his wife put him in to prevent exactly this behavior.
-- **B:** He ate a bat's head during a concert. He did not plan to eat the bat's head. He thought the bat was fake. It was not fake. The bat was real and now it had no head.
-
-**How you'd identify him immediately:**
-- **A:** Round glasses, black everything, and a shuffling gait that suggests his body is still processing substances from 1978.
-- **B:** Man in black clothes walking slowly. He is talking but you cannot understand him. He seems happy. Or confused. It is hard to tell.
-
-**The energy in one sentence:**
-- **A:** Survived heavy metal by being too confused to notice it was killing him.
-- **B:** He did not die because he did not realize he was supposed to.
-
----
-
-## 19. TYLER, THE CREATOR
-**Genre/Era:** Hip hop / fashion / chaos in pastels, 2009-present
-
-**What made him special:**
-- **A:** Went from shock-rap provocateur to pastel-suited fashion mogul with a flower obsession, proving that growing up in public can be the art itself.
-- **B:** First he was angry and said terrible things. Then he became calm and wore nice colors and liked flowers. The same person did both of these things. Nobody expected the flowers.
-
-**What made him weird:**
-- **A:** Created an entire alternative universe with his music, launched a festival, a clothing line, and a TV show, all while wearing golf-themed outfits and doing a voice that sounds like a cartoon villain having a nice day.
-- **B:** He made a clothing brand about golf. He does not play golf. He made a TV show. It was very strange. He talks like a cartoon character sometimes and like a poet other times. You never know which you will get.
-
-**How you'd identify him immediately:**
-- **A:** Pastel suit, crooked hat, gap-toothed grin, and the energy of someone who just thought of something hilarious and isn't going to tell you what it is.
-- **B:** Young man in colorful suit, big smile with gap in teeth. He looks like he is having more fun than everyone else in the room. He is.
-
-**The energy in one sentence:**
-- **A:** Grew up in public from a gremlin into a garden and made both versions compelling.
-- **B:** He was a monster, then he became a flower. Both were real.
-
----
-
-## 20. NINA HAGEN
-**Genre/Era:** Punk / opera / German expressionist nightmare, 1974-present
-
-**What made her special:**
-- **A:** Grafted four-octave operatic vocals onto punk rock and sprayed the result in neon, creating a genre that existed entirely within a three-foot radius of her larynx.
-- **B:** She could sing opera and also scream. She did both. At the same time. While wearing the most colorful clothes in Germany. She was a lot.
-
-**What made her weird:**
-- **A:** Demonstrated masturbation techniques on Austrian television, claimed to have been abducted by aliens, and once sang an entire concert in a different language than the audience expected — picking whichever one felt right per song.
-- **B:** She showed very private things on television. In Austria. She says aliens took her. She may believe this. She sang in whatever language she felt like, even if nobody in the room spoke that language.
-
-**How you'd identify her immediately:**
-- **A:** Hair in colors that haven't been invented yet, wearing something that looks like a carnival ate a thrift store, and making sounds that suggest her vocal cords have diplomatic immunity.
-- **B:** Woman with rainbow hair making sounds that are not normal human sounds. She is happy. Everyone else is confused. She does not notice the confusion.
-
-**The energy in one sentence:**
-- **A:** Punk's operatic aunt who showed up uninvited and made everything louder.
-- **B:** She was too much. But there was no way to have less of her.
-
----
-
-## 21. SCREAMIN' JAY HAWKINS
-**Genre/Era:** Rhythm and blues / shock rock before shock rock existed, 1950s-2000
-
-**What made him special:**
-- **A:** Emerged from a coffin on stage decades before Alice Cooper or KISS, turned a love song into a voodoo incantation, and treated every performance like a seance run by someone who'd been drinking.
-- **B:** He came out of a coffin on stage. In the 1950s. His most famous song sounded like a spell. He carried a skull on a stick. The skull had a name. The skull's name was Henry.
-
-**What made him weird:**
-- **A:** Kept a smoking skull named Henry as his stage companion, wore a bone through his nose, and claimed to have fathered 75 children (a number that continued to grow posthumously as more came forward).
-- **B:** He talked to a skull during concerts. The skull was his friend. He also apparently had 75 children. He did not know about all of them.
-
-**How you'd identify him immediately:**
-- **A:** Cape, coffin, skull on a stick, and a face contorted into expressions that suggested he was channeling spirits or had very bad gas.
-- **B:** Man with a cape climbing out of a coffin. He has a skull. He is making a very strange face. This is his job.
-
-**The energy in one sentence:**
-- **A:** Invented theatrical rock by accident, just because his natural state was already a haunted house.
-- **B:** He was scary and funny at the same time and he did this before anyone else thought of it.
-
----
-
-## 22. SERGE GAINSBOURG
-**Genre/Era:** French chanson / provocateur / elegant filth, 1958-1991
-
-**What made him special:**
-- **A:** Chain-smoked his way through French culture like a dissolute philosopher with a melody, writing songs so filthy they got banned and so beautiful they made you cry, sometimes simultaneously.
-- **B:** French man who smoked constantly and wrote songs about sex. The songs were banned. They were also the most beautiful songs in France. Both things were true.
-
-**What made him weird:**
-- **A:** Recorded an orgasm duet with Jane Birkin that the Pope condemned, told Whitney Houston on live TV that he wanted to "fuck her" (in English, for clarity), and burned a 500-franc note on television to protest taxes.
-- **B:** He told Whitney Houston he wanted to have sex with her. On television. She was confused. He burned money on camera because he was angry about taxes. France still loves him.
-
-**How you'd identify him immediately:**
-- **A:** Perpetual cigarette, three-day stubble elevated to art form, and eyes that suggested everything in the world was both amusing and disappointing.
-- **B:** Man with cigarette who looks tired and dirty but in an attractive way. French people find this very appealing. Other countries are less sure.
-
-**The energy in one sentence:**
-- **A:** Made depravity sound like poetry and poetry sound like it needed a shower.
-- **B:** He was disgusting and brilliant and French, which explained everything.
-
----
-
-## 23. LIL WAYNE
-**Genre/Era:** Hip hop / cough syrup / skateboarding revelation, 2000-present
-
-**What made him special:**
-- **A:** Rapped with the fevered intensity of a man trying to fit every word he'd ever learned into every bar, treating the English language like a Rubik's Cube he was solving in real time.
-- **B:** He used words in ways that words had not been used before. He made connections between things that have no connection. It worked. Somehow, it worked.
-
-**What made him weird:**
-- **A:** Covered himself in tattoos including teardrops and the word "misunderstood" on his eyelids, took up skateboarding in his thirties with the earnestness of a twelve-year-old, and recorded thousands of songs with no apparent need for sleep or editing.
-- **B:** He has a tattoo on his eyelids. He learned to skateboard when he was already famous and old enough to know better. He fell down many times. He kept skateboarding.
-
-**How you'd identify him immediately:**
-- **A:** Dreadlocks, face tattoos, a styrofoam cup that everyone pretends is just a beverage, and a guitar he plays at concerts even though nobody asked.
-- **B:** Man with drawings on his face and long hair, holding a cup. He is rapping very fast. You cannot understand all the words but you know they are clever.
-
-**The energy in one sentence:**
-- **A:** Rapped like a man outrunning his own thoughts and losing beautifully.
-- **B:** His mouth was faster than his brain. But his brain was also fast. So it was fine.
-
----
-
-## 24. KATE BUSH
-**Genre/Era:** Art pop / interpretive everything / the Wuthering Heights of it all, 1978-present
-
-**What made her special:**
-- **A:** Danced like a woman possessed by a very literate ghost, sang in a soprano that could shatter glass and reassemble it into a snow globe, and disappeared from public life so completely she became a rumor.
-- **B:** She danced in a way that looked like she was fighting invisible wind. Her voice was very high. She disappeared for thirty-five years. Then a TV show used her song and teenagers discovered her. She was not surprised.
-
-**What made her weird:**
-- **A:** Performed "Wuthering Heights" on national television at age 19 while doing interpretive dance moves that suggested Heathcliff was an actual wind pattern, retired from touring for 35 years, then returned to perform shows that included a helicopter crash simulation.
-- **B:** She did not do concerts for thirty-five years. When she came back, she put a helicopter crash in the show. No one asked for a helicopter crash. It was brilliant.
-
-**How you'd identify her immediately:**
-- **A:** Billowing fabric, expressive hand movements that tell entire novels, and a voice that arrives from somewhere above the clouds and slightly to the left.
-- **B:** Woman in flowing clothes moving her arms like she is telling a story but the story is about the wind and the wind is sad.
-
-**The energy in one sentence:**
-- **A:** Made art pop feel like a secret between her and whichever moor she was channeling.
-- **B:** She made music for ghosts and the ghosts were grateful.
-
----
-
-## 25. RICK JAMES
-**Genre/Era:** Funk / cocaine's spokesperson / superfreak, 1978-2004
-
-**What made him special:**
-- **A:** Braided funk, punk, and unbridled hedonism into a career that burned twice as bright and roughly three times as destructively as anyone reasonable would allow.
-- **B:** He made very good dance music. He also did a lot of drugs. A lot. More than you are imagining. More than that.
-
-**What made him weird:**
-- **A:** Went AWOL from the Navy by fleeing to Canada, formed a band with Neil Young, wore cornrows and thigh-high boots before it was anyone's thing, and became more famous posthumously for Dave Chappelle's impression of him than for decades of actual hits.
-- **B:** He ran away from the Navy to Canada. He met Neil Young there. He wore boots that were very tall. He is now most famous because a comedian pretended to be him on television.
-
-**How you'd identify him immediately:**
-- **A:** Cornrows, leather, funk bass, and the grin of a man who's about to do something your mother warned you about.
-- **B:** Man with braids in leather pants, smiling like he has done something bad and enjoyed it.
-
-**The energy in one sentence:**
-- **A:** Cocaine is a hell of a drug, and he was a hell of a musician, and those two facts are inseparable.
-- **B:** He was talented and chaotic and it was impossible to have one without the other.
-
----
-
-## 26. DANIEL JOHNSTON
-**Genre/Era:** Lo-fi / outsider art / heartbreaking sincerity, 1980-2019
-
-**What made him special:**
-- **A:** Recorded masterpieces on a $50 boombox in his parents' basement, singing with a trembling voice that made vulnerability sound like the bravest thing in any room.
-- **B:** He recorded songs on a very cheap machine. The quality was terrible. The songs were perfect. Kurt Cobain wore his t-shirt. He still lived with his parents.
-
-**What made him weird:**
-- **A:** Handed out homemade cassettes at McDonald's, had a manic episode on a two-seater plane and pulled the keys from the ignition mid-flight (his father, the pilot, landed using backup power), and drew a frog named Jeremiah that became one of indie rock's most iconic symbols.
-- **B:** He pulled the keys out of an airplane while it was flying. His father was the pilot. They did not die. He also drew a frog that many people have tattooed on their bodies.
-
-**How you'd identify him immediately:**
-- **A:** Shy, round-faced man with a warbling voice, looking like someone's gentle uncle who happened to be a genius and knew it least of all.
-- **B:** Quiet man who looks nervous. Singing in a shaky voice. The song is the saddest thing you have ever heard. You want to hug him.
-
-**The energy in one sentence:**
-- **A:** Made outsider art feel like the only honest art and never once tried to.
-- **B:** He was not trying to be different. He was just different. The songs came out of the difference.
-
----
-
-## 27. NICKI MINAJ
-**Genre/Era:** Hip hop / pop / character-driven maximalism, 2010-present
-
-**What made her special:**
-- **A:** Rapped in seventeen voices, each a distinct character with its own accent, agenda, and apparent bone structure, turning every verse into a one-woman theater company on fast-forward.
-- **B:** She used many voices when she rapped. Each voice was a different person. One was British. One was a baby. One was very angry. She switched between them quickly. It was disorienting but impressive.
-
-**What made her weird:**
-- **A:** Created alter egos including Roman Zolanski (an angry British gay man living inside her), wore wigs in colors not found in nature's palette, and once performed an exorcism at the Grammys because subtlety was for other people.
-- **B:** She said a man named Roman lived inside her. He was British and angry. She pretended to have an exorcism at an awards show. The Catholic Church complained. She did not care.
-
-**How you'd identify her immediately:**
-- **A:** Wig in an impossible color, outfit that defies both physics and taste simultaneously, and a smirk that says she knows exactly what she's doing even when it looks like chaos.
-- **B:** Woman in bright wig and very tight clothes. She is rapping faster than seems possible. The wig is pink. Or green. Or both. It changes.
-
-**The energy in one sentence:**
-- **A:** Built a carnival inside hip hop and charged admission in attitude.
-- **B:** She was ten people in one body and all of them were loud.
-
----
-
-## 28. IAN CURTIS
-**Genre/Era:** Post-punk / existential dread you can dance to, 1977-1980
-
-**What made him special:**
-- **A:** Channeled an entire generation's alienation through a baritone so deep it seemed to come from underneath the floorboards, making despair sound like the only honest response to modern life.
-- **B:** He sang very low and very sadly. The songs were about feeling nothing. Many people who also felt nothing appreciated this. He was twenty-three.
-
-**What made him weird:**
-- **A:** Danced like a man being electrocuted by his own emotions — a spastic, jerking, hypnotic flail that people mistakenly attributed to style when it was actually the early signs of his epilepsy manifesting on stage.
-- **B:** He danced very strangely. People thought it was art. It was partially a medical condition. This is very sad. The dancing was still beautiful.
-
-**How you'd identify him immediately:**
-- **A:** Grey overcoat, blank stare, and movements that suggested his body was receiving transmissions from somewhere deeply uncomfortable.
-- **B:** Young man in a grey coat, staring at nothing. Moving like a broken puppet. He looks like he needs help. The audience is dancing.
-
-**The energy in one sentence:**
-- **A:** Made three years of music that sounded like the end of the world, and for him it was.
-- **B:** He sang about the end of things and then he ended. He was only twenty-three.
-
----
-
-## 29. JANELLE MONAE
-**Genre/Era:** Afrofuturism / funk / android liberation theology, 2007-present
-
-**What made her special:**
-- **A:** Built an entire mythology about an android in a dystopian future as a metaphor for Black womanhood, then dressed exclusively in black and white tuxedos like a time-traveling conductor of the revolution.
-- **B:** She pretended to be a robot in her songs. The robot was about being Black in America. She only wore black and white clothes. Like a penguin. A very cool penguin who could sing and also act.
-
-**What made her weird:**
-- **A:** Created a multi-album science fiction saga with a recurring android protagonist, wore vagina pants to the Grammys, and maintained a tuxedo-only dress code for years as a tribute to her parents' working-class uniforms.
-- **B:** She wore pants shaped like body parts to a fancy party. She also wrote a science fiction story that lasted five albums. The story was about a robot falling in love. The robot was her.
-
-**How you'd identify her immediately:**
-- **A:** Black-and-white tuxedo, pompadour, and the electric smile of someone who knows the future is going to be funky.
-- **B:** Person in a suit with very good hair. Smiling like the future is going to be good. Dancing like they have already been there.
-
-**The energy in one sentence:**
-- **A:** Made protest music you could two-step to and science fiction you could feel in your chest.
-- **B:** She fought for freedom while dancing. Both activities were excellent.
-
----
-
-## 30. ALICE COOPER
-**Genre/Era:** Shock rock / golf / the nicest villain in rock, 1969-present
-
-**What made him special:**
-- **A:** Married horror movies to rock and roll, got guillotined nightly on stage, and then went golfing the next morning like a perfectly normal retired suburban gentleman who happens to have seventeen pythons.
-- **B:** He pretended to die on stage every night. With a guillotine. Then he woke up the next day and played golf. He is reportedly a very nice person. The snake is real.
-
-**What made him weird:**
-- **A:** Brought live snakes, electric chairs, baby dolls, and gallows to the stage in an era when the Rolling Stones were considered dangerous for having long hair.
-- **B:** He used a snake and a fake dead baby in his concert. This was in the 1970s. People were very shocked. Now he plays golf with businessmen. He is still using the snake.
-
-**How you'd identify him immediately:**
-- **A:** Black eye makeup smeared like a raccoon in a thunderstorm, top hat, and a boa constrictor draped casually around his neck like a very long, very alive scarf.
-- **B:** Man with black makeup around his eyes. There is a snake on him. He seems comfortable with the snake. The snake seems comfortable with him.
-
-**The energy in one sentence:**
-- **A:** Built a career on scaring parents and being the kind of neighbor who always returns your lawnmower.
-- **B:** He looked like a villain but was a gentleman. The snake was also polite.
-
----
-
-## 31. BILLIE EILISH
-**Genre/Era:** Pop / whisper-singing / oversized everything, 2019-present
-
-**What made her special:**
-- **A:** Whispered her way to global domination from her childhood bedroom, wearing clothes five sizes too big like armor against an industry that wanted her to shrink.
-- **B:** She sang very quietly and became very famous. She wore very large clothes. The clothes were too big on purpose. She was a teenager. She won all the awards.
-
-**What made her weird:**
-- **A:** Recorded a Grammy-winning album in her brother's tiny bedroom, wore neon green roots like a hazmat warning label, and talked openly about sleep paralysis and lucid dreaming as creative tools.
-- **B:** She made the best album of the year in a room that was very small. Her hair was green at the roots. She said ghosts visited her while she slept and this helped with songwriting.
-
-**How you'd identify her immediately:**
-- **A:** Baggy everything, expression suggesting she finds your enthusiasm exhausting, and a voice that sounds like a secret being told to the back of your skull.
-- **B:** Teenager in clothes that are too big. Looking slightly bored. Singing so quietly you must lean in. This is the trick. The leaning in.
-
-**The energy in one sentence:**
-- **A:** Made whispering louder than screaming and baggy clothes more provocative than nudity.
-- **B:** She was quiet and it was the loudest thing in the room.
-
----
-
-## 32. BOOTSY COLLINS
-**Genre/Era:** Funk / Parliament-Funkadelic / interstellar bass tourism, 1970-present
-
-**What made him special:**
-- **A:** Played bass like it was a sentient creature from a planet where funk is the primary language, wearing star-shaped glasses and a cape because funk demands formal wear.
-- **B:** He played bass guitar very well. He wore star glasses. He was in a band that pretended to be from outer space. The bass playing was real. The outer space was metaphorical. The glasses were real.
-
-**What made him weird:**
-- **A:** Wore platform boots that added a foot of height, star-shaped sunglasses in every color, and played a bass shaped like a star because his entire personality was "what if bass guitar, but extraterrestrial?"
-- **B:** His boots were very tall. His glasses were stars. His guitar was also a star. Everything was stars. He was very committed to stars.
-
-**How you'd identify him immediately:**
-- **A:** Star-shaped glasses, cape, platform boots, and a bass guitar that looked like it was designed by a funky five-year-old with access to NASA funding.
-- **B:** Man wearing stars on his face. Playing bass. Smiling enormously. Everything about him is shiny.
-
-**The energy in one sentence:**
-- **A:** Made bass guitar the funniest, funkiest, most joyful instrument on the planet and dressed accordingly.
-- **B:** He played bass and smiled and wore stars and that was enough to make people very happy.
-
----
-
-## 33. YOKO ONO
-**Genre/Era:** Avant-garde / conceptual art / the most blamed woman in music, 1961-present
-
-**What made her special:**
-- **A:** Was making conceptual art that confused and infuriated people decades before performance art had a name, then married a Beatle and got blamed for the decline of Western civilization.
-- **B:** She made art before art like this existed. Then she married John Lennon. Then everyone blamed her for everything. She kept making art. She did not care what people thought.
-
-**What made her weird:**
-- **A:** Once performed a piece where audience members cut off her clothing with scissors, screamed into microphones as a form of musical expression, and made an 80-minute film of 365 human backsides.
-- **B:** She let strangers cut her clothes off with scissors. This was art. She screamed and called it music. She filmed many human bottoms. She was very serious about all of these things.
-
-**How you'd identify her immediately:**
-- **A:** Round sunglasses, black hair, and the serene confidence of someone who was right about everything forty years too early.
-- **B:** Small Japanese woman in round glasses. She looks calm. She is about to scream. The scream is on purpose.
-
-**The energy in one sentence:**
-- **A:** Made art so far ahead of its time that people are still arguing about whether it was art.
-- **B:** She was right. Everyone was just early to being angry about it.
+- **A:** Graduated from shock-rap provocateur to pastel-suited auteur without anyone quite seeing the pivot. Made albums that tracked his emotional evolution in real time — from basement anger to Igor's heartbroken falsetto to luxury-soaked bloom.
+- **B:** He started by being very shocking and rude. Then he became very stylish and emotional. Now he wears flowers and pastels and sings about love. This change happened slowly and then all at once.
+
+**What made him weird/identifiable:**
+- **A:** Gap-toothed, cherry-bomb-throwing, fashion-brand-founding polymath who directed his own everything and made "Earfquake" sound like what a sunset would sound like if it had abandonment issues.
+- **B:** His teeth have a gap. He designs his own clothes. He directs his own videos. He named an album after a flower. He shouts and also whispers. He is his own creative director and also his own problem.
+
+**Energy in one sentence:**
+- **A:** A Technicolor tantrum that matured into a cashmere masterpiece.
+- **B:** He grew up in front of everyone and the growing up was the art.
 
 ---
 
 ## 34. LIL NAS X
-**Genre/Era:** Hip hop / pop / country (briefly) / meme-to-mogul pipeline, 2019-present
+**Genre/Era:** Pop / hip hop, 2019-present
 
 **What made him special:**
-- **A:** Turned a meme into a number-one hit, came out as gay on the last day of Pride Month, and gave Satan a lap dance in his music video because subtlety is for people without plans.
-- **B:** He made a song that was a joke and it became the most popular song in America. Then he said he was gay. Then he danced on the Devil. The order of events was important.
+- **A:** Meme'd his way to a diamond record, slid down a pole to hell in his music video, then kissed a man at the BET Awards and watched the internet eat itself. Made queerness in hip-hop look less like a statement and more like a dare.
+- **B:** He made a cowboy song on the internet and it became the biggest song. Then he made a video where he goes to hell and dances with the devil. Then he kissed a man on TV. He does things that make people very upset and he thinks this is very funny.
 
-**What made him weird:**
-- **A:** Released a pair of "Satan Shoes" containing human blood, performed at the BET Awards and kissed a male dancer on stage, and trolled conservatives so effectively they became his best marketing team.
-- **B:** He put blood in shoes. Human blood. He sold the shoes. People were very angry. He made more money because they were angry. He understood the internet better than the internet.
+**What made him weird/identifiable:**
+- **A:** Cowboy-hat-to-Satan's-lap pipeline, weaponized Twitter troll who turned every controversy into a marketing masterclass. Made homophobes promote his album by accident, repeatedly.
+- **B:** He wears cowboy hats. He trolls people on Twitter who are mad at him. Every time someone says something bad about him, his music sells more. He has figured out a system. The system is: make people angry, sell records.
 
-**How you'd identify him immediately:**
-- **A:** Shirtless in something fabulous, grinning with the specific joy of a man who knows exactly which buttons he's pushing and has brought extra fingers.
-- **B:** Young man wearing very little clothing. Smiling. He has just made someone angry on purpose and he is enjoying it very much.
-
-**The energy in one sentence:**
-- **A:** Weaponized joy against bigotry and made homophobes fund his empire through hate-clicks.
-- **B:** He made people angry and then he thanked them for the attention. They did not know how to respond.
+**Energy in one sentence:**
+- **A:** A viral sensation who refused to be temporary and made permanence look effortless.
+- **B:** He came from the internet and he understands the internet better than the internet understands itself.
 
 ---
 
-## 35. CAPTAIN BEEFHEART
-**Genre/Era:** Avant-rock / blues / hostile surrealism, 1964-1982
-
-**What made him special:**
-- **A:** Composed music by humming parts to musicians who had no idea what time signature they were in, creating an organized chaos that sounded like a blues band falling down stairs in perfect harmony.
-- **B:** He made music that sounded like a mistake but was planned. Every note was on purpose. The purpose was confusing. The musicians were confused. The audience was confused. He was not confused.
-
-**What made him weird:**
-- **A:** Locked his band in a house for eight months to rehearse, surviving on minimal food while he controlled every aspect of their lives, made a double album in four hours because his masterpiece was already perfect in his head, and retired to become a painter because music had gotten boring.
-- **B:** He kept his band in a house and did not let them leave. For eight months. He did not feed them very well. Then he recorded an album in four hours. Then he quit music to paint. The paintings were also confusing.
-
-**How you'd identify him immediately:**
-- **A:** Big man in a top hat howling lyrics about squid and electricity, surrounded by musicians who look mildly traumatized.
-- **B:** Large man wearing a hat, shouting about animals. The band members look like they have not slept. They have not. He would not let them.
-
-**The energy in one sentence:**
-- **A:** Made music that sounded like nothing before or since, mostly because no one else was willing to starve a band into genius.
-- **B:** He invented a kind of music. No one else wanted to make that kind of music. This did not bother him.
-
----
-
-## 36. PEACHES
-**Genre/Era:** Electroclash / feminist filth / genital-forward pop, 2000-present
+## 35. NICKI MINAJ
+**Genre/Era:** Hip hop / pop, 2007-present
 
 **What made her special:**
-- **A:** Made electro-punk about genitalia with the academic rigor of a women's studies professor and the delivery of someone who just kicked down your door to tell you about it.
-- **B:** She made electronic music about body parts. She was very direct about which body parts. She was a music teacher before this. The career change was dramatic.
+- **A:** Fractured herself into a dozen characters — Roman Zolanski, Harajuku Barbie, the Queen — and rapped in all their voices, sometimes in the same verse. Made female rap feel like a one-woman theater troupe with a grudge and a platinum wig collection.
+- **B:** She has many characters inside her and they each have a name and a voice. She switches between them in the middle of a song. She has very many wigs. Pink ones. She decided she was a queen and everyone agreed or they were wrong.
 
-**What made her weird:**
-- **A:** Performed in a leotard made of hair, wore a beard of glitter, and once played a concert where she emerged from a giant pair of inflatable legs giving birth to herself.
-- **B:** She wore a suit made of hair. Not her hair. Costume hair. She also pretended to be born from giant legs on stage. This was a Wednesday for her.
+**What made her weird/identifiable:**
+- **A:** Barbie-pink provocateur with a British alter ego, anime cosplay wardrobe, and a flow that could pivot from nursery rhyme to machete in the time it takes to blink.
+- **B:** She talks in silly voices during her songs and it sounds like she is joking but she is actually rapping very well. She dresses like a cartoon character. She has a British accent sometimes. It is not real but it is hers.
 
-**How you'd identify her immediately:**
-- **A:** Something confrontational on her body, a sneer on her face, and beats that sound like a sex-positive blender in a nightclub.
-- **B:** Woman in a strange outfit making aggressive music about bodies. She is not embarrassed. You might be embarrassed. She does not care.
-
-**The energy in one sentence:**
-- **A:** Made sexual liberation sound like a punk record and a punk record sound like a gender studies class.
-- **B:** She talked about sex like it was a political act and politics like it was sex. Both were loud.
+**Energy in one sentence:**
+- **A:** A kaleidoscope in stilettos, spinning between personas at the speed of a punchline.
+- **B:** She is many people at once and all of them are very confident and very loud.
 
 ---
 
-## 37. JAMES BROWN
-**Genre/Era:** Funk / soul / the Hardest Working Man in Show Business, 1956-2006
-
-**What made him special:**
-- **A:** Invented funk by being too impatient to wait for the beat to arrive, sweated through three capes per show, and danced in ways that made the laws of physics file a formal complaint.
-- **B:** He invented a type of music because he could not sit still. He danced so hard he needed many capes because he sweated through them. His feet moved faster than your eyes could follow.
-
-**What made him weird:**
-- **A:** Led police on a two-state car chase while high on PCP, performed split drops in his sixties with the flexibility of a man half his age, and fined band members for wrong notes — deducting from their pay in real time.
-- **B:** He took money from his musicians if they played a wrong note. During the concert. Real money. They played correctly. He also led police on a car chase. Twice. He was a complicated person.
-
-**How you'd identify him immediately:**
-- **A:** Pompadour processed to within an inch of its life, cape being dramatically removed and replaced, and feet doing things that suggest he's been secretly boneless this entire time.
-- **B:** Man with very shiny hair, being wrapped in a cape and then unwrapped from the cape. His feet are moving in a way that seems impossible. It is not impossible. He practiced.
-
-**The energy in one sentence:**
-- **A:** Worked harder than God and sweated harder than everyone.
-- **B:** He was the hardest worker. This is what he said. It was true. Nobody worked harder. He made sure.
-
----
-
-## 38. DIAMANDA GALAS
-**Genre/Era:** Avant-garde / gothic / vocal terrorism, 1979-present
+## 36. CARDI B
+**Genre/Era:** Hip hop / pop, 2017-present
 
 **What made her special:**
-- **A:** Weaponized a four-octave voice into a scream that could curdle blood, bore witness, and make an entire concert hall question its relationship with the divine.
-- **B:** She screamed in a way that made people feel things they did not want to feel. Her voice could go very high and very low. She used both extremes. Neither was comfortable.
+- **A:** Cartwheeled from stripper to reality TV to diamond-certified rapper without ever adjusting her volume or apologizing for any of it. Made unfiltered Bronx energy into a luxury brand.
+- **B:** She was a stripper. Then she was on television. Then she was the biggest rapper. She did not change at any point. She is the same person at every level of fame. She is very loud and this is who she is.
 
-**What made her weird:**
-- **A:** Covered herself in blood to perform songs about the AIDS crisis, sang entire operas alone for three hours, and once described her work as "the music of the plague."
-- **B:** She put blood on herself for concerts. The concerts were about AIDS. They lasted three hours. She was the only performer. This was in the 1980s when no one wanted to talk about AIDS. She screamed about it.
+**What made her weird/identifiable:**
+- **A:** Tongue-out, nail-clacking, okurrr-rolling force of nature who Instagram-ranted her way into the zeitgeist and stayed there through sheer force of personality and one perfect album.
+- **B:** She makes a sound with her tongue — "okurrr." Her nails are very long and very decorated. She talks on Instagram for a long time about things that make her angry. She is angry a lot. People love this.
 
-**How you'd identify her immediately:**
-- **A:** Black everything, blood (sometimes), and a voice that sounds like a cathedral collapsing on a prayer.
-- **B:** Woman in black. There may be blood. She is screaming. It is not entertainment. It is a warning.
-
-**The energy in one sentence:**
-- **A:** Made horror a hymn and grief a weapon and aimed both at anyone who looked away.
-- **B:** She screamed because the world was terrible and someone needed to scream about it.
+**Energy in one sentence:**
+- **A:** A bodega argument that went platinum.
+- **B:** She yells and people listen because she is right and also because she is funny when she yells.
 
 ---
 
-## 39. DEE DEE RAMONE
-**Genre/Era:** Punk / the Ramones / beautiful simplicity weaponized, 1974-2002
-
-**What made him special:**
-- **A:** Counted to four faster than anyone in recorded history and turned three chords into a revolution, proving that overthinking was the enemy of everything good.
-- **B:** He counted "one-two-three-four" before every song. He did this hundreds of times. It was always the same. It was always perfect. The songs were short. The counting was essential.
-
-**What made him weird:**
-- **A:** Briefly pursued a career as a rapper named Dee Dee King (it was exactly as catastrophic as it sounds), lived in a state of cheerful chaos, and wrote the majority of the Ramones' songs while being the member most likely to wander off mid-conversation.
-- **B:** He tried to become a rapper. His rapper name was Dee Dee King. It was very bad. He went back to punk. This was the correct decision.
-
-**How you'd identify him immediately:**
-- **A:** Bowl cut, leather jacket, ripped jeans, and the wide-eyed expression of someone who is both extremely punk and extremely confused about why.
-- **B:** Man in leather jacket with hair like a bowl was placed on his head. Counting to four. Loudly.
-
-**The energy in one sentence:**
-- **A:** Proved that three chords, a count-off, and total commitment were worth more than a music degree.
-- **B:** He could only do a little. But he did the little harder than anyone did a lot.
+# PUNK / POST-PUNK / ALT
 
 ---
 
-## 40. GRACE SLICK
-**Genre/Era:** Psychedelic rock / Jefferson Airplane/Starship / acid aristocracy, 1965-1989
+## 37. SIOUXSIE SIOUX
+**Genre/Era:** Post-punk / goth, 1976-present
 
 **What made her special:**
-- **A:** Sang "White Rabbit" like a woman delivering a pharmacological manifesto to the Queen of Hearts, with a voice that could slice through a wall of feedback like a hot knife through tie-dye.
-- **B:** She sang about drugs using a children's story. The children's story was Alice in Wonderland. She made it sound dangerous. It was dangerous. She was invited to the White House.
+- **A:** Drew the blueprint for goth in eyeliner so sharp it could puncture timelines. Took Weimar cabaret, punk snarl, and Egyptian geometry and built a religion out of looking magnificent while sounding like a cathedral on fire.
+- **B:** She invented the goth look — very dark eyes, very pale face, very black hair. She looked like an Egyptian queen who was also punk. Her music sounds like a beautiful church that is haunted.
 
-**What made her weird:**
-- **A:** Was invited to a White House tea party by Tricky Dick Nixon and planned to dose him with LSD (she was stopped at the door), once walked onstage in blackface as a commentary on racism (a strategy with, shall we say, mixed results), and quit music to become a painter because she felt rock and roll was "for young people."
-- **B:** She tried to give the President drugs. At his own house. She was caught. She also decided rock music was only for young people and stopped. She was correct but no one else agreed.
+**What made her weird/identifiable:**
+- **A:** Kohl-drenched, spider-web-stockinged ice queen with a voice that swooped between banshee wail and velvet purr. Every outfit a declaration of war on beige.
+- **B:** Her eye makeup takes a very long time. She wears stockings with spider webs. Her voice goes very high and very low. She never smiles in photos. This is not because she is sad. This is because smiling is not what she does.
 
-**How you'd identify her immediately:**
-- **A:** Dark hair, striking features, and the posture of someone who considers herself visiting from a more interesting timeline.
-- **B:** Beautiful woman standing very straight, looking at you like she is from the future and the future is disappointing.
-
-**The energy in one sentence:**
-- **A:** Made psychedelia sound like a dare and treated the counterculture like it was a formal dinner she was about to ruin.
-- **B:** She was the most dangerous person at the party and she was not trying.
+**Energy in one sentence:**
+- **A:** Egyptian royalty reborn in a London squat with impeccable bone structure and zero tolerance for the mundane.
+- **B:** She looks like she is from a very old and very dark country that does not exist, and she is the queen of it.
 
 ---
 
-## 41. ODB (OL' DIRTY BASTARD)
-**Genre/Era:** Hip hop / Wu-Tang / chaos incarnate, 1992-2004
+## 38. IAN CURTIS
+**Genre/Era:** Post-punk, 1977-1980
 
 **What made him special:**
-- **A:** Rapped like a man wrestling his own stream of consciousness and losing gloriously, turning every verse into a jazz improvisation played on a broken instrument.
-- **B:** He rapped but the rapping did not follow rules. He went where the words took him. The words took him to very strange places. He seemed happy there.
+- **A:** Channeled epileptic seizures into a dance style, existential dread into anthems, and a baritone deeper than the void he was staring into. Made Joy Division sound like the weather forecast for the end of the world — precise, inevitable, impossible to ignore.
+- **B:** He had a sickness that made his body move in ways he could not control, and he made this into his dancing. His voice was very deep. His songs were very sad. He was very young.
 
-**What made him weird:**
-- **A:** Picked up his welfare check in a limousine with an MTV camera crew, crashed the Grammys stage to declare that Wu-Tang was for the children, and gave himself a name that suggested his fighting style had no father.
-- **B:** He went to collect his government money in a very expensive car. With cameras. He did not see the contradiction. Or he saw it perfectly. It is hard to know which.
+**What made him weird/identifiable:**
+- **A:** Trench-coated, hollow-eyed baritone who danced like a man being electrocuted by his own sadness. Stood stock-still, then erupted into flailing convulsions that blurred the line between performance and medical emergency.
+- **B:** He wore a long coat. His eyes looked empty. He stood very still and then suddenly he moved in a very strange way. People did not know if it was dancing or if something was wrong. It was both.
 
-**How you'd identify him immediately:**
-- **A:** Wild eyes, wilder hair, and the energy of a man who just remembered something urgent but can't quite place what it is.
-- **B:** Man with big eyes looking excited about something. He is not sure what. You are not sure either. Everyone is having a good time anyway.
-
-**The energy in one sentence:**
-- **A:** Lived every day like a man who just discovered that chaos was a valid lifestyle and no one could stop him.
-- **B:** He was a mess but the mess was on purpose and also by accident and both at the same time.
+**Energy in one sentence:**
+- **A:** A transmission from the frequency where beauty and despair share a wavelength.
+- **B:** He was very sad and he made the sadness into something you wanted to listen to, and then he was gone.
 
 ---
 
-## 42. DAVID BYRNE
-**Genre/Era:** New wave / Talking Heads / the thinking man's alien, 1975-present
-
-**What made him special:**
-- **A:** Made art rock for people who were afraid of art rock, twitching and jerking across stages in an enormous suit like a man trying to escape his own skeleton while explaining postmodern theory.
-- **B:** He wore a suit that was too big. Much too big. He danced like he did not know how his arms worked. He was very smart. The combination of big suit and smart was his thing.
-
-**What made him weird:**
-- **A:** Wore a suit four times his size in *Stop Making Sense* because he wanted to look like a building, asked "How did I get here?" with the genuine confusion of a man who might actually not know, and rode a bicycle everywhere like a millionaire who never got the memo about cars.
-- **B:** He wore the big suit because he wanted to look like a house. He rides a bicycle. He is very rich. He still rides the bicycle. He asks questions in his songs. He does not seem to know the answers. The audience does not know either.
-
-**How you'd identify him immediately:**
-- **A:** Twitchy, wide-eyed, and dressed like either a professor or a very well-read alien, with movements that suggest his body is being operated by remote control from another room.
-- **B:** Thin man moving strangely. Looks like he is thinking about seven things at once. He is. Only two of them are about the concert.
-
-**The energy in one sentence:**
-- **A:** Made weirdness feel like the most normal thing in the room by committing to it completely.
-- **B:** He was strange in a way that made normal people realize they were also strange.
-
----
-
-## 43. M.I.A.
-**Genre/Era:** World-pop / political grenades over dance beats, 2005-present
+## 39. PATTI SMITH
+**Genre/Era:** Punk / poetry, 1974-present
 
 **What made her special:**
-- **A:** Mixed Tamil Tigers with dance beats, truffle fries with revolutionary politics, and a middle finger at the Super Bowl with the precision of a diplomat.
-- **B:** She made music about war that you could dance to. She showed her middle finger at the most watched TV event in America. She was eating french fries at the time. Very expensive french fries.
+- **A:** Fused Rimbaud and three-chord rock into something that made poetry feel dangerous again. Made "Horses" sound like a sermon, a dare, and a love letter to everything that didn't fit.
+- **B:** She is a poet who also does rock music. She made them into one thing. Her most famous album starts with "Jesus died for somebody's sins but not mine." She was not joking.
 
-**What made her weird:**
-- **A:** Made an entire album using sounds recorded in her iPhone, got nominated for an Oscar while nine months pregnant and performed at the Grammys three days before giving birth, and documented a civil war on Twitter before Twitter knew it was a news platform.
-- **B:** She nearly had a baby on stage at the Grammys. She was nine months pregnant. She performed anyway. The baby waited. The baby was polite.
+**What made her weird/identifiable:**
+- **A:** Rat-nest hair, ripped t-shirts, androgynous angles — looked like a beautiful feral cat who'd been reading French poetry in a dumpster. Keith Richards' cheekbones on Rimbaud's frame.
+- **B:** Her hair is always messy. She is very thin. She wears t-shirts with holes. She looks like she does not own a mirror but she also looks exactly right. She is old now and she still looks exactly right.
 
-**How you'd identify her immediately:**
-- **A:** Neon colors, political slogans, and the energy of someone who just smuggled a manifesto into a nightclub and is waiting for you to notice.
-- **B:** Woman in bright colors looking like she has a secret. The secret is political. The outfit is not. The combination works.
-
-**The energy in one sentence:**
-- **A:** Made protest music for the dance floor and dared the dance floor to think about it.
-- **B:** She mixed fun and revolution and did not see why these were supposed to be separate things.
+**Energy in one sentence:**
+- **A:** A lit match in a library — illuminating everything, threatening to burn it all down.
+- **B:** She is a poet and a punk and she proved these are the same thing.
 
 ---
 
-## 44. GARY NUMAN
-**Genre/Era:** Synth-pop / industrial / the first android pop star, 1979-present
+## 40. MORRISSEY
+**Genre/Era:** Post-punk / indie, 1982-present
 
 **What made him special:**
-- **A:** Made synthesizers sound like the apocalypse had a dress code, arriving on Top of the Pops looking like a robot who'd been granted one evening of shore leave from the future.
-- **B:** He used a keyboard to make music that sounded like a machine was sad. He looked like a machine. A sad machine. It was very popular.
+- **A:** Made celibacy, gladioli, and chronic misery into the most charismatic personality in indie rock. Sang like Oscar Wilde trapped in a Salford bedsit, waving flowers at audiences who adored being insulted.
+- **B:** He is sad and he sings about being sad and lonely and people who are also sad and lonely love him very much for this. He waves flowers during concerts. He does not like meat. He has many opinions.
 
-**What made him weird:**
-- **A:** Has Asperger's and used his social discomfort as an aesthetic, flew planes around the world as a hobby, and went bankrupt then came back stronger three decades later because giving up requires a social awareness he didn't have.
-- **B:** He could not read social situations. He made this into a style. He looked blank and sang about cars and loneliness. Then he flew airplanes around the world. He is still making music. He never stopped.
+**What made him weird/identifiable:**
+- **A:** Quiff-coiffed, hearing-aid-wearing, deliberately-celibate contrarian who stuffed gladioli in his back pocket and his foot in his mouth with equal regularity. Made moping into a competitive sport.
+- **B:** His hair is always up in the front. He wore a hearing aid as a fashion choice. He puts flowers in his pants. He says things that make people very angry but he sings things that make people cry and so they keep listening.
 
-**How you'd identify him immediately:**
-- **A:** White face paint, black clothes, and the thousand-yard stare of someone who doesn't understand why you're making small talk when there are synthesizers to be programmed.
-- **B:** Pale man with dark makeup staring straight ahead. He does not blink enough. He is playing a keyboard. He seems to prefer the keyboard to the audience.
-
-**The energy in one sentence:**
-- **A:** Made alienation the most danceable feeling in electronic music.
-- **B:** He was uncomfortable around people so he made music about being uncomfortable around people and people loved it.
+**Energy in one sentence:**
+- **A:** A gladiolus thrown at the feet of an audience he simultaneously adores and despises.
+- **B:** He hates everything and everyone loves him for it, and this is a problem he has created for himself.
 
 ---
 
-## 45. COURTNEY LOVE
-**Genre/Era:** Grunge / punk / tabloid inferno, 1989-present
+## 41. NICK CAVE
+**Genre/Era:** Post-punk / gothic / alternative, 1977-present
+
+**What made him special:**
+- **A:** Preached fire-and-brimstone from a pulpit made of piano keys and murder ballads. Made violence beautiful, love terrifying, and Sunday school feel like a Nick Cave album all along.
+- **B:** He sings about God and death and murder and love and sometimes all in the same song. He plays piano while doing this. He is very tall and very thin and very serious.
+
+**What made him weird/identifiable:**
+- **A:** Gaunt-faced, suit-clad Southern Gothic preacher from Australia, with a mustache like a horseshoe and a catalogue of murder ballads that made Cormac McCarthy look like a children's author.
+- **B:** He is Australian but he sounds like he is from the old American South. He wears black suits. His mustache goes down. He writes songs where people die and it is sad and beautiful. He talks in interviews very slowly like every word is expensive.
+
+**Energy in one sentence:**
+- **A:** A sermon delivered in a burning church by a man who set the fire and regrets nothing.
+- **B:** He is the most serious man in music and the seriousness is not a performance. He means every word. Every word.
+
+---
+
+## 42. PJ HARVEY
+**Genre/Era:** Alt rock / art rock, 1991-present
 
 **What made her special:**
-- **A:** Played guitar like she was punishing it for something, sang like mascara tastes when it runs, and turned a smeared-lipstick look into a feminist war paint that launched a thousand arguments.
-- **B:** She played guitar angrily. Her makeup was always smeared. She did this on purpose. Or she did not have time to fix it. Both explanations are equally likely.
+- **A:** Shapeshifted from blues-howling guitar demon to feather-boa'd glamour witch to war-poet laureate without anyone's permission. Made each reinvention feel less like a costume change and more like a possession.
+- **B:** She changes who she is for every album. One time she is playing guitar very loud. Next time she is wearing pink feathers. Next time she is singing about wars. Each time she is completely different and completely herself.
 
-**What made her weird:**
-- **A:** Threw things at audiences, gave rambling press conferences that were either genius or unhinged (the line was never clear), and managed to be simultaneously the most dismissed and most discussed woman in 90s rock.
-- **B:** She threw objects at people during concerts. She said things in interviews that made no sense. Then they made sense three years later. Then they stopped making sense again. This cycle continues.
+**What made her weird/identifiable:**
+- **A:** Razor-cheekboned chameleon who could wail like a banshee in combat boots, then show up in a feathered catsuit for the next record cycle. Won the Mercury Prize twice — nobody does that.
+- **B:** Her face is very sharp. Her voice can be very soft or very loud. She won a very important prize two times. Nobody wins it two times. She won it because each time she was a completely different kind of musician.
 
-**How you'd identify her immediately:**
-- **A:** Smeared red lipstick, torn vintage dress, and the energy of someone who crashed their own party and isn't leaving until she's said what she came to say.
-- **B:** Woman in a ripped dress with red lipstick on her face. Not on her lips. On her face. She is yelling. She may be right about what she is yelling about.
-
-**The energy in one sentence:**
-- **A:** Burned brighter and messier than anyone gave her credit for, and the mess was the point.
-- **B:** She was a disaster but the disaster made a sound and the sound was good.
+**Energy in one sentence:**
+- **A:** A controlled demolition in lipstick — each album a different building, each one brought down with elegant precision.
+- **B:** She destroys what she made before and builds something new and this is why she is still interesting after thirty years.
 
 ---
 
-## 46. WESLEY WILLIS
-**Genre/Era:** Outsider rock / one-man keyboard assault / Chicago legend, 1989-2003
-
-**What made him special:**
-- **A:** Wrote over a thousand songs on a cheap Technics keyboard, all in the same structure, each one a sincere tribute or a creative evisceration, delivered with the unbridled enthusiasm of a man who loved rock and roll more than rock and roll loved itself.
-- **B:** He wrote songs using one keyboard. He wrote more than one thousand songs. Every song sounded the same. Every song was different. He headbutted people as a greeting. He meant it kindly.
-
-**What made him weird:**
-- **A:** Every song began with the same keyboard demo, ended with a brand jingle ("Rock over London, rock on Chicago — Wheaties, breakfast of champions"), and was titled exactly what it was about ("I Whupped Batman's Ass").
-- **B:** His songs ended with advertisements. For real products. No one paid him to do this. He just liked the products. He also said he beat up Batman. He did not beat up Batman.
-
-**How you'd identify him immediately:**
-- **A:** Very large man with a keyboard, a permanent headbutt bruise on his forehead, and the widest smile in any room he entered.
-- **B:** Big man with a keyboard and a bump on his forehead from headbutting people he liked. He liked many people. The bump was large.
-
-**The energy in one sentence:**
-- **A:** Loved rock and roll with a purity that made cynicism impossible.
-- **B:** He just liked music. More than anyone. More than was normal. It was wonderful.
-
----
-
-## 47. SHABAZZ PALACES
-**Genre/Era:** Experimental hip hop / astral projection with a beat, 2009-present
-
-**What made them special:**
-- **A:** Made hip hop that sounded like it was being broadcast from a dimension adjacent to this one — close enough to recognize, far enough to feel like you were eavesdropping on something private.
-- **B:** They made rap music that came from a nearby universe. Not this universe. A different one. Close but different. You could hear both universes at the same time. It was disorienting.
-
-**What made them weird:**
-- **A:** Ishmael Butler — formerly of Digable Planets — reinvented himself as a cosmic nomad, releasing music with no interviews, no explanations, and song titles that read like intercepted alien transmissions.
-- **B:** The main person used to be in a famous group. He left and started a new group that no one understood. He does not explain the music. The song titles are not in normal language. He does not care if you understand.
-
-**How you'd identify them immediately:**
-- **A:** Cloaked in darkness, bathed in projection, making beats that feel like they're happening behind your eyes rather than in your ears.
-- **B:** People standing in dark light making sounds that are somewhere between music and a dream you cannot remember.
-
-**The energy in one sentence:**
-- **A:** Made hip hop from the corner of your peripheral vision and dared you not to look directly at it.
-- **B:** They made music that was almost invisible and this made it impossible to ignore.
-
----
-
-## 48. DAVID LEE ROTH
-**Genre/Era:** Hard rock / Van Halen / spandex philosophy, 1974-present
-
-**What made him special:**
-- **A:** High-kicked, split-jumped, and hair-tossed his way through arena rock with the confidence of a man who genuinely believed he was the greatest entertainer alive, which — for the duration of any given performance — he absolutely was.
-- **B:** He jumped very high and kicked his legs apart while jumping. He did this in tight pants. He was very confident. His confidence was so large it filled stadiums. This is not a metaphor.
-
-**What made him weird:**
-- **A:** Published a 500-page autobiography that read like a fever dream, became an EMT in New York City after leaving Van Halen because he "wanted to help people," and once explained his creative philosophy using a metaphor involving water buffaloes.
-- **B:** After being very famous he became an ambulance driver. Because he wanted to. He also wrote a book that was five hundred pages long. About himself. He found the subject interesting enough for five hundred pages.
-
-**How you'd identify him immediately:**
-- **A:** Blond mane, spandex, a grin that suggests he's never experienced self-doubt, and legs that scissor-kick with the joy of a man who treats gravity as a suggestion.
-- **B:** Blond man in tight pants jumping and smiling. He has never been unsure about anything. This is either inspiring or terrifying.
-
-**The energy in one sentence:**
-- **A:** Made narcissism so joyful it became a public service.
-- **B:** He loved himself very much and it made other people happy. Somehow.
-
----
-
-## 49. FEVER RAY
-**Genre/Era:** Electronic / Karin Dreijer's solo nightmare / post-gender horror pop, 2009-present
+## 43. COURTNEY LOVE
+**Genre/Era:** Punk / grunge, 1989-present
 
 **What made her special:**
-- **A:** Took the already unsettling sound of The Knife and made it more personal, more intimate, and significantly more likely to make you check the locks on your doors.
-- **B:** She made scary music. Not horror movie scary. Scary like when you are alone in a house and something feels wrong but you cannot say what. That kind of scary. With good bass.
+- **A:** Smeared lipstick like war paint, wore babydoll dresses like armor, and screamed into the void with a voice that sounded like it had already survived everything it was singing about. Made "kinderwhore" into an aesthetic and a philosophical position.
+- **B:** She wears lipstick that is always smeared. She wears children's dresses as a grown woman. She screams. She has had a very difficult life and she sings about it and you can hear all of it in her voice.
 
-**What made her weird:**
-- **A:** Performed in full prosthetic makeup that made her look like a creature from a Nordic mythology the Nordics haven't discovered yet, and made music videos where she prowled through suburban spaces like a apex predator loose in IKEA.
-- **B:** She wore a fake face on her real face. The fake face was frightening. She walked around furniture stores in the music videos looking like a monster. A stylish monster. The furniture was nice.
+**What made her weird/identifiable:**
+- **A:** Smudge-lipped, tiara-wearing, controversy-magnetizing tornado who made vulnerability look like aggression and aggression look like high art. Said terrible things, brilliant things, and true things, often in the same sentence.
+- **B:** She wears a tiara sometimes. She says things that are shocking. Some of them are wrong. Some of them are the smartest thing anyone has said. You do not know which until later. Her makeup is always messy and this is on purpose.
 
-**How you'd identify her immediately:**
-- **A:** Prosthetic-distorted face, voice pitched to sound like it's being transmitted through ice, and an overall vibe suggesting the concept of "cozy" has been permanently revoked.
-- **B:** Person who does not look human. On purpose. Singing in a voice that sounds frozen. You are cold now. From the music. The room temperature has not changed.
-
-**The energy in one sentence:**
-- **A:** Made the domestic uncanny and the uncanny domestic.
-- **B:** She made normal things frightening and frightening things normal and you could not tell which was which.
+**Energy in one sentence:**
+- **A:** A broken music box playing a song that could cut glass.
+- **B:** She is a mess but she is her own mess and the mess has a point and the point is sharp.
 
 ---
 
-## 50. FLAVOR FLAV
-**Genre/Era:** Hip hop / Public Enemy / the hype man's hype man, 1985-present
-
-**What made him special:**
-- **A:** Wore a clock around his neck the size of a dinner plate and turned the role of "hype man" into a performance art installation, proving that enthusiasm is a legitimate instrument.
-- **B:** He wore a big clock. As a necklace. It was a real clock. It worked. His job was to be excited while another person rapped. He was the best in the world at being excited.
-
-**What made him weird:**
-- **A:** The clock. Obviously the clock. But also: a reality TV career that outlived his music career, a brief turn as a restaurateur, and a persona so cartoonishly ebullient that it obscured the fact that he's a classically trained pianist who plays fifteen instruments.
-- **B:** Everyone thinks he is just a funny man with a clock. He plays fifteen instruments. Fifteen. He went to music school. He can play piano like a classical musician. Nobody talks about this. They talk about the clock.
-
-**How you'd identify him immediately:**
-- **A:** Clock. Necklace. Clock necklace. The rest is commentary.
-- **B:** Man with clock. Big clock. Around his neck. You cannot miss the clock. It is the size of a plate.
-
-**The energy in one sentence:**
-- **A:** Proved that pure uncut joy, properly accessorized, is its own art form.
-- **B:** He was happy and loud and wore a clock. It was enough. It was more than enough.
-
----
-
-## 51. GENESIS P-ORRIDGE
-**Genre/Era:** Industrial / Throbbing Gristle / COUM Transmissions / pandrogyny, 1969-2020
-
-**What made them special:**
-- **A:** Invented industrial music, co-founded two of the most influential underground bands in history, and then surgically modified their body to look like their partner because love was a physical project, not just an emotion.
-- **B:** They made a kind of music that did not exist before. They called it industrial. It sounded like machines in pain. Then they got surgery to look like the person they loved. Many surgeries. To become one person together.
-
-**What made them weird:**
-- **A:** Created COUM Transmissions performances that included used tampons and syringes as art materials, got called "wreckers of civilization" by a member of Parliament, and pursued "pandrogyny" — surgically merging their appearance with their partner Lady Jaye's.
-- **B:** A politician called them a wrecker of civilization. This was meant as an insult. They used it as a compliment. They put it on their resume.
-
-**How you'd identify them immediately:**
-- **A:** Surgically altered face, third-eye forehead tattoo, and the calm demeanor of someone who has already transgressed every boundary you're aware of and several you aren't.
-- **B:** Person with a changed face and a tattoo of an eye on their forehead. Looking peaceful. They have done things you cannot imagine. They are calm about all of it.
-
-**The energy in one sentence:**
-- **A:** Made transgression a spiritual practice and spirituality a transgression.
-- **B:** They broke every rule and believed this was a form of prayer. They may have been correct.
-
----
-
-## 52. DOLLY PARTON
-**Genre/Era:** Country / pop / the most underestimated genius in American music, 1967-present
+## 44. KATHLEEN HANNA
+**Genre/Era:** Punk / riot grrrl, 1990-present
 
 **What made her special:**
-- **A:** Hid a titanium-sharp songwriter's brain underneath a wig the size of a weather system and a smile so disarming that people kept mistaking strategic brilliance for folksy charm.
-- **B:** She wore a big wig and smiled a lot and people thought she was simple. She was not simple. She wrote the best songs. She owned everything. She was smarter than everyone. The wig was a disguise.
+- **A:** Scrawled "SLUT" on her stomach and turned the insult into insulation. Built riot grrrl out of zines, fury, and the radical notion that punk had a gender problem. Made DIY feel like revolution because it was.
+- **B:** She wrote a bad word on her body so that when men shouted it at her it had no power. She made a kind of punk music that was for women. She made small magazines by hand. She was very angry and the anger was correct.
 
-**What made her weird:**
-- **A:** Built an entire theme park, runs a book charity that's given away nearly 200 million books to children, funded a COVID vaccine, and once lost a Dolly Parton lookalike contest to a drag queen — and thought it was hilarious.
-- **B:** She built a park. A real park with rides. She also gives books to every child in America. She also paid for medicine that saved lives. She lost a contest to look like herself. She thought this was funny. She was right.
+**What made her weird/identifiable:**
+- **A:** Bikini-Kill-fronting, zine-distributing, patriarchy-shredding punk who performed like a woman setting fire to expectations and warming herself by the blaze. Every show a protest; every lyric a leaflet.
+- **B:** Her band was called Bikini Kill. She danced and screamed and talked to the audience about important things between songs. She told men to go to the back of the room. Some of them went.
 
-**How you'd identify her immediately:**
-- **A:** Blonde wig, rhinestones, and a grin that makes you think you're in on the joke when really you ARE the joke and she's too kind to tell you.
-- **B:** Very small woman with very big hair, wearing shiny things. Smiling. The smile looks simple. The woman is not simple. Do not confuse these.
-
-**The energy in one sentence:**
-- **A:** Made kindness look like a superpower and big hair look like a crown.
-- **B:** She was nice and smart and rich and nobody could figure out how all three fit in one person.
+**Energy in one sentence:**
+- **A:** A Molotov cocktail wrapped in a photocopied manifesto, thrown with impeccable aim.
+- **B:** She is small and loud and she changed music by being angry about the right things at the right time.
 
 ---
 
-## 53. SLY STONE
-**Genre/Era:** Funk / psychedelic soul / brilliant self-destruction, 1966-present
+## 45. HENRY ROLLINS
+**Genre/Era:** Punk / hardcore, 1981-present
 
 **What made him special:**
-- **A:** Built the most integrated, genre-destroying band of the 1960s and made funk, rock, soul, and psychedelia sound like they'd been the same music all along and everyone else had just been filing them in the wrong drawer.
-- **B:** His band had men, women, Black people, white people. In the 1960s. Playing music that was all types of music at the same time. This was revolutionary. He was a genius. Then things went badly.
+- **A:** Turned hardcore punk into a full-body contact sport and spoken word into a spectator one. Veins bulging, neck cords straining, delivering every lyric like it owed him money.
+- **B:** He shouts. He shouts in music and he shouts when he is just talking on a stage by himself. His body is very muscular. His neck has veins that are visible. He is very intense about everything. Everything.
 
-**What made him weird:**
-- **A:** Showed up hours late to concerts (or not at all), lived in a van in Los Angeles for years despite having made millions, and was last reliably sighted accepting a Grammy lifetime achievement award wearing a blonde mohawk and sunglasses indoors.
-- **B:** He was very rich. Then he was very poor. He lived in a car. He had been famous. He stopped coming to his own concerts. When he did come, he was very late. Sometimes days late.
+**What made him weird/identifiable:**
+- **A:** Buzz-cut, bulging-bicep, Black-Flag-tattooed spoken-word warrior who pivoted from stage-diving into crowds to lecturing them about books, travel, and civic responsibility — at the same volume.
+- **B:** He has a tattoo of his band on his back. He is very muscular. He went from punk music to traveling the world and talking about it. He reads many books. He tells you about the books in the same voice he used to scream in. He has two volumes: very loud and asleep.
 
-**How you'd identify him immediately:**
-- **A:** Whatever decade-inappropriate hairstyle he's currently sporting, enormous sunglasses, and the vibration of a man who changed music and then had music change him back, harder.
-- **B:** Man in big sunglasses with unusual hair. He looks like he has seen too much. He has seen too much. The music he made was perfect. Everything else was not.
-
-**The energy in one sentence:**
-- **A:** Built a utopia on a bass line and then watched it burn from behind very dark glasses.
-- **B:** He created something perfect and then he could not stay inside it.
+**Energy in one sentence:**
+- **A:** A flexed bicep with a library card and opinions about everything, delivered at 11.
+- **B:** He is angry and smart and strong and he has been this way for forty years without resting.
 
 ---
 
-## 54. ANNIE LENNOX
-**Genre/Era:** Synth-pop / Eurythmics / gender as performance art, 1980-present
+# R&B / SOUL ECCENTRICS
+
+---
+
+## 46. PRINCE
+**Genre/Era:** Funk / rock / R&B / pop / purple, 1978-2016
+
+**What made him special:**
+- **A:** Played every instrument, sang every octave, wore every heel height, and made Minneapolis sound like the center of the known universe. Fused funk, rock, pop, R&B, and religion into a singular purple-tinted theology that no one else could practice because there was only ever one high priest.
+- **B:** He played all the instruments on his albums. All of them. He sang very high and very low. He wore high heels and lace and he was the most masculine person in the room. This is confusing but it was true every time.
+
+**What made him weird/identifiable:**
+- **A:** Five-foot-two sex-church architect in ruffled blouses and heels, wielding a symbol for a name and a falsetto that could make furniture blush. Made "Purple Rain" a color, a sound, and a feeling.
+- **B:** He was very short. He wore high heels. He changed his name to a symbol that nobody could pronounce. He played guitar in a way that made you feel things you did not expect to feel. He was very private. He was very purple.
+
+**Energy in one sentence:**
+- **A:** Five-foot-two in six-inch heels — tiny, total, and non-negotiable.
+- **B:** He was small and he contained everything and when he was gone the everything was gone too.
+
+---
+
+## 47. JAMES BROWN
+**Genre/Era:** Funk / soul / R&B, 1956-2006
+
+**What made him special:**
+- **A:** Invented funk by making the "one" the most important beat in music, then danced on it so hard the stage required structural reinforcement. The Godfather of Soul who governed with splits, spins, and screams that reorganized your nervous system.
+- **B:** He invented a type of music by deciding which beat was the most important. Then he danced very hard on that beat. His dancing involved doing the splits — going all the way to the floor — and he did this when he was old. He should not have been able to do this but he did.
+
+**What made him weird/identifiable:**
+- **A:** Cape-draped, perspiration-drenched, microphone-stand-wrestling dynamo who staged his own fake collapses and resurrections every night like a revival preacher addicted to his own sermons. Hair processed to a supernatural sheen.
+- **B:** Someone would put a cape on him and he would pretend to be too tired to sing. Then he would throw the cape off and start again. He did this every show. His hair was always very shiny. His feet moved faster than you could see. He sweated more than any person has ever sweated.
+
+**Energy in one sentence:**
+- **A:** A perpetual-motion machine powered by pride, sweat, and the hardest-working feet in show business.
+- **B:** He worked harder than everyone and he wanted you to know this and you did know this because you could see it and hear it and feel it.
+
+---
+
+## 48. BOOTSY COLLINS
+**Genre/Era:** Funk, 1970-present
+
+**What made him special:**
+- **A:** Turned the bass guitar into a spaceship and piloted it wearing star-shaped glasses through a galaxy of sequins, falsetto, and weapons-grade groove. Made Parliament-Funkadelic's bottom end feel like the floor of the universe bouncing.
+- **B:** He plays bass guitar and he makes it sound like outer space. He wears glasses shaped like stars. He is very sparkly. His music makes your body move even if your brain says no.
+
+**What made him weird/identifiable:**
+- **A:** Star-goggled, platform-booted, space-bass-wielding funk cosmonaut who dressed like a pimp from Jupiter and played bass lines that rearranged your skeletal structure. Every outfit a spacecraft, every groove an orbit.
+- **B:** His glasses are stars. His boots are very tall. His clothes have many sequins and many colors. He looks like if a disco ball became a person and learned to play bass very well. He talks in a very high voice and calls everyone "baby."
+
+**Energy in one sentence:**
+- **A:** A sequined supernova bouncing on the one with star-shaped eyes and a bass that bends gravity.
+- **B:** He is a sparkly man from space and his bass guitar agrees.
+
+---
+
+## 49. GEORGE CLINTON
+**Genre/Era:** Funk / P-Funk, 1967-present
+
+**What made him special:**
+- **A:** Built an entire mothership mythology around funk — literally landed a spaceship on stage, staffed it with a costumed army of freaks, and made "One Nation Under a Groove" feel less like a song title and more like a viable political platform.
+- **B:** He built a spaceship for his concerts. A real spaceship — well, a fake spaceship, but a real big one. He had many, many people in his band. They all wore costumes. He invented a whole story about funk coming from outer space. Some people believe this.
+
+**What made him weird/identifiable:**
+- **A:** Rainbow-dreadlocked, diaper-wearing (yes, on stage), P-Funk-commanding mothership commander who turned a barbershop quintet into an intergalactic funk army. Changed hairstyles more than Bowie changed personas.
+- **B:** His hair has been every color, many colors at one time. He wore a diaper on stage once. He is in charge of many people and what he says is "play funk and dress like space people." He started as a barber. This is a real fact.
+
+**Energy in one sentence:**
+- **A:** A mothership full of freaks commanded by a rainbow-haired prophet in a diaper — and it's the most important thing in the room.
+- **B:** He is a man who decided reality was not interesting enough so he made a better one and moved everyone into it.
+
+---
+
+## 50. RICK JAMES
+**Genre/Era:** Funk / R&B, 1977-2004
+
+**What made him special:**
+- **A:** Braided, beaded, bare-chested ambassador of confrontational funk who made "Super Freak" the most joyfully sleazy groove in pop history. Punk attitude in platform boots with a bass line that refused to stop.
+- **B:** He was very flashy and his most famous song is about a woman who parties a lot. He wore braids with beads. He did not wear a shirt usually. He called himself a punk-funk artist. He was not wrong.
+
+**What made him weird/identifiable:**
+- **A:** Cornrow-braided, leather-panted, controversy-courting provocateur who made funk feel dangerous again. Became a meme twenty years after his death when Dave Chappelle quoted him: "I'm Rick James, bitch."
+- **B:** He had braids with beads in them. He wore leather pants. He did many bad things. A comedian said "I'm Rick James" and now everyone says this. He would have liked this.
+
+**Energy in one sentence:**
+- **A:** A braided Molotov cocktail thrown at a dance floor — it explodes, but everyone keeps dancing.
+- **B:** He was trouble and he knew it and the music was so good that the trouble was worth it.
+
+---
+
+## 51. D'ANGELO
+**Genre/Era:** Neo-soul / R&B, 1995-present
+
+**What made him special:**
+- **A:** Made "Untitled (How Does It Feel)" and its nude music video into a full-body argument that R&B didn't need sanitizing to be sophisticated. Then disappeared for fourteen years because he felt like it.
+- **B:** He made a video where he is not wearing clothes and it was very popular. Then he went away for fourteen years. When he came back, the album was very good. He does things on his own schedule. His schedule is very slow.
+
+**What made him weird/identifiable:**
+- **A:** Sweat-sheened, retro-soul perfectionist who treated every album like a decade-long meditation retreat. Made three albums in twenty years, each a masterclass in making people wait and making the wait worth it.
+- **B:** He has made three albums. This took twenty years. Each one is very good. He takes a long time because he wants it to be perfect. He does not care what you think about this.
+
+**Energy in one sentence:**
+- **A:** A slow-burning candle in a world of flash grenades — takes forever to arrive, impossible to look away once it does.
+- **B:** He is very slow and very good and he will not be rushed and this is the answer.
+
+---
+
+## 52. THE WEEKND
+**Genre/Era:** R&B / pop, 2010-present
+
+**What made him special:**
+- **A:** Built an empire out of darkness, falsetto, and the space between the club at 3 AM and the regret at 7 AM. Made hedonism sound lonely and loneliness sound like a stadium anthem.
+- **B:** He sings in a very high voice about very dark things — drugs, parties that are sad, being alone in a crowd. His music sounds like the worst night of your life but you want to listen to it again.
+
+**What made him weird/identifiable:**
+- **A:** Vertical-dreadlock era, bandaged-face era, plastic-surgery-horror era — each visual chapter a commitment to alienation as aesthetic. Performed the Super Bowl halftime show surrounded by faceless bandaged dancers, turning America's biggest party into a surrealist nightmare.
+- **B:** His hair was very tall. Then his face was covered in bandages. Then his face looked like bad plastic surgery. These were characters for albums. He played the Super Bowl and made it scary. The Super Bowl is not supposed to be scary.
+
+**Energy in one sentence:**
+- **A:** A velvet void with a falsetto — the most beautiful panic attack at the party.
+- **B:** He makes the darkness sound beautiful and this is his gift and his problem.
+
+---
+
+## 53. FRANK OCEAN
+**Genre/Era:** R&B / art pop, 2011-present
+
+**What made him special:**
+- **A:** Whispered his sexuality into a Tumblr post, dropped two generation-defining albums, then vanished behind a fortress of silence and furniture design. Made scarcity into the most compelling narrative in modern music.
+- **B:** He told everyone he loved a man by writing about it on the internet. This was very brave. Then he made two very good albums. Then he stopped making music and started building stairs. Real stairs. Out of wood.
+
+**What made him weird/identifiable:**
+- **A:** Notoriously reclusive, magazine-publishing, staircase-building enigma who made "Blonde" into a holy text for an entire generation and then refused to explain it, discuss it, or follow it up on any reasonable timeline.
+- **B:** He does not do interviews. He does not do social media. He made a magazine one time. He built staircases. His album "Blonde" changed many people's lives. He has not made another one. People are waiting. He is building stairs.
+
+**Energy in one sentence:**
+- **A:** A gorgeous ghost who left the party early and became more present by being absent.
+- **B:** He said a few things, they were very important, and then he stopped talking, and the silence became important too.
+
+---
+
+# UNCLASSIFIABLE
+
+---
+
+## 54. TOM WAITS
+**Genre/Era:** Blues / jazz / experimental, 1973-present
+
+**What made him special:**
+- **A:** Gargled gravel, swallowed a junkyard, and coughed up the most beautiful songs about rain-soaked losers, barflies, and the kind of America that smells like wet asphalt and broken promises. Made dereliction sound like a cathedral.
+- **B:** His voice sounds like a machine that is broken. He sings about people who are drunk and sad in places that are wet and dark. This sounds terrible. It is the most beautiful music. This is a contradiction he does not explain.
+
+**What made him weird/identifiable:**
+- **A:** Hobo-suited, megaphone-wielding, junkyard-percussing poet laureate of the gutters and diners of the American subconscious. Banged on things, growled into tubes, and somehow made it all sound like the most honest thing you'd ever heard.
+- **B:** He wears old suits. He sings into a megaphone sometimes. He hits things that are not instruments and it sounds like music. His voice is very, very rough — like a road that has not been fixed. He is actually a very quiet, polite man. This is surprising.
+
+**Energy in one sentence:**
+- **A:** A busted piano in a rainstorm, playing itself.
+- **B:** He sounds like the world is ending but he is not worried about it. He is describing it. Beautifully.
+
+---
+
+## 55. SERGE GAINSBOURG
+**Genre/Era:** Chanson / pop / provocateur, 1958-1991
+
+**What made him special:**
+- **A:** Chain-smoked his way through French pop like a dissolute philosopher who'd been asked to write hit songs and resented it just enough to make them brilliant. Made "Je t'aime... moi non plus" — basically an orgasm set to music — and scandalized an entire continent.
+- **B:** He was French and he smoked constantly and he made a song that was just breathing and moaning and it became very famous. Everyone was upset. He was not upset. He drank a lot. He was considered very ugly and very attractive at the same time.
+
+**What made him weird/identifiable:**
+- **A:** Cabbage-eared, perpetually stubbled, deliberately disheveled seducer who looked like a beautiful accident and sang like cigarette smoke had learned to carry a tune. Told Whitney Houston on live TV he wanted to sleep with her. Burned a 500-franc note on camera.
+- **B:** His ears were very large. He always needed a shave. He said something very rude to Whitney Houston on television. He burned money on camera. He dated the most beautiful women in France. He looked like a man who had not slept in many years. Women loved him. This confuses many people.
+
+**Energy in one sentence:**
+- **A:** A half-smoked cigarette in a velvet ashtray — dissolute, decadent, and maddeningly attractive.
+- **B:** He was ugly and charming and drunk and brilliant and French, and all five of these things were necessary.
+
+---
+
+## 56. KLAUS NOMI
+**Genre/Era:** New wave / opera / art, 1978-1983
+
+**What made him special:**
+- **A:** Arrived from another dimension wearing a clear plastic tuxedo and a countertenor voice that could shatter both wineglasses and genre categories. Made opera punk and made punk operatic and made everyone in early-'80s New York feel like they were living in his science fiction movie.
+- **B:** He sang opera but in punk clubs. He wore plastic clothes shaped like triangles. His face was painted white with very dark lips. He looked like an alien who learned about humans from a book but the book was wrong. He was one of the first famous people to die of AIDS.
+
+**What made him weird/identifiable:**
+- **A:** Triangular-shouldered, whiteface-painted, lightning-bolt-lipped creature who sang Purcell's "Cold Song" at CBGB's and made it feel like it belonged. Geometric costumes that made him look like a Bauhaus diagram brought to terrifying, beautiful life.
+- **B:** His shoulders were pointed like triangles — this was his costume, not his body. His lips were painted like a small black lightning bolt. He sang songs from hundreds of years ago in clubs where people had safety pins in their ears. Both things made sense when he did them.
+
+**Energy in one sentence:**
+- **A:** A Weimar cabaret alien who crash-landed in CBGB's and sang arias at the wreckage.
+- **B:** He was from the future and the past at the same time and the present did not know what to do with him.
+
+---
+
+## 57. YOKO ONO
+**Genre/Era:** Avant-garde / experimental, 1961-present
 
 **What made her special:**
-- **A:** Showed up on the pop landscape with a buzz cut and a man's suit and a voice that could melt steel, at a time when female pop stars were contractually obligated to have perms and smile.
-- **B:** She cut her hair very short and wore men's clothes in the 1980s. In the 1980s women did not do this. She did it. She also had the best voice. This was difficult to argue with.
+- **A:** Screamed, whispered, and deconstructed music before most people realized it could be deconstructed. Took the blame for breaking up the Beatles and turned it into a career-length performance piece about endurance.
+- **B:** She makes sounds that many people do not think are music. She has been told she ruined the most famous band for sixty years. She is still making art. She has not stopped. She will not stop. The people who are angry have mostly gotten tired. She has not gotten tired.
 
-**What made her weird:**
-- **A:** Performed at the Grammys in drag as Elvis Presley, shaved her head when long hair was the uniform, and maintained an androgynous presentation so committed that interviewers couldn't stop asking about gender instead of music.
-- **B:** She dressed as Elvis at an awards show. She was a woman dressed as a man who was famous for being a man. This confused many people. She was not confused.
+**What made her weird/identifiable:**
+- **A:** Primal-screaming, bed-protesting, conceptual-art-weaponizing force of nature who was hated for decades and outlasted the hatred through sheer commitment to not caring what you think.
+- **B:** She screams as art. She stayed in bed for peace. She made a film of people's bottoms. She put instructions on walls that say things like "imagine the clouds dripping." She is the most misunderstood person in music. Or the most understood. It depends who you ask.
 
-**How you'd identify her immediately:**
-- **A:** Cropped hair, sharp suit, and a voice that descends from somewhere between a cathedral ceiling and a broken heart.
-- **B:** Woman with short hair in a suit. You think she is going to sing quietly. She is not going to sing quietly. She is going to sing very loudly and it will be beautiful and sad.
-
-**The energy in one sentence:**
-- **A:** Made androgyny elegant and elegance feel dangerous.
-- **B:** She looked like a businessman and sang like an angel and nobody knew what to do about this.
+**Energy in one sentence:**
+- **A:** A conceptual art piece that refuses to end, filed under "unresolved" in the twentieth century's permanent record.
+- **B:** She is doing something and she has been doing it for sixty years and people still cannot agree on what it is.
 
 ---
 
-## 55. GHOSTFACE KILLAH
-**Genre/Era:** Hip hop / Wu-Tang / luxury rap in a bathrobe, 1993-present
+## 58. CAPTAIN BEEFHEART
+**Genre/Era:** Experimental rock / blues, 1964-1982
 
 **What made him special:**
-- **A:** Rapped with a stream-of-consciousness intensity that made every verse sound like a man narrating his life in real time while the life was happening too fast to edit, draped in robes and Versace like a don who couldn't decide between the corner and the runway.
-- **B:** He rapped very fast about many things. The things did not always connect. He wore a bathrobe and expensive Italian clothes. At the same time. He made this work. Nobody else could make this work.
+- **A:** Made "Trout Mask Replica" — an album that sounds like several bands falling down different staircases in the same building, simultaneously, on purpose, and it's a masterpiece. Taught his band members to play instruments wrong until wrong became a new kind of right.
+- **B:** He made an album that sounds broken. Everything is in the wrong place. The timing is wrong. The notes are wrong. It is one of the most important albums ever made. He taught people how to play music by teaching them to play it incorrectly. This took eight months.
 
-**What made him weird:**
-- **A:** Wore a mask for early Wu-Tang appearances (before MF DOOM made it iconic), recorded an album entirely about cooking (Supreme Clientele), and named himself after a character from a 1979 kung fu movie because hip hop and martial arts cinema are the same mythology if you squint right.
-- **B:** His name is from a karate movie. He wore a mask. Then he stopped wearing the mask. He also talks about cooking. And crime. And Italian fashion. In the same sentence.
+**What made him weird/identifiable:**
+- **A:** Growling, poetry-spouting, painting-obsessed desert hermit who made blues sound like it was being translated through an alien dialect in real time. Quit music to paint, because even the weirdest music wasn't weird enough.
+- **B:** He lived in the desert. He growled. He wrote poems that do not make sense. He stopped making music and started painting because music was not strange enough for him. He was friends with Frank Zappa. Frank Zappa thought HE was strange. This is saying something.
 
-**How you'd identify him immediately:**
-- **A:** Wallabee Clarks, a bathrobe that costs more than your rent, and a delivery so rapid-fire it sounds like his thoughts are in a foot race and his mouth is trying to keep up.
-- **B:** Man in an expensive bathrobe and desert boots, talking very fast. You understand some of the words. The words you understand are beautiful. The words you don't understand are probably also beautiful.
-
-**The energy in one sentence:**
-- **A:** Made luxury sound urgent and urgency sound luxurious.
-- **B:** He was elegant and chaotic and you could not have one without the other.
+**Energy in one sentence:**
+- **A:** A blues howl refracted through a prism made of pure, uncut bewilderment.
+- **B:** He is what would happen if music itself got confused and decided to go in every direction at once.
 
 ---
 
-## 56. GRIMES
-**Genre/Era:** Art pop / electronic / cyberpunk girlfriend-to-AI-prophet pipeline, 2010-present
-
-**What made her special:**
-- **A:** Built alien-sounding pop music on a MacBook in a Montreal closet, taught herself to produce, sing, and art-direct, then dated the richest man on Earth and named their baby something a QR code would reject.
-- **B:** She made music on a laptop. In a closet. Alone. The music sounded like it came from space. Then she dated a very rich man and named their baby a math equation. The baby is fine.
-
-**What made her weird:**
-- **A:** Named her child X AE A-XII, trained herself for Mars colonization by listening to nothing but EDM and podcasts about war, and publicly documented her journey from indie darling to transhumanist AI art evangelist.
-- **B:** She wants to go to Mars. She thinks AI will make art. She named her child something a computer would say. She lives like science fiction is already happening. She may be correct.
-
-**How you'd identify her immediately:**
-- **A:** Silver hair, elf ears (sometimes surgically implied), and the aesthetic of someone who is cosplaying as a character from a future that hasn't decided if it's utopian or dystopian yet.
-- **B:** Woman with strange hair and possibly pointed ears. She looks like she is from the future. She thinks she is from the future. She may just be from Canada.
-
-**The energy in one sentence:**
-- **A:** Made the apocalypse sound like a love song and love sound like a software update.
-- **B:** She lived in the future and sent music back to the present. The present was confused.
-
----
-
-## 57. SCREAMING LORD SUTCH
-**Genre/Era:** Horror rock / British eccentric / political chaos agent, 1961-1999
+## 59. SCREAMIN' JAY HAWKINS
+**Genre/Era:** R&B / shock blues, 1952-2000
 
 **What made him special:**
-- **A:** Came on stage in a coffin before Alice Cooper was out of diapers, founded the Official Monster Raving Loony Party, and ran for Parliament forty times because democracy should be at least as entertaining as rock and roll.
-- **B:** He climbed out of coffins in the 1960s. He started a joke political party. He ran for parliament forty times. He lost forty times. He kept running. The party is still active.
+- **A:** Emerged from a coffin on stage — in 1956 — wearing a cape, carrying a skull named Henry, and howling "I Put a Spell on You" like a man who'd just arrived from the underworld with a noise complaint.
+- **B:** He came out of a coffin. On stage. In 1956. He carried a skull. The skull had a name. He screamed. This was before anyone did things like this. Alice Cooper was nine years old. He invented being scary in music.
 
-**What made him weird:**
-- **A:** His election manifestos included proposals for passports for pets and lowering the voting age, both of which eventually became law, making him retroactively the most successful failed politician in British history.
-- **B:** His joke ideas became real laws. He suggested passports for animals. They laughed. Then they made passports for animals. He suggested teenagers should vote. They laughed. Then teenagers could vote.
+**What made him weird/identifiable:**
+- **A:** Bone-through-the-nose, cape-swirling, voodoo-performing proto-shock-rocker who was doing horror-show theatrics while rock and roll was still in bobby socks. Recorded his most famous song so drunk the label almost didn't release it. They did. It's a classic.
+- **B:** He wore a bone in his nose. He wore a cape. He pretended to do magic spells. He recorded his most famous song while very drunk. The company did not want to release it because it was too strange. They released it. It is now in the Library of Congress.
 
-**How you'd identify him immediately:**
-- **A:** Top hat, leopard print, and the demeanor of a man running for office in a country that exists only in his head, except the policies keep coming true.
-- **B:** Man in a hat and animal print. He is either giving a concert or running for political office. Sometimes both. At the same time.
-
-**The energy in one sentence:**
-- **A:** Turned democracy into performance art and accidentally got more done than the professionals.
-- **B:** His jokes became laws and this was funnier than the jokes.
+**Energy in one sentence:**
+- **A:** The founding father of freak-out, howling from inside a coffin before anyone built the stage for him.
+- **B:** He did it first and he did it the scariest and nobody thanked him for many years.
 
 ---
 
-## 58. AZEALIA BANKS
-**Genre/Era:** Hip hop / house / verbal arson, 2011-present
-
-**What made her special:**
-- **A:** Rapped with the technical precision of a lyrical surgeon and the emotional regulation of a house fire, making some of the decade's most virtuosic music between Twitter feuds with literally everyone.
-- **B:** She was one of the best rappers. She was also the most argumentative person on the internet. She fought with everyone. She was talented enough that people kept listening even though she fought with them.
-
-**What made her weird:**
-- **A:** Publicly feuded with Elon Musk (from inside his house), practiced brujeria and documented cleaning her apartment of sacrificial chicken remains on Instagram, and burned bridges so enthusiastically that bridge-burning became its own art form.
-- **B:** She fought with the richest man in the world. From his own house. She was staying at his house when the fight started. She also does witch ceremonies. With chickens. She posted photos. The photos were alarming.
-
-**How you'd identify her immediately:**
-- **A:** Whoever she's arguing with on social media today, she's winning on talent and losing on strategy.
-- **B:** Woman saying something controversial on the internet. She is probably correct. She is definitely making it worse. The music playing in the background is excellent.
-
-**The energy in one sentence:**
-- **A:** Had the talent to rule the world and the temperament to set it on fire first.
-- **B:** She was brilliant and impossible and could not be one without being the other.
-
----
-
-## 59. LEE "SCRATCH" PERRY
-**Genre/Era:** Reggae / dub / sonic sorcerer, 1960s-2021
+## 60. DANIEL JOHNSTON
+**Genre/Era:** Lo-fi / outsider, 1981-2019
 
 **What made him special:**
-- **A:** Invented dub by treating the mixing board like a musical instrument from another planet, creating echo-drenched soundscapes in a tiny Jamaican studio he'd covered floor-to-ceiling in found objects, album covers, and what appeared to be prayers.
-- **B:** He invented a type of music by using the machines wrong. On purpose. He put echoes on everything. He covered his studio with pictures and objects and words. The studio was a work of art. Then he burned it down.
+- **A:** Recorded masterpieces on a $59 boombox in his parents' garage, sang with a voice that sounded like it might crack into a thousand pieces at any moment — and sometimes did — and made fragility feel like the bravest thing in any room.
+- **B:** He made music on a very cheap machine in his parents' house. His voice is not strong. It shakes. It breaks sometimes. He draws pictures too. His drawings are simple. His songs are simple. But when you hear them you feel something that complicated music does not make you feel.
 
-**What made him weird:**
-- **A:** Burned down his own studio — the legendary Black Ark — because he said there were demons in it, glued album covers and mirrors to every surface of subsequent studios, and gave interviews in a stream-of-consciousness glossolalia that was either channeling spirits or the most advanced form of trolling ever devised.
-- **B:** He set fire to his own workplace because of demons. He built a new one and covered it with mirrors. He spoke in a way that might be a language from another world. Or he might be joking. He has never clarified.
+**What made him weird/identifiable:**
+- **A:** Casper-the-Friendly-Ghost-t-shirt-wearing, frog-drawing, cassette-tape-distributing outsider saint who battled severe mental illness and made it into art that Kurt Cobain wore on his chest.
+- **B:** He wore the same t-shirt with a frog on it. He had very serious mental health problems. He gave people tapes of his music at McDonald's where he worked. Kurt Cobain wore his drawing on a shirt. He is one of the most important artists most people do not know. His best song is about being scared and it is the bravest song.
 
-**How you'd identify him immediately:**
-- **A:** Covered in mirrors, stickers, and inscrutable talismans, speaking in a language that's adjacent to English but has its own grammar and gravitational pull.
-- **B:** Old man covered in shiny objects, saying things that sound like words but are arranged in new ways. He is either a genius or a wizard. He might be both.
-
-**The energy in one sentence:**
-- **A:** Made music by talking to machines and made machines talk back in a language only he could hear.
-- **B:** He spoke to the equipment and the equipment answered. Nobody else heard the answers. The music was the proof.
+**Energy in one sentence:**
+- **A:** A love letter written in crayon that arrived crumpled and perfect.
+- **B:** He is proof that you do not need to be strong to make something important. You need to be honest. That is all.
 
 ---
 
-## 60. JPEGMAFIA
-**Genre/Era:** Experimental hip hop / noise rap / extremely online warfare, 2016-present
+## BONUS: TINY TIM
+**Genre/Era:** Novelty / vaudeville revival, 1960s-1996
 
 **What made him special:**
-- **A:** Made hip hop from shattered samples, screaming, and the specific rage of a Black man who spent formative years on 4chan, creating music that sounded like the internet having a panic attack with impeccable rhythm.
-- **B:** He made rap music using broken sounds and screaming. He grew up on the internet. The bad parts of the internet. He put the feelings from the bad internet into music. The music was angry and clever and sometimes very funny.
+- **A:** Falsetto-warbling, ukulele-strumming anachronism who made Tin Pan Alley sound like a visitation from a dimension where 1920 never ended. Got married on The Tonight Show to 41 million viewers while singing "Tiptoe Through the Tulips" and meant every single note.
+- **B:** He sang in a very high voice — very, very high — and played a very small guitar called a ukulele. He sang old songs from the 1920s. He got married on television and millions of people watched. He was completely sincere about everything.
 
-**What made him weird:**
-- **A:** Named albums things search engines couldn't process, performed for sometimes hostile audiences in the DIY scene while stationed as a military contractor, and made music that deliberately sounds like it's buffering, glitching, and fighting with itself.
-- **B:** His album names do not work in Google. He did this on purpose. He was in the military and also an underground musician. These are not usually the same person. His music sounds like a computer that is broken. It is not broken. It just sounds that way.
+**What made him weird/identifiable:**
+- **A:** Six-foot-one beanpole with a shopping bag full of makeup, a nose like a historical landmark, and a falsetto that could pierce steel and centuries simultaneously. Knew more about pre-war popular music than any musicologist alive.
+- **B:** He was very tall and his nose was very large and his hair was very long. He carried shopping bags everywhere. He wore makeup. He knew every old song ever written. People laughed at him but he was not joking. He was completely serious. The joke was that there was no joke.
 
-**How you'd identify him immediately:**
-- **A:** Shirtless, drenched in sweat, screaming into a laptop with the energy of a man who just won an argument with the entire internet and isn't done yet.
-- **B:** Man without a shirt, very sweaty, yelling at a computer. The computer is playing music. He is also the music. The audience does not know if they should dance or be afraid. They do both.
-
-**The energy in one sentence:**
-- **A:** Made the internet sound like it feels and made how it feels into a beat you could mosh to.
-- **B:** He turned online anger into music and the music was better than the anger.
+**Energy in one sentence:**
+- **A:** A Victorian ghost who wandered into the 1960s, picked up a ukulele, and decided to stay.
+- **B:** He was from another time and he did not adjust. The world adjusted to him, a little. Enough.
 
 ---
 
-## QUICK REFERENCE: THE LINEUP
-
-| # | Artist | Genre | Key Word |
-|---|--------|-------|----------|
-| 1 | David Bowie | Glam/Art Rock | Chameleon |
-| 2 | Prince | Funk/Pop/Everything | Audacity |
-| 3 | Freddie Mercury | Rock/Opera | Command |
-| 4 | Iggy Pop | Proto-Punk | Indestructible |
-| 5 | Bjork | Avant-Pop | Volcanic |
-| 6 | Kanye West | Hip Hop | Cathedral/Fire |
-| 7 | Grace Jones | New Wave/Disco | Obsidian |
-| 8 | Andre 3000 | Hip Hop/Jazz | Transcended |
-| 9 | Siouxsie Sioux | Post-Punk/Goth | Weaponized |
-| 10 | Little Richard | Rock & Roll | Invention |
-| 11 | Missy Elliott | Hip Hop/R&B | Future |
-| 12 | Tom Waits | Blues/Jazz | Junkyard |
-| 13 | Lady Gaga | Pop | Dare |
-| 14 | GG Allin | Punk | Biohazard |
-| 15 | Erykah Badu | Neo-Soul | Cosmic |
-| 16 | Klaus Nomi | New Wave/Opera | Geometric |
-| 17 | Madonna | Pop | Reinvention |
-| 18 | Ozzy Osbourne | Metal | Survival |
-| 19 | Tyler, the Creator | Hip Hop | Evolution |
-| 20 | Nina Hagen | Punk/Opera | Excess |
-| 21 | Screamin' Jay Hawkins | R&B/Shock | Coffin |
-| 22 | Serge Gainsbourg | Chanson | Filth |
-| 23 | Lil Wayne | Hip Hop | Velocity |
-| 24 | Kate Bush | Art Pop | Disappearance |
-| 25 | Rick James | Funk | Hedonism |
-| 26 | Daniel Johnston | Lo-Fi | Sincerity |
-| 27 | Nicki Minaj | Hip Hop/Pop | Characters |
-| 28 | Ian Curtis | Post-Punk | Transmission |
-| 29 | Janelle Monae | Afrofuturism | Android |
-| 30 | Alice Cooper | Shock Rock | Gentleman |
-| 31 | Billie Eilish | Pop | Whisper |
-| 32 | Bootsy Collins | Funk | Stars |
-| 33 | Yoko Ono | Avant-Garde | Ahead |
-| 34 | Lil Nas X | Hip Hop/Pop | Provocation |
-| 35 | Captain Beefheart | Avant-Rock | Hostile |
-| 36 | Peaches | Electroclash | Confrontation |
-| 37 | James Brown | Funk/Soul | Hardest |
-| 38 | Diamanda Galas | Avant-Garde | Scream |
-| 39 | Dee Dee Ramone | Punk | Count |
-| 40 | Grace Slick | Psych Rock | Acid |
-| 41 | ODB | Hip Hop | Chaos |
-| 42 | David Byrne | New Wave | Suit |
-| 43 | M.I.A. | World-Pop | Grenade |
-| 44 | Gary Numan | Synth-Pop | Android |
-| 45 | Courtney Love | Grunge | Smeared |
-| 46 | Wesley Willis | Outsider | Joy |
-| 47 | Shabazz Palaces | Exp. Hip Hop | Adjacent |
-| 48 | David Lee Roth | Hard Rock | Kick |
-| 49 | Fever Ray | Electronic | Uncanny |
-| 50 | Flavor Flav | Hip Hop | Clock |
-| 51 | Genesis P-Orridge | Industrial | Transgression |
-| 52 | Dolly Parton | Country | Disguise |
-| 53 | Sly Stone | Funk/Psych | Utopia |
-| 54 | Annie Lennox | Synth-Pop | Androgyny |
-| 55 | Ghostface Killah | Hip Hop | Bathrobe |
-| 56 | Grimes | Art Pop | Future |
-| 57 | Lord Sutch | Horror Rock | Loony |
-| 58 | Azealia Banks | Hip Hop | Combustion |
-| 59 | Lee Scratch Perry | Reggae/Dub | Sorcerer |
-| 60 | JPEGMAFIA | Noise Rap | Glitch |
-
----
-
-## BEST LINES FOR POTENTIAL CAT-RESPONSE MINING
-
-These phrasings from the descriptions could be twisted into MaybeCat responses:
-
-- "He stole from everyone but somehow everyone said thank you."
-- "He fought God with a guitar and it was not clear who was losing."
-- "She was weird like a forest is weird. Not trying. Just being what she is."
-- "He made beautiful things and then stood in front of them so you could not see."
-- "She danced like she was punishing the floor."
-- "He was the best at the thing and then he got bored of the thing."
-- "She made sad music you could dance to, which is a very difficult thing."
-- "He was a monster, then he became a flower. Both were real."
-- "She turned getting dressed into a competition. She was the only contestant. She still won."
-- "Everything that should have killed him made him happier."
-- "He collected broken things and made them sing."
-- "He did not die because he did not realize he was supposed to."
-- "He was angry and his shoes were nice and somehow this became a business."
-- "She was nice and smart and rich and nobody could figure out how all three fit in one person."
-- "He created something perfect and then he could not stay inside it."
-- "He was too much. But there was no way to have less of her."
-- "She was brilliant and impossible and could not be one without being the other."
-- "He spoke to the equipment and the equipment answered."
-- "His jokes became laws and this was funnier than the jokes."
-- "He was a disaster but the disaster made a sound and the sound was good."
-- "He could only do a little. But he did the little harder than anyone did a lot."
-- "She was the most dangerous person at the party and she was not trying."
-- "He just liked music. More than anyone. More than was normal. It was wonderful."
-- "He was uncomfortable around people so he made music about being uncomfortable around people and people loved it."
-- "She was too much. But there was no way to have less of her."
-- "He loved himself very much and it made other people happy. Somehow."
+*61 entries total (60 + Tiny Tim bonus). Debbie Harry appears in Classic Rock/Glam section and cross-references Punk.*
