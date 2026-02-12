@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>That Person/Subject IS The Issue (20 Responses)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 140px; }
+  .sticky-header { position: fixed; top: 0; left: 0; right: 0; background: #16213e; border-bottom: 2px solid #0f3460; padding: 16px 24px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 8px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; margin-bottom: 12px; font-size: 16px; }
+  .export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; color: #ccc; max-height: 500px; overflow-y: auto; white-space: pre-wrap; cursor: pointer; }
+  .copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>That Person/Subject IS The Issue (20 Responses)</h1>
+  <div class="subtitle">Territory: the cat names what you won't — the person, the situation, the thing you keep dancing around. Life chaos, not surface cat. | Voices: Detective Cat, Realist Cat, Judge Cat, Feral Cat, Street Cat, Elder Cat, Reluctant Therapist Cat | Energy: cold crescendos, sharp rhythm</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">20</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "*stares at specific spot* It\u2019s them. It was always them. You just didn\u2019t want it to be them.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "You keep rearranging the room. The room isn\u2019t the problem.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat"
+  },
+  {
+    text: "*ears flatten* The common denominator in every story you just told me has a name.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "You\u2019re not confused. You\u2019re loyal to someone who isn\u2019t loyal to the situation.",
+    category: "judgy",
+    voice: "Realist Cat"
+  },
+  {
+    text: "*tail tip flicks* Every time you describe the problem, you leave out the same person. Interesting.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "The leak isn\u2019t the ceiling. The leak is who you let in.",
+    category: "cold",
+    voice: "Street Cat"
+  },
+  {
+    text: "*slow blink* You changed your diet, your sleep, your job, your hair. You didn\u2019t change the one thing that was actually wrong.",
+    category: "judgy",
+    voice: "Realist Cat"
+  },
+  {
+    text: "You keep saying \u201cthe situation.\u201d The situation has a face and a phone number.",
+    category: "cold",
+    voice: "Judge Cat"
+  },
+  {
+    text: "*one ear rotates toward you* You already named it. Three conversations ago. You just weren\u2019t ready to hear yourself.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat"
+  },
+  {
+    text: "The vibe changed when they entered. You noticed. You decided not to notice.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "*pupils dilate* It\u2019s not the job. It\u2019s who you became to keep it.",
+    category: "existential",
+    voice: "Elder Cat"
+  },
+  {
+    text: "Stop blaming the system. The system is one person with a title.",
+    category: "angry",
+    voice: "Feral Cat"
+  },
+  {
+    text: "You said \u201cwe have a communication problem.\u201d No. One of you has a lying problem.",
+    category: "cold",
+    voice: "Realist Cat"
+  },
+  {
+    text: "*stares through you* The chaos follows them. Track the pattern. I already did.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "Everyone else adjusted. They didn\u2019t. That\u2019s the whole briefing.",
+    category: "cold",
+    voice: "Judge Cat"
+  },
+  {
+    text: "*tail straight, hackles slightly raised* Your nervous system already identified the threat. Your brain is still writing it a recommendation letter.",
+    category: "judgy",
+    voice: "Reluctant Therapist Cat"
+  },
+  {
+    text: "You keep asking \u201cwhat\u2019s wrong with me?\u201d when the answer is standing next to you.",
+    category: "cold",
+    voice: "Realist Cat"
+  },
+  {
+    text: "The fire alarm is going off. You\u2019re interviewing the smoke about its intentions.",
+    category: "judgy",
+    voice: "Street Cat"
+  },
+  {
+    text: "*slow blink* You\u2019re not crazy. The thing making you feel crazy has a name. Say it.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "Some problems don\u2019t get solved. They get removed. This is the second kind.",
+    category: "cold",
+    voice: "Feral Cat"
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
