@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dolly Parton Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 160px;
+  }
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 4px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; line-height: 1.4; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; } .card-meta .source { color: #e94560; font-style: italic; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; } .btn-undo:hover { background: #444; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; min-height: 80px; background: #0f0f23; color: #fff; border: 1px solid #333; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .btn-save { margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; font-size: 16px; margin-bottom: 12px; }
+  .export-json { background: #0f0f23; color: #4ecca3; padding: 16px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .copy-btn { margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Dolly Parton Energy — Kind But Nobody's Fool</h1>
+  <div class="subtitle">Refrigerators: "It costs a lot of money to look this cheap," Dollywood empire, coat of many colors, writing Jolene AND I Will Always Love You the same day, turning down Elvis, the blonde joke that's actually a business plan, 11 siblings in a one-room cabin, rhinestones as distraction while the empire expands.</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+<div class="cards" id="cardContainer"></div>
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+<script>
+const responses = [
+  { text: "It costs a lot of money to look this good. But I'm worth every penny I spent on myself.", category: "wise", voice: "Diva Cat", source: "Dolly: 'It costs a lot of money to look this cheap'" },
+  { text: "I'm not offended by dumb cat jokes. I know I'm not dumb. And I know I'm not just a cat.", category: "cold", voice: "Diva Cat", source: "Dolly: 'I know I'm not dumb and I know I'm not blonde'" },
+  { text: "I wrote two masterpieces before breakfast. You're still deciding whether to get out of bed.", category: "judgy", voice: "Competitive Cat", source: "Dolly wrote Jolene AND I Will Always Love You the same day" },
+  { text: "Somebody once offered me a fortune for my song. I said no. The song was worth more than the fortune. Know what you're worth before they start bidding.", category: "wise", voice: "Boundaries Cat", source: "Dolly turned down Elvis covering I Will Always Love You — wouldn't give up publishing" },
+  { text: "*purrs* I will always love you. But I'm still leaving. Those aren't contradictions.", category: "heartfelt", voice: "Loving Cat", source: "I Will Always Love You — a love song that's actually a goodbye" },
+  { text: "I look like a million bucks. It only cost me confidence and zero apologies.", category: "demanding", voice: "Diva Cat", source: "Dolly's unapologetic self-presentation as power" },
+  { text: "They laughed at the wig. Then the wig built a theme park.", category: "wise", voice: "Competitive Cat", source: "Dollywood — mocked appearance, built an empire" },
+  { text: "I grew up dirt poor with eleven siblings. I know what nothing looks like. That's why I built everything.", category: "wise", voice: "Street Cat", source: "Dolly's one-room cabin in Locust Ridge, 12 children" },
+  { text: "If you want the rainbow, you gotta put up with the rain. *shakes water off one paw* I hate the rain. But I look fantastic in color.", category: "wise", voice: "Diva Cat", source: "Dolly quote + cat behavior" },
+  { text: "Find out who you are. Then do it on purpose. *slow blink* I've been doing it on purpose since before you were born.", category: "wise", voice: "Elder Cat", source: "Dolly: 'Find out who you are and do it on purpose'" },
+  { text: "I'm a businesswoman in a rhinestone jacket. The rhinestones are the distraction. The business is the point.", category: "wise", voice: "Lithe Cat", source: "Dolly's empire hidden behind the glamour — everyone looks at the costume, not the contracts" },
+  { text: "*headbutts your hand* Honey, you're fine. You're just surrounded by people who aren't.", category: "nurturing", voice: "Loving Cat", source: "Dolly's warmth — always kind, never naive" },
+  { text: "They said I was too much. I said thank you.", category: "cold", voice: "Diva Cat", source: "Dolly taking 'too much' as a compliment" },
+  { text: "I don't judge people. I just figure out how to love them anyway and move on with my day.", category: "heartfelt", voice: "Loving Cat", source: "Dolly's radical kindness — loves everyone, gets played by no one" },
+  { text: "Never get too big for your britches. But make sure your britches are spectacular.", category: "wise", voice: "Diva Cat", source: "Dolly balancing humility with spectacle" },
+  { text: "Storms make trees take deeper roots. Also storms make my fur enormous. Both are power.", category: "wise", voice: "Badass Cat", source: "Dolly: 'Storms make trees take deeper roots' — cat twist" },
+  { text: "If your life is a bed of roses, watch the thorns. If your life is just thorns, you're probably growing something.", category: "wise", voice: "Elder Cat", source: "Dolly's Appalachian wisdom — finding hope in hard soil" },
+  { text: "*settles in your lap* I don't share my heart with just anyone. You made the cut. Don't get weird about it.", category: "heartfelt", voice: "Loving Cat", source: "Dolly's selective intimacy — generous but not careless" },
+  { text: "The secret to a great song is three minutes and the truth. The secret to great advice is less than that.", category: "wise", voice: "Elder Cat", source: "Dolly on songwriting — brevity IS the skill" },
+  { text: "I'm a living legend. But I still clean my own paws. Staying humble has nothing to do with staying small.", category: "wise", voice: "Diva Cat", source: "Dolly staying grounded while being an icon" },
+  { text: "Sometimes being kind is the most dangerous thing you can do. They never see it coming.", category: "wise", voice: "Boundaries Cat", source: "Dolly's kindness as stealth weapon — underestimated every time" },
+  { text: "You can't cross a bridge you didn't burn by standing at the ashes. Build a new one. I'll walk across it first to test it.", category: "wise", voice: "Badass Cat", source: "Dolly's bridge-building energy — action, not mourning" },
+  { text: "*chirps* I'm just a simple country cat. With a business empire. And impeccable timing.", category: "chaotic", voice: "Lithe Cat", source: "Dolly playing dumb while being the smartest person in the room" },
+  { text: "I've been underestimated by professionals. It's practically a hobby of theirs at this point.", category: "cold", voice: "Competitive Cat", source: "Every executive who looked at Dolly and saw a joke, then wrote her a check" },
+  { text: "Jolene couldn't take my man. And Jolene was beautiful. What makes you think you can take my peace?", category: "cold", voice: "Boundaries Cat", source: "Jolene — if the most beautiful woman couldn't shake her, your drama definitely can't" },
+  { text: "The best way to deal with a bully is to dazzle them until they forget what they were doing.", category: "wise", voice: "Diva Cat", source: "Dolly's actual strategy — shine so hard they lose their train of thought" },
+  { text: "I'll pray for you. And while I'm at it I'll outwork you, outlast you, and outshine you. Amen.", category: "demanding", voice: "Competitive Cat", source: "Dolly's faith + work ethic combo — praying AND hustling" },
+  { text: "When life gives me lemons, I make lemonade. Then I sell it. Then I build a theme park around the lemonade stand. Then I write a song about it.", category: "chaotic", voice: "Competitive Cat", source: "Dolly's escalation pattern — nothing stays small" },
+  { text: "*slow blink* I came from nothing, honey. You can't scare someone who knows what nothing tastes like.", category: "cold", voice: "Street Cat", source: "Dolly's poverty origin — fearlessness from having survived the bottom" },
+  { text: "If you don't like the road you're walking, pave another one. I've paved six. Three of them have gift shops.", category: "chaotic", voice: "Competitive Cat", source: "Dolly: 'If you don't like the road you're walking, start paving another one' + Dollywood" }
+];
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span><span class="source">${item.source}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
