@@ -3229,19 +3229,19 @@ function generateFromTemplate(template: Template): OracleResponse {
 // ============================================
 
 const categoryWeights: Record<OracleCategory, number> = {
-  mystical: 6,      // 42 responses
-  nurturing: 5,     // 32 responses
-  poetic: 7,        // 47 responses
-  cold: 6,          // 39 responses
-  angry: 5,         // 33 responses
-  heartfelt: 5,     // 33 responses
-  judgy: 5,         // 35 responses
-  chaotic: 17,      // 112 responses
-  wise: 30,         // 202 responses - lots of content!
-  existential: 5,   // 31 responses
-  demanding: 10,    // 64 responses
-  meta: 3,          // 21 responses
-  adoption: 1,      // adoption fourth-wall responses
+  wise: 20,         // 544 responses
+  chaotic: 18,      // 470 responses
+  cold: 10,         // 246 responses
+  judgy: 10,        // 242 responses
+  demanding: 10,    // 166 responses
+  mystical: 7,      // 164 responses
+  existential: 7,   // 119 responses
+  heartfelt: 7,     // 118 responses
+  nurturing: 6,     // 114 responses
+  angry: 5,         // 79 responses
+  poetic: 5,        // 72 responses
+  meta: 4,          // 38 responses
+  adoption: 1,      // 7 responses — has its own 2.5% trigger
 };
 
 // Track recently shown responses to avoid repeats
