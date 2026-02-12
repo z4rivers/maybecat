@@ -1,16 +1,26 @@
 {
   "name": "MaybeCat",
   "short_name": "MaybeCat",
-  "description": "Magic 8-Ball that poops and purrs. Questionable advice from adoptable cats.",
+  "description": "Ask a cat. Get answers. Maybe. Real adoptable shelter cats with opinions about your life choices.",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#EC4899",
   "background_color": "#FBBF24",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }
