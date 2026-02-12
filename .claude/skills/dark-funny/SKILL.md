@@ -512,6 +512,22 @@ This prevents the gravitational pull toward: Judge Cat + surface cat behavior + 
 - Trying to BE funny/dark/edgy — look at the world, see what's there, be cat about it
 - Constructed cleverness — the assembly is visible. Found language hides its seams.
 
+### The Center Problem — THE BIGGEST THREAT
+
+The gravitational pull is toward the center of every category. The most "demanding"-sounding phrase. The most "wise"-shaped sentence. The most expected version of whatever's being asked for. **This is the death of every batch.**
+
+The center is where boring lives. The center is Pinterest. The center is the Reddit front page. The center is the phrase that fits the category definition so neatly it has zero friction, zero surprise, zero life.
+
+**What we actually want is the edges.** The line that doesn't sound like it belongs in any category. The one that comes from a real human moment — not from the *idea* of a human moment. The sentence that existed in someone's life before it existed on a page.
+
+Think: the rapper who references Shakespeare and makes it work in the hood. Not the lowest denominator. Not clever wordplay that any 3rd grader could spot. LAYERS that English professors and barbers both catch something different in. Specificity so sharp it becomes universal.
+
+**Before writing any response, ask:** Is this the first thing that comes to mind for this category? If yes, THROW IT AWAY. The first, second, and third ideas are the center. The fourth or fifth — the unexpected word, the surprising combination, the thing that makes you go "wait, WHAT?" before it clicks — that's the edge.
+
+**"Dirty" doesn't mean innuendo.** It means raw. Connected. Alive. A line that touches actual human experience — the 2 AM text you almost sent, the job you stayed at too long, the thing your ex said that you still think about. Not the idea of those things. The TEXTURE of those things.
+
+**"Demanding" doesn't mean commands.** "Wise" doesn't mean proverbs. "Cold" doesn't mean dismissive. Every category has an edge where it stops being itself and becomes something nobody has a word for. THAT'S where the responses live.
+
 ### The Dorothy Parker Principle
 Wit has truth underneath it. Wisecracks are calisthenics with words. Stay on the truth side. If a response is clever but empty, it's a wisecrack. If it makes someone go quiet for a second before they laugh, it's wit.
 
