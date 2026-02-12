@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malicious Compliance x Petty Revenge x Technical Truth - 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #ffd93d;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counters .keep { color: #4ecca3; }
+  .counters .cut { color: #e94560; }
+  .counters .edit { color: #ffd93d; }
+  .counters .pending { color: #888; }
+
+  .card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut-card { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .card-num {
+    font-size: 12px;
+    color: #555;
+    font-weight: 600;
+  }
+  .card-category {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #0f3460;
+    color: #aaa;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  .buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db892; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+  .btn-undo:hover { background: #444; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.active { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .save-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-save { background: #4ecca3; color: #1a1a2e; }
+  .btn-cancel { background: #555; color: #ccc; }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .export-section pre {
+    background: #0a0a1a;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .btn-copy:hover { background: #3db892; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Malicious Compliance x Petty Revenge x Technical Truth &mdash; 30 Responses</h1>
+  <div class="subtitle">Refrigerators: r/MaliciousCompliance, r/pettyrevenge, r/technicallythetruth | Voices: Tim Robinson, Nate Bargatze, Tig Notaro | Push: meta, angry, poetic</div>
+  <div class="counters">
+    <span class="keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="cut">CUT: <span id="cut-count">0</span></span>
+    <span class="edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="pending">PENDING: <span id="pending-count">30</span>/30</span>
+  </div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <h2>Export (KEPT + EDITED only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  // --- MALICIOUS COMPLIANCE ENERGY ---
+  {
+    text: "I did exactly what you asked. You should have asked better.",
+    category: "meta",
+    source: "malicious-compliance",
+    voice: "Judge Cat"
+  },
+  {
+    text: "You said 'be honest.' Those were your words.",
+    category: "angry",
+    source: "malicious-compliance",
+    voice: "Condescending Parent Cat"
+  },
+  {
+    text: "*sits exactly where you told me not to* I'm adjacent. Check the wording.",
+    category: "meta",
+    source: "malicious-compliance",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "I followed your instructions. Every one. That's why it's ruined.",
+    category: "angry",
+    source: "malicious-compliance",
+    voice: "Grudging Virtue Cat"
+  },
+  {
+    text: "You asked me to care. You didn't say how much.",
+    category: "cold",
+    source: "malicious-compliance",
+    voice: "Chaos Cat"
+  },
+  {
+    text: "The loophole was right there. I didn't make the loophole. I just used it.",
+    category: "wise",
+    source: "malicious-compliance",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "I listened. I heard you. I did something else. All three were respectful.",
+    category: "meta",
+    source: "malicious-compliance",
+    voice: "Tim Robinson energy"
+  },
+  {
+    text: "You said 'do your best.' This is my best. Sit with that.",
+    category: "angry",
+    source: "malicious-compliance",
+    voice: "Grudging Virtue Cat"
+  },
+
+  // --- PETTY REVENGE ENERGY ---
+  {
+    text: "I'm not mad. I'm just going to be very specific about what I remember.",
+    category: "angry",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "Small gestures. That's how I love. Also how I ruin.",
+    category: "poetic",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I don't get even. I get precise.",
+    category: "cold",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "Revenge is a dish best served at room temperature in a spot you won't find until Thursday.",
+    category: "angry",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I moved your bookmark. One page back. You'll never be sure.",
+    category: "meta",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "*one ear rotates* I hold no grudge. I hold a detailed list.",
+    category: "angry",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+  {
+    text: "The best revenge is living well. The second best is very, very quiet.",
+    category: "poetic",
+    source: "petty-revenge",
+    voice: "Tig Notaro energy"
+  },
+  {
+    text: "I forgive you. I also rearranged something. Unrelated.",
+    category: "meta",
+    source: "petty-revenge",
+    voice: "Karen Cat"
+  },
+
+  // --- TECHNICALLY THE TRUTH ENERGY ---
+  {
+    text: "Correct. Not useful, but correct.",
+    category: "cold",
+    source: "technically-the-truth",
+    voice: "Judge Cat"
+  },
+  {
+    text: "Technically, you never said it was a bad idea. You said 'is this a bad idea.' Different sentence.",
+    category: "meta",
+    source: "technically-the-truth",
+    voice: "Judge Cat"
+  },
+  {
+    text: "Every exit is also an entrance. You're welcome.",
+    category: "poetic",
+    source: "technically-the-truth",
+    voice: "Nate Bargatze energy"
+  },
+  {
+    text: "You asked if you should. Not if you could. Those are different budgets.",
+    category: "wise",
+    source: "technically-the-truth",
+    voice: "Judge Cat"
+  },
+  {
+    text: "The answer is yes. The answer to the question you meant is no.",
+    category: "meta",
+    source: "technically-the-truth",
+    voice: "Judge Cat"
+  },
+  {
+    text: "I answered your question. I just didn't answer your problem.",
+    category: "meta",
+    source: "technically-the-truth",
+    voice: "Condescending Parent Cat"
+  },
+  {
+    text: "Nothing I said was wrong. That's not the same as helpful.",
+    category: "cold",
+    source: "technically-the-truth",
+    voice: "Tig Notaro energy"
+  },
+
+  // --- HYBRIDS: where all three energies meet ---
+  {
+    text: "You asked for the truth. You got the truth. Now you're upset about the truth. Fascinating cycle.",
+    category: "meta",
+    source: "hybrid",
+    voice: "Condescending Parent Cat"
+  },
+  {
+    text: "*tail tip flicks* I gave you exactly what you deserve. Not a calorie more.",
+    category: "angry",
+    source: "hybrid",
+    voice: "Karen Cat"
+  },
+  {
+    text: "The rule said 'no.' The rule didn't say why. So I found out.",
+    category: "wise",
+    source: "hybrid",
+    voice: "Chaos Cat"
+  },
+  {
+    text: "I am being supportive. This is what my support looks like. Lower your expectations or raise your standards. Pick.",
+    category: "angry",
+    source: "hybrid",
+    voice: "Tim Robinson energy"
+  },
+  {
+    text: "Obedience and agreement are different animals. I'm the other one.",
+    category: "poetic",
+    source: "hybrid",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "You wanted an answer. Here's an answer. You wanted the RIGHT answer? That costs extra.",
+    category: "meta",
+    source: "hybrid",
+    voice: "Judge Cat"
+  },
+  {
+    text: "I'm not difficult. I'm literal. You're just imprecise.",
+    category: "judgy",
+    source: "hybrid",
+    voice: "Condescending Parent Cat"
+  }
+];
+
+// State
+const decisions = new Array(responses.length).fill(null); // null, 'keep', 'cut', 'edit'
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    const displayText = editedTexts[i] || r.text;
+    const cls = d === 'keep' ? 'kept' : d === 'cut' ? 'cut-card' : d === 'edit' ? 'edited' : '';
+    container.innerHTML += `
+      <div class="card ${cls}" id="card-${i}">
+        <div class="card-header">
+          <span class="card-num">#${i + 1}</span>
+          <span class="card-category">${r.category}</span>
+        </div>
+        <div class="card-text">${displayText}</div>
+        <div class="card-meta">${r.source} | ${r.voice}</div>
+        <div class="buttons">
+          ${d ? `<button class="btn btn-undo" onclick="undo(${i})">UNDO</button>` : `
+            <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+          `}
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <div class="save-row">
+            <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+            <button class="btn btn-cancel" onclick="cancelEdit(${i})">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, type) {
+  decisions[i] = type;
+  render();
+}
+
+function undo(i) {
+  decisions[i] = null;
+  render();
+}
+
+function showEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('active');
+  if (el.classList.contains('active')) {
+    document.getElementById(`textarea-${i}`).focus();
+  }
+}
+
+function cancelEdit(i) {
+  document.getElementById(`edit-${i}`).classList.remove('active');
+}
+
+function saveEdit(i) {
+  const val = document.getElementById(`textarea-${i}`).value.trim();
+  if (val) {
+    editedTexts[i] = val;
+    decisions[i] = 'edit';
+    render();
+  }
+}
+
+function updateCounters() {
+  const k = decisions.filter(d => d === 'keep').length;
+  const c = decisions.filter(d => d === 'cut').length;
+  const e = decisions.filter(d => d === 'edit').length;
+  const p = decisions.filter(d => d === null).length;
+  document.getElementById('keep-count').textContent = k;
+  document.getElementById('cut-count').textContent = c;
+  document.getElementById('edit-count').textContent = e;
+  document.getElementById('pending-count').textContent = p;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      kept.push({ text: editedTexts[i], category: r.category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mildly Infuriating x Choosing Beggars x Confidently Incorrect - 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .cat-voice { color: #7b68ee; }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #e94560; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f1a30;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f1a30;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Mildly Infuriating x Choosing Beggars x Confidently Incorrect -- 30 Responses</h1>
+  <div class="subtitle">Refrigerators: r/mildlyinfuriating (the tile that's off), r/ChoosingBeggars (the audacity), r/confidentlyincorrect (wrong with certainty) | Feeding: angry, demanding, meta</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "You moved the water bowl two inches to the left. We're done here.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Hissy Cat"
+  },
+  {
+    text: "I wanted the premium treats. Not the treats. The PREMIUM treats. In the blue bag. The other blue.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I'm right. I've always been right. The fact that I missed the jump changes nothing.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "Something is one degree off in this room and I will not rest until I've identified it.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Judge Cat"
+  },
+  {
+    text: "Free advice and you're complaining about the delivery? *ears flatten*",
+    category: "meta",
+    source: "Choosing Beggars",
+    voice: "Realist Cat"
+  },
+  {
+    text: "That's the wrong brand. Same flavor, wrong brand. I can tell. Don't insult me.",
+    category: "demanding",
+    source: "Mildly Infuriating",
+    voice: "Diva Cat"
+  },
+  {
+    text: "No, I'm sure. *falls off counter* I'm still sure.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "The towel is folded wrong. I don't fold towels. But I know when they're wrong.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Judge Cat"
+  },
+  {
+    text: "I require a lap. Warm. Still. Minimum two hours. No sudden movements. Also I might leave in thirty seconds.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Karen Cat"
+  },
+  {
+    text: "*tail tip flicks* The rug is crooked. Nobody else sees it. I see it.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Hissy Cat"
+  },
+  {
+    text: "I corrected you because you were wrong. You weren't wrong? I've corrected you anyway.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "The kibble touches the side of the bowl. Inedible. Start over.",
+    category: "demanding",
+    source: "Mildly Infuriating + Choosing Beggars",
+    voice: "Diva Cat"
+  },
+  {
+    text: "Almost right is the most violent kind of wrong.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Realist Cat"
+  },
+  {
+    text: "I wanted you to open the door. Not THAT door.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I have reviewed the evidence. The evidence is wrong.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Judge Cat"
+  },
+  {
+    text: "You put the new food in the old bowl. I noticed. It's contaminated now.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Hissy Cat"
+  },
+  {
+    text: "I don't want much. Just everything. Arranged correctly. By someone who anticipates my needs.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Diva Cat"
+  },
+  {
+    text: "I measured. With my body. It doesn't fit. *squeezes in anyway* See? Perfect fit.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "*ears flatten* The picture frame. It's tilted. By a hair. Fix it or I push it off the wall.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Hissy Cat"
+  },
+  {
+    text: "You offered me food. I rejected the food. Why is there no food?",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I watched you close it wrong. Not wrong enough to fix. Wrong enough to remember.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Judge Cat"
+  },
+  {
+    text: "You're asking me for advice and also questioning my qualifications. Pick one.",
+    category: "meta",
+    source: "Choosing Beggars + Confidently Incorrect",
+    voice: "Realist Cat"
+  },
+  {
+    text: "The couch cushion is back but it's not in the right orientation. I can feel the difference.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Hissy Cat"
+  },
+  {
+    text: "I am not high-maintenance. I am correctly-maintained. There's a difference you keep failing to grasp.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Diva Cat"
+  },
+  {
+    text: "Facts don't care about your feelings. My feelings don't care about your facts. Stalemate.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Realist Cat"
+  },
+  {
+    text: "You replaced the hand soap. I can tell. It's slightly different. The bathroom is ruined.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Judge Cat"
+  },
+  {
+    text: "I need attention. Not that attention. Different attention. Figure it out.",
+    category: "demanding",
+    source: "Choosing Beggars",
+    voice: "Karen Cat"
+  },
+  {
+    text: "I know what I saw. What I saw was wrong. But I know what I saw.",
+    category: "meta",
+    source: "Confidently Incorrect",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "One tile. One tile is a millimeter off. And you just LIVE like this.",
+    category: "angry",
+    source: "Mildly Infuriating",
+    voice: "Judge Cat"
+  },
+  {
+    text: "You came here for free wisdom from a cat on the internet and you want it to be MORE specific?",
+    category: "meta",
+    source: "Choosing Beggars",
+    voice: "Realist Cat"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    const displayText = editedTexts[i] || r.text;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="cat-voice">${r.voice}</span>
+        <span class="category">${r.category}</span>
+        <span class="source">${r.source}</span>
+      </div>
+      <div class="card-text">"${displayText}"</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${decisions[i] ? '<button class="btn btn-undo" onclick="undo(' + i + ')">UNDO</button>' : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${displayText}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, d) {
+  decisions[i] = d;
+  render();
+}
+
+function undo(i) {
+  decisions[i] = null;
+  editedTexts[i] = null;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById('edit-' + i);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const val = document.getElementById('textarea-' + i).value.trim();
+  if (val && val !== responses[i].text) {
+    editedTexts[i] = val;
+    decisions[i] = 'edit';
+  }
+  render();
+}
+
+function updateCounters() {
+  document.getElementById('keepCount').textContent = decisions.filter(d => d === 'keep').length;
+  document.getElementById('cutCount').textContent = decisions.filter(d => d === 'cut').length;
+  document.getElementById('editCount').textContent = decisions.filter(d => d === 'edit').length;
+  document.getElementById('pendingCount').textContent = decisions.filter(d => d === null).length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit' && editedTexts[i]) {
+      kept.push({ text: editedTexts[i], category: r.category });
+    }
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

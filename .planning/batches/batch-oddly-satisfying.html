@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oddly Satisfying -- 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .category { color: #4ecca3; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f1a30;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f1a30;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Oddly Satisfying -- 30 Responses</h1>
+  <div class="subtitle">The click of recognition. The perfect-fit sentence. Not clever, not a punchline. Just right. Skew: poetic, heartfelt, existential, wise.</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "You already left. Your body just hasn\u2019t caught up.",
+    category: "poetic"
+  },
+  {
+    text: "The right thing and the hard thing are the same door.",
+    category: "wise"
+  },
+  {
+    text: "*places each paw exactly* One thing at a time.",
+    category: "poetic"
+  },
+  {
+    text: "You\u2019re not lost. You\u2019re between names for where you are.",
+    category: "existential"
+  },
+  {
+    text: "The ache means it mattered.",
+    category: "heartfelt"
+  },
+  {
+    text: "Some doors close so quietly you only hear them later.",
+    category: "poetic"
+  },
+  {
+    text: "You\u2019ve been holding your breath. I can tell from here.",
+    category: "heartfelt"
+  },
+  {
+    text: "The answer arrived before the question. You just put them in the wrong order.",
+    category: "wise"
+  },
+  {
+    text: "*slow blink* There it is. That\u2019s the one you\u2019re afraid of.",
+    category: "poetic"
+  },
+  {
+    text: "It fits. You just don\u2019t want it to.",
+    category: "wise"
+  },
+  {
+    text: "The quiet after the decision is the answer.",
+    category: "existential"
+  },
+  {
+    text: "You didn\u2019t lose them. You returned them to where they were going.",
+    category: "heartfelt"
+  },
+  {
+    text: "What if the waiting is the whole thing.",
+    category: "existential"
+  },
+  {
+    text: "*kneads the air* Some comfort has no source. It just arrives.",
+    category: "poetic"
+  },
+  {
+    text: "The relief you\u2019re looking for is on the other side of the sentence you won\u2019t say.",
+    category: "wise"
+  },
+  {
+    text: "Not yet. But soon. You can feel it shifting.",
+    category: "heartfelt"
+  },
+  {
+    text: "The shape of what\u2019s missing tells you what it was.",
+    category: "poetic"
+  },
+  {
+    text: "You keep circling it because you already know the center.",
+    category: "wise"
+  },
+  {
+    text: "Nothing is wrong. Something is ending. Those aren\u2019t the same.",
+    category: "existential"
+  },
+  {
+    text: "That\u2019s not confusion. That\u2019s two true things at once.",
+    category: "wise"
+  },
+  {
+    text: "*curls into a perfect circle* Everything finds its shape eventually.",
+    category: "poetic"
+  },
+  {
+    text: "The heaviest things land the softest.",
+    category: "poetic"
+  },
+  {
+    text: "You\u2019re growing. It just looks like breaking from the inside.",
+    category: "heartfelt"
+  },
+  {
+    text: "The word you\u2019re reaching for is \u2018enough.\u2019",
+    category: "wise"
+  },
+  {
+    text: "Somewhere between the inhale and the exhale, you already decided.",
+    category: "existential"
+  },
+  {
+    text: "It wasn\u2019t nothing. It was small, and it was everything.",
+    category: "heartfelt"
+  },
+  {
+    text: "The wound closed. You just keep checking.",
+    category: "wise"
+  },
+  {
+    text: "What you\u2019re describing has a name. The name is \u2018ready.\u2019",
+    category: "heartfelt"
+  },
+  {
+    text: "Some things don\u2019t resolve. They just become part of the landscape.",
+    category: "existential"
+  },
+  {
+    text: "The purr started before you touched me. I felt you coming.",
+    category: "poetic"
+  }
+];
+
+// State
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+
+    const displayText = editedTexts[i] || r.text;
+
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="category">${r.category}</span>
+      </div>
+      <div class="card-text">${displayText}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-undo" onclick="decide(${i}, null)">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="editText-${i}">${displayText}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateCounters();
+  updateExport();
+}
+
+function decide(i, decision) {
+  decisions[i] = decision;
+  if (decision !== 'edit') {
+    editedTexts[i] = null;
+  }
+  render();
+}
+
+function showEdit(i) {
+  render();
+  const editArea = document.getElementById(`edit-${i}`);
+  editArea.style.display = 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`editText-${i}`);
+  editedTexts[i] = textarea.value;
+  decisions[i] = 'edit';
+  render();
+}
+
+function updateCounters() {
+  const keep = decisions.filter(d => d === 'keep').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edit = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+
+  document.getElementById('keepCount').textContent = keep;
+  document.getElementById('cutCount').textContent = cut;
+  document.getElementById('editCount').textContent = edit;
+  document.getElementById('pendingCount').textContent = pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      kept.push({ text: editedTexts[i], category: r.category });
+    }
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
