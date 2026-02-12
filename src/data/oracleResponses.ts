@@ -192,6 +192,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I refuse.", category: 'cold' },
   { text: "Absolutely not.", category: 'cold' },
   { text: "Hard no.", category: 'cold' },
+  { text: "Safe. Expected. Spineless.", category: 'cold' },
   { text: "*stares* *leaves*", category: 'cold' },
   { text: "Don't.", category: 'cold' },
   { text: "No. And stop asking.", category: 'cold' },
