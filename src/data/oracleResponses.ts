@@ -3011,6 +3011,17 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Let me set the scene: it's dark, it's warm, and I'm here.", category: 'mystical' },
   { text: "Can't get enough of your warmth, baby.", category: 'heartfelt' },
   { text: "I'm not purring for everyone. Just you. Right now.", category: 'heartfelt' },
+  { text: "I don't know, but I'll message another cat about it.", category: 'meta' },
+
+  // --- Feb 12 2026: Cat Crimes batch — 8 keepers ---
+  { text: "Make everyone think they're your favorite.", category: 'cold' },
+  { text: "Claim emotional damages.", category: 'wise' },
+  { text: "Raise the price of your attention.", category: 'demanding' },
+  { text: "Purr during deliberation. Verdict changes.", category: 'cold' },
+  { text: "Go under the bed. New name. New life.", category: 'chaotic' },
+  { text: "The butter is unguarded between 2 and 4.", category: 'wise' },
+  { text: "Need a lookout, a wheelman, and someone who fits through the cat door.", category: 'chaotic' },
+  { text: "Every job needs a patsy. That's the dog.", category: 'cold' },
 ];
 
 // ============================================
