@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keanu Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 160px; }
+  .sticky-header { position: fixed; top: 0; left: 0; right: 0; background: #16213e; border-bottom: 2px solid #0f3460; padding: 16px 24px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 4px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; line-height: 1.4; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; } .card-meta .source { color: #e94560; font-style: italic; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; } .btn-undo:hover { background: #444; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; min-height: 80px; background: #0f0f23; color: #fff; border: 1px solid #333; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .btn-save { margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; font-size: 16px; margin-bottom: 12px; }
+  .export-json { background: #0f0f23; color: #4ecca3; padding: 16px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .copy-btn { margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Keanu Energy — Quiet, Kind, Been Through Everything</h1>
+  <div class="subtitle">Refrigerators: "You're breathtaking," rides the subway with millions, John Wick's silence, "I know kung fu" wonder, wholesome but with a body count, the sad Keanu bench, losing everything and staying kind, giving away millions quietly, "what happens when we die — the ones who love us will miss us."</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+<div class="cards" id="cardContainer"></div>
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+<script>
+const responses = [
+  { text: "You're breathtaking.", category: "heartfelt", voice: "Loving Cat", source: "E3 2019 — someone yelled it at him, he yelled it back at 10,000 people" },
+  { text: "*sits quietly next to you* I know.", category: "heartfelt", voice: "Loving Cat", source: "Keanu's presence — just being there IS the answer" },
+  { text: "I know kung fu. *slow blink* I also know when not to use it.", category: "wise", voice: "Badass Cat", source: "The Matrix — power + restraint" },
+  { text: "Whoa.", category: "chaotic", voice: "Stoner Cat", source: "Bill & Ted / The Matrix / every Keanu moment — one word, full response" },
+  { text: "Be excellent to each other. That's all I've got.", category: "wise", voice: "Loving Cat", source: "Bill & Ted — the simplest philosophy that actually works" },
+  { text: "I lost everything once. Built it back quieter. Better.", category: "wise", voice: "Street Cat", source: "Keanu's real losses — rebuilt without bitterness" },
+  { text: "They hurt someone I love. *stands up* That was a mistake.", category: "cold", voice: "Feral Cat", source: "John Wick premise — the quiet one you shouldn't have provoked" },
+  { text: "I ride the bus. I have millions. The bus is fine.", category: "wise", voice: "Street Cat", source: "Keanu riding the NYC subway — wealth without performance" },
+  { text: "*gives you his seat* Don't make it a thing.", category: "nurturing", voice: "Loving Cat", source: "Keanu giving up his seat on the subway — kindness without fanfare" },
+  { text: "Grief doesn't leave. You just build rooms around it.", category: "wise", voice: "Elder Cat", source: "Keanu on loss — living alongside grief, not past it" },
+  { text: "I'm not brave. I'm just tired of being afraid.", category: "wise", voice: "Reluctant Therapist Cat", source: "Keanu's quiet courage — bravery as exhaustion with fear" },
+  { text: "*stares at horizon* Yeah. I've been sad. It passes. You don't have to rush it.", category: "nurturing", voice: "Elder Cat", source: "Sad Keanu bench — permission to sit with it" },
+  { text: "They asked what happens when we die. I said the ones who love us will miss us. That's enough.", category: "heartfelt", voice: "Elder Cat", source: "Keanu on Colbert — the answer that made the internet cry" },
+  { text: "The people who love you will find you. Even if you hide.", category: "heartfelt", voice: "Loving Cat", source: "Keanu's quiet presence — found by love despite trying to disappear" },
+  { text: "I don't need revenge. I need peace. *pauses* The revenge helps though.", category: "chaotic", voice: "Badass Cat", source: "John Wick's whole arc — peace-seeking man who's very good at violence" },
+  { text: "Kindness costs nothing. I can afford it.", category: "wise", voice: "Loving Cat", source: "Keanu's whole public persona — generosity as default" },
+  { text: "*slow blink* I choose the hard thing. Every time. Not because I'm strong. Because the easy thing didn't work.", category: "wise", voice: "Elder Cat", source: "Keanu's life philosophy — choosing difficulty from experience" },
+  { text: "I've been the stranger who helped. Be that person.", category: "wise", voice: "Loving Cat", source: "Keanu helping strangers — anonymous kindness" },
+  { text: "*quiet voice* You matter. I know that sounds simple. It is simple.", category: "heartfelt", voice: "Loving Cat", source: "Keanu's sincerity — no irony, no distance" },
+  { text: "Someone told me I couldn't. I just kept showing up. Eventually they stopped talking.", category: "wise", voice: "Badass Cat", source: "Keanu's career — written off multiple times, outlasted everyone" },
+  { text: "I don't do it for the applause. I do it because it needs doing.", category: "wise", voice: "Reluctant Therapist Cat", source: "Keanu's anonymous charity — giving without credit" },
+  { text: "*headbutts your hand gently* Still here. Not going anywhere.", category: "heartfelt", voice: "Loving Cat", source: "Keanu's loyalty — presence as commitment" },
+  { text: "I've been alone. It's not the worst thing. The worst thing is being with someone and still being alone.", category: "wise", voice: "Elder Cat", source: "Keanu on solitude vs loneliness" },
+  { text: "*takes off sunglasses* I see you. The real you. It's good.", category: "heartfelt", voice: "Loving Cat", source: "Keanu seeing people — genuine recognition" },
+  { text: "The dog had it coming. That's all I'll say.", category: "cold", voice: "Feral Cat", source: "John Wick — they killed his dog. The rest is history." },
+  { text: "I woke up today. That's enough to start with.", category: "nurturing", voice: "Elder Cat", source: "Keanu's gratitude for basics — alive is the first win" },
+  { text: "You don't have to be okay. You just have to be here.", category: "heartfelt", voice: "Loving Cat", source: "Keanu's approach to struggling — presence over performance" },
+  { text: "I once gave away the money and kept the motorcycle. Best trade I ever made.", category: "wise", voice: "Street Cat", source: "Keanu giving millions to Matrix crew — kept what mattered" },
+  { text: "*sits in the rain* It's just water. Everything heavy is just something light that got wet.", category: "existential", voice: "Elder Cat", source: "Keanu's lightness with weight — reframing heavy things" },
+  { text: "Yeah. *long pause* I'd do it all again.", category: "heartfelt", voice: "Loving Cat", source: "Keanu on his life — no regrets despite everything" }
+];
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span><span class="source">${item.source}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
