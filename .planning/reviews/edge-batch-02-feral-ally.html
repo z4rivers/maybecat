@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Edge Batch 02 — Feral Ally (Not Roasts)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+  .stats { display: flex; gap: 20px; flex-wrap: wrap; font-family: monospace; font-size: 14px; }
+  .stat { padding: 6px 14px; border-radius: 4px; }
+  .stat-keep { background: rgba(78,204,163,0.15); color: #4ecca3; }
+  .stat-cut { background: rgba(233,69,96,0.15); color: #e94560; }
+  .stat-edit { background: rgba(255,217,61,0.15); color: #ffd93d; }
+  .stat-pending { background: rgba(255,255,255,0.08); color: #888; }
+  h1 { font-size: 22px; margin-bottom: 5px; color: #fff; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; font-style: italic; }
+  .axis-info { font-size: 12px; color: #666; margin-bottom: 5px; font-family: monospace; }
+  .section-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; color: #4ecca3; margin: 30px 0 15px; padding-bottom: 5px; border-bottom: 1px solid #333; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .item-text { font-size: 20px; line-height: 1.5; margin-bottom: 8px; color: #fff; }
+  .item-meta { font-size: 11px; color: #666; margin-bottom: 12px; font-family: monospace; }
+  .item-meta span { margin-right: 15px; }
+  .cat-tag { color: #8a6fff; }
+  .source-tag { color: #ff6b9d; }
+  .energy-tag { color: #ffd93d; }
+  .note { font-size: 12px; color: #555; font-style: italic; margin-bottom: 12px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; font-family: monospace; transition: all 0.15s; }
+  .btn-keep { background: rgba(78,204,163,0.2); color: #4ecca3; border: 1px solid #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: rgba(233,69,96,0.2); color: #e94560; border: 1px solid #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { background: rgba(255,217,61,0.2); color: #ffd93d; border: 1px solid #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f1629; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 16px; font-family: Georgia, serif; resize: vertical; min-height: 60px; }
+  .edit-area select { background: #0f1629; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 6px; margin-top: 8px; font-size: 12px; }
+  .export-section { margin-top: 50px; padding: 20px; background: #0f1629; border-radius: 8px; border: 1px solid #333; }
+  .export-section h2 { font-size: 16px; color: #4ecca3; margin-bottom: 10px; }
+  .export-btn { padding: 10px 24px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
+  .export-btn:hover { background: #3db892; }
+  #exportOutput { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Edge Batch 02 — Feral Ally (Not Roasts)</h1>
+  <div class="subtitle">Same edges, same real. But the cat is ON YOUR SIDE. Rage at the world on your behalf. Warmth with teeth. Punch up, purr down.</div>
+  <div class="axis-info">TERRITORY: validation, permission, presence, confrontation-on-behalf-of, perspective shift, hope that isn't cheap</div>
+  <div class="axis-info">CONSTRAINT: Nothing aimed AT the asker. Cat is wingman, bodyguard, the friend who shows up with a shovel.</div>
+  <div class="stats" id="stats">
+    <span class="stat stat-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="stat stat-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="stat stat-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="stat stat-pending">PENDING: <span id="pendingCount">35</span></span>
+  </div>
+</div>
+
+<div class="section-label">Crescendos — the cat goes to war for you</div>
+
+<div class="item" data-id="1" data-category="wise">
+  <div class="item-text">They didn't break you. You just learned their language and it's ugly.</div>
+  <div class="item-meta">
+    <span class="cat-tag">STREET CAT</span>
+    <span class="source-tag">SRC: surviving bad relationships</span>
+    <span class="energy-tag">CRESCENDO</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Reframe. You think you're broken but you're actually fluent in something you shouldn't have had to learn. The damage is knowledge, not weakness.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-1">
+    <textarea id="text-1">They didn't break you. You just learned their language and it's ugly.</textarea>
+    <select id="cat-1"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="2" data-category="heartfelt">
+  <div class="item-text"><em>*sits on your suitcase*</em> You're not running away. You're running toward. There's a difference.</div>
+  <div class="item-meta">
+    <span class="cat-tag">ELDER CAT</span>
+    <span class="source-tag">SRC: leaving home / starting over</span>
+    <span class="energy-tag">CRESCENDO</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">For the person packing bags at 2am feeling guilty about it. The cat physically sits on the suitcase — claiming the decision as valid. Reframe: running toward, not away.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-2">
+    <textarea id="text-2">*sits on your suitcase* You're not running away. You're running toward. There's a difference.</textarea>
+    <select id="cat-2"><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="3" data-category="angry">
+  <div class="item-text">They called you "too much." <em>*fur rises*</em> They were not enough.</div>
+  <div class="item-meta">
+    <span class="cat-tag">BADASS CAT</span>
+    <span class="source-tag">SRC: rejection / being told you're too intense</span>
+    <span class="energy-tag">CRESCENDO</span>
+    <span>cat: angry</span>
+  </div>
+  <div class="note">Inversion. The cat is ANGRY on your behalf. Fur rises = real cat threat display. Punching UP at whoever made you feel small.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-3">
+    <textarea id="text-3">They called you "too much." *fur rises* They were not enough.</textarea>
+    <select id="cat-3"><option value="angry">angry</option><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="4" data-category="nurturing">
+  <div class="item-text">The version of you that got through last Tuesday? That one's tougher than you think.</div>
+  <div class="item-meta">
+    <span class="cat-tag">RELUCTANT THERAPIST CAT</span>
+    <span class="source-tag">SRC: recent survival / specific day</span>
+    <span class="energy-tag">CRESCENDO</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">"Last Tuesday" is specific enough to feel personal, vague enough to apply to anyone. Everyone had a last Tuesday. The cat knows you survived something recent.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-4">
+    <textarea id="text-4">The version of you that got through last Tuesday? That one's tougher than you think.</textarea>
+    <select id="cat-4"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="5" data-category="wise">
+  <div class="item-text">The quiet ones scare me. The quiet ones have been planning.</div>
+  <div class="item-meta">
+    <span class="cat-tag">STREET CAT</span>
+    <span class="source-tag">SRC: cat hunting behavior as compliment</span>
+    <span class="energy-tag">CRESCENDO</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Cat respects your silence. Reads it as strategy, not weakness. "Been planning" — the cat sees you as a predator, not prey. That's the highest compliment a cat gives.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-5">
+    <textarea id="text-5">The quiet ones scare me. The quiet ones have been planning.</textarea>
+    <select id="cat-5"><option value="wise">wise</option><option value="mystical">mystical</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="section-label">Rhythm — cat as wingman, bodyguard, the one who shows up</div>
+
+<div class="item" data-id="6" data-category="angry">
+  <div class="item-text"><em>*ears back*</em> Who said that to you. Names.</div>
+  <div class="item-meta">
+    <span class="cat-tag">FERAL CAT</span>
+    <span class="source-tag">SRC: protective rage</span>
+    <span>cat: angry</span>
+  </div>
+  <div class="note">Cat goes into threat mode on your behalf. Not judging you — hunting whoever hurt you. "Names." is the cold precision of a cat who already decided.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-6">
+    <textarea id="text-6">*ears back* Who said that to you. Names.</textarea>
+    <select id="cat-6"><option value="angry">angry</option><option value="wise">wise</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="7" data-category="wise">
+  <div class="item-text">You outgrew them. That's not a betrayal. That's a season ending.</div>
+  <div class="item-meta">
+    <span class="cat-tag">BARNCAT</span>
+    <span class="source-tag">SRC: agricultural/seasonal language</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Found language from farming. Seasons end — it's not anyone's fault. Removes the guilt from moving on. Barncat sees cycles, not blame.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-7">
+    <textarea id="text-7">You outgrew them. That's not a betrayal. That's a season ending.</textarea>
+    <select id="cat-7"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="8" data-category="nurturing">
+  <div class="item-text"><em>*sits on your chest*</em> Your heartbeat is fast. We're going to fix that. Stay down.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: anxiety attacks / weighted blanket energy</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">Cat as weighted blanket. "Stay down" — not a command, a prescription. The cat heard your heart and decided to intervene. Physical, specific, real cat behavior.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-8">
+    <textarea id="text-8">*sits on your chest* Your heartbeat is fast. We're going to fix that. Stay down.</textarea>
+    <select id="cat-8"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="9" data-category="wise">
+  <div class="item-text">The people who matter won't ask you to be smaller.</div>
+  <div class="item-meta">
+    <span class="cat-tag">ELDER CAT</span>
+    <span class="source-tag">SRC: dimming yourself to fit</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Simple truth. Not "believe in yourself" — names the SPECIFIC thing bad relationships ask of you. "Smaller" is the word that hits.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-9">
+    <textarea id="text-9">The people who matter won't ask you to be smaller.</textarea>
+    <select id="cat-9"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="10" data-category="wise">
+  <div class="item-text">Loyalty is a door, not a cage. You can leave a room and still love it.</div>
+  <div class="item-meta">
+    <span class="cat-tag">PHILOSOPHER CAT</span>
+    <span class="source-tag">SRC: guilt about leaving jobs/relationships/churches</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">For the person who stays out of loyalty, not love. Reframes leaving as compatible with love. Door/cage — the same shape, different function.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-10">
+    <textarea id="text-10">Loyalty is a door, not a cage. You can leave a room and still love it.</textarea>
+    <select id="cat-10"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="11" data-category="heartfelt">
+  <div class="item-text"><em>*headbutts your hand*</em> You kept going. I noticed. Most don't.</div>
+  <div class="item-meta">
+    <span class="cat-tag">ELDER CAT</span>
+    <span class="source-tag">SRC: quiet persistence</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">Headbutt = filing ownership papers in cat language. "Most don't" — the cat respects you specifically because you didn't quit. Not generic praise — earned recognition.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-11">
+    <textarea id="text-11">*headbutts your hand* You kept going. I noticed. Most don't.</textarea>
+    <select id="cat-11"><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="12" data-category="wise">
+  <div class="item-text">Boundaries don't make you cold. They make you a place worth entering.</div>
+  <div class="item-meta">
+    <span class="cat-tag">BOUNDARIES CAT</span>
+    <span class="source-tag">SRC: guilt about saying no</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Reframe. Boundaries = architecture, not walls. "Worth entering" — the door exists BECAUSE the room has value. Edge of wise — not telling you to set boundaries, telling you why they matter.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-12">
+    <textarea id="text-12">Boundaries don't make you cold. They make you a place worth entering.</textarea>
+    <select id="cat-12"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="13" data-category="nurturing">
+  <div class="item-text">You don't owe anyone the story of how you got here. You're here. That's the whole thing.</div>
+  <div class="item-meta">
+    <span class="cat-tag">BADASS CAT</span>
+    <span class="source-tag">SRC: recovery / reinvention / immigration</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">For the person who's always explaining themselves. The cat doesn't need your backstory. "You're here" is the credential. Works for recovery, immigration, career change, anything.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-13">
+    <textarea id="text-13">You don't owe anyone the story of how you got here. You're here. That's the whole thing.</textarea>
+    <select id="cat-13"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="14" data-category="wise">
+  <div class="item-text">The right answer at the wrong volume is still courage.</div>
+  <div class="item-meta">
+    <span class="cat-tag">PHILOSOPHER CAT</span>
+    <span class="source-tag">SRC: speaking up badly / stumbling through truth</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">For the person who said the right thing but said it wrong — shaky voice, bad timing, tears. The cat validates the messy version of brave.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-14">
+    <textarea id="text-14">The right answer at the wrong volume is still courage.</textarea>
+    <select id="cat-14"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="15" data-category="heartfelt">
+  <div class="item-text"><em>*kneads the air next to you*</em> I'm not good at this. But I'm here for it.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: awkward comfort</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">Air-kneading = comfort behavior from kittenhood. The cat admitting it doesn't know how to help but showing up anyway. Most honest form of love.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-15">
+    <textarea id="text-15">*kneads the air next to you* I'm not good at this. But I'm here for it.</textarea>
+    <select id="cat-15"><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="16" data-category="wise">
+  <div class="item-text">Their opinion of you was formed before you opened your mouth. That's not your weight to carry.</div>
+  <div class="item-meta">
+    <span class="cat-tag">REALIST CAT</span>
+    <span class="source-tag">SRC: prejudice / first impressions / interviews</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">For the person who keeps trying to prove themselves to someone who decided early. Works for racism, classism, corporate politics, family dynamics. "Not your weight" — cat removes the burden.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-16">
+    <textarea id="text-16">Their opinion of you was formed before you opened your mouth. That's not your weight to carry.</textarea>
+    <select id="cat-16"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="17" data-category="nurturing">
+  <div class="item-text">You showed up. To the thing you were dreading. <em>*slow blink*</em> That counts.</div>
+  <div class="item-meta">
+    <span class="cat-tag">RELUCTANT THERAPIST CAT</span>
+    <span class="source-tag">SRC: social anxiety / doing the hard thing</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">Slow blink = trust/love in cat language. For the person who went to the party, the interview, the funeral, the appointment. "That counts" — minimum words, maximum recognition.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-17">
+    <textarea id="text-17">You showed up. To the thing you were dreading. *slow blink* That counts.</textarea>
+    <select id="cat-17"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="18" data-category="wise">
+  <div class="item-text">Healing isn't linear. Some days you're the wound. Some days you're the scar. Both are progress.</div>
+  <div class="item-meta">
+    <span class="cat-tag">OLD SOUL CAT</span>
+    <span class="source-tag">SRC: medical language relocated / recovery</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Medical language: wound → scar is actual healing progression. "Both are progress" names what people forget on bad days — that the regression IS part of it.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-18">
+    <textarea id="text-18">Healing isn't linear. Some days you're the wound. Some days you're the scar. Both are progress.</textarea>
+    <select id="cat-18"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="19" data-category="mystical">
+  <div class="item-text"><em>*pupils dilate*</em> Something good is coming. I can smell it. Not today. But soon.</div>
+  <div class="item-meta">
+    <span class="cat-tag">PROPHET CAT</span>
+    <span class="source-tag">SRC: cat sensory behavior / hope</span>
+    <span>cat: mystical</span>
+  </div>
+  <div class="note">Cat as oracle — uses its actual superior senses. "Not today" keeps it honest. "But soon" keeps it hopeful. Hope that isn't cheap because the cat qualified it.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-19">
+    <textarea id="text-19">*pupils dilate* Something good is coming. I can smell it. Not today. But soon.</textarea>
+    <select id="cat-19"><option value="mystical">mystical</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="cold">cold</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="20" data-category="wise">
+  <div class="item-text">You didn't burn the bridge. You stopped rebuilding the part they kept setting fire to.</div>
+  <div class="item-meta">
+    <span class="cat-tag">REALIST CAT</span>
+    <span class="source-tag">SRC: cutting people off / guilt about it</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">Reframe the "burning bridges" narrative. You didn't destroy anything — you stopped repairing what they kept destroying. Removes the guilt from walking away.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(20)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-20">
+    <textarea id="text-20">You didn't burn the bridge. You stopped rebuilding the part they kept setting fire to.</textarea>
+    <select id="cat-20"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="21" data-category="heartfelt">
+  <div class="item-text"><em>*shows belly, keeps claws ready*</em> I trust you. That's not small.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: cat vulnerability behavior</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">Belly-showing with claws ready = the most honest form of cat trust: vulnerability WITH readiness. "That's not small" — the cat naming the weight of what it just did.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(21)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-21">
+    <textarea id="text-21">*shows belly, keeps claws ready* I trust you. That's not small.</textarea>
+    <select id="cat-21"><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="22" data-category="wise">
+  <div class="item-text">Leaving isn't quitting. Staying when you know isn't loyalty. It's a hostage situation you're running.</div>
+  <div class="item-meta">
+    <span class="cat-tag">STREET CAT</span>
+    <span class="source-tag">SRC: jobs/relationships you've outgrown</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">"A hostage situation you're running" — you're both the hostage AND the captor. Edge of wise. Found language from crime relocated into self-sabotage.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(22)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-22">
+    <textarea id="text-22">Leaving isn't quitting. Staying when you know isn't loyalty. It's a hostage situation you're running.</textarea>
+    <select id="cat-22"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="23" data-category="nurturing">
+  <div class="item-text">You're not behind. There's no schedule. Whoever told you there was one lied.</div>
+  <div class="item-meta">
+    <span class="cat-tag">BADASS CAT</span>
+    <span class="source-tag">SRC: milestone anxiety / social comparison</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">For the person comparing their timeline to everyone else's. "Whoever told you there was one lied" — names the invisible oppressor. Cat punches up at the system, not the person.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(23)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-23">
+    <textarea id="text-23">You're not behind. There's no schedule. Whoever told you there was one lied.</textarea>
+    <select id="cat-23"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="24" data-category="wise">
+  <div class="item-text">You changed and they punished you for it. That tells you everything about the room, nothing about you.</div>
+  <div class="item-meta">
+    <span class="cat-tag">REALIST CAT</span>
+    <span class="source-tag">SRC: family dynamics / outgrowing friend groups</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">"The room" — not "them." Depersonalizes the blame. Tells you the environment was the problem, not the growth. Cat redirects the judgment outward.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(24)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-24">
+    <textarea id="text-24">You changed and they punished you for it. That tells you everything about the room, nothing about you.</textarea>
+    <select id="cat-24"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="25" data-category="mystical">
+  <div class="item-text"><em>*one ear rotates toward the door*</em> That thing you closed? It needed closing. The next one's already unlocked.</div>
+  <div class="item-meta">
+    <span class="cat-tag">PROPHET CAT</span>
+    <span class="source-tag">SRC: cat hearing / endings</span>
+    <span>cat: mystical</span>
+  </div>
+  <div class="note">Cat hears the next door before you see it. Validates the ending AND promises the beginning. The ear rotation is the cat detecting what you can't yet.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(25)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-25">
+    <textarea id="text-25">*one ear rotates toward the door* That thing you closed? It needed closing. The next one's already unlocked.</textarea>
+    <select id="cat-25"><option value="mystical">mystical</option><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="26" data-category="wise">
+  <div class="item-text">Soft isn't weak. Water is soft. Water built the Grand Canyon.</div>
+  <div class="item-meta">
+    <span class="cat-tag">OLD SOUL CAT</span>
+    <span class="source-tag">SRC: geological language / Lao Tzu energy</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">For the person who's been told their gentleness is a liability. Geological timescale reframe — soft things reshape hard things. Just slowly.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(26)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-26">
+    <textarea id="text-26">Soft isn't weak. Water is soft. Water built the Grand Canyon.</textarea>
+    <select id="cat-26"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="27" data-category="chaotic">
+  <div class="item-text">Do the scary thing first. Then eat. That's my whole system and I'm thriving.</div>
+  <div class="item-meta">
+    <span class="cat-tag">COMPETITIVE CAT</span>
+    <span class="source-tag">SRC: cat hunting behavior as life advice</span>
+    <span>cat: chaotic</span>
+  </div>
+  <div class="note">Cat's actual survival strategy reframed as encouragement. "I'm thriving" — the cat IS evidence that this works. Light energy but real advice underneath.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(27)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-27">
+    <textarea id="text-27">Do the scary thing first. Then eat. That's my whole system and I'm thriving.</textarea>
+    <select id="cat-27"><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="28" data-category="angry">
+  <div class="item-text">They don't get to make you feel small and then act surprised when you leave. <em>*hiss*</em></div>
+  <div class="item-meta">
+    <span class="cat-tag">FERAL CAT</span>
+    <span class="source-tag">SRC: toxic relationships / jobs</span>
+    <span>cat: angry</span>
+  </div>
+  <div class="note">Cat is ANGRY on your behalf. The hiss is aimed at THEM. "Act surprised" names the gaslighting pattern — they knew, they just didn't think you'd actually go.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(28)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-28">
+    <textarea id="text-28">They don't get to make you feel small and then act surprised when you leave. *hiss*</textarea>
+    <select id="cat-28"><option value="angry">angry</option><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="29" data-category="nurturing">
+  <div class="item-text">Some things don't need fixing. They need a witness. <em>*sits*</em> Go ahead.</div>
+  <div class="item-meta">
+    <span class="cat-tag">RELUCTANT THERAPIST CAT</span>
+    <span class="source-tag">SRC: therapy language relocated / being heard</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">"Witness" from legal/spiritual language. The cat isn't going to solve it — it's going to see it. "Go ahead" = permission to unload. Cat as witness, not fixer.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(29)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-29">
+    <textarea id="text-29">Some things don't need fixing. They need a witness. *sits* Go ahead.</textarea>
+    <select id="cat-29"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="section-label">Quiet — steel spine, gentle voice</div>
+
+<div class="item" data-id="30" data-category="nurturing">
+  <div class="item-text"><em>*makes biscuits on your chest*</em> This is the safest place I know.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: cat kneading behavior / trust</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">Biscuit-making = kitten nursing behavior. The cat is telling you that YOU are its safe place. The flip — you thought you needed comfort and the cat says you ARE comfort.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(30)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-30">
+    <textarea id="text-30">*makes biscuits on your chest* This is the safest place I know.</textarea>
+    <select id="cat-30"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="31" data-category="heartfelt">
+  <div class="item-text"><em>*silent meow*</em></div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: real cat behavior — soundless meow = sincerest request</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">Just the action. No words. The silent meow is a real thing cats do — it's the most sincere, most vulnerable sound a cat makes. Just... nothing else needs to be said.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(31,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(31,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(31)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-31">
+    <textarea id="text-31">*silent meow*</textarea>
+    <select id="cat-31"><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="32" data-category="nurturing">
+  <div class="item-text"><em>*presses forehead against yours*</em> There. That's all I've got. Take it.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: cat bunting / all-I-have love</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">Forehead press = the cat's most intimate gesture. "That's all I've got" — not pretending to have answers. Just presence. "Take it" — almost a demand. Love as something forced on you because you need it.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(32,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(32,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(32)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-32">
+    <textarea id="text-32">*presses forehead against yours* There. That's all I've got. Take it.</textarea>
+    <select id="cat-32"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="33" data-category="wise">
+  <div class="item-text">Rest isn't giving up. It's reloading.</div>
+  <div class="item-meta">
+    <span class="cat-tag">COMPETITIVE CAT</span>
+    <span class="source-tag">SRC: gaming/military language relocated</span>
+    <span>cat: wise</span>
+  </div>
+  <div class="note">For the person who feels guilty about needing a break. "Reloading" — not passive. Strategic. Rest as offensive move, not retreat.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(33,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(33,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(33)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-33">
+    <textarea id="text-33">Rest isn't giving up. It's reloading.</textarea>
+    <select id="cat-33"><option value="wise">wise</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="34" data-category="heartfelt">
+  <div class="item-text">You don't have to earn the good thing that's coming. It's not a transaction. It's weather.</div>
+  <div class="item-meta">
+    <span class="cat-tag">OLD SOUL CAT</span>
+    <span class="source-tag">SRC: meteorological language / Protestant work ethic</span>
+    <span>cat: heartfelt</span>
+  </div>
+  <div class="note">For the person who thinks happiness has to be deserved. "It's weather" — it just arrives. Nobody earns rain. Nobody earns sun. Found language from meteorology applied to grace.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(34,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(34,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(34)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-34">
+    <textarea id="text-34">You don't have to earn the good thing that's coming. It's not a transaction. It's weather.</textarea>
+    <select id="cat-34"><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<div class="item" data-id="35" data-category="nurturing">
+  <div class="item-text"><em>*curls around your feet*</em> I'm not leaving. You can stop checking.</div>
+  <div class="item-meta">
+    <span class="cat-tag">LOVING CAT</span>
+    <span class="source-tag">SRC: abandonment anxiety / attachment</span>
+    <span>cat: nurturing</span>
+  </div>
+  <div class="note">For the person who keeps looking to see if people are still there. "Stop checking" — the cat names the anxious behavior without judging it. It's staying. It said so. Believe it.</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(35,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(35,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(35)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-35">
+    <textarea id="text-35">*curls around your feet* I'm not leaving. You can stop checking.</textarea>
+    <select id="cat-35"><option value="nurturing">nurturing</option><option value="heartfelt">heartfelt</option><option value="wise">wise</option><option value="cold">cold</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="chaotic">chaotic</option><option value="existential">existential</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="meta">meta</option><option value="poetic">poetic</option></select>
+  </div>
+</div>
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export Kept Responses (JSON)</h2>
+  <button class="export-btn" onclick="generateExport()">Generate Export</button>
+  <textarea id="exportOutput" readonly></textarea>
+</div>
+
+<script>
+const decisions = {};
+const totalItems = 35;
+
+function decide(id, action) {
+  const item = document.querySelector(`[data-id="${id}"]`);
+  item.classList.remove('kept','cut','edited');
+  if (decisions[id] === action) { delete decisions[id]; }
+  else {
+    decisions[id] = action;
+    item.classList.add(action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+  }
+  item.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (decisions[id]) {
+    const btnClass = action === 'keep' ? 'btn-keep' : action === 'cut' ? 'btn-cut' : 'btn-edit';
+    item.querySelector(`.${btnClass}`).classList.add('active');
+  }
+  if (action === 'edit') document.getElementById(`edit-${id}`).classList.add('visible');
+  updateStats();
+}
+
+function toggleEdit(id) {
+  document.getElementById(`edit-${id}`).classList.toggle('visible');
+  decide(id, 'edit');
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => { if (d === 'keep') keep++; else if (d === 'cut') cut++; else if (d === 'edit') edit++; });
+  document.getElementById('keepCount').textContent = keep;
+  document.getElementById('cutCount').textContent = cut;
+  document.getElementById('editCount').textContent = edit;
+  document.getElementById('pendingCount').textContent = totalItems - keep - cut - edit;
+}
+
+function generateExport() {
+  const results = [];
+  for (let id = 1; id <= totalItems; id++) {
+    if (decisions[id] === 'keep') {
+      const item = document.querySelector(`[data-id="${id}"]`);
+      results.push({ text: item.querySelector('.item-text').textContent.trim(), category: item.dataset.category });
+    } else if (decisions[id] === 'edit') {
+      results.push({ text: document.getElementById(`text-${id}`).value.trim(), category: document.getElementById(`cat-${id}`).value });
+    }
+  }
+  document.getElementById('exportOutput').value = JSON.stringify(results, null, 2);
+}
+</script>
+
+</body>
+</html>
