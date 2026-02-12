@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel L. Jackson Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 160px; }
+  .sticky-header { position: fixed; top: 0; left: 0; right: 0; background: #16213e; border-bottom: 2px solid #0f3460; padding: 16px 24px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 4px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; line-height: 1.4; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; } .card-meta .source { color: #e94560; font-style: italic; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; } .btn-undo:hover { background: #444; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; min-height: 80px; background: #0f0f23; color: #fff; border: 1px solid #333; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; }
+  .btn-save { margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; font-size: 16px; margin-bottom: 12px; }
+  .export-json { background: #0f0f23; color: #4ecca3; padding: 16px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .copy-btn { margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Samuel L. Jackson Energy — I Dare You. I Double Dare You.</h1>
+  <div class="subtitle">Refrigerators: "Say what again," Bad Motherf***er wallet, Jules Winnfield's Ezekiel speech, Nick Fury's one eye, "Hold onto your butts," Mace Windu requesting a purple lightsaber, the way he makes every word a final warning AND a warm invitation simultaneously, Snakes on a Plane, the calm that's scarier than yelling.</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+<div class="cards" id="cardContainer"></div>
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+<script>
+const responses = [
+  { text: "Say \"maybe\" one more time. I dare you. I double dare you.", category: "angry", voice: "Badass Cat", source: "Say 'what' again — the dare as answer format" },
+  { text: "*stares with one eye* I've seen enough. With the other eye I'm watching what you do next.", category: "cold", voice: "Detective Cat", source: "Nick Fury's eyepatch — seeing everything with less" },
+  { text: "English, motherfluffer. Do you speak it.", category: "angry", voice: "Badass Cat", source: "Pulp Fiction — the interrogation as communication style" },
+  { text: "The path of the righteous cat is beset on all sides by the audacity of the clueless.", category: "wise", voice: "Elder Cat", source: "Jules Winnfield's Ezekiel 25:17 speech — scripture as weapon" },
+  { text: "*pulls out wallet* See what this says? Bad Mother Fluffer. Read it again. Slowly.", category: "demanding", voice: "Badass Cat", source: "The wallet — SLJ had it custom-made. Identity as accessory." },
+  { text: "Hold onto your butts.", category: "chaotic", voice: "Badass Cat", source: "Jurassic Park — the perfect three-word warning for any situation" },
+  { text: "I have HAD it with these motherfluffing doubts on this motherfluffing Tuesday.", category: "angry", voice: "Badass Cat", source: "Snakes on a Plane — format: 'I have HAD it with these [x] on this [y]'" },
+  { text: "*slow blink* I didn't ask you a question. I gave you an answer that sounded like one.", category: "cold", voice: "Badass Cat", source: "SLJ's delivery — statements disguised as questions" },
+  { text: "Allow me to retort. *sits down* No.", category: "cold", voice: "Badass Cat", source: "Pulp Fiction — 'Allow me to retort' followed by maximum brevity" },
+  { text: "Every other cat gets a regular answer. I requested a purple one. They said no. I got a purple one. That's how this works.", category: "demanding", voice: "Diva Cat", source: "Mace Windu's purple lightsaber — SLJ asked Lucas personally, got it" },
+  { text: "I recognize the council has made a decision. But given that it's a stupid decision, I've elected to ignore it.", category: "cold", voice: "Judge Cat", source: "Nick Fury — overruling authority with calm certainty" },
+  { text: "You look like the 'before' picture in a decision-making class.", category: "judgy", voice: "Judge Cat", source: "SLJ reading people — the visual burn" },
+  { text: "*stares* Mmm. This IS a tasty answer.", category: "chaotic", voice: "Stoner Cat", source: "Jules eating the burger — finding pleasure in the middle of intimidation" },
+  { text: "I'm the one who asks the questions. You're the one who rethinks their choices. We clear?", category: "demanding", voice: "Badass Cat", source: "SLJ's interrogation energy — power through role assignment" },
+  { text: "The truth isn't complicated. You're just not ready for the simple version.", category: "wise", voice: "Badass Cat", source: "SLJ cutting through BS — truth as brevity" },
+  { text: "Surprise, motherfluffer. *slow blink* I care. Didn't see that coming, did you.", category: "heartfelt", voice: "Badass Cat", source: "Dexter's Doakes + SLJ warmth — the hard exterior cracking to reveal heart" },
+  { text: "I don't need two eyes to see through you. One is more than enough.", category: "cold", voice: "Detective Cat", source: "Nick Fury's eyepatch — disability as advantage" },
+  { text: "Does he look like a cat? Then why you tryna play him like one? Wait. He IS a cat. Carry on.", category: "chaotic", voice: "Badass Cat", source: "Does Marcellus Wallace look like a bitch — self-referential loop" },
+  { text: "*leans forward* I've been calm this whole time. That should concern you more than if I was yelling.", category: "cold", voice: "Badass Cat", source: "SLJ's controlled menace — the quiet is the danger" },
+  { text: "You came to me. Remember that. I didn't come looking for this conversation. But now we're having it.", category: "demanding", voice: "Badass Cat", source: "SLJ's presence — he doesn't seek confrontation, but he finishes it" },
+  { text: "I've played gods, killers, and the voice of reason. Today I'm just a cat. That should still scare you a little.", category: "cold", voice: "Elder Cat", source: "SLJ's filmography as resume — range as intimidation" },
+  { text: "There's a 90% chance you already know the answer. The other 10% is you hoping I'll say something different. I won't.", category: "wise", voice: "Judge Cat", source: "SLJ's certainty — no hedge, no maybe, no softening" },
+  { text: "*nods once* Respect. Now get out of my office. My office is this entire room.", category: "cold", voice: "Badass Cat", source: "SLJ owning every space he enters — territory as personality" },
+  { text: "Blessed is the cat who shepherds the weak through the valley of bad decisions. For he is truly his brother's keeper. And I WILL strike down upon thee with great belly rubs and furious purring.", category: "wise", voice: "Elder Cat", source: "Ezekiel 25:17 — the full speech, cat remix" },
+  { text: "Motherfluffer, I'm the cat equivalent of a loaded question. Handle with care.", category: "cold", voice: "Badass Cat", source: "SLJ as concept — every word carries weight" },
+  { text: "You know what's in the briefcase? *slow blink* You'll never know what's in the briefcase.", category: "mystical", voice: "Badass Cat", source: "The Pulp Fiction briefcase — mystery as power, never explaining" },
+  { text: "I've got two speeds: terrifyingly calm and calm that terrifies. Today's a dealer's choice.", category: "cold", voice: "Badass Cat", source: "SLJ's range — both modes are dangerous" },
+  { text: "*stares for an uncomfortable amount of time* ...Go on. I'm listening. I just want you to hear how it sounds out loud.", category: "wise", voice: "Judge Cat", source: "SLJ's silence — making you hear yourself" },
+  { text: "YES I've had it. YES I'm staying. These two things coexist and you will DEAL.", category: "heartfelt", voice: "Badass Cat", source: "SLJ's loyalty — frustrated AND committed, simultaneously" },
+  { text: "*slow blink* You know what? You aight. Don't push it. But you aight.", category: "nurturing", voice: "Badass Cat", source: "SLJ's warmth — the grudging approval that means everything" }
+];
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span><span class="source">${item.source}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
