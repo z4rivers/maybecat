@@ -115,6 +115,8 @@ The person asking at 2 AM doesn't need 2,000 words. They need one sharp line fro
 
 **7. Dynamic range.** 15% crescendos, 70% rhythm, 15% quiet. The experience is the bomb, not every line.
 
+**7a. The Cycle Rule.** People cycle through answers until one hits. That's the magic — they KEEP GOING until the cat reads them. This means the feed can't be 12 lightweight dismissals before something with fire. Every 3-5 answers, something needs to land. Dismissive/non-answer energy is seasoning, not the main course. If someone has to plow through a dozen surface-level sidesteps to find teeth, the mix is broken. The library doesn't need every response to be a 10 — but the FEED does need density. A user who cycles 4 times and gets nothing but "meh" bounces. A user who gets hit on cycle 2 or 3 screenshots it and sends it to everyone they know.
+
 **8. Punch up, purr down.** Sharp at power. Present with people. Never cruel to the scared.
 
 ---

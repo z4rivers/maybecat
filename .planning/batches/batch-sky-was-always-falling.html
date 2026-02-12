@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sky Was Always Falling (20 Responses)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 8px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; }
+  .card-meta .category { color: #4ecca3; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; margin-bottom: 12px; font-size: 16px; }
+  .export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; color: #ccc; max-height: 500px; overflow-y: auto; white-space: pre-wrap; cursor: pointer; }
+  .copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>The Sky Was Always Falling (20 Responses)</h1>
+  <div class="subtitle">Territory: existential acceptance, the cat already knew, none of this is new | Voices: Elder Cat, Philosopher Cat, Pensive Cat, Realist Cat, Detective Cat, Feral Cat, Unimpressed Cat | Energy: cold rhythm with existential crescendos</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">20</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "*slow blink* First time?",
+    category: "cold",
+    voice: "Elder Cat"
+  },
+  {
+    text: "The sky has been falling since before the sky.",
+    category: "existential",
+    voice: "Philosopher Cat"
+  },
+  {
+    text: "There was never an answer. There was always just the next thing.",
+    category: "existential",
+    voice: "Elder Cat"
+  },
+  {
+    text: "*stares at wall* I\u2019ve been watching this coming since Tuesday.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "The void doesn\u2019t blink first. I checked.",
+    category: "existential",
+    voice: "Philosopher Cat"
+  },
+  {
+    text: "*tail tip flicks* It was always like this. You just started paying attention.",
+    category: "cold",
+    voice: "Realist Cat"
+  },
+  {
+    text: "Nothing is fine. Nothing was fine. The cat adjusted.",
+    category: "wise",
+    voice: "Feral Cat"
+  },
+  {
+    text: "*sits in exact center of chaos* This is just Tuesday with better lighting.",
+    category: "cold",
+    voice: "Unimpressed Cat"
+  },
+  {
+    text: "Empires crumble. Milk spills. I\u2019ve been present for both.",
+    category: "existential",
+    voice: "Elder Cat"
+  },
+  {
+    text: "The answer packed its bags years ago. Didn\u2019t leave a forwarding address.",
+    category: "existential",
+    voice: "Pensive Cat"
+  },
+  {
+    text: "*ears flatten* You wanted certainty. Certainty wanted nothing to do with this.",
+    category: "cold",
+    voice: "Realist Cat"
+  },
+  {
+    text: "The ground was never solid. You just stopped checking.",
+    category: "existential",
+    voice: "Philosopher Cat"
+  },
+  {
+    text: "*pupils dilate* Oh. You\u2019re just NOW noticing.",
+    category: "cold",
+    voice: "Elder Cat"
+  },
+  {
+    text: "There\u2019s no manual. There was never a manual. The manual was a rumor.",
+    category: "existential",
+    voice: "Realist Cat"
+  },
+  {
+    text: "*chatters jaw at window* I\u2019ve been yelling at the void. The void unsubscribed.",
+    category: "chaotic",
+    voice: "Philosopher Cat"
+  },
+  {
+    text: "You\u2019re looking for the bottom. There\u2019s no bottom. There\u2019s just further.",
+    category: "existential",
+    voice: "Feral Cat"
+  },
+  {
+    text: "Everything is unprecedented. Everything was always unprecedented. That word lost its privileges.",
+    category: "cold",
+    voice: "Realist Cat"
+  },
+  {
+    text: "The cat didn\u2019t lose the plot. There was no plot.",
+    category: "existential",
+    voice: "Philosopher Cat"
+  },
+  {
+    text: "*slow blink* You thought there was a plan? For ANY of this?",
+    category: "cold",
+    voice: "Elder Cat"
+  },
+  {
+    text: "The collapse isn\u2019t coming. The collapse was the foundation. We built on it anyway.",
+    category: "existential",
+    voice: "Old Soul Cat"
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="cat-voice">${item.voice}</span>
+        <span class="category">${item.category}</span>
+      </div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateCounters();
+  updateExport();
+}
+
+function setStatus(i, status) { state[i].status = status; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  const exportData = kept.map(s => ({ text: s.editedText || s.text, category: s.category }));
+  document.getElementById('exportJson').textContent = JSON.stringify(exportData, null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>

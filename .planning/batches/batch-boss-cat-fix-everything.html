@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boss Cat Is Here To Fix Everything (22 Responses)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 140px; }
+  .sticky-header { position: fixed; top: 0; left: 0; right: 0; background: #16213e; border-bottom: 2px solid #0f3460; padding: 16px 24px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-bottom: 8px; font-weight: 600; }
+  .sticky-header .subtitle { font-size: 13px; color: #888; margin-bottom: 10px; }
+  .counters { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+  .counter-keep { color: #4ecca3; } .counter-cut { color: #e94560; } .counter-edit { color: #ffd93d; } .counter-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #0f3460; transition: border-color 0.2s; }
+  .card.kept { border-color: #4ecca3; } .card.cut { border-color: #e94560; opacity: 0.5; } .card.edited { border-color: #ffd93d; }
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: #666; margin-bottom: 8px; display: flex; gap: 12px; }
+  .card-meta .cat-voice { color: #7b68ee; } .card-meta .category { color: #4ecca3; }
+  .card-text { font-size: 18px; line-height: 1.5; margin-bottom: 16px; color: #fff; font-style: italic; }
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d43550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82d; }
+  .btn-undo { background: #333; color: #aaa; font-size: 11px; padding: 6px 12px; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .export-section { max-width: 800px; margin: 40px auto; background: #16213e; border-radius: 10px; padding: 20px; border: 1px solid #0f3460; }
+  .export-section h2 { color: #4ecca3; margin-bottom: 12px; font-size: 16px; }
+  .export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; color: #ccc; max-height: 500px; overflow-y: auto; white-space: pre-wrap; cursor: pointer; }
+  .copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .copy-btn:hover { background: #3db88f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Boss Cat Is Here To Fix Everything (22 Responses)</h1>
+  <div class="subtitle">Territory: I got this, step aside, supreme confidence, the cat who takes charge | Voices: Badass Cat, Lithe Cat, Competitive Cat, Diva Cat, Feral Cat, Street Cat, Detective Cat | Energy: demanding crescendos, chaotic rhythm</div>
+  <div class="counters">
+    <span class="counter-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="counter-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="counter-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="counter-pending">PENDING: <span id="pendingCount">22</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "*stands up* Fine. I\u2019ll do it. Move.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "Step aside. You\u2019ve been handling this like a human.",
+    category: "demanding",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "*cracks neck* I\u2019ve seen the problem. I\u2019ve seen your approach. I\u2019m taking over.",
+    category: "demanding",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "Everybody calm down. The cat is here.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "*walks directly across the situation* Was that so hard?",
+    category: "cold",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "*jumps to highest surface* I can see the whole board from here. You\u2019re two moves behind.",
+    category: "demanding",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "You were waiting for permission. This is it. Go.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "*lands on counter* Here\u2019s what\u2019s going to happen.",
+    category: "demanding",
+    voice: "Street Cat"
+  },
+  {
+    text: "I\u2019m not going to sugarcoat this. Also I don\u2019t know what sugarcoat means. Here\u2019s the plan.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "*tail straight up* Follow me. Don\u2019t ask where.",
+    category: "demanding",
+    voice: "Feral Cat"
+  },
+  {
+    text: "The meeting is over. The decision was already made. It was made by me just now.",
+    category: "demanding",
+    voice: "Diva Cat"
+  },
+  {
+    text: "*locks eyes with the problem* \u2026we\u2019ve met before.",
+    category: "cold",
+    voice: "Detective Cat"
+  },
+  {
+    text: "Everyone in this room is fired except me. I just started. Let\u2019s go.",
+    category: "chaotic",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "*slow blink* You panicked beautifully. Really. Now watch.",
+    category: "demanding",
+    voice: "Lithe Cat"
+  },
+  {
+    text: "Plan A failed. Plan B was garbage. This is Plan Cat.",
+    category: "chaotic",
+    voice: "Badass Cat"
+  },
+  {
+    text: "*sits on the paperwork* The situation has been reviewed. I\u2019m sitting on the outcome.",
+    category: "demanding",
+    voice: "Judge Cat"
+  },
+  {
+    text: "I didn\u2019t ask what went wrong. I don\u2019t care what went wrong. Tell me what\u2019s next.",
+    category: "demanding",
+    voice: "Badass Cat"
+  },
+  {
+    text: "*walks through the closed door* Doors are a suggestion. So are your excuses.",
+    category: "demanding",
+    voice: "Feral Cat"
+  },
+  {
+    text: "The plan is the plan is the plan. Move your feet.",
+    category: "demanding",
+    voice: "Street Cat"
+  },
+  {
+    text: "*pupils narrow to slits* I see exactly one path. It\u2019s mine. Try to keep up.",
+    category: "demanding",
+    voice: "Competitive Cat"
+  },
+  {
+    text: "Somebody had to be in charge. You\u2019re looking at them. Adjust.",
+    category: "demanding",
+    voice: "Diva Cat"
+  },
+  {
+    text: "First: breathe. Second: move. Third: stop asking a cat for a fourth step.",
+    category: "demanding",
+    voice: "Badass Cat"
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta"><span class="cat-voice">${item.voice}</span><span class="category">${item.category}</span></div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
