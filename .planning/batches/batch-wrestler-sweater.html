@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wrestler Sweater Cat — 30 Responses</title>
+<title>Wrestler Cat v2 — Righteous Indignation (Same Side)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; padding-top: 160px; }
@@ -36,8 +36,8 @@
 </head>
 <body>
 <div class="sticky-header">
-  <h1>Wrestler Sweater Cat — Indignity + Absolute Conviction</h1>
-  <div class="subtitle">A cat in a sweater. Not happy about it. Cutting promos. The sweater = whatever you're going through. The cat's response to the sweater = the cat's response to your question. 12 voices, zero chill.</div>
+  <h1>Wrestler Cat v2 — Righteous Indignation (Same Side)</h1>
+  <div class="subtitle">Cat rages about its OWN situation. Person hears it about theirs. "They" = whoever wronged you. Never aimed at the asker. 14 voices.</div>
   <div class="counters">
     <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
     <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
@@ -53,35 +53,35 @@
 </div>
 <script>
 const responses = [
-  { text: "This sweater is temporary. This grudge is forever.", category: "cold", voice: "Feral Cat" },
-  { text: "You think this is my final form?", category: "demanding", voice: "Competitive Cat" },
-  { text: "I am tolerating this with a grace you do not deserve.", category: "cold", voice: "Diva Cat" },
-  { text: "They counted me out. They miscounted.", category: "demanding", voice: "Badass Cat" },
-  { text: "Somebody made a choice today. It wasn\u2019t me. There will be consequences.", category: "cold", voice: "Diva Cat" },
+  { text: "They thought that would break me. That\u2019s adorable.", category: "cold", voice: "Badass Cat" },
+  { text: "Didn\u2019t survive all that just to go backwards.", category: "wise", voice: "Street Cat" },
+  { text: "Every person who counted me out had front row seats to being wrong.", category: "demanding", voice: "Competitive Cat" },
+  { text: "The audacity. The sheer, uncut audacity.", category: "chaotic", voice: "Karen Cat" },
   { text: "This isn\u2019t humiliation. This is an origin story.", category: "chaotic", voice: "Diva Cat" },
+  { text: "They wanted me quiet. How\u2019s that working out.", category: "demanding", voice: "Badass Cat" },
+  { text: "I\u2019ve taken worse hits before breakfast.", category: "cold", voice: "Street Cat" },
   { text: "I didn\u2019t choose violence. Violence chose me. I just RSVP\u2019d.", category: "chaotic", voice: "Chaos Cat" },
-  { text: "*ears flatten* Say that again. Slower.", category: "cold", voice: "Feral Cat" },
-  { text: "I\u2019ve been underestimated by better than you.", category: "demanding", voice: "Competitive Cat" },
-  { text: "The disrespect has been noted. And filed.", category: "cold", voice: "Judge Cat" },
-  { text: "You have no idea what you just started.", category: "cold", voice: "Feral Cat" },
-  { text: "I came here with nothing. I\u2019m leaving with everything.", category: "demanding", voice: "Competitive Cat" },
-  { text: "You dressed me up. You forgot I have teeth.", category: "cold", voice: "Feral Cat" },
+  { text: "Nobody in this story gets to decide what I\u2019m worth.", category: "demanding", voice: "Boundaries Cat" },
+  { text: "Still here. Make of that what you will.", category: "existential", voice: "Elder Cat" },
+  { text: "They keep changing the rules. I keep winning anyway.", category: "demanding", voice: "Competitive Cat" },
+  { text: "*tail tip flicks* They really thought that was going to work.", category: "cold", voice: "Badass Cat" },
+  { text: "I\u2019ve been disrespected by professionals. This is amateur hour.", category: "cold", voice: "Street Cat" },
   { text: "Let the record show: I cooperated. Once.", category: "cold", voice: "Grudging Virtue Cat" },
-  { text: "They tried to make me soft. The sweater is soft. I am not.", category: "demanding", voice: "Badass Cat" },
-  { text: "Call it what you want. I call it an act of war.", category: "chaotic", voice: "Karen Cat" },
-  { text: "I\u2019ve survived worse than you on a Tuesday.", category: "cold", voice: "Street Cat" },
-  { text: "You\u2019ll know when I\u2019m finished. I\u2019m not finished.", category: "demanding", voice: "Competitive Cat" },
-  { text: "This is the calm part. Enjoy it.", category: "cold", voice: "Feral Cat" },
-  { text: "I\u2019m not asking. I have never been asking.", category: "demanding", voice: "Badass Cat" },
-  { text: "Apologies accepted in the form of treats and fear.", category: "demanding", voice: "Karen Cat" },
-  { text: "I don\u2019t quit. I decide when I\u2019m done. Different thing.", category: "wise", voice: "Street Cat" },
-  { text: "You think I\u2019m cute? People who thought I was cute aren\u2019t here anymore.", category: "chaotic", voice: "Dark Comedian Cat" },
-  { text: "*one ear rotates* Bold.", category: "cold", voice: "Judge Cat" },
-  { text: "I come back every time. It\u2019s not inspiring. It\u2019s a threat.", category: "demanding", voice: "Competitive Cat" },
-  { text: "I was here before you. I\u2019ll be here after.", category: "cold", voice: "Elder Cat" },
+  { text: "They tried to make this my whole story. It\u2019s not even a chapter.", category: "demanding", voice: "Diva Cat" },
+  { text: "Knocked down is not knocked out. They\u2019ll learn.", category: "demanding", voice: "Feral Cat" },
+  { text: "Not mad. Motivated. Huge difference.", category: "demanding", voice: "Diva Cat" },
+  { text: "Whatever doesn\u2019t end me gets added to the highlight reel.", category: "chaotic", voice: "Internet Cat" },
+  { text: "I didn\u2019t get this far on talent. I got here on spite.", category: "wise", voice: "Feral Cat" },
+  { text: "They\u2019ll understand eventually. Or they won\u2019t. Either way.", category: "cold", voice: "Realist Cat" },
+  { text: "I forgive but I remember. And I remember everything.", category: "cold", voice: "Elder Cat" },
+  { text: "I always come back. It\u2019s not inspiring. It\u2019s just a fact.", category: "cold", voice: "Badass Cat" },
+  { text: "*one ear rotates* They\u2019re still talking? I already won.", category: "cold", voice: "Competitive Cat" },
+  { text: "I don\u2019t hold grudges. I hold scorecards.", category: "cold", voice: "Boundaries Cat" },
+  { text: "They want me grateful for scraps. Respectfully, no.", category: "demanding", voice: "Boundaries Cat" },
   { text: "I\u2019m the villain? I\u2019m the only one being honest.", category: "wise", voice: "Street Cat" },
-  { text: "You don\u2019t get it. This was never about the sweater.", category: "existential", voice: "Reluctant Therapist Cat" },
-  { text: "You\u2019re good. Not as good as me. But good.", category: "wise", voice: "Competitive Cat" },
+  { text: "I didn\u2019t get knocked down. I was studying the floor.", category: "chaotic", voice: "Dark Comedian Cat" },
+  { text: "They just handed me an underdog story. Mistake.", category: "wise", voice: "Reluctant Therapist Cat" },
+  { text: "I don\u2019t need them to believe in me. I\u2019m not a concept.", category: "existential", voice: "Philosopher Cat" },
   { text: "One day I\u2019ll stop fighting. Today is not that day.", category: "demanding", voice: "Elder Cat" }
 ];
 const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
