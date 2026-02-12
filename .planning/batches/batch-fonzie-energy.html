@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fonzie Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 160px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .cat-voice { color: #7b68ee; }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #e94560; font-style: italic; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; }
+  .btn-undo:hover { background: #444; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .btn-save {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .export-json {
+    background: #0f0f23;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Fonzie Energy — The Cool Cat</h1>
+  <div class="subtitle">Refrigerators: Happy Days specific moments — the jukebox hit, "Ayyy," "Sit on it," the bathroom office, leather jacket as identity, the mirror moment, cool uncle mentoring, the orphan underneath the cool, jumping the shark, Fonzie's rare vulnerability. Every response channels a specific Fonzie behavior/moment.</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "*hits the side of the fridge* It works now. You're welcome.",
+    category: "chaotic",
+    voice: "Badass Cat",
+    source: "Fonzie hitting the jukebox — force of personality as repair tool"
+  },
+  {
+    text: "Ayyy.",
+    category: "nurturing",
+    voice: "Badass Cat",
+    source: "Fonzie's signature — one syllable contains approval, warmth, 'you got this'"
+  },
+  {
+    text: "Sit on it.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Fonzie's perfect two-word dismissal"
+  },
+  {
+    text: "I was wr... I was wro... *hacks up hairball* ...mistakes were made.",
+    category: "chaotic",
+    voice: "Grudging Virtue Cat",
+    source: "Fonzie physically unable to say 'I was wrong'"
+  },
+  {
+    text: "*checks reflection in window, adjusts nothing* Heyyy.",
+    category: "judgy",
+    voice: "Competitive Cat",
+    source: "Fonzie looking in mirror, seeing perfection, saying 'heyyyy'"
+  },
+  {
+    text: "My office is a litter box and I'm still the boss. What's your excuse?",
+    category: "wise",
+    voice: "Street Cat",
+    source: "Fonzie's office = the men's room at Arnold's. Owned it."
+  },
+  {
+    text: "*snaps tail* Done. What else you got.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Fonzie snapping his fingers — things just happen"
+  },
+  {
+    text: "I don't chase. They come to me. It's not a strategy. It's a condition.",
+    category: "cold",
+    voice: "Flirt Cat",
+    source: "Fonzie never pursued anyone — magnetism as lifestyle"
+  },
+  {
+    text: "*leans against the wall* I'm not waiting. I'm being available. Big difference.",
+    category: "wise",
+    voice: "Flirt Cat",
+    source: "Fonzie's signature lean — casual posture as entire philosophy"
+  },
+  {
+    text: "You need cool? *slow blink* Stand next to me. It transfers.",
+    category: "heartfelt",
+    voice: "Badass Cat",
+    source: "Fonzie making Richie cool by association — generosity disguised as swagger"
+  },
+  {
+    text: "*thumbs up* Verdict delivered. No appeals.",
+    category: "nurturing",
+    voice: "Badass Cat",
+    source: "The thumbs up — Fonzie's entire judicial system"
+  },
+  {
+    text: "I dropped out of worrying. Dean's list in not caring. Full scholarship.",
+    category: "chaotic",
+    voice: "Street Cat",
+    source: "Fonzie the dropout who was smarter than the college kids"
+  },
+  {
+    text: "The jacket stays on. Even in summer. Especially in summer. Commitment is a temperature.",
+    category: "demanding",
+    voice: "Badass Cat",
+    source: "The leather jacket as identity — never removed, never questioned"
+  },
+  {
+    text: "Kid, listen. *one ear rotates toward you* You've got something. Stop apologizing for it.",
+    category: "heartfelt",
+    voice: "Badass Cat",
+    source: "Cool uncle Fonzie — the mentoring moments that made him more than cool"
+  },
+  {
+    text: "I walked in. The music changed. I didn't request anything. It just knew.",
+    category: "demanding",
+    voice: "Competitive Cat",
+    source: "Every room adjusted to Fonzie, not the other way around"
+  },
+  {
+    text: "Three things: show up, say less, mean it. That's the whole curriculum.",
+    category: "wise",
+    voice: "Badass Cat",
+    source: "Fonzie's communication style — brevity as power"
+  },
+  {
+    text: "*fixes your collar without asking* You were close. Now you're there.",
+    category: "nurturing",
+    voice: "Lithe Cat",
+    source: "Fonzie adjusting people — care disguised as correction"
+  },
+  {
+    text: "I'm not the hero. I'm the guy who saw the hero in you before you did. *taps your chest* Keep up.",
+    category: "heartfelt",
+    voice: "Badass Cat",
+    source: "Fonzie believing in people — his real superpower under the jacket"
+  },
+  {
+    text: "Eyyy. Not perfect. Still eyyy.",
+    category: "nurturing",
+    voice: "Badass Cat",
+    source: "The 'ayyy' approval system has tiers — this is the B+, still warm"
+  },
+  {
+    text: "I've done stupider things. They became legends. Context is everything.",
+    category: "chaotic",
+    voice: "Competitive Cat",
+    source: "Fonzie jumping the shark — committing fully to the ridiculous"
+  },
+  {
+    text: "The jukebox plays what I tell it. So does Tuesday.",
+    category: "demanding",
+    voice: "Badass Cat",
+    source: "Force of will over circumstance — the jukebox obeyed, days of the week next"
+  },
+  {
+    text: "*combs fur once* Presentation isn't vanity. It's the opening argument.",
+    category: "wise",
+    voice: "Lithe Cat",
+    source: "Fonzie combing his hair — daily ritual as self-respect"
+  },
+  {
+    text: "I don't apologize. I improve. It's faster and everyone can tell.",
+    category: "cold",
+    voice: "Competitive Cat",
+    source: "Fonzie couldn't say sorry — but he'd show up better next time"
+  },
+  {
+    text: "You want advice from someone who read the book? Or someone who lived the chapter and skipped the book entirely?",
+    category: "wise",
+    voice: "Street Cat",
+    source: "Street smarts vs book smarts — the Fonzie educational philosophy"
+  },
+  {
+    text: "I live above a garage and I'm the most important person you know. Real estate is a scam.",
+    category: "chaotic",
+    voice: "Street Cat",
+    source: "Fonzie lived above Arnold's garage — owned it completely"
+  },
+  {
+    text: "Panic? *stretches* That's a retriever's game. I already found the exits.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Fonzie's unflappable cool — panic is beneath him"
+  },
+  {
+    text: "I don't try to be this way. Trying is the opposite of this.",
+    category: "wise",
+    voice: "Lithe Cat",
+    source: "The paradox of Fonzie — effortlessness can't be manufactured"
+  },
+  {
+    text: "I chose you. That makes you cool. Don't question the system, it's airtight.",
+    category: "heartfelt",
+    voice: "Flirt Cat",
+    source: "Fonzie chose the uncool kid — his friendship WAS the credential"
+  },
+  {
+    text: "Everybody's got a leather jacket. Not everybody's got the walk that goes with it.",
+    category: "wise",
+    voice: "Badass Cat",
+    source: "The jacket was nothing without the Fonz inside it"
+  },
+  {
+    text: "Hey. *headbutts your hand* Between us? You're gonna be fine. Tell anyone I said that and I'll deny it.",
+    category: "heartfelt",
+    voice: "Badass Cat",
+    source: "Rare Fonzie vulnerability — the orphan under the leather, the heart under the cool"
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="cat-voice">${item.voice}</span>
+        <span class="category">${item.category}</span>
+        <span class="source">${item.source}</span>
+      </div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snoop Cat Energy — 30 Responses</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 160px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .sticky-header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .counters {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .counter-keep { color: #4ecca3; }
+  .counter-cut { color: #e94560; }
+  .counter-edit { color: #ffd93d; }
+  .counter-pending { color: #888; }
+
+  .cards { max-width: 800px; margin: 0 auto; }
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+
+  .card-num { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .card-meta {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+  }
+  .card-meta .cat-voice { color: #7b68ee; }
+  .card-meta .category { color: #4ecca3; }
+  .card-meta .source { color: #e94560; font-style: italic; }
+
+  .card-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db88f; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #f0ca2e; }
+  .btn-undo { background: #333; color: #aaa; }
+  .btn-undo:hover { background: #444; }
+
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .btn-save {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 { color: #4ecca3; font-size: 16px; margin-bottom: 12px; }
+  .export-json {
+    background: #0f0f23;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Snoop Cat Energy — Laid Back (With My Mind On My Catnip)</h1>
+  <div class="subtitle">Refrigerators: Snoop's specific cadence and -izzle language, "Gin and Juice" unbothered calm, "Drop It Like It's Hot" minimalism, the Martha Stewart friendship (gangsta + domestic goddess), Snoop coaching youth football (OG who mentors), "ain't no fun if the homies can't have none" loyalty, the slow drawl that makes everything sound inevitable, "beautiful" as genuine compliment, the way he narrates nature documentaries like they're hood stories. Snoop is basically a cat who raps.</div>
+  <div class="counters">
+    <span class="counter-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="counter-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="counter-edit">Edit: <span id="editCount">0</span></span>
+    <span class="counter-pending">Pending: <span id="pendingCount">30</span></span>
+  </div>
+</div>
+
+<div class="cards" id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export — Kept & Edited (JSON)</h2>
+  <pre class="export-json" id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "*slow blink* Laid back. With my mind on my catnip and my catnip on my mind.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Gin and Juice — the thesis statement. Unbothered, present, slightly elevated."
+  },
+  {
+    text: "Drop it like it's hot. Or don't. I'm gonna be over here either way.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Drop It Like It's Hot — Snoop's gift: making indifference sound like an invitation"
+  },
+  {
+    text: "Fo shizzle.",
+    category: "nurturing",
+    voice: "Stoner Cat",
+    source: "One word. Absolute affirmation. Snoop's 'ayyy.' Everything you needed to hear."
+  },
+  {
+    text: "Beautiful. *doesn't elaborate*",
+    category: "heartfelt",
+    voice: "Stoner Cat",
+    source: "Snoop calling everything 'beautiful' — genuine, warm, not performing"
+  },
+  {
+    text: "The game is the game. But you can change how you play it. *rolls over*",
+    category: "wise",
+    voice: "Street Cat",
+    source: "Snoop's street philosophy — accept the field, change the strategy"
+  },
+  {
+    text: "I wake up, I eat, I handle my business, I nap. That's not lazy. That's a system.",
+    category: "wise",
+    voice: "Stoner Cat",
+    source: "Snoop's daily routine energy — simplicity as mastery"
+  },
+  {
+    text: "You're stressed about something I forgot about three naps ago.",
+    category: "cold",
+    voice: "Sleepy Cat",
+    source: "Snoop's unbothered memory — some things aren't worth carrying"
+  },
+  {
+    text: "I don't hold grudges. I hold positions. Huge difference.",
+    category: "wise",
+    voice: "Badass Cat",
+    source: "Snoop surviving the 90s rap scene — not angry, just strategic"
+  },
+  {
+    text: "*bakes something at 3 AM* You think the streets and the kitchen are different? Same heat. Same timing.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Snoop + Martha Stewart — gangsta meets domestic goddess. Both are precision arts."
+  },
+  {
+    text: "I been through worse with better people. *stretches* You'll be fine.",
+    category: "nurturing",
+    voice: "Street Cat",
+    source: "Snoop's 30+ year career — perspective from someone who's survived everything"
+  },
+  {
+    text: "Nephew. *one ear rotates* Sit down. Uncle Cat got something to say.",
+    category: "heartfelt",
+    voice: "Elder Cat",
+    source: "Snoop coaching youth football — the OG who mentors the next generation"
+  },
+  {
+    text: "Ain't nothin' but a cat thang.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Nuthin' But a G Thang — minimized to its essence. Whatever this is, it's not that serious."
+  },
+  {
+    text: "You movin' too fast. The slow play always wins. I got receipts.",
+    category: "wise",
+    voice: "Street Cat",
+    source: "Snoop's career longevity — the slow drawl IS the strategy"
+  },
+  {
+    text: "*narrates your situation like a nature documentary* And here we see the human... making the same mistake... for the fourth time this week. Remarkable.",
+    category: "judgy",
+    voice: "Stoner Cat",
+    source: "Snoop narrating Plizzanet Earth — hood commentary on nature = cat commentary on humans"
+  },
+  {
+    text: "I don't beef with people below my weight class. I don't beef with people IN my weight class. I don't beef.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Snoop refusing drama — evolved past conflict as a lifestyle choice"
+  },
+  {
+    text: "If they don't bring you peace, they bring you experience. Both feed you.",
+    category: "wise",
+    voice: "Elder Cat",
+    source: "Snoop's philosophical evolution — from gangsta to sage without losing credibility"
+  },
+  {
+    text: "*passes you the vibe* Here. You need this more than I do. And I need it a lot.",
+    category: "nurturing",
+    voice: "Stoner Cat",
+    source: "Snoop's generosity — sharing the good energy, catnip as communion"
+  },
+  {
+    text: "I'm not late. I'm on Snoop time. Everything adjusts to Snoop time eventually.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Snoop's legendary lateness — time bends to his schedule, not the other way around"
+  },
+  {
+    text: "The real Gs move in silence like lasagna. I move in silence like a cat. Who do you think taught the lasagna.",
+    category: "wise",
+    voice: "Badass Cat",
+    source: "Lil Wayne's line given the Snoop upgrade — cats are the original silent movers"
+  },
+  {
+    text: "You want to know the secret? There's no secret. Show up. Be cool. Don't panic. That's the whole thing.",
+    category: "wise",
+    voice: "Street Cat",
+    source: "Snoop's public philosophy — radical simplicity"
+  },
+  {
+    text: "I've reinvented myself seventeen times. Every single one was me. *slow blink* Figure that out.",
+    category: "existential",
+    voice: "Elder Cat",
+    source: "Snoop → Snoop Lion → back to Snoop — reinvention without identity crisis"
+  },
+  {
+    text: "You can be from the streets and still bake a beautiful soufflé. Those aren't contradictions. Those are range.",
+    category: "wise",
+    voice: "Stoner Cat",
+    source: "Martha + Snoop — the friendship that proved range > consistency"
+  },
+  {
+    text: "Rollin' down the street, smokin' catnip, sippin' on cream juice. *slow blink* With my mind on my money and my money on my mind.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Gin and Juice — the full verse, cat remix. The anthem of unbothered"
+  },
+  {
+    text: "I don't run from problems. I don't run toward them either. I recline near them until they sort themselves out.",
+    category: "wise",
+    voice: "Stoner Cat",
+    source: "Snoop's approach to conflict — horizontal problem-solving"
+  },
+  {
+    text: "Everybody got a past. I did a murder trial and a cooking show. Same decade. Don't let anyone box you.",
+    category: "chaotic",
+    voice: "Street Cat",
+    source: "Snoop's actual biography — acquitted of murder, then became America's favorite cooking buddy"
+  },
+  {
+    text: "*slow drawl* I'm not ignoring your question. I'm letting the answer marinate. You'll thank me.",
+    category: "wise",
+    voice: "Stoner Cat",
+    source: "Snoop's pacing — the drawl isn't slow, it's deliberate"
+  },
+  {
+    text: "Boss Dogg don't run. Boss Dogg don't hide. Boss Dogg takes a nap and handles it refreshed.",
+    category: "demanding",
+    voice: "Badass Cat",
+    source: "Snoop's self-narration — third person as supreme confidence"
+  },
+  {
+    text: "You ever notice how the calmest person in the room is usually the most dangerous? *yawns* Anyway.",
+    category: "cold",
+    voice: "Badass Cat",
+    source: "Snoop's calm — the still water that runs deep. The yawn that carries weight."
+  },
+  {
+    text: "I got my mind on my money and... actually nah. I got my mind on this warm spot. The money can wait.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    source: "Gin and Juice subverted — even the hustle takes a backseat to comfort"
+  },
+  {
+    text: "We good? *slow blink* Yeah. We good.",
+    category: "heartfelt",
+    voice: "Stoner Cat",
+    source: "Snoop's warmth — the check-in that's also the answer. Simple. Complete."
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.innerHTML = `
+      <div class="card-num">#${i + 1}</div>
+      <div class="card-meta">
+        <span class="cat-voice">${item.voice}</span>
+        <span class="category">${item.category}</span>
+        <span class="source">${item.source}</span>
+      </div>
+      <div class="card-text">${item.editedText || item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="setStatus(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="editArea${i}">
+        <textarea id="editText${i}">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>`;
+    container.appendChild(card);
+  });
+  updateCounters(); updateExport();
+}
+function setStatus(i, s) { state[i].status = s; render(); }
+function toggleEdit(i) { const a = document.getElementById(`editArea${i}`); if (a) a.style.display = a.style.display === 'block' ? 'none' : 'block'; }
+function saveEdit(i) { const t = document.getElementById(`editText${i}`).value.trim(); if (t) { state[i].editedText = t; state[i].status = 'edit'; render(); } }
+function updateCounters() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  document.getElementById('exportJson').textContent = JSON.stringify(kept.map(s => ({ text: s.editedText || s.text, category: s.category })), null, 2);
+}
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('exportJson').textContent).then(() => {
+    const b = document.querySelector('.copy-btn'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy JSON', 1500);
+  });
+}
+render();
+</script>
+</body>
+</html>
