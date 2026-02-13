@@ -649,6 +649,17 @@ export function Oracle() {
                         <p className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
                           "{preventOrphans(response.text)}"
                         </p>
+                        {response.attribution && (
+                          <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.6 }}
+                            transition={{ delay: 0.5 }}
+                            className="text-sm text-amber-700 italic text-right pr-6 mt-1"
+                            style={{ fontFamily: "Georgia, serif" }}
+                          >
+                            ← {response.attribution}
+                          </motion.p>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
