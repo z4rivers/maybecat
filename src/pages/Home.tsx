@@ -321,8 +321,26 @@ export function Oracle() {
                 <span className="whitespace-nowrap">CAT MAY ANSWER &nbsp;✦</span>
               </p>
 
-              {/* Horizontal layout: Your Cat (fixed) | carousel */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-2 overflow-x-auto">
+              {/* Horizontal layout: arrows outside, scrollable content inside */}
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-2">
+                {/* Left arrow - nano-banana style */}
+                <button
+                  onClick={prevCat}
+                  disabled={loadingShelterCats}
+                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
+                  style={{
+                    background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
+                    borderRadius: '50%',
+                    border: '2px solid #92400E',
+                    boxShadow: '0 3px 8px rgba(120,53,15,0.3), inset 0 1px 2px rgba(255,255,255,0.5)',
+                  }}
+                  aria-label="Previous cats"
+                >
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
+                </button>
+
+                {/* Scrollable carousel content */}
+                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto">
                 {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
                 <AnimatePresence>
                   {!loadingShelterCats && (
@@ -387,22 +405,6 @@ export function Oracle() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-                {/* Left arrow - nano-banana style */}
-                <button
-                  onClick={prevCat}
-                  disabled={loadingShelterCats}
-                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40"
-                  style={{
-                    background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
-                    borderRadius: '50%',
-                    border: '2px solid #92400E',
-                    boxShadow: '0 3px 8px rgba(120,53,15,0.3), inset 0 1px 2px rgba(255,255,255,0.5)',
-                  }}
-                  aria-label="Previous cats"
-                >
-                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
-                </button>
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
                 <div className="flex items-end gap-3 h-[294px] md:h-[368px] lg:h-[391px]">
@@ -539,11 +541,13 @@ export function Oracle() {
                   )}
                 </div>
 
+                </div>
+
                 {/* Right arrow - nano-banana style */}
                 <button
                   onClick={nextCat}
                   disabled={loadingShelterCats}
-                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40"
+                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
                   style={{
                     background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
                     borderRadius: '50%',
@@ -753,7 +757,7 @@ export function Oracle() {
         className="fixed bottom-0 left-0 right-0 z-50 flex items-center shadow-2xl"
         style={{
           backgroundColor: '#0d1b2a',
-          height: '150px',
+          height: '80px',
           boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
         }}
       >

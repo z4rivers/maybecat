@@ -548,29 +548,29 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // LITERARY WISDOM - Poets, Mystics
   // ============================================
-  { text: "\"Let yourself be silently drawn by the strange pull of what you really love.\" — Rumi", category: 'wise' },
-  { text: "\"Be patient toward all that is unsolved in your heart.\" — Rilke", category: 'nurturing' },
-  { text: "\"I dwell in possibility.\" — Emily Dickinson", category: 'wise' },
-  { text: "\"Forever is composed of nows.\" — Emily Dickinson", category: 'existential' },
+  { text: "Let yourself be silently drawn by the strange pull of what you really love.", category: 'wise', attribution: 'Rumi' },
+  { text: "Be patient toward all that is unsolved in your heart.", category: 'nurturing', attribution: 'Rilke' },
+  { text: "I dwell in possibility.", category: 'wise', attribution: 'Emily Dickinson' },
+  { text: "Forever is composed of nows.", category: 'existential', attribution: 'Emily Dickinson' },
 
   // ============================================
   // ATTITUDE - Don't test me energy
   // ============================================
-  { text: "\"Reality is wrong. Dreams are for real.\" — Tupac", category: 'wise' },
-  { text: "\"Fight the power.\" — Public Enemy", category: 'wise' },
-  { text: "\"Real eyes realize real lies.\"", category: 'wise' },
-  { text: "\"How you gonna win when you ain't right within?\" — Lauryn Hill", category: 'wise' },
-  { text: "\"Respect is just a minimum.\" — Lauryn Hill", category: 'wise' },
-  { text: "\"It could all be so simple.\" — Lauryn Hill", category: 'wise' },
-  { text: "\"I ain't a killer but don't push me.\" — Biggie", category: 'wise' },
-  { text: "\"I'll tell you what freedom is to me: no fear.\" — Nina Simone", category: 'wise' },
-  { text: "\"You have to learn to get up from the table when love is no longer being served.\" — Nina Simone", category: 'wise' },
-  { text: "\"You wanna fly, you got to give up the sh*t that weighs you down.\" — Toni Morrison", category: 'wise' },
-  { text: "\"When someone shows you who they are, believe them the first time.\" — Maya Angelou", category: 'wise' },
-  { text: "\"I'm not a humanitarian. I'm a hell-raiser.\" — Mother Jones", category: 'wise' },
-  { text: "\"Strong people don't need strong leaders.\" — Ella Baker", category: 'wise' },
-  { text: "\"Your silence will not protect you.\" — Audre Lorde", category: 'wise' },
-  { text: "\"You are your best thing.\" — Toni Morrison", category: 'nurturing' },
+  { text: "Reality is wrong. Dreams are for real.", category: 'wise', attribution: 'Tupac' },
+  { text: "Fight the power.", category: 'wise', attribution: 'Public Enemy' },
+  { text: "Real eyes realize real lies.", category: 'wise', attribution: 'Tupac' },
+  { text: "How you gonna win when you ain't right within?", category: 'wise', attribution: 'Lauryn Hill' },
+  { text: "Respect is just a minimum.", category: 'wise', attribution: 'Lauryn Hill' },
+  { text: "It could all be so simple.", category: 'wise', attribution: 'Lauryn Hill' },
+  { text: "I ain't a killer but don't push me.", category: 'wise', attribution: 'Biggie' },
+  { text: "I'll tell you what freedom is to me: no fear.", category: 'wise', attribution: 'Nina Simone' },
+  { text: "You have to learn to get up from the table when love is no longer being served.", category: 'wise', attribution: 'Nina Simone' },
+  { text: "You wanna fly, you got to give up the sh*t that weighs you down.", category: 'wise', attribution: 'Toni Morrison' },
+  { text: "When someone shows you who they are, believe them the first time.", category: 'wise', attribution: 'Maya Angelou' },
+  { text: "I'm not a humanitarian. I'm a hell-raiser.", category: 'wise', attribution: 'Mother Jones' },
+  { text: "Strong people don't need strong leaders.", category: 'wise', attribution: 'Ella Baker' },
+  { text: "Your silence will not protect you.", category: 'wise', attribution: 'Audre Lorde' },
+  { text: "You are your best thing.", category: 'nurturing', attribution: 'Toni Morrison' },
 
   // ============================================
   // POP CULTURE - Movies, TV, Memes, Music
@@ -2015,7 +2015,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Could this BE any more obvious?", category: 'judgy' },
   { text: "It's a moo point. Like a cow's opinion. It doesn't matter.", category: 'wise' },
   // Better Call Saul
-  { text: "You think a normal person can do what I do?", category: 'cold' },
+  { text: "You think a normal cat can do what I do?", category: 'cold' },
   // Chaos goblin dispensing wisdom from the dumpster fire
   { text: "Chaos goblin dispensing wisdom from the dumpster fire.", category: 'chaotic' },
   { text: "You're right and everyone else is an idiot.", category: 'chaotic' },
@@ -2086,7 +2086,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You've confused being loud with being right. Common mistake.", category: 'cold' },
   { text: "The discourse is discoursing. Touch grass immediately.", category: 'wise' },
   { text: "Praying for clarity. Receiving static. Continuing anyway.", category: 'mystical' },
-  { text: "I'm trying to be a good person but the definition keeps changing.", category: 'existential' },
+  { text: "I'm trying to be good but the definition keeps changing.", category: 'existential' },
   { text: "Faith and doubt in equal measure. This is apparently normal.", category: 'mystical' },
   { text: "The moral high ground is lonely and there's no WiFi.", category: 'wise' },
   { text: "You're allowed to be angry. The anger is information.", category: 'nurturing' },
@@ -3186,7 +3186,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Somehow less attractive from every new angle.", category: 'cold' },
   { text: "We thought she was sick. Turns out she's just a jerk.", category: 'cold' },
   { text: "Single and ready to be socially awkward with a socially awkward human.", category: 'heartfelt' },
-  { text: "Cannot be owned. She will own you, your house, and everything you hold dear.", category: 'demanding' },
+  { text: "A cat will own you, your house, and everything you hold dear.", category: 'demanding' },
   { text: "If you show a moment of weakness, prepare to be exploited.", category: 'cold' },
   { text: "Made of 60% trash and 40% prom king energy.", category: 'chaotic' },
   { text: "Always running for the door like he just robbed a bank.", category: 'chaotic' },
@@ -3522,8 +3522,8 @@ const templates: Template[] = [
     pattern: "You're asking ME for advice? After {grievance}? {reaction}.",
     category: 'angry',
     slots: {
-      grievance: ["you touched my belly", "the food bowl situation", "you moved while I was comfortable", "you took my spot", "you closed that door", "you stopped petting too soon", "I saw you pet another cat", "the vacuum incident", "you were late with dinner", "that sneeze"],
-      reaction: ["Bold", "The audacity", "We'll discuss this later", "I'm still processing", "I haven't forgotten", "You're on thin ice", "My patience is being tested", "I'm choosing to let it go. For now.", "Consider this a warning", "I'll answer, but I'm not happy about it"]
+      grievance: ["you touched my belly", "the food bowl situation", "you moved while I was comfortable", "you took my spot", "you closed that door", "you stopped petting too soon", "I saw you pet another cat", "the vacuum incident", "you were late with dinner", "that sneeze", "the vet trip", "you picked me up without consent", "you rearranged the furniture", "the cucumber incident", "you laughed at me falling", "you used the blender", "the bath attempt", "you gave me the cheap treats", "you stepped on my tail", "the time you locked me out of the bedroom", "you forgot my second breakfast", "you moved my favorite box", "the nail clipping fiasco", "you didn't open the window fast enough", "that time you didn't share your chicken"],
+      reaction: ["Bold", "The audacity", "We'll discuss this later", "I'm still processing", "I haven't forgotten", "You're on thin ice", "My patience is being tested", "I'm choosing to let it go. For now.", "Consider this a warning", "I'll answer, but I'm not happy about it", "Unbelievable", "I'm keeping score", "Don't think I've moved on", "You owe me", "We are not okay"]
     }
   },
 
@@ -3532,7 +3532,7 @@ const templates: Template[] = [
     pattern: "You want to know if it's real? {example}. {meaning}.",
     category: 'heartfelt',
     slots: {
-      example: ["I wait by the door for you", "I only bite you a little", "I bring you dead things", "I chose to sit near you", "I let you touch my belly", "I showed you where I hide", "I headbutt you on purpose", "I slow-blink at you", "I follow you to the bathroom"],
+      example: ["I wait by the door for you", "I only bite you a little", "I bring you dead things", "I chose to sit near you", "I let you touch my belly", "I showed you where I hide", "I headbutt you on purpose", "I slow-blink at you", "I follow you to the bathroom", "I sleep on your pillow", "I come running when you call", "I sit on your laptop so you'll pay attention to me", "I knead you even though my claws are out", "I chirp at you from across the room", "I let you hold me for three whole seconds"],
       meaning: ["That's basically marriage in cat", "That means I trust you", "That's 'I love you' in my language", "Don't overthink it", "That's more than most get", "It means something", "In my culture that's forever", "The small things ARE the big things", "Love looks different for everyone. Look for the pattern."]
     }
   },
@@ -3790,10 +3790,17 @@ const templates: Template[] = [
 // Generate response from template
 function generateFromTemplate(template: Template): OracleResponse {
   let text = template.pattern;
+  const usedSlots: string[] = [];
   for (const [slot, options] of Object.entries(template.slots)) {
-    const randomOption = options[Math.floor(Math.random() * options.length)];
-    text = text.replace(`{${slot}}`, randomOption);
+    // Prefer slot values not recently used
+    const fresh = options.filter(o => !isSlotRecent(o));
+    const pool = fresh.length > 0 ? fresh : options;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    usedSlots.push(pick);
+    text = text.replace(`{${slot}}`, pick);
   }
+  // Track the slot values we used
+  for (const s of usedSlots) addSlotToRecent(s);
   return { text, category: template.category };
 }
 
@@ -3819,19 +3826,58 @@ const categoryWeights: Record<OracleCategory, number> = {
 };
 
 // Track recently shown responses to avoid repeats
-// Stores last 50 response texts to prevent repetition
-const recentResponses: string[] = [];
+// Persisted to localStorage so it survives page reloads
 const MAX_RECENT = 50;
+const STORAGE_KEY = 'maybecat_recent_responses';
+const SLOT_STORAGE_KEY = 'maybecat_recent_slots';
+const MAX_RECENT_SLOTS = 30;
+
+function loadRecent(): string[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch { /* corrupted or unavailable — start fresh */ }
+  return [];
+}
+
+function loadRecentSlots(): string[] {
+  try {
+    const stored = localStorage.getItem(SLOT_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch { /* corrupted or unavailable */ }
+  return [];
+}
 
 function addToRecent(text: string): void {
-  recentResponses.push(text);
-  if (recentResponses.length > MAX_RECENT) {
-    recentResponses.shift();
+  const recent = loadRecent();
+  recent.push(text);
+  while (recent.length > MAX_RECENT) {
+    recent.shift();
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(recent));
+  } catch { /* storage full or unavailable */ }
+}
+
+function addSlotToRecent(value: string): void {
+  const slots = loadRecentSlots();
+  if (!slots.includes(value)) {
+    slots.push(value);
+    while (slots.length > MAX_RECENT_SLOTS) {
+      slots.shift();
+    }
+    try {
+      localStorage.setItem(SLOT_STORAGE_KEY, JSON.stringify(slots));
+    } catch { /* no-op */ }
   }
 }
 
 function isRecent(text: string): boolean {
-  return recentResponses.includes(text);
+  return loadRecent().includes(text);
+}
+
+function isSlotRecent(value: string): boolean {
+  return loadRecentSlots().includes(value);
 }
 
 export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleResponse {
@@ -3860,9 +3906,9 @@ export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleR
 }
 
 function getRandomResponseInternal(): OracleResponse {
-  // 70% chance: use handcrafted response
-  // 30% chance: generate from template (for variety)
-  const useTemplate = Math.random() < 0.3;
+  // 88% chance: use handcrafted response
+  // 12% chance: generate from template (seasoning, not the main course)
+  const useTemplate = Math.random() < 0.12;
 
   // Build weighted array of categories
   const weightedCategories: OracleCategory[] = [];

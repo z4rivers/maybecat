@@ -183,7 +183,11 @@ function transformAnimal(animal: V5Animal, orgsMap: Map<string, V5Org>, pictures
 
   if (!location || !photo) return null;
 
-  const nameLower = name.toLowerCase();
+  // Clean display hacks — shelters prefix with ! or * to sort to top
+  const cleanName = name.replace(/^[!*#]+\s*/, '').trim();
+  if (!cleanName) return null;
+
+  const nameLower = cleanName.toLowerCase();
   const redFlags = [
     'foster', 'adoption', 'medical', 'kitten', 'pending',
     'hold', 'reserved', 'urgent', 'hospice', 'sanctuary',
@@ -191,16 +195,16 @@ function transformAnimal(animal: V5Animal, orgsMap: Map<string, V5Org>, pictures
     'courtesy', 'stray', 'bonded',
   ];
   if (redFlags.some(flag => nameLower.includes(flag))) return null;
-  if (/^[\d\s#-]+$/.test(name.trim())) return null;
+  if (/^[\d\s#-]+$/.test(cleanName)) return null;
   // Filter names containing numbers — these are shelter IDs, not real names
-  if (/\d/.test(name)) return null;
+  if (/\d/.test(cleanName)) return null;
 
   // Filter bonded pairs, qualifications, and multi-cat names
-  if (name.includes('&') || name.includes('(') || /\band\b/i.test(name)) return null;
+  if (cleanName.includes('&') || cleanName.includes('(') || /\band\b/i.test(cleanName)) return null;
 
   return {
     id: animal.id,
-    name: name || 'Mystery Cat',
+    name: cleanName || 'Mystery Cat',
     photo,
     description: attrs.descriptionText?.slice(0, 200) || 'A cat seeking their forever home.',
     age: attrs.ageGroup || 'Unknown',
@@ -417,11 +421,41 @@ function setCachedCats(cats: ShelterCat[]): void {
 }
 
 /**
- * Pick a random subset from a pool
+ * Track recently shown cat IDs so refresh gives fresh faces
+ */
+const RECENT_CATS_KEY = 'maybecat_recent_cat_ids';
+
+function getRecentCatIds(): Set<string> {
+  try {
+    const stored = localStorage.getItem(RECENT_CATS_KEY);
+    if (stored) return new Set(JSON.parse(stored));
+  } catch { /* no-op */ }
+  return new Set();
+}
+
+function addRecentCatIds(ids: string[]): void {
+  const recent = getRecentCatIds();
+  for (const id of ids) recent.add(id);
+  // Keep last 60 to avoid blocking too much of the pool
+  const arr = [...recent];
+  while (arr.length > 60) arr.shift();
+  try {
+    localStorage.setItem(RECENT_CATS_KEY, JSON.stringify(arr));
+  } catch { /* no-op */ }
+}
+
+/**
+ * Pick a random subset from a pool, preferring cats not recently shown
  */
 function pickRandom(pool: ShelterCat[], count: number): ShelterCat[] {
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  const recentIds = getRecentCatIds();
+  const fresh = pool.filter(c => !recentIds.has(c.id));
+  // Use fresh cats if enough, otherwise mix in recent ones
+  const source = fresh.length >= count ? fresh : pool;
+  const shuffled = [...source].sort(() => Math.random() - 0.5);
+  const picked = shuffled.slice(0, count);
+  addRecentCatIds(picked.map(c => c.id));
+  return picked;
 }
 
 /**
