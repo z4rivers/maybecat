@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Sparkles, Camera, ChevronLeft, ChevronRight, Share2, Loader2 } from 'lucide-react';
 import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
@@ -64,6 +64,10 @@ export function Oracle() {
   const [needsBrightening, setNeedsBrightening] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const answerRef = useRef<HTMLParagraphElement>(null);
+  const scaleContainerRef = useRef<HTMLDivElement>(null);
+  const scaleContentRef = useRef<HTMLDivElement>(null);
+  const [readingScale, setReadingScale] = useState(1);
 
   // Carousel navigation - infinite circular rotation
   const VISIBLE_CATS = 4;
@@ -194,6 +198,58 @@ export function Oracle() {
   }, [setCatFromUpload]);
 
 
+  // Auto-shrink answer text if it overflows the fixed-height answer area
+  useLayoutEffect(() => {
+    const el = answerRef.current;
+    if (!el) return;
+
+    // Reset font size to measure natural size
+    el.style.fontSize = '';
+
+    if (!response) return;
+
+    const container = el.closest('[data-answer-area]') as HTMLElement;
+    if (!container) return;
+
+    const maxH = container.clientHeight;
+    let size = parseFloat(getComputedStyle(el).fontSize);
+
+    // Shrink by 2px at a time until it fits (max 10 iterations)
+    let i = 0;
+    while (el.scrollHeight > maxH + 2 && size > 14 && i < 10) {
+      size -= 2;
+      el.style.fontSize = `${size}px`;
+      i++;
+    }
+  }, [response]);
+
+  // Scale entire reading view to fit viewport as one unit
+  useLayoutEffect(() => {
+    if (!catImage) { setReadingScale(1); return; }
+
+    const container = scaleContainerRef.current;
+    const content = scaleContentRef.current;
+    if (!container || !content) return;
+
+    const updateScale = () => {
+      const availW = container.clientWidth;
+      const availH = container.clientHeight;
+      // scrollWidth/scrollHeight return untransformed dimensions
+      const contentW = content.scrollWidth;
+      const contentH = content.scrollHeight;
+      if (!contentW || !contentH) return;
+
+      setReadingScale(Math.min(availW / contentW, availH / contentH));
+    };
+
+    updateScale();
+
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(container);
+    ro.observe(content);
+    return () => ro.disconnect();
+  }, [catImage, response, isThinking]);
+
   const clearCat = useCallback(() => {
     clearCatStorage();
     clearResponse();
@@ -221,7 +277,7 @@ export function Oracle() {
         }}
       />
 
-      <div className="flex-1 flex flex-col px-4 py-3 relative z-10 overflow-auto">
+      <div className={`flex-1 flex flex-col px-4 pt-3 relative z-10 ${catImage ? 'overflow-hidden pb-20 md:pb-[150px]' : 'overflow-auto pb-3'}`}>
         {/* Elaborate Art Nouveau corner vines - LARGE and ornate like tarot deck borders */}
         <CornerVine className="absolute top-0 left-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60" />
         <CornerVine className="absolute top-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-x-100" />
@@ -251,48 +307,277 @@ export function Oracle() {
           ))}
         </div>
 
-        {/* Header */}
-        <header className="text-center mb-2">
-          <div className="flex items-center justify-center gap-3 mb-1">
-            <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
-            <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
-            <MysticalStar className="w-6 h-6 md:w-8 md:h-8 text-amber-100 drop-shadow-lg" />
-            <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
-            <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+        {catImage ? (
+          /* ═══ READING VIEW — scales uniformly to fit viewport ═══ */
+          <div ref={scaleContainerRef} className="flex-1 min-h-0 overflow-hidden flex items-start justify-center">
+            <motion.div
+              ref={scaleContentRef}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center"
+              style={{ width: '56rem', maxWidth: '100%', transform: `scale(${readingScale})`, transformOrigin: 'top center' }}
+            >
+              {/* Header */}
+              <header className="text-center mb-2 w-full">
+                <div className="flex items-center justify-center gap-3">
+                  <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+                  <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+                  <MysticalStar className="w-6 h-6 md:w-8 md:h-8 text-amber-100 drop-shadow-lg" />
+                  <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+                  <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+                </div>
+
+                <h1
+                  onClick={clearCat}
+                  className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight min-h-[72px] md:min-h-[95px] lg:min-h-[120px]"
+                  style={{
+                    fontFamily: "'Cinzel Decorative', Georgia, serif",
+                    color: '#78350F',
+                    textShadow: [
+                      '2px 2px 0 #FBBF24',
+                      '4px 4px 0 rgba(0,0,0,0.2)',
+                      '0 0 30px rgba(251,191,36,0.4)',
+                      '-1px -1px 0 rgba(0,0,0,0.15)',
+                      ' 1px -1px 0 rgba(0,0,0,0.15)',
+                      '-1px  1px 0 rgba(0,0,0,0.15)',
+                      ' 1px  1px 0 rgba(0,0,0,0.15)'
+                    ].join(', ')
+                  }}
+                >
+                  Maybe Cat
+                </h1>
+
+                <div className="flex items-center justify-center gap-2 -mt-[14px]">
+                  <div className="h-[3px] w-14 bg-white/60" />
+                  <span className="text-[26px] md:text-[30px] text-white/80">☽</span>
+                  <span className="text-[21px] text-white/90">✧</span>
+                  <span className="text-[26px] md:text-[30px] text-white/80">☾</span>
+                  <div className="h-[3px] w-14 bg-white/60" />
+                </div>
+              </header>
+
+              {/* Card + Input + Button */}
+              <div className="-mt-[7px] w-full flex flex-col items-center">
+                {/* Oracle Reading Card */}
+                <div
+                  className="w-full relative mt-[19px]"
+                  style={{
+                    background: 'linear-gradient(145deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%)',
+                    borderRadius: '1rem',
+                    padding: '2.5rem 1rem 0.5rem',
+                    boxShadow: '0 20px 60px rgba(120,53,15,0.3), inset 0 0 40px rgba(255,255,255,0.2)',
+                    border: '4px solid #92400E',
+                  }}
+                >
+                  <div className="absolute inset-4 border-2 border-amber-700/40 rounded-lg pointer-events-none" />
+                  <div className="absolute top-3 left-3 text-amber-700/50">✦</div>
+                  <div className="absolute top-3 right-3 text-amber-700/50">✦</div>
+                  <div className="absolute bottom-3 left-3 text-amber-700/50">✦</div>
+                  <div className="absolute bottom-3 right-3 text-amber-700/50">✦</div>
+
+                  {/* Image container */}
+                  <div className="flex items-start justify-center mx-auto w-full" style={{ maxWidth: '300px' }}>
+                    <div className="relative w-full aspect-square">
+                      <div
+                        className="rounded-xl overflow-hidden w-full h-full"
+                        style={{
+                          border: '4px solid #92400E',
+                          boxShadow: '0 12px 30px rgba(120,53,15,0.4)',
+                          padding: '6px',
+                          backgroundColor: '#FFFBEB'
+                        }}
+                      >
+                        <img
+                          src={catImage}
+                          alt={displayName}
+                          className="w-full h-full object-cover rounded-lg"
+                          style={needsBrightening ? { filter: config.brightness.enhanceFilter } : undefined}
+                        />
+                      </div>
+
+                      {/* Adopt Me Badge */}
+                      {shelterCat?.adoptionUrl && (
+                        <a
+                          href={shelterCat.adoptionUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name })}
+                          className="absolute -top-3 -right-3 z-20 w-16 h-16 md:w-[72px] md:h-[72px] rounded-full flex items-center justify-center rotate-12 hover:scale-110 hover:rotate-6 transition-all duration-300 cursor-pointer"
+                          title={`Adopt ${shelterCat.name}`}
+                          style={{
+                            background: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)',
+                            border: '3px solid #FBBF24',
+                            boxShadow: '0 4px 15px rgba(236,72,153,0.5), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 3px rgba(255,255,255,0.3)',
+                          }}
+                        >
+                          <span
+                            className="font-bold text-[11px] md:text-xs leading-none text-center block pt-[2px]"
+                            style={{
+                              color: '#FEF3C7',
+                              fontFamily: "'Cinzel Decorative', Georgia, serif",
+                              textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                            }}
+                          >
+                            Adopt<br />Me!
+                          </span>
+                        </a>
+                      )}
+
+                      <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-6 py-2 bg-amber-800 rounded-full shadow-lg">
+                        <p className="text-amber-100 font-bold text-base md:text-lg whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
+                          {displayName}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Answer area */}
+                  <div className="h-[88px] md:h-[112px] mt-[24px] mb-[15px] flex items-center justify-center overflow-hidden" data-answer-area>
+                    <AnimatePresence mode="wait">
+                      {!response && !isThinking && (
+                        <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} className="text-center text-amber-700/50">
+                          <span className="text-2xl">✧ ☽ ✧</span>
+                        </motion.div>
+                      )}
+
+                      {isThinking && (
+                        <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
+                          <Sparkles className="w-8 h-8 mx-auto mb-2 text-amber-700 animate-pulse" />
+                          <p className="text-amber-800 text-base italic" style={{ fontFamily: "Georgia, serif" }}>
+                            ✧ {displayName} contemplates... ✧
+                          </p>
+                        </motion.div>
+                      )}
+
+                      {response && !isThinking && (
+                        <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
+                          <p ref={answerRef} className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
+                            "{preventOrphans(response.text)}"
+                          </p>
+                          {response.attribution && (
+                            <motion.p
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 0.6 }}
+                              transition={{ delay: 0.5 }}
+                              className="text-sm text-amber-700 italic text-right pr-6 mt-1"
+                              style={{ fontFamily: "Georgia, serif" }}
+                            >
+                              ← {response.attribution}
+                            </motion.p>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+                <button onClick={clearCat} className="absolute top-2 right-16 md:right-2 z-30 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
+                  <X className="w-5 h-5" />
+                </button>
+
+                {/* Input + buttons */}
+                <div className="w-full mt-[16px] pb-[25px] space-y-2">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={question}
+                      onChange={(e) => { setQuestion(e.target.value); if (response) clearResponse(); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
+                      placeholder="I may know. I may care. I may answer."
+                      className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
+                      style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
+                    />
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <motion.button
+                      onClick={response ? askAgain : handleAskOracle}
+                      disabled={!question.trim() || isThinking}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
+                    >
+                      {response ? `✦ Ask ${displayName} Again ✦` : `✦ Ask ${displayName} ✦`}
+                    </motion.button>
+
+                    <AnimatePresence>
+                      {response && !isThinking && (
+                        <motion.button
+                          initial={{ opacity: 0, scale: 0.8, width: 0 }}
+                          animate={{ opacity: 1, scale: 1, width: 'auto' }}
+                          exit={{ opacity: 0, scale: 0.8, width: 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                          onClick={() => handleShare({ catImage: catImage!, catName: displayName, question, responseText: response.text, attribution: response.attribution, needsBrightening })}
+                          disabled={isGenerating}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-xl text-amber-100 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                          style={{
+                            background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)',
+                            boxShadow: '0 4px 20px rgba(124,45,18,0.4)',
+                          }}
+                          title="Share as image"
+                        >
+                          {isGenerating ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Share2 className="w-5 h-5" />
+                          )}
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
+        ) : (
+          /* ═══ CAT SELECTION VIEW — normal scrollable layout ═══ */
+          <>
+          {/* Header */}
+          <header className="text-center mb-2">
+            <div className="flex items-center justify-center gap-3 mb-1">
+              <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+              <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+              <MysticalStar className="w-6 h-6 md:w-8 md:h-8 text-amber-100 drop-shadow-lg" />
+              <div className="h-0.5 w-16 md:w-24 bg-gradient-to-r from-transparent via-amber-100 to-transparent rounded-full" />
+              <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
+            </div>
 
-          <h1
-            onClick={clearCat}
-            className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight min-h-[72px] md:min-h-[95px] lg:min-h-[120px]"
-            style={{
-              fontFamily: "'Cinzel Decorative', Georgia, serif",
-              color: '#78350F',
-              textShadow: [
-                '2px 2px 0 #FBBF24',                   // gold offset — the carnival two-tone
-                '4px 4px 0 rgba(0,0,0,0.2)',            // depth layer
-                '0 0 30px rgba(251,191,36,0.4)',        // warm glow
-                '-1px -1px 0 rgba(0,0,0,0.15)',         // subtle edge definition
-                ' 1px -1px 0 rgba(0,0,0,0.15)',
-                '-1px  1px 0 rgba(0,0,0,0.15)',
-                ' 1px  1px 0 rgba(0,0,0,0.15)'
-              ].join(', ')
-            }}
-          >
-            Maybe Cat
-          </h1>
+            <h1
+              onClick={clearCat}
+              className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight min-h-[72px] md:min-h-[95px] lg:min-h-[120px]"
+              style={{
+                fontFamily: "'Cinzel Decorative', Georgia, serif",
+                color: '#78350F',
+                textShadow: [
+                  '2px 2px 0 #FBBF24',
+                  '4px 4px 0 rgba(0,0,0,0.2)',
+                  '0 0 30px rgba(251,191,36,0.4)',
+                  '-1px -1px 0 rgba(0,0,0,0.15)',
+                  ' 1px -1px 0 rgba(0,0,0,0.15)',
+                  '-1px  1px 0 rgba(0,0,0,0.15)',
+                  ' 1px  1px 0 rgba(0,0,0,0.15)'
+                ].join(', ')
+              }}
+            >
+              Maybe Cat
+            </h1>
 
-          <div className="flex items-center justify-center gap-2 -mt-[6px]">
-            <div className="h-[3px] w-14 bg-white/60" />
-            <span className="text-[26px] md:text-[30px] text-white/80">☽</span>
-            <span className="text-[21px] text-white/90">✧</span>
-            <span className="text-[26px] md:text-[30px] text-white/80">☾</span>
-            <div className="h-[3px] w-14 bg-white/60" />
-          </div>
-        </header>
+            <div className="flex items-center justify-center gap-2 -mt-[6px]">
+              <div className="h-[3px] w-14 bg-white/60" />
+              <span className="text-[26px] md:text-[30px] text-white/80">☽</span>
+              <span className="text-[21px] text-white/90">✧</span>
+              <span className="text-[26px] md:text-[30px] text-white/80">☾</span>
+              <div className="h-[3px] w-14 bg-white/60" />
+            </div>
+          </header>
 
-        {/* Main content */}
-        <div className="flex flex-col -mt-[7px]">
-          {!catImage ? (
+          {/* Main content */}
+          <div className="flex-1 flex flex-col -mt-[7px] min-h-0">
+          {/* Cat selection carousel */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -340,7 +625,7 @@ export function Oracle() {
                 </button>
 
                 {/* Scrollable carousel content */}
-                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto">
+                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
                 <AnimatePresence>
                   {!loadingShelterCats && (
@@ -560,204 +845,28 @@ export function Oracle() {
                 </button>
               </div>
             </motion.div>
-          ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex flex-col items-center">
-              {/* Oracle Reading Card - wider to prevent vertical expansion */}
-              <div
-                className="w-full max-w-4xl relative mt-[19px]"
-                style={{
-                  background: 'linear-gradient(145deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%)',
-                  borderRadius: '1rem',
-                  padding: '1rem',
-                  boxShadow: '0 20px 60px rgba(120,53,15,0.3), inset 0 0 40px rgba(255,255,255,0.2)',
-                  border: '4px solid #92400E',
-                }}
-              >
-                <div className="absolute inset-4 border-2 border-amber-700/40 rounded-lg pointer-events-none" />
-                <div className="absolute top-3 left-3 text-amber-700/50">✦</div>
-                <div className="absolute top-3 right-3 text-amber-700/50">✦</div>
-                <div className="absolute bottom-3 left-3 text-amber-700/50">✦</div>
-                <div className="absolute bottom-3 right-3 text-amber-700/50">✦</div>
-
-                <div className="relative mx-auto mb-2" style={{ maxWidth: '380px' }}>
-                  <div
-                    className="rounded-xl overflow-hidden"
-                    style={{
-                      border: '4px solid #92400E',
-                      boxShadow: '0 12px 30px rgba(120,53,15,0.4)',
-                      padding: '6px',
-                      backgroundColor: '#FFFBEB'
-                    }}
-                  >
-                    <img
-                      src={catImage}
-                      alt={displayName}
-                      className="w-full aspect-square object-cover rounded-lg"
-                      style={needsBrightening ? { filter: config.brightness.enhanceFilter } : undefined}
-                    />
-                  </div>
-                  
-                  {/* Adopt Me Badge - Shelter Cats Only */}
-                  {shelterCat?.adoptionUrl && (
-                    <a
-                      href={shelterCat.adoptionUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name })}
-                      className="absolute -top-3 -right-3 z-20 w-16 h-16 md:w-[72px] md:h-[72px] rounded-full flex items-center justify-center rotate-12 hover:scale-110 hover:rotate-6 transition-all duration-300 cursor-pointer"
-                      title={`Adopt ${shelterCat.name}`}
-                      style={{
-                        background: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)',
-                        border: '3px solid #FBBF24',
-                        boxShadow: '0 4px 15px rgba(236,72,153,0.5), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 3px rgba(255,255,255,0.3)',
-                      }}
-                    >
-                      <span
-                        className="font-bold text-[11px] md:text-xs leading-none text-center block pt-[2px]"
-                        style={{
-                          color: '#FEF3C7',
-                          fontFamily: "'Cinzel Decorative', Georgia, serif",
-                          textShadow: '0 1px 2px rgba(0,0,0,0.4)',
-                        }}
-                      >
-                        Adopt<br />Me!
-                      </span>
-                    </a>
-                  )}
-
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-6 py-2 bg-amber-800 rounded-full shadow-lg">
-                    <p className="text-amber-100 font-bold text-base md:text-lg whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
-                      {displayName}
-                    </p>
-                  </div>
-                </div>
-
-
-                {/* Answer area - fixed min-height for 2 lines to prevent layout jump */}
-                <div className="min-h-[80px] flex items-center justify-center">
-                  <AnimatePresence mode="wait">
-                    {!response && !isThinking && (
-                      <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} className="text-center text-amber-700/50">
-                        <span className="text-2xl">✧ ☽ ✧</span>
-                      </motion.div>
-                    )}
-
-                    {isThinking && (
-                      <motion.div key="thinking" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
-                        <Sparkles className="w-8 h-8 mx-auto mb-2 text-amber-700 animate-pulse" />
-                        <p className="text-amber-800 text-base italic" style={{ fontFamily: "Georgia, serif" }}>
-                          ✧ {displayName} contemplates... ✧
-                        </p>
-                      </motion.div>
-                    )}
-
-                    {response && !isThinking && (
-                      <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
-                        <p className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
-                          "{preventOrphans(response.text)}"
-                        </p>
-                        {response.attribution && (
-                          <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.6 }}
-                            transition={{ delay: 0.5 }}
-                            className="text-sm text-amber-700 italic text-right pr-6 mt-1"
-                            style={{ fontFamily: "Georgia, serif" }}
-                          >
-                            ← {response.attribution}
-                          </motion.p>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-              </div>
-
-              <button onClick={clearCat} className="absolute top-2 right-16 md:right-2 z-30 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Question input - INSIDE page 2 for proper centering */}
-              <div className="w-full max-w-4xl mt-2 space-y-2">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={question}
-                      onChange={(e) => { setQuestion(e.target.value); if (response) clearResponse(); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) handleAskOracle(); }}
-                      placeholder="I may know. I may care. I may answer."
-                      className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
-                      style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
-                    />
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <motion.button
-                      onClick={response ? askAgain : handleAskOracle}
-                      disabled={!question.trim() || isThinking}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                      style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
-                    >
-                      {response ? `✦ Ask ${displayName} Again ✦` : `✦ Ask ${displayName} ✦`}
-                    </motion.button>
-
-                    <AnimatePresence>
-                      {response && !isThinking && (
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.8, width: 0 }}
-                          animate={{ opacity: 1, scale: 1, width: 'auto' }}
-                          exit={{ opacity: 0, scale: 0.8, width: 0 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                          onClick={() => handleShare({ catImage: catImage!, catName: displayName, question, responseText: response.text, attribution: response.attribution, needsBrightening })}
-                          disabled={isGenerating}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2 rounded-xl text-amber-100 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
-                          style={{
-                            background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)',
-                            boxShadow: '0 4px 20px rgba(124,45,18,0.4)',
-                          }}
-                          title="Share as image"
-                        >
-                          {isGenerating ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                          ) : (
-                            <Share2 className="w-5 h-5" />
-                          )}
-                        </motion.button>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                </div>
-            </motion.div>
-          )}
-
-
-
-        </div>
+          </div>
+          </>
+        )}
 
       </div>
 
 
 
-      {/* SEO Footer */}
-      <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
-        <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
-          <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
-        </div>
-      </footer>
+      {/* SEO Footer — hidden when reading card fills viewport, visible during cat selection */}
+      {!catImage && (
+        <footer className="w-full text-center relative z-10 select-text pb-24 md:pb-40 pt-2 px-4">
+          <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
+            <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
+          </div>
+        </footer>
+      )}
 
       {/* FIXED PURRfoot Sponsor Banner - Always at bottom */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 flex items-center shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 flex items-center shadow-2xl h-[80px] md:h-[150px]"
         style={{
           backgroundColor: '#0d1b2a',
-          height: '80px',
           boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
         }}
       >

@@ -311,8 +311,9 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
 
   try {
     // Fetch with different sort orders in parallel — each surfaces different cats
-    // from the database, dramatically increasing the pool
-    const sorts = ['-animals.updatedDate', 'animals.name', '-animals.createdDate'];
+    // from the database, dramatically increasing the pool.
+    // Avoid deterministic sorts like 'animals.name' which always return the same A-B cats.
+    const sorts = ['-animals.updatedDate', '-animals.createdDate', 'animals.updatedDate'];
     const results = await Promise.allSettled(
       sorts.map(sort => fetchCatsFromApi(50, sort))
     );
@@ -378,8 +379,9 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
  * v3: Random state selection, removed sort, kitten cap
  * v4: Large pool + shelter cap + instant refresh from cache
  * v5: Filter cats with numbers in names (shelter IDs)
+ * v6: Drop alphabetical sort (always returned same A-B name cats like Butter Bean)
  */
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 6;
 const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
