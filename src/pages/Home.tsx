@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Sparkles, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Heart, Sparkles, Camera, ChevronLeft, ChevronRight, Share2, Loader2 } from 'lucide-react';
 import { getCachedOrFetchCats, refreshCats, type ShelterCat } from '../services/rescueGroups';
 /** Safe analytics tracking — never breaks the UX if analytics fails */
 function safeTrack(event: string, data?: Record<string, string>) {
@@ -12,6 +12,8 @@ import { config } from '../config';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
+import { useShareCard } from '../hooks/useShareCard';
+import { ShareCard } from '../components/ShareCard';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { keywords } from '../data/keywords';
 
@@ -55,6 +57,8 @@ export function Oracle() {
     askAgain,
     clearResponse,
   } = useOracle({ isShelterCat: !!shelterCat });
+
+  const { shareCardRef, isGenerating, shouldRenderCard, shareCatImage, handleShare } = useShareCard();
 
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
@@ -686,17 +690,45 @@ export function Oracle() {
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
                   </div>
 
-                  <motion.button
-                    onClick={response ? askAgain : handleAskOracle}
-                    disabled={!question.trim() || isThinking}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
-                  >
-                    {response ? `✦ Ask ${displayName} Again ✦` : `✦ Ask ${displayName} ✦`}
-                  </motion.button>
+                  <div className="flex gap-2">
+                    <motion.button
+                      onClick={response ? askAgain : handleAskOracle}
+                      disabled={!question.trim() || isThinking}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 py-2 rounded-xl text-white font-bold text-lg md:text-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)', boxShadow: '0 4px 20px rgba(124,45,18,0.4)', fontFamily: "Georgia, serif" }}
+                    >
+                      {response ? `✦ Ask ${displayName} Again ✦` : `✦ Ask ${displayName} ✦`}
+                    </motion.button>
 
+                    <AnimatePresence>
+                      {response && !isThinking && (
+                        <motion.button
+                          initial={{ opacity: 0, scale: 0.8, width: 0 }}
+                          animate={{ opacity: 1, scale: 1, width: 'auto' }}
+                          exit={{ opacity: 0, scale: 0.8, width: 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                          onClick={() => handleShare(catImage)}
+                          disabled={isGenerating}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-xl text-amber-100 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                          style={{
+                            background: 'linear-gradient(135deg, #92400E 0%, #B45309 50%, #D97706 100%)',
+                            boxShadow: '0 4px 20px rgba(146,64,14,0.4)',
+                          }}
+                          title="Share as image"
+                        >
+                          {isGenerating ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Share2 className="w-5 h-5" />
+                          )}
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
                 </div>
             </motion.div>
@@ -709,6 +741,19 @@ export function Oracle() {
       </div>
 
 
+
+      {/* Share card — only mounts during capture, never visible */}
+      {shouldRenderCard && response && catImage && (
+        <ShareCard
+          ref={shareCardRef}
+          catImage={shareCatImage || catImage}
+          catName={displayName}
+          question={question}
+          responseText={response.text}
+          attribution={response.attribution}
+          needsBrightening={needsBrightening}
+        />
+      )}
 
       {/* SEO Footer */}
       <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
