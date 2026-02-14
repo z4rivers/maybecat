@@ -3620,11 +3620,11 @@ const templates: Template[] = [
 
   // JUDGY templates
   {
-    pattern: "{observation}. {verdict}.",
+    pattern: "{observation}. {verdict}",
     category: 'judgy',
     slots: {
       observation: ["I saw you eat that off the floor", "I watched you trip over nothing", "I heard you talk to the plants", "I noticed you haven't moved in 4 hours", "I observed your outfit choice", "I've seen your 2am snack decisions", "I watched you cry at that commercial", "I saw you wave back at someone who wasn't waving at you", "I've noted your screen time", "I saw you rehearse that conversation in the mirror"],
-      verdict: ["I've seen dogs with more dignity", "Fascinating. Truly.", "And you judge ME for licking myself", "My respect for you has adjusted accordingly", "We're not so different. Except I'm better", "I'll allow it. This time.", "Points for confidence, I guess", "I'm not mad. I'm just disappointed. Okay I'm also mad.", "I've decided to find this endearing. Barely.", "This explains so much about you"]
+      verdict: ["I've seen dogs with more dignity.", "Fascinating. Truly.", "And you judge ME for licking myself.", "My respect for you has adjusted accordingly.", "We're not so different. Except I'm better.", "I'll allow it. This time.", "Points for confidence, I guess.", "I'm not mad. I'm just disappointed. Okay I'm also mad.", "I've decided to find this endearing. Barely.", "This explains so much about you."]
     }
   },
 
