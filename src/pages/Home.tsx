@@ -432,7 +432,7 @@ export function Oracle() {
                   </div>
 
                   {/* Answer area */}
-                  <div className="h-[88px] md:h-[112px] mt-[24px] mb-[15px] flex items-center justify-center overflow-hidden" data-answer-area>
+                  <div className="h-[88px] md:h-[112px] mt-[29px] mb-[20px] flex items-center justify-center overflow-hidden" data-answer-area>
                     <AnimatePresence mode="wait">
                       {!response && !isThinking && (
                         <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} className="text-center text-amber-700/50">
@@ -452,7 +452,7 @@ export function Oracle() {
                       {response && !isThinking && (
                         <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
                           <p ref={answerRef} className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
-                            "{preventOrphans(response.text)}"
+                            {preventOrphans(response.text)}
                           </p>
                           {response.attribution && (
                             <motion.p
