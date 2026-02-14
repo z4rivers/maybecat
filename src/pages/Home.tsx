@@ -400,6 +400,9 @@ export function Oracle() {
                   {/* Image container — larger before question asked, shrinks for answer */}
                   <div className="flex items-start justify-center mx-auto w-full transition-all duration-500" style={{ maxWidth: response || isThinking ? '300px' : '380px' }}>
                     <div className="relative w-full aspect-square">
+                      <button onClick={clearCat} className="absolute -top-2 -left-2 z-30 p-1 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                       <div
                         className="rounded-xl overflow-hidden w-full h-full"
                         style={{
@@ -492,10 +495,6 @@ export function Oracle() {
                     </AnimatePresence>
                   </div>
                 </div>
-
-                <button onClick={clearCat} className="absolute top-2 right-16 md:right-2 z-30 p-2 bg-amber-900/80 rounded-full text-amber-100 hover:bg-amber-900 transition-colors shadow-lg">
-                  <X className="w-5 h-5" />
-                </button>
 
                 {/* Input + buttons */}
                 <div className="w-full mt-[16px] pb-[25px] space-y-2">

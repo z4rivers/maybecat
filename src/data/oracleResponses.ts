@@ -3446,6 +3446,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The specificity is interesting.", category: 'judgy' },
   { text: "Confidence isn't delusional, it's feline.", category: 'wise' },
   { text: "Make sure the hate is directed.", category: 'demanding' },
+  { text: "Unstoppable.", category: 'demanding' },
   { text: "The world's on fire, but, let's get silly with it, you know?", category: 'chaotic', attribution: 'RXK Nephew' },
 ];
 
