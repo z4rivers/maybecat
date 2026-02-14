@@ -3881,6 +3881,27 @@ function isSlotRecent(value: string): boolean {
   return loadRecentSlots().includes(value);
 }
 
+/**
+ * Easter eggs — specific questions that always get specific answers.
+ * Pattern matching is case-insensitive, ignores punctuation.
+ */
+const easterEggs: Array<{ patterns: RegExp[]; response: OracleResponse }> = [
+  {
+    patterns: [/what(?:'?s| is)\s+9\s*\+\s*10/, /9\s*\+\s*10/, /9\s*plus\s*10/],
+    response: { text: "21.", category: 'meta' },
+  },
+];
+
+export function getEasterEggResponse(question: string): OracleResponse | null {
+  const q = question.toLowerCase().replace(/[?.!,'"]/g, '').trim();
+  for (const egg of easterEggs) {
+    if (egg.patterns.some(p => p.test(q))) {
+      return egg.response;
+    }
+  }
+  return null;
+}
+
 export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleResponse {
   // ~2.5% chance to show adoption fourth-wall break for shelter cats
   if (options?.isShelterCat && Math.random() < 0.025) {

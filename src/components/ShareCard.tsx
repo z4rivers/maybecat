@@ -234,7 +234,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
           <p
             style={{
               fontFamily: "Georgia, serif",
-              fontSize: '26px',
+              fontSize: '32px',
               fontStyle: 'italic',
               color: '#FEF3C7',
               textAlign: 'center',
@@ -301,7 +301,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
             <p
               style={{
                 fontFamily: "Georgia, serif",
-                fontSize: '20px',
+                fontSize: '28px',
                 color: '#FEF3C7',
                 margin: 0,
                 letterSpacing: '0.05em',

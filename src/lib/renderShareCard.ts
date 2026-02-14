@@ -166,12 +166,12 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   // Measure text
   const displayQ = data.question.length > 80 ? data.question.slice(0, 77) + '...' : data.question;
   const rText = '\u201C' + data.responseText + '\u201D';
-  ctx.font = 'italic 24px Georgia, serif';
+  ctx.font = 'italic 32px Georgia, serif';
   const qLines = wrapText(ctx, displayQ, 760);
   ctx.font = 'bold 42px Georgia, serif';
   const rLines = wrapText(ctx, rText, 800);
 
-  const Q_LINE_H = 32;
+  const Q_LINE_H = 42;
   const R_LINE_H = 54;
   const Q_FRAME_PAD_V = 12;
   const QR_GAP = 16;
@@ -184,7 +184,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   const panelInnerH = qFrameH + QR_GAP + rBlockH + attribH;
   const panelH = PANEL_PAD_V * 2 + panelInnerH;
 
-  const FOOTER_H = 36;
+  const FOOTER_H = 46;
 
   const fixedH = PAD_TOP + HEADER_H + FRAME_TOTAL + PILL_OVERLAP + panelH + FOOTER_H + PAD_BOTTOM;
   // 3 distributable gaps: header→photo, pill→panel, panel→footer
@@ -401,7 +401,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   ctx.stroke();
 
   // Question text — dark, full opacity
-  ctx.font = 'italic 24px Georgia, serif';
+  ctx.font = 'italic 32px Georgia, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.fillStyle = '#1a1a1a';
@@ -440,13 +440,13 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   ctx.textAlign = 'left';
   const prefix = 'Cats answer questions at ';
   const domain = 'maybecat.com';
-  ctx.font = 'bold 26px Georgia, serif';
+  ctx.font = 'bold 34px Georgia, serif';
   const pw = ctx.measureText(prefix).width;
   const dw = ctx.measureText(domain).width;
   const startX = CX - (pw + dw) / 2;
 
   ctx.fillStyle = DARK_BROWN;
-  ctx.font = 'bold 26px Georgia, serif';
+  ctx.font = 'bold 34px Georgia, serif';
   ctx.fillText(prefix, startX, footerY);
   ctx.fillText(domain, startX + pw, footerY);
   reset(ctx);

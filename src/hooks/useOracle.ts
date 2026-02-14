@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { getRandomResponse, type OracleResponse } from '../data/oracleResponses';
+import { getRandomResponse, getEasterEggResponse, type OracleResponse } from '../data/oracleResponses';
 import { config } from '../config';
 
 /** Safe analytics tracking — never breaks the UX if analytics fails */
@@ -43,7 +43,7 @@ export function useOracle(options?: { isShelterCat?: boolean }): UseOracleReturn
     const { base, variance } = config.thinking.firstAsk;
     const thinkingTime = base + Math.random() * variance;
     timeoutRef.current = setTimeout(() => {
-      const r = getRandomResponse({ isShelterCat });
+      const r = getEasterEggResponse(question) || getRandomResponse({ isShelterCat });
       setResponse(r);
       setIsThinking(false);
       safeTrack('question_asked', { type: 'first' });
