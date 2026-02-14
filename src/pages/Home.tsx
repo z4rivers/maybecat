@@ -51,6 +51,7 @@ export function Oracle() {
     question,
     setQuestion,
     response,
+    setResponse,
     isThinking,
     askOracle,
     askAgain,
@@ -198,30 +199,26 @@ export function Oracle() {
   }, [setCatFromUpload]);
 
 
-  // Auto-shrink answer text if it overflows the fixed-height answer area
-  useLayoutEffect(() => {
-    const el = answerRef.current;
+  // Auto-shrink answer text via ref callback — fires when element mounts in DOM
+  const answerRefCallback = useCallback((el: HTMLParagraphElement | null) => {
+    answerRef.current = el;
     if (!el) return;
 
     // Reset font size to measure natural size
     el.style.fontSize = '';
 
-    if (!response) return;
-
-    const container = el.closest('[data-answer-area]') as HTMLElement;
-    if (!container) return;
-
-    const maxH = container.clientHeight;
+    // Use fixed target height (matches the answer area h-[88px] md:h-[112px])
+    const maxH = window.innerWidth >= 768 ? 112 : 88;
     let size = parseFloat(getComputedStyle(el).fontSize);
 
-    // Shrink by 2px at a time until it fits (max 10 iterations)
+    // Shrink by 1px at a time until it fits (floor 11px, max 25 iterations)
     let i = 0;
-    while (el.scrollHeight > maxH + 2 && size > 14 && i < 10) {
-      size -= 2;
+    while (el.scrollHeight > maxH && size > 11 && i < 25) {
+      size -= 1;
       el.style.fontSize = `${size}px`;
       i++;
     }
-  }, [response]);
+  }, []);
 
   // Scale entire reading view to fit viewport as one unit
   useLayoutEffect(() => {
@@ -258,6 +255,21 @@ export function Oracle() {
   const handleAskOracle = useCallback(() => {
     askOracle();
   }, [askOracle]);
+
+  // DEBUG: Ctrl+Shift+L = inject long test response — REMOVE BEFORE SHIPPING
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+        e.preventDefault();
+        setResponse({
+          text: "I saw you wave back at someone who wasn't waving at you. I'm not mad. I'm just disappointed. Okay I'm also mad.",
+          category: 'judgy',
+        });
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [setResponse]);
 
   const displayName = catName || 'your cat';
 
@@ -375,8 +387,8 @@ export function Oracle() {
                   <div className="absolute bottom-3 left-3 text-amber-700/50">✦</div>
                   <div className="absolute bottom-3 right-3 text-amber-700/50">✦</div>
 
-                  {/* Image container */}
-                  <div className="flex items-start justify-center mx-auto w-full" style={{ maxWidth: '300px' }}>
+                  {/* Image container — larger before question asked, shrinks for answer */}
+                  <div className="flex items-start justify-center mx-auto w-full transition-all duration-500" style={{ maxWidth: response || isThinking ? '300px' : '380px' }}>
                     <div className="relative w-full aspect-square">
                       <div
                         className="rounded-xl overflow-hidden w-full h-full"
@@ -432,7 +444,7 @@ export function Oracle() {
                   </div>
 
                   {/* Answer area */}
-                  <div className="h-[88px] md:h-[112px] mt-[29px] mb-[20px] flex items-center justify-center overflow-hidden" data-answer-area>
+                  <div className={`${response || isThinking ? 'h-[88px] md:h-[112px] mt-[29px] mb-[20px]' : 'h-[40px] mt-[10px]'} flex items-center justify-center overflow-hidden transition-all duration-500`} data-answer-area>
                     <AnimatePresence mode="wait">
                       {!response && !isThinking && (
                         <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} className="text-center text-amber-700/50">
@@ -450,8 +462,8 @@ export function Oracle() {
                       )}
 
                       {response && !isThinking && (
-                        <motion.div key="response" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
-                          <p ref={answerRef} className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
+                        <motion.div key={`response-${response.text}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
+                          <p ref={answerRefCallback} className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
                             {preventOrphans(response.text)}
                           </p>
                           {response.attribution && (
@@ -490,7 +502,7 @@ export function Oracle() {
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <motion.button
                       onClick={response ? askAgain : handleAskOracle}
                       disabled={!question.trim() || isThinking}
@@ -503,14 +515,14 @@ export function Oracle() {
                     </motion.button>
 
                     <AnimatePresence>
-                      {response && !isThinking && (
+                      {response && (
                         <motion.button
                           initial={{ opacity: 0, scale: 0.8, width: 0 }}
                           animate={{ opacity: 1, scale: 1, width: 'auto' }}
                           exit={{ opacity: 0, scale: 0.8, width: 0 }}
                           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                           onClick={() => handleShare({ catImage: catImage!, catName: displayName, question, responseText: response.text, attribution: response.attribution, needsBrightening })}
-                          disabled={isGenerating}
+                          disabled={isGenerating || isThinking}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-xl text-amber-100 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"

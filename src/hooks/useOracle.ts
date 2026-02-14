@@ -15,6 +15,7 @@ export interface UseOracleReturn {
   question: string;
   setQuestion: (q: string) => void;
   response: OracleResponse | null;
+  setResponse: (r: OracleResponse | null) => void; // DEBUG — remove before shipping
   isThinking: boolean;
   askOracle: () => void;
   askAgain: () => void;
@@ -72,6 +73,7 @@ export function useOracle(options?: { isShelterCat?: boolean }): UseOracleReturn
     question,
     setQuestion,
     response,
+    setResponse, // DEBUG — remove before shipping
     isThinking,
     askOracle,
     askAgain,
