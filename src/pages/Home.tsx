@@ -13,7 +13,6 @@ import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
 import { useShareCard } from '../hooks/useShareCard';
-import { ShareCard } from '../components/ShareCard';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { keywords } from '../data/keywords';
 
@@ -58,7 +57,7 @@ export function Oracle() {
     clearResponse,
   } = useOracle({ isShelterCat: !!shelterCat });
 
-  const { shareCardRef, isGenerating, shouldRenderCard, shareCatImage, handleShare } = useShareCard();
+  const { isGenerating, handleShare } = useShareCard();
 
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
@@ -282,12 +281,12 @@ export function Oracle() {
             Maybe Cat
           </h1>
 
-          <div className="flex items-center justify-center gap-2 mt-[1px]">
-            <div className="h-[3px] w-14 bg-amber-800/60" />
-            <span className="text-[22px] md:text-[26px]" style={{ color: '#92400E' }}>☽</span>
-            <span className="text-[18px]" style={{ color: '#92400E' }}>✧</span>
-            <span className="text-[22px] md:text-[26px]" style={{ color: '#92400E' }}>☾</span>
-            <div className="h-[3px] w-14 bg-amber-800/60" />
+          <div className="flex items-center justify-center gap-2 -mt-[6px]">
+            <div className="h-[3px] w-14 bg-white/60" />
+            <span className="text-[26px] md:text-[30px] text-white/80">☽</span>
+            <span className="text-[21px] text-white/90">✧</span>
+            <span className="text-[26px] md:text-[30px] text-white/80">☾</span>
+            <div className="h-[3px] w-14 bg-white/60" />
           </div>
         </header>
 
@@ -709,7 +708,7 @@ export function Oracle() {
                           animate={{ opacity: 1, scale: 1, width: 'auto' }}
                           exit={{ opacity: 0, scale: 0.8, width: 0 }}
                           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                          onClick={() => handleShare(catImage)}
+                          onClick={() => handleShare({ catImage: catImage!, catName: displayName, question, responseText: response.text, attribution: response.attribution, needsBrightening })}
                           disabled={isGenerating}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -741,19 +740,6 @@ export function Oracle() {
       </div>
 
 
-
-      {/* Share card — only mounts during capture, never visible */}
-      {shouldRenderCard && response && catImage && (
-        <ShareCard
-          ref={shareCardRef}
-          catImage={shareCatImage || catImage}
-          catName={displayName}
-          question={question}
-          responseText={response.text}
-          attribution={response.attribution}
-          needsBrightening={needsBrightening}
-        />
-      )}
 
       {/* SEO Footer */}
       <footer className="w-full text-center relative z-10 select-text pb-40 pt-2 px-4">
