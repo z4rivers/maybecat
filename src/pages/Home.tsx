@@ -16,6 +16,16 @@ import { useShareCard } from '../hooks/useShareCard';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { keywords } from '../data/keywords';
 
+// Render response text — italicizes the term in "Word — definition" patterns
+function renderResponseText(text: string): React.ReactNode {
+  // Match: starts with 1-4 words followed by an em dash
+  const match = text.match(/^(.+?)\s—\s(.+)$/);
+  if (match) {
+    return <><em>{match[1]}</em>{' — '}{preventOrphans(match[2])}</>;
+  }
+  return preventOrphans(text);
+}
+
 // Prevent orphaned words by joining last 2-3 short words with non-breaking spaces
 function preventOrphans(text: string): string {
   const words = text.split(' ');
@@ -464,7 +474,7 @@ export function Oracle() {
                       {response && !isThinking && (
                         <motion.div key={`response-${response.text}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-2">
                           <p ref={answerRefCallback} className="text-2xl md:text-3xl lg:text-4xl text-amber-950 leading-relaxed font-bold px-4" style={{ fontFamily: "Georgia, serif", textWrap: 'pretty' }}>
-                            {preventOrphans(response.text)}
+                            {renderResponseText(response.text)}
                           </p>
                           {response.attribution && (
                             <motion.p
