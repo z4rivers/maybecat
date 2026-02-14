@@ -15,33 +15,13 @@ function safeSetItem(key: string, value: string): void {
   }
 }
 
-/** Convert a CDN image URL to a data URL (solves CORS for html2canvas/share card) */
-function convertToDataUrl(url: string, maxSize = 800): Promise<string | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let { width, height } = img;
-      if (width > maxSize || height > maxSize) {
-        const ratio = Math.min(maxSize / width, maxSize / height);
-        width = Math.round(width * ratio);
-        height = Math.round(height * ratio);
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) { resolve(null); return; }
-      ctx.drawImage(img, 0, 0, width, height);
-      try {
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
-      } catch {
-        resolve(null); // CORS blocked toDataURL
-      }
-    };
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
+/** Rewrite a RescueGroups CDN URL to go through our same-origin proxy */
+function proxyImageUrl(url: string): string {
+  const CDN_HOST = 'https://cdn.rescuegroups.org';
+  if (url.startsWith(CDN_HOST)) {
+    return '/api/cat-image' + url.slice(CDN_HOST.length);
+  }
+  return url;
 }
 
 export interface UseCatStorageReturn {
@@ -85,21 +65,14 @@ export function useCatStorage(): UseCatStorageReturn {
   }, []);
 
   const setCatFromShelter = useCallback((cat: ShelterCat) => {
-    // Show immediately with CDN URL
-    setCatImage(cat.photo);
+    // Route CDN images through our proxy to avoid CORS issues (share card, canvas)
+    const proxiedUrl = proxyImageUrl(cat.photo);
+    setCatImage(proxiedUrl);
     setCatNameState(cat.name);
     setShelterCat(cat);
-    safeSetItem(STORAGE_KEYS.image, cat.photo);
+    safeSetItem(STORAGE_KEYS.image, proxiedUrl);
     safeSetItem(STORAGE_KEYS.name, cat.name);
     safeSetItem(STORAGE_KEYS.shelterCat, JSON.stringify(cat));
-
-    // Convert to data URL in background (solves CORS for share card)
-    convertToDataUrl(cat.photo).then(dataUrl => {
-      if (dataUrl) {
-        setCatImage(dataUrl);
-        safeSetItem(STORAGE_KEYS.image, dataUrl);
-      }
-    });
   }, []);
 
   const clearCat = useCallback(() => {

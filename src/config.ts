@@ -25,4 +25,12 @@ export const config = {
     scale: 2,                  // html2canvas scale factor
     backgroundColor: '#fef3c7',
   },
+
+  // Share card image generation
+  shareCard: {
+    width: 1080,
+    height: 1350,  // 4:5 portrait — Instagram's default feed format
+    fontWaitTimeout: 2000,
+    filename: 'maybecat.png',
+  },
 };

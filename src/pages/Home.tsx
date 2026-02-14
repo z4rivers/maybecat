@@ -714,8 +714,8 @@ export function Oracle() {
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-xl text-amber-100 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
                           style={{
-                            background: 'linear-gradient(135deg, #92400E 0%, #B45309 50%, #D97706 100%)',
-                            boxShadow: '0 4px 20px rgba(146,64,14,0.4)',
+                            background: 'linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #C2410C 100%)',
+                            boxShadow: '0 4px 20px rgba(124,45,18,0.4)',
                           }}
                           title="Share as image"
                         >

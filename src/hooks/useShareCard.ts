@@ -1,6 +1,6 @@
-import { useRef, useState, useCallback } from 'react';
-import html2canvas from 'html2canvas';
+import { useState, useCallback } from 'react';
 import { config } from '../config';
+import { renderShareCard, type ShareCardData } from '../lib/renderShareCard';
 
 /** Safe analytics tracking — never breaks the UX if analytics fails */
 function safeTrack(event: string, data?: Record<string, string>) {
@@ -9,145 +9,140 @@ function safeTrack(event: string, data?: Record<string, string>) {
   } catch { /* no-op */ }
 }
 
-/** Convert an external image URL to a data URL to bypass CORS in html2canvas */
-async function imageToDataUrl(url: string): Promise<string> {
-  if (url.startsWith('data:')) return url;
+/**
+ * Load an image URL into a square-cropped data URL.
+ * Solves CORS and sizing in one step.
+ */
+async function prepareSquareImage(url: string, size: number): Promise<string> {
+  function loadImg(src: string, cors?: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const el = new Image();
+      if (cors) el.crossOrigin = cors;
+      el.onload = () => resolve(el);
+      el.onerror = reject;
+      el.src = src;
+    });
+  }
+
+  function cropAndExport(img: HTMLImageElement): string {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+    const { naturalWidth: w, naturalHeight: h } = img;
+    const cropSize = Math.min(w, h);
+    ctx.drawImage(img, (w - cropSize) / 2, (h - cropSize) / 2, cropSize, cropSize, 0, 0, size, size);
+    return canvas.toDataURL('image/jpeg', 0.92);
+  }
+
+  if (url.startsWith('data:')) {
+    return cropAndExport(await loadImg(url));
+  }
+
+  try {
+    return cropAndExport(await loadImg(url, 'anonymous'));
+  } catch {
+    // CORS load failed
+  }
+
   try {
     const res = await fetch(url);
     const blob = await res.blob();
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+    const blobUrl = URL.createObjectURL(blob);
+    try {
+      return cropAndExport(await loadImg(blobUrl));
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
   } catch {
-    return url; // fallback to original if fetch fails
+    // fetch also failed
   }
+
+  return url;
 }
 
-/** Wait for every <img> inside an element to finish loading */
-function waitForImages(el: HTMLElement, timeout = 5000): Promise<void> {
-  const imgs = el.querySelectorAll('img');
-  const promises = Array.from(imgs).map(img => {
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-    return new Promise<void>(resolve => {
-      img.onload = () => resolve();
-      img.onerror = () => resolve(); // don't block capture on broken image
-    });
-  });
-  return Promise.race([
-    Promise.all(promises).then(() => {}),
-    new Promise<void>(resolve => setTimeout(resolve, timeout)),
-  ]);
+/** True for actual mobile devices (phones/tablets), not desktop with touch screens */
+function isMobileDevice(): boolean {
+  return /Android|iPhone|iPad|iPod|webOS|BlackBerry/i.test(navigator.userAgent);
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 export interface UseShareCardReturn {
-  shareCardRef: React.RefObject<HTMLDivElement | null>;
   isGenerating: boolean;
-  /** True only while the ShareCard needs to be in the DOM (during capture) */
-  shouldRenderCard: boolean;
-  /** Data URL version of the cat image, safe for html2canvas */
-  shareCatImage: string | null;
-  handleShare: (catImage: string) => Promise<void>;
+  handleShare: (data: ShareCardData) => Promise<void>;
 }
 
 export function useShareCard(): UseShareCardReturn {
-  const shareCardRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [shouldRenderCard, setShouldRenderCard] = useState(false);
-  const [shareCatImage, setShareCatImage] = useState<string | null>(null);
 
-  const handleShare = useCallback(async (catImage: string) => {
+  const handleShare = useCallback(async (data: ShareCardData) => {
     if (isGenerating) return;
 
     setIsGenerating(true);
     safeTrack('share_started');
 
-    // Convert external URLs to data URLs before rendering the card
-    const dataUrl = await imageToDataUrl(catImage);
-    setShareCatImage(dataUrl);
-    setShouldRenderCard(true);
-
     try {
+      // Pre-crop cat image to square data URL (420px for canvas)
+      const croppedDataUrl = await prepareSquareImage(data.catImage, 460);
+
       // Wait for Cinzel Decorative font if not yet loaded
-      const fontFace = "'Cinzel Decorative'";
-      if (!document.fonts.check(`bold 56px ${fontFace}`)) {
+      const fontFace = '"Cinzel Decorative"';
+      if (!document.fonts.check(`900 120px ${fontFace}`)) {
         try {
           await Promise.race([
-            document.fonts.load(`bold 56px ${fontFace}`),
+            document.fonts.load(`900 120px ${fontFace}`),
             new Promise(resolve => setTimeout(resolve, config.shareCard.fontWaitTimeout)),
           ]);
         } catch {
-          // Font load failed — Georgia fallback is fine
+          // Georgia fallback is fine
         }
       }
 
-      // Wait for React to render the card + browser to paint it
-      await new Promise<void>(resolve => {
-        requestAnimationFrame(() => setTimeout(resolve, 150));
-      });
+      // Render via Canvas API
+      const blob = await renderShareCard({ ...data, catImage: croppedDataUrl });
 
-      const el = shareCardRef.current;
-      if (!el) throw new Error('ShareCard ref not available after render');
-
-      // Wait for the cat photo (and any other images) to fully load
-      await waitForImages(el);
-
-      const { width, height } = config.shareCard;
-      const canvas = await html2canvas(el, {
-        scale: 1,
-        width,
-        height,
-        windowWidth: width,
-        windowHeight: height,
-        useCORS: true,
-        logging: false,
-      });
-
-      const blob = await new Promise<Blob | null>(resolve =>
-        canvas.toBlob(resolve, 'image/png')
-      );
-
-      if (!blob) throw new Error('canvas.toBlob returned null');
-
-      const file = new File([blob], config.shareCard.filename, { type: 'image/png' });
-
-      // Try native share (mobile)
-      if (navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file] });
-          safeTrack('share_completed', { method: 'native' });
-        } catch (err) {
-          // User cancelled — not an error
-          if (err instanceof Error && err.name === 'AbortError') {
-            // Silent cancel
-          } else {
-            throw err;
+      // MOBILE: Native Web Share API — works great with Instagram/social apps
+      // DESKTOP: Download file — industry standard (Canva, Kapwing, etc. all do this)
+      // Instagram's Windows desktop app handles Web Share API images terribly
+      // (tiny window, broken crop dialog). Download + manual upload is the correct path.
+      if (isMobileDevice()) {
+        const file = new File([blob], config.shareCard.filename, { type: 'image/png' });
+        if (navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file] });
+            safeTrack('share_completed', { method: 'native' });
+            return;
+          } catch (err) {
+            if (err instanceof Error && err.name === 'AbortError') {
+              return; // User cancelled — not an error
+            }
+            // Fall through to download
           }
         }
-      } else {
-        // Desktop fallback: download
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = config.shareCard.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        safeTrack('share_completed', { method: 'download' });
       }
+
+      // Desktop (or mobile fallback): download the file
+      downloadBlob(blob, config.shareCard.filename);
+      safeTrack('share_completed', { method: 'download' });
     } catch (err) {
       console.error('Share card generation failed:', err);
       safeTrack('share_error', {
         message: err instanceof Error ? err.message : 'unknown',
       });
     } finally {
-      setShouldRenderCard(false);
       setIsGenerating(false);
     }
   }, [isGenerating]);
 
-  return { shareCardRef, isGenerating, shouldRenderCard, shareCatImage, handleShare };
+  return { isGenerating, handleShare };
 }
