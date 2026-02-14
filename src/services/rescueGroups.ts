@@ -315,7 +315,7 @@ export async function fetchAdoptableCats(limit: number = 10): Promise<ShelterCat
     // Avoid deterministic sorts like 'animals.name' which always return the same A-B cats.
     const sorts = ['-animals.updatedDate', '-animals.createdDate', 'animals.updatedDate'];
     const results = await Promise.allSettled(
-      sorts.map(sort => fetchCatsFromApi(50, sort))
+      sorts.map(sort => fetchCatsFromApi(200, sort))
     );
 
     // Combine and deduplicate
@@ -381,7 +381,7 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
  * v5: Filter cats with numbers in names (shelter IDs)
  * v6: Drop alphabetical sort (always returned same A-B name cats like Butter Bean)
  */
-const CACHE_VERSION = 6;
+const CACHE_VERSION = 7;
 const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
