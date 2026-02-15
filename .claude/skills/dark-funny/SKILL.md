@@ -295,6 +295,9 @@ Workers, the struggling, anyone without power.
 - **Dismissive care** — "I don't know what you did. I don't care. Let it go."
 - **Dual-reading** — Clean surface, second meaning underneath. Highest hit rate in generation sessions.
 - **Twisted familiar** — Flip what everyone's heard. Redefine, don't recycle.
+- **The arrest test** — Cat advice that, if a human followed it literally, would create a scene or get them arrested. The gap between cat-normal and human-illegal = comedy gold.
+- **Mental images that install** — Responses that plant a visual you can't shake. Three days later in the checkout line, it flashes back. Physical, specific, cinematic.
+- **The cat report** — Cat describing human behavior from outside, deadpan. The description IS the judgment. "You set an alarm. To stop sleeping." Energy.
 
 ## What Doesn't
 
@@ -346,6 +349,31 @@ These are the first 10 things any AI or lazy human reaches for when writing "cat
 
 ### The Test
 Before using ANY cat behavior as content: **Would a "funny cat" Instagram account post this?** If yes, it's dead here. MaybeCat lives in the space AFTER the memes.
+
+---
+
+## Dead Constructs — THE OTHER BLACKLIST
+
+These are structural patterns that AI reaches for repeatedly. They FEEL clever the first time. By the fifth variant in a batch, they're wallpaper. NEVER generate these.
+
+### The "You Rehearsed" Family (DEAD — most frequent offender)
+The observation that humans are performing instead of being genuine. It's ONE idea. Stop generating 5 versions per batch.
+- "You rehearsed this conversation 47 times. They've thought about it zero."
+- "The casual text took 40 minutes."
+- "You timed your reply."
+- "Your confidence is a recent installation."
+- "You rehearsed in the mirror."
+- ANY variant where the joke is "you practiced being spontaneous" — it's the same note every time.
+
+### The "You Said X. You Meant Y." Family (DEAD)
+Any structure that takes what someone said/did and reveals the "real" meaning. The seams show. You can see the machine assembling the inversion.
+- "You're not X, you're Y."
+- "Standards lowered. Rebranded as growth."
+- "You said 'I'm fine.' You meant [something else]."
+- ANY formula where the punchline is an unmasking of stated vs. real intent.
+
+### The "You Rehearsed" Test
+Before including a response: **Is the joke "humans perform instead of being authentic"?** If yes, check if the pool already has this. It does. Move on.
 
 ---
 
@@ -470,6 +498,17 @@ The problem: when you focus on one dimension (comedian delivery), the other dime
 5. **ENERGY** — Where in the dynamic range?
    Crescendo (screenshot-worthy), rhythm (solid, earned), quiet (the pause that makes crescendos hit)
 
+### Pre-Flight Scan Protocol
+
+Before generating any batch, scan the existing response library (`src/data/oracleResponses.ts`):
+
+1. **Sample the vibe** — Read 100-150 lines from different sections to internalize the current quality bar and voice
+2. **Check category weight** — Know which categories are heavy vs. thin. Current counts are in the `categoryWeights` comment block at the end of the file.
+3. **Grep for collisions** — If generating in a specific territory (e.g., morning responses, DOOM-inspired), search for key phrases to avoid near-duplicates
+4. **Find the keeper bar** — The best existing lines ARE the quality bar. If a new line wouldn't hold its own among the current best, cut it before presenting.
+
+This is NOT optional. Skipping the scan produces duplicates, misses the current quality level, and generates in voices that are already overrepresented.
+
 ### Generation Protocol
 Before each batch, declare constraints on at least 3 axes. Example:
 > "5 responses from kitchen/restaurant language, through Barncat and Reluctant Therapist, at rhythm energy"
@@ -482,6 +521,72 @@ This prevents the gravitational pull toward: Judge Cat + surface cat behavior + 
 - At least 2 different delivery types
 - No more than 40% burns/sharp — mix in wonder, quiet, absurd, warm
 - At least 3 that are genuinely strange (not quirky-cute strange, but WHAT? strange)
+
+---
+
+## The Variation Engine
+
+One truth, multiple deliveries. When generating responses, offer multiple cuts of the same idea so the user can pick the version that hits hardest.
+
+### Four Variation Types
+
+1. **Connected** — The full thought with its connecting tissue. Shows the logic, the bridge between setup and landing. The one that explains itself.
+2. **Trim** — Does the cutting the user always does in edits. Strips the setup, trusts the landing. Often half the length or less. This is usually the keeper.
+3. **Ridiculous** — The version with the double meaning, the absurd escalation, the reading that makes someone spit their drink or creates a mental image that won't leave.
+4. **Reference** — The same truth said through a song lyric, movie line, cultural reference, or found language. Relocates instead of constructs.
+
+### How to Present
+
+Show 2-4 variations per idea. Not every idea needs all four — some are already trimmed, some don't have a natural reference version. Don't force variations that aren't there.
+
+Format:
+> **[core truth or idea]**
+> - Connected: "full version with the bridge"
+> - Trim: "stripped version"
+> - Ridiculous: "the double-meaning / absurd cut"
+> - Reference: "the lyric / cultural version"
+
+### When to Use Variations
+
+- **Default for new batches** — show at least Trim + one other variation per response
+- **On request** — user can ask for all 4 variations of a specific keeper
+- **For editing** — when user says "shorter" or "weirder," jump to the relevant variation type
+
+---
+
+## The Scene Test — Responses That Install Images
+
+The best MaybeCat responses don't just read well — they **plant a mental image** that won't leave.
+
+### Three Benchmarks
+
+**1. Would this get someone arrested?**
+The cat's advice, taken literally by a human, would often create a scene. Cats don't know laws. Cats don't know social norms. The gap between "perfectly reasonable cat behavior" and "human doing this in public" IS the comedy and the truth.
+
+- "If the door is open, walk through it." → Human does this at a stranger's house. Arrested.
+- "Take what you want. Apologize if caught." → Human does this at Target. Arrested.
+- "If someone is in your spot, sit on them until they leave." → Human does this on the subway. Scene.
+
+**2. Does this create a forever scene?**
+Can you picture the moment? Not words on a screen — the actual physical situation. The best responses are tiny movies you can't stop replaying.
+
+**3. Does this install a mental image?**
+The kind that flashes back three days later in the checkout line. Visual, physical, specific. Not abstract, not conceptual. The image does the work.
+
+### The Cat View of Humanity
+
+This is where the gold lives. The cat **describes what it sees** humans doing. The description IS the judgment. Reality named from a slightly outside perspective becomes comedy, truth, and an image that stays.
+
+Humans:
+- Set alarms to stop sleeping
+- Voluntarily enter water daily
+- Wear uncomfortable fabric to impress strangers
+- Stare at glowing rectangles for hours then complain about being tired
+- Sit in vehicles that don't move to reach buildings they don't want to be in
+- Apologize to furniture they bump into
+- Wrap gifts just so someone can destroy the wrapping
+
+The cat doesn't editorialize. The cat REPORTS. The report is devastating.
 
 ---
 
