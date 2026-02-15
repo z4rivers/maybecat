@@ -79,6 +79,9 @@ export function Oracle() {
   const scaleContainerRef = useRef<HTMLDivElement>(null);
   const scaleContentRef = useRef<HTMLDivElement>(null);
   const [readingScale, setReadingScale] = useState(1);
+  const selectionContainerRef = useRef<HTMLDivElement>(null);
+  const selectionContentRef = useRef<HTMLDivElement>(null);
+  const [selectionScale, setSelectionScale] = useState(1);
 
   // Carousel navigation - infinite circular rotation
   const VISIBLE_CATS = 4;
@@ -257,6 +260,30 @@ export function Oracle() {
     return () => ro.disconnect();
   }, [catImage, response, isThinking]);
 
+  // Scale entire selection view to fit viewport as one unit
+  useLayoutEffect(() => {
+    if (catImage) { setSelectionScale(1); return; }
+
+    const container = selectionContainerRef.current;
+    const content = selectionContentRef.current;
+    if (!container || !content) return;
+
+    const updateScale = () => {
+      const availW = container.clientWidth;
+      const availH = container.clientHeight;
+      const contentW = content.scrollWidth;
+      const contentH = content.scrollHeight;
+      if (!contentW || !contentH) return;
+      setSelectionScale(Math.min(availW / contentW, availH / contentH));
+    };
+
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(container);
+    ro.observe(content);
+    return () => ro.disconnect();
+  }, [catImage, shelterCats, loadingShelterCats]);
+
   const clearCat = useCallback(() => {
     clearCatStorage();
     clearResponse();
@@ -299,7 +326,7 @@ export function Oracle() {
         }}
       />
 
-      <div className={`flex-1 flex flex-col px-4 pt-3 relative z-10 ${catImage ? 'overflow-hidden pb-20 md:pb-[150px]' : 'overflow-auto pb-3'}`}>
+      <div className="flex-1 flex flex-col px-4 pt-3 relative z-10 overflow-hidden pb-20 md:pb-[150px]">
         {/* Elaborate Art Nouveau corner vines - LARGE and ornate like tarot deck borders */}
         <CornerVine className="absolute top-0 left-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60" />
         <CornerVine className="absolute top-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-x-100" />
@@ -311,7 +338,7 @@ export function Oracle() {
         <CenterMandala className="absolute top-1/2 right-8 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 text-fuchsia-900/30 hidden lg:block" />
 
         {/* Drifting keyword whispers — decorative & indexable */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute inset-0 bottom-24 md:bottom-32 overflow-hidden pointer-events-none select-none">
           {keywords.map((w, i) => (
             <span
               key={i}
@@ -555,8 +582,16 @@ export function Oracle() {
             </motion.div>
           </div>
         ) : (
-          /* ═══ CAT SELECTION VIEW — normal scrollable layout ═══ */
-          <>
+          /* ═══ CAT SELECTION VIEW — scales uniformly to fit viewport ═══ */
+          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden flex items-start justify-center">
+            <div
+              ref={selectionContentRef}
+              className="flex flex-col items-center"
+              style={{
+                transform: `scale(${selectionScale})`,
+                transformOrigin: 'top center',
+              }}
+            >
           {/* Header */}
           <header className="text-center mb-2">
             <div className="flex items-center justify-center gap-3 mb-1">
@@ -628,7 +663,7 @@ export function Oracle() {
               </p>
 
               {/* Horizontal layout: arrows outside, scrollable content inside */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-2">
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-4 md:px-8">
                 {/* Left arrow - nano-banana style */}
                 <button
                   onClick={prevCat}
@@ -646,7 +681,7 @@ export function Oracle() {
                 </button>
 
                 {/* Scrollable carousel content */}
-                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex items-center gap-2 md:gap-4 overflow-visible px-2">
                 {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
                 <AnimatePresence>
                   {!loadingShelterCats && (
@@ -867,21 +902,17 @@ export function Oracle() {
               </div>
             </motion.div>
           </div>
-          </>
+          {/* SEO Footer */}
+          <footer className="w-full text-center select-text pt-3 pb-4 px-4">
+            <div className="text-sm md:text-base leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
+              <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
+            </div>
+          </footer>
+            </div>
+          </div>
         )}
 
       </div>
-
-
-
-      {/* SEO Footer — hidden when reading card fills viewport, visible during cat selection */}
-      {!catImage && (
-        <footer className="w-full text-center relative z-10 select-text pb-24 md:pb-40 pt-2 px-4">
-          <div className="text-xs md:text-sm leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
-            <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
-          </div>
-        </footer>
-      )}
 
       {/* FIXED PURRfoot Sponsor Banner - Always at bottom */}
       <div
