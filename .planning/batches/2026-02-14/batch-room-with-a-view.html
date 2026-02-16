@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: A Room with a View</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .sticky-header h1 {
+    font-size: 1.1rem;
+    color: #e94560;
+    white-space: nowrap;
+  }
+  .sticky-header .subtitle {
+    font-size: 0.8rem;
+    color: #888;
+    flex-basis: 100%;
+    margin-top: -10px;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .stat-total { color: #e0e0e0; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-number {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .response-text {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .response-category {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: #0f3460;
+    color: #a0a0c0;
+    margin-bottom: 12px;
+  }
+  .response-meta {
+    font-size: 0.7rem;
+    color: #555;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3ab88a; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d13350; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82a; }
+  .btn-reset { background: #333; color: #888; }
+  .btn-reset:hover { background: #444; color: #aaa; }
+
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 50px;
+  }
+  .edit-area .btn-save {
+    margin-top: 6px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 5px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  .export-section p {
+    color: #888;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
+  .export-section textarea {
+    width: 100%;
+    min-height: 300px;
+    background: #0d1b36;
+    color: #4ecca3;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.85rem;
+    resize: vertical;
+  }
+  .btn-copy {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .btn-copy:hover { background: #3ab88a; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>A Room with a View</h1>
+  <div class="stats">
+    <span class="stat-total">Total: <span id="total">30</span></span>
+    <span class="stat-kept">Kept: <span id="kept-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edited">Edited: <span id="edited-count">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending-count">30</span></span>
+  </div>
+  <div class="subtitle">Forster's DNA relocated as cat wisdom. Safety vs. life, propriety vs. truth, the room vs. the view. 30 responses, 15 words max.</div>
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <p>Updates live as you make decisions. Copy and paste into oracleResponses.ts.</p>
+  <textarea id="export-json" readonly></textarea>
+  <br>
+  <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "By the side of every why, there's a yes. Take it.",
+    category: "wise",
+    voice: "Elder Cat",
+    note: "Mr. Emerson's core philosophy — the transitory Yes beside the everlasting Why. Relocated as direct advice."
+  },
+  {
+    text: "Beware of muddle.",
+    category: "wise",
+    voice: "Realist Cat",
+    note: "Mr. Emerson's signature warning. Two words. Works for any 2AM mess — relationship confusion, career paralysis, self-deception."
+  },
+  {
+    text: "Passion should never ask for leave.",
+    category: "demanding",
+    voice: "Badass Cat",
+    note: "Forster narrator on passion vs. civility. Reads clean as 'go for it' advice. Second read: deliciously suggestive."
+  },
+  {
+    text: "*slow blink* The room or the view. Pick.",
+    category: "demanding",
+    voice: "Pensive Cat",
+    note: "The novel's core metaphor as a binary choice. Safety vs. life. Nobody will trace this to Forster."
+  },
+  {
+    text: "You got better at lying. You called it growth.",
+    category: "judgy",
+    voice: "Detective Cat",
+    note: "From narrator on Lucy: 'she had developed — better able to stifle emotions.' Development as self-deception."
+  },
+  {
+    text: "The holiness of direct desire.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "Forster's phrase about George's effect on Lucy. Stands alone as a devastating fragment. Works for permission-seekers."
+  },
+  {
+    text: "It was never love vs. duty. It was real vs. pretend.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat",
+    note: "The novel's most important line relocated. Cuts through every 'I can't because I should' spiral."
+  },
+  {
+    text: "Medieval.",
+    category: "judgy",
+    voice: "Judge Cat",
+    note: "Forster's chapter title describing Cecil — the wrong-on-paper choice. Single-word verdict. Devastating in context of any question."
+  },
+  {
+    text: "They want you like a painting. Not like a person.",
+    category: "cold",
+    voice: "Street Cat",
+    note: "George's speech about Cecil: 'he wants you for a possession, like an ivory box.' Relocated as cold read."
+  },
+  {
+    text: "Courage.",
+    category: "wise",
+    voice: "Badass Cat",
+    note: "The Italian carriage driver's one word before the kiss in the violets. The best advice in the entire novel, from a stranger."
+  },
+  {
+    text: "I know where things lead. I went there.",
+    category: "cryptic",
+    voice: "Street Cat",
+    note: "Charlotte's 'I know where things can lead to' — but the cat actually followed through, unlike Charlotte who just fretted."
+  },
+  {
+    text: "*ears flatten* You're choosing the room without the view.",
+    category: "judgy",
+    voice: "Pensive Cat",
+    note: "Lucy's devastating line to Cecil — 'I think of you always as in a room. With no view.' Cat sees you doing the same thing."
+  },
+  {
+    text: "You can't pull love out of you. I've tried.",
+    category: "poetic",
+    voice: "Old Soul Cat",
+    note: "Mr. Emerson: 'you can transmute love, ignore it, muddle it, but you can never pull it out of you.' Cat confirms from experience."
+  },
+  {
+    text: "The shadow follows. Face the sun instead.",
+    category: "wise",
+    voice: "Elder Cat",
+    note: "Forster: 'we cast a shadow wherever we stand... face the sunshine.' Relocated as practical wisdom."
+  },
+  {
+    text: "Someone else has to say the thing you already know.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat",
+    note: "Mr. Emerson's final intervention — telling Lucy the truth she was running from. The cat is that someone."
+  },
+  {
+    text: "Strip the pretense. Get in the water.",
+    category: "demanding",
+    voice: "Feral Cat",
+    note: "The Sacred Lake bathing scene — clothes on the bank as trappings of society, freedom in the water. Pure cat directive."
+  },
+  {
+    text: "Let yourself go.",
+    category: "chaotic",
+    voice: "Instant Gratification Cat",
+    note: "Mr. Emerson's blunt therapy. Three words. Works as permission, as release, as something filthier. Maximum dual-read."
+  },
+  {
+    text: "You play with passion. You live with restraint. Stop that.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat",
+    note: "Mr. Beebe on Lucy's piano playing vs. her life. The prophecy: 'if she ever takes to live as she plays.' Cat finishes the thought."
+  },
+  {
+    text: "Self-knowledge. The king of terrors.",
+    category: "cryptic",
+    voice: "Philosopher Cat",
+    note: "Forster: 'Lucy disliked confidences, for they might lead to self-knowledge and that king of terrors — Light.' Fragment. Hits existential seekers."
+  },
+  {
+    text: "It is so difficult to understand people who speak the truth.",
+    category: "dismissive",
+    voice: "Unimpressed Cat",
+    note: "Charlotte Bartlett word-for-word — but it reads as original cat observation. Relocates perfectly because the sentiment is eternal."
+  },
+  {
+    text: "Things won't fit. Good.",
+    category: "chaotic",
+    voice: "Chaos Cat",
+    note: "George's existential crisis: 'things won't fit.' Cat adds the twist — that discomfort is correct. The not-fitting IS the answer."
+  },
+  {
+    text: "*one ear rotates* You're lying to everyone. Including yourself.",
+    category: "cold",
+    voice: "Detective Cat",
+    note: "The novel's escalating chapter titles: Lying to George, Lying to Cecil, Lying to Everyone. Cat sees the whole pattern."
+  },
+  {
+    text: "Only connect.",
+    category: "loving",
+    voice: "Loving Cat",
+    note: "Forster's two-word thesis from Howards End. Works as relationship advice, life advice, existential answer. Two words. Done."
+  },
+  {
+    text: "You don't fall out of it slowly. The scales fall. You see.",
+    category: "wise",
+    voice: "Elder Cat",
+    note: "Lucy's instant realization about Cecil. 'The scales fell from her eyes. How had she stood Cecil for a moment?' Relocated as universal truth."
+  },
+  {
+    text: "He looked at you instead of through you. Once. Too late.",
+    category: "cold",
+    voice: "Realist Cat",
+    note: "Cecil's late realization: 'he looked at her, instead of through her, for the first time.' Three sentences. Story of every wrong relationship."
+  },
+  {
+    text: "I don't apologize. But I love you. Both are facts.",
+    category: "loving",
+    voice: "Loving Cat",
+    note: "George after the kiss: 'I don't apologize. But you may not have noticed that I love you.' Relocated with cat directness."
+  },
+  {
+    text: "Life is easy to narrate. Bewildering to live.",
+    category: "poetic",
+    voice: "Philosopher Cat",
+    note: "Forster: 'Life is easy to chronicle, but bewildering to practice.' Slightly relocated verb. Works for the person who plans everything but can't act."
+  },
+  {
+    text: "The birds sing in here. *taps chest*",
+    category: "loving",
+    voice: "Old Soul Cat",
+    note: "Mr. Emerson tapping his chest in the film: 'Here is where the birds sing! Here is where the sky is blue!' Cat version. Quietly devastating."
+  },
+  {
+    text: "We all have our little foibles. Mine have teeth.",
+    category: "playful",
+    voice: "Flirt Cat",
+    note: "Charlotte presenting neurosis as charm: 'We all have our little foibles.' Cat twist: mine aren't harmless. Dual read: flirty or threatening."
+  },
+  {
+    text: "Spoon-feeding teaches nothing but the shape of the spoon.",
+    category: "wise",
+    voice: "Philosopher Cat",
+    note: "Forster on being given answers. Relocates perfectly — the cat won't give you the answer because that would teach you nothing."
+  }
+];
+
+const container = document.getElementById('responses');
+const decisions = new Array(responses.length).fill(null); // null=pending, 'kept', 'cut', 'edited'
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] ? ' ' + decisions[i] : '');
+    card.innerHTML = `
+      <div class="response-number">#${i + 1} of ${responses.length}</div>
+      <div class="response-text" id="text-${i}">${editedTexts[i] || r.text}</div>
+      <span class="response-category">${r.category}</span>
+      <div class="response-meta">${r.voice} — ${r.note}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-reset" onclick="decide(${i}, null)">RESET</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="edit-text-${i}">${editedTexts[i] || r.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  decisions[i] = status;
+  if (status === 'cut') editedTexts[i] = null;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`edit-text-${i}`);
+  editedTexts[i] = textarea.value;
+  decisions[i] = 'edited';
+  render();
+}
+
+function updateStats() {
+  const kept = decisions.filter(d => d === 'kept').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edited = decisions.filter(d => d === 'edited').length;
+  const pending = decisions.filter(d => d === null).length;
+  document.getElementById('kept-count').textContent = kept;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edited-count').textContent = edited;
+  document.getElementById('pending-count').textContent = pending;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'kept' || decisions[i] === 'edited') {
+      exported.push({
+        text: editedTexts[i] || r.text,
+        category: r.category
+      });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+}
+
+render();
+</script>
+</body>
+</html>

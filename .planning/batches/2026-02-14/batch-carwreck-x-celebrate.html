@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Car Wrecks × Fun Ways to Celebrate</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sticky-header h1 { font-size: 1.1rem; color: #e94560; flex-shrink: 0; }
+  .sticky-header .subtitle { font-size: 0.8rem; color: #888; flex-shrink: 0; }
+  .stats { display: flex; gap: 16px; margin-left: auto; flex-wrap: wrap; }
+  .stat { font-size: 0.85rem; font-weight: 600; }
+  .stat-total { color: #e0e0e0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .batch-info {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #aaa;
+  }
+  .batch-info strong { color: #e94560; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .response-number { font-size: 0.75rem; color: #555; font-weight: 600; }
+  .response-category { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 4px; background: #0f3460; color: #4ecca3; }
+  .response-source { font-size: 0.65rem; color: #666; margin-top: 4px; font-style: italic; }
+  .response-text { font-size: 1.15rem; line-height: 1.5; color: #fff; margin-bottom: 8px; font-style: italic; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .btn-undo { background: #333; color: #aaa; font-size: 0.7rem; padding: 4px 10px; }
+  .btn-undo:hover { background: #444; }
+
+  .decision-label { font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+  .decision-keep { color: #4ecca3; }
+  .decision-cut { color: #e94560; }
+  .decision-edit { color: #ffd93d; }
+
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #fff; border: 1px solid #4ecca3; border-radius: 4px; padding: 10px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 8px; background: #4ecca3; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; }
+
+  .export-section { margin-top: 40px; background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 20px; }
+  .export-section h2 { font-size: 1rem; color: #4ecca3; margin-bottom: 12px; }
+  .export-section textarea { width: 100%; min-height: 300px; background: #0a0a1a; color: #4ecca3; border: 1px solid #0f3460; border-radius: 4px; padding: 12px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.8rem; resize: vertical; }
+  .copy-btn { margin-top: 8px; background: #4ecca3; color: #1a1a2e; padding: 8px 20px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+  .copy-btn:hover { background: #3dbb92; }
+
+  .research-section {
+    background: #0f1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #666;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .research-section h3 { color: #e94560; font-size: 0.85rem; margin-bottom: 8px; }
+  .research-section h4 { color: #4ecca3; font-size: 0.75rem; margin: 8px 0 4px; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Car Wrecks &times; Celebrations</h1>
+  <span class="subtitle">30 responses | Insurance claim language collides with party instructions</span>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">30</span></span>
+    <span class="stat stat-keep">Keep: <span id="stat-keep">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="stat-edit">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="stat-pending">30</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Refrigerators:</strong> Car wreck descriptions (insurance claims, police reports, Reddit stories, body shop estimates) &times; &ldquo;Fun ways to celebrate&rdquo; lists (champagne, confetti, spa days, victory laps). Damage assessment meets party planning.<br>
+  <strong>Why it works:</strong> Car wreck language is clinical, final, and accidentally philosophical (&ldquo;came out of nowhere,&rdquo; &ldquo;total loss,&rdquo; &ldquo;walked away without a scratch&rdquo;). Celebration language is aggressively optimistic (&ldquo;pop champagne,&rdquo; &ldquo;throw confetti,&rdquo; &ldquo;treat yourself&rdquo;). The cat smashes them together. The wreck IS the celebration. The damage report IS the fortune.<br>
+  <strong>Cat voices:</strong> Chaos Cat, Realist Cat, Badass Cat, Dark Comedian Cat, Feral Cat, Elder Cat
+</div>
+
+<div class="research-section">
+  <h3>Raw Research Highlights (scroll)</h3>
+  <h4>Car Wreck Language:</h4>
+  &bull; "total loss" &bull; "came out of nowhere" &bull; "I didn't see it coming" &bull; "the airbags deployed" &bull; "walked away without a scratch" &bull; "it happened so fast" &bull; "the other driver fled the scene" &bull; "rear-ended at a stoplight" &bull; "hydroplaned" &bull; "lost control" &bull; "rolled three times" &bull; "frame damage" &bull; "crumple zone" &bull; "fender bender" &bull; "write-off" &bull; "salvage" &bull; "an invisible car came out of nowhere, struck my car, and vanished" &bull; "in an attempt to kill a fly I drove into a telephone pole" &bull; "I had one eye on the parked car, another on an approaching truck, and another on the woman behind" &bull; "the bumper hung like a broken jaw" &bull; "sideswiped" &bull; "structural damage" &bull; "slammed on the brakes"
+
+  <h4>Celebration Language:</h4>
+  &bull; "pop champagne" &bull; "throw confetti" &bull; "do a happy dance" &bull; "treat yourself" &bull; "buy yourself flowers" &bull; "dance like nobody's watching" &bull; "scream from the rooftops" &bull; "take a victory lap" &bull; "raise a glass" &bull; "paint the town red" &bull; "let the good times roll" &bull; "break out the bubbly" &bull; "pop the cork" &bull; "strike a power pose" &bull; "have a spa day" &bull; "eat cake for breakfast" &bull; "sparkle" &bull; "shine" &bull; "glow" &bull; "you are the occasion" &bull; "the party's just getting started"
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <textarea id="export-json" readonly></textarea>
+  <br>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+  <span id="copy-status" style="margin-left: 12px; font-size: 0.8rem; color: #4ecca3;"></span>
+</div>
+
+<script>
+const responses = [
+  // === THE COLLISION (wreck + celebration) ===
+  { text: "Total loss. Pop the champagne.", category: "chaotic", source: "insurance term + celebration" },
+  { text: "Came out of nowhere. Throw confetti.", category: "chaotic", source: "wreck phrase + party" },
+  { text: "The airbags deployed. Treat yourself.", category: "chaotic", source: "safety feature + self-care" },
+  { text: "Lost control. Buy yourself flowers.", category: "chaotic", source: "wreck + self-love" },
+  { text: "Rear-ended at a stoplight. Have a spa day.", category: "chaotic", source: "wreck + pampering" },
+  { text: "The other driver fled the scene. Raise a glass.", category: "cold", source: "wreck report + toast" },
+  { text: "Rolled three times. Still sparkle.", category: "demanding", source: "wreck + celebration adjective" },
+  { text: "Salvage what you can. Throw a party.", category: "chaotic", source: "body shop + celebration" },
+  { text: "Pop the cork. Check for damage later.", category: "chaotic", source: "celebration + wreck" },
+  { text: "Sideswiped. Kept the sparkle.", category: "demanding", source: "wreck + celebration energy" },
+
+  // === WRECK LANGUAGE AS LIFE WISDOM ===
+  { text: "Walked away without a scratch. That\u2019s the whole answer.", category: "wise", source: "wreck outcome as fortune" },
+  { text: "Didn\u2019t see it coming. Nobody does.", category: "wise", source: "wreck comfort" },
+  { text: "It happened so fast. Good things do.", category: "wise", source: "wreck phrase flipped" },
+  { text: "Frame damage. Still drivable.", category: "wise", source: "body shop as resilience" },
+  { text: "Fender bender. Not a total loss.", category: "nurturing", source: "wreck as reassurance" },
+  { text: "Hydroplaned. Kept going.", category: "demanding", source: "wreck as resilience" },
+
+  // === ACTUAL INSURANCE CLAIMS (accidentally mystical/cat) ===
+  { text: "An invisible car came out of nowhere and vanished.", category: "mystical", source: "actual insurance claim" },
+  { text: "In an attempt to kill a fly, I drove into a telephone pole.", category: "chaotic", source: "actual insurance claim" },
+  { text: "I had one eye on the road and another on the approaching future.", category: "mystical", source: "insurance claim energy" },
+
+  // === CELEBRATION AS DAMAGE REPORT ===
+  { text: "Dance like nobody\u2019s watching. Someone is.", category: "cold", source: "celebration + surveillance" },
+  { text: "Take a victory lap. Check the mirrors first.", category: "wise", source: "celebration + driving" },
+  { text: "Paint the town red. Check the rearview first.", category: "wise", source: "celebration idiom + driving" },
+  { text: "The party\u2019s just getting started. Buckle up.", category: "demanding", source: "celebration + seatbelt" },
+
+  // === WRECK AS SELF-PORTRAIT ===
+  { text: "Structural damage. Cosmetically flawless.", category: "cold", source: "body shop estimate as self-description" },
+  { text: "Write-off. Fresh start energy.", category: "demanding", source: "insurance term as liberation" },
+  { text: "The crumple zone did its job. So did you.", category: "heartfelt", source: "safety engineering as affirmation" },
+  { text: "Totaled. But what a ride.", category: "chaotic", source: "wreck as eulogy" },
+  { text: "Slammed on the brakes. Worth it.", category: "demanding", source: "wreck + no regrets" },
+
+  // === PURE DARK COMEDY ===
+  { text: "Scream from the rooftops. It happened so fast.", category: "chaotic", source: "celebration + wreck timeline" },
+  { text: "The other party was at fault. Celebrate accordingly.", category: "cold", source: "insurance + party instruction" },
+];
+
+const container = document.getElementById('responses-container');
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function renderCards() {
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    card.id = 'card-' + i;
+    const displayText = editedTexts[i] || r.text;
+    card.innerHTML = `
+      <div class="response-header">
+        <span class="response-number">#${i + 1}</span>
+        <span class="response-category">${r.category}</span>
+      </div>
+      <div class="response-text">\u201c${displayText}\u201d</div>
+      <div class="response-source">${r.source}</div>
+      <div class="actions" id="actions-${i}">
+        ${decisions[i] ? `
+          <span class="decision-label decision-${decisions[i]}">${decisions[i].toUpperCase()}${decisions[i] === 'edit' ? ': \u201c' + (editedTexts[i] || r.text) + '\u201d' : ''}</span>
+          <button class="btn btn-undo" onclick="undo(${i})">Undo</button>
+        ` : `
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        `}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="edit-text-${i}">${r.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(i, decision) { decisions[i] = decision; renderCards(); updateStats(); updateExport(); }
+function undo(i) { decisions[i] = null; editedTexts[i] = null; renderCards(); updateStats(); updateExport(); }
+function showEdit(i) { document.getElementById('edit-' + i).classList.toggle('visible'); }
+function saveEdit(i) { editedTexts[i] = document.getElementById('edit-text-' + i).value; decisions[i] = 'edit'; renderCards(); updateStats(); updateExport(); }
+
+function updateStats() {
+  const keep = decisions.filter(d => d === 'keep').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edit = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-pending').textContent = pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (decisions[i] === 'edit') kept.push({ text: editedTexts[i] || r.text, category: r.category });
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  document.execCommand('copy');
+  const status = document.getElementById('copy-status');
+  status.textContent = 'Copied!';
+  setTimeout(() => status.textContent = '', 2000);
+}
+
+renderCards();
+updateExport();
+</script>
+</body>
+</html>

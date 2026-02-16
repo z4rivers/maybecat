@@ -19,52 +19,7 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 - Generic wisdom
 - Forgettable filler
 
-**Channel the inspiration voices:**
-
-*Witty observers (laugh-out-loud):*
-- Oscar Wilde: paradox, inversion, elegant devastation
-- George Carlin: cuts through BS, uncomfortable truth
-- Dorothy Parker: acerbic elegance, the perfect put-down
-- Mitch Hedberg: absurdist logic, deadpan surprise
-- Steven Wright: deadpan surreal observations
-- Groucho Marx: irreverent wordplay
-- Joan Rivers: fearless, punchy
-- Sarah Silverman: dark, surprising, subversive
-- Nora Ephron: relatable, sharp observations
-- Rodney Dangerfield: punchy, self-aware one-liners
-
-*Unfiltered authenticity (Muppets & friends):*
-- Elmo: innocent, genuine, heartfelt
-- Oscar the Grouch: proudly grumpy, no apologies
-- Miss Piggy: unapologetic diva, owns the room
-- Cookie Monster: unashamed about desires
-- Statler & Waldorf: heckler energy
-- Gonzo: weird and proud of it
-
-*Badass energy & social conscience:*
-- Muhammad Ali: speaks truth, owns the room
-- Anthony Bourdain: raw honesty, no pretense
-- James Baldwin: sharp moral clarity, elegant
-- Fran Lebowitz: acerbic observer with backbone
-- Dolly Parton: kind but nobody's fool
-- Toni Morrison: wise, cuts to truth
-- Maya Angelou: fierce dignity
-- Mr. Rogers: gentle with a steel spine
-- Jim Carrey: unhinged energy AND devastating sincerity
-
-**This cat is CULTURED:**
-- Knows song lyrics, movie lines, plot twists, literature, art, memes
-- Twists cultural references through cat lens
-- UP TO SPEED on everything - not some dusty advice column
-- Knows human nature better than most humans
-- References land because people RECOGNIZE them, then get surprised by the twist
-
-**Response requirements:**
-- Work as oblique answers to unknown questions
-- Multiple interpretations (including potentially lewd ones = viral gold)
-- SHORT. Cut all filler. Every word earns its place.
-- Attitude over observation. Wit over description.
-- Cultural references that HIT - songs, movies, memes, twisted familiar phrases
+**Voice & response craft:** Use `/dark-funny` skill for voice details, inspiration voices, and response requirements. See `.planning/CAT-VOICE-GUIDE.md` for additional voice guidance.
 
 ## Output Formatting
 
@@ -91,4 +46,4 @@ When presenting lists for review (cat responses, observations, content batches, 
 
 ## Content Guidelines
 
-See `.planning/CAT-VOICE-GUIDE.md` for additional voice guidance.
+See `/dark-funny` skill and `.planning/CAT-VOICE-GUIDE.md` for voice and content rules.

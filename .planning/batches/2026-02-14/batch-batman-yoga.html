@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Batman Teaches Yoga</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .header-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #e94560;
+  }
+  .header-subtitle {
+    font-size: 0.85em;
+    color: #888;
+    font-style: italic;
+  }
+  .stats-row {
+    display: flex;
+    gap: 20px;
+    font-size: 0.95em;
+    flex-wrap: wrap;
+  }
+  .stat { font-weight: 600; }
+  .stat-total { color: #e0e0e0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .item {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .item.kept { border-color: #4ecca3; }
+  .item.cut { border-color: #e94560; opacity: 0.5; }
+  .item.edited { border-color: #ffd93d; }
+
+  .item-number {
+    font-size: 0.75em;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .item-text {
+    font-size: 1.25em;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #fff;
+  }
+  .item-meta {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .item-meta span {
+    margin-right: 12px;
+  }
+  .cat-label { color: #4ecca3; }
+  .word-count { color: #888; }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .btn {
+    padding: 6px 16px;
+    border: 2px solid;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.15s;
+  }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #1a1a2e; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    color: #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 50px;
+  }
+  .edit-area .save-edit {
+    margin-top: 6px;
+    padding: 4px 12px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+  }
+  .export-section pre {
+    background: #0a0a1a;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.6;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-bottom: 10px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+
+  .batch-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    font-size: 0.85em;
+    color: #888;
+    line-height: 1.7;
+  }
+  .batch-info strong { color: #e94560; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="header-title">Batman Teaches Yoga — MaybeCat Batch Review</div>
+  <div class="header-subtitle">Yoga instruction language delivered through Batman's gravelly intensity. The disproportion IS the joke.</div>
+  <div class="stats-row">
+    <span class="stat stat-total">Total: <span id="stat-total">30</span></span>
+    <span class="stat stat-keep">Keep: <span id="stat-keep">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="stat-edit">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="stat-pending">30</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Batch:</strong> Batman Teaches Yoga<br>
+  <strong>Date:</strong> 2026-02-14<br>
+  <strong>Source refrigerator:</strong> Yoga instruction cues (physical, breath, alignment, savasana, yin holds)<br>
+  <strong>Delivery filter:</strong> Batman voice — gravelly, intense, commands not suggestions, darkness metaphors, occasional devastating vulnerability<br>
+  <strong>Comedy engine:</strong> The DISPROPORTION between Batman's life-or-death intensity and yoga's gentle calm. Also: Batman actually needs yoga. The cracks where vulnerability shows through the growl are the heartpluckers.<br>
+  <strong>Rule:</strong> Every response works as oblique answer to unknown question. No Batman or yoga knowledge required.<br>
+  <strong>Categories:</strong> demanding, cold, cryptic, wise, reluctant (loving), chaotic
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export — KEPT responses (JSON)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json">[]</pre>
+</div>
+
+<script>
+const responses = [
+  // --- INTENSE COMMANDS (warrior pose energy) ---
+  {
+    text: "Sink deeper. You're not done.",
+    category: "demanding",
+    notes: "Warrior II instruction. Growled command. Dual-read: physical AND emotional/sexual. Batman who won't let you quit."
+  },
+  {
+    text: "Hold. I said hold.",
+    category: "demanding",
+    notes: "Yin hold cue. Clipped, gravelly repeat. Works as relationship advice, life advice, emotional regulation. Pure authority."
+  },
+  {
+    text: "You're shaking. Good.",
+    category: "demanding",
+    notes: "Classic yoga tough love: 'if you're shaking, you're working.' Batman growl makes it menacing AND motivating. Dual-read."
+  },
+  {
+    text: "Again.",
+    category: "cold",
+    notes: "Single word. Batman's favorite. The yoga teacher who makes you repeat. Total authority. Works for everything."
+  },
+  {
+    text: "Find your edge. Stay there.",
+    category: "demanding",
+    notes: "Direct yoga cue. Batman delivery makes 'edge' sound like a rooftop. Advice: push to your limit but don't destroy yourself."
+  },
+  // --- THREATENING ENCOURAGEMENT ---
+  {
+    text: "Breathe. That's not a suggestion.",
+    category: "demanding",
+    notes: "Yoga breath cue as Batman threat. The comedy: encouragement that sounds like it'll hurt you if you don't comply."
+  },
+  {
+    text: "The pose you avoid is the one you need.",
+    category: "wise",
+    notes: "Exact yoga teacher line. Through Batman, it's a growled confrontation. Works perfectly for avoidance in any life area."
+  },
+  {
+    text: "Lean forward until you have to fly.",
+    category: "cryptic",
+    notes: "Crow pose instruction. Through Batman it's about the leap — Gotham rooftops, trust falls, commitment. Beautiful dual-read."
+  },
+  {
+    text: "Discomfort is not danger. Learn the difference.",
+    category: "wise",
+    notes: "Yoga alignment truth. Batman voice makes it steel-spined. Works for anxiety, relationships, growth. 9 words, all earned."
+  },
+  {
+    text: "Don't hold your breath through the hard part.",
+    category: "wise",
+    notes: "Yoga breath cue, almost verbatim. Batman delivering it = someone who holds his breath through EVERYTHING telling you not to. The hypocrisy is the tenderness."
+  },
+  // --- DRAMATIC BREATHING INSTRUCTIONS ---
+  {
+    text: "Exhale like you mean it.",
+    category: "demanding",
+    notes: "Simple breath cue made intense. Batman treats exhaling like combat. Dual-read: letting go, releasing, surrender as action."
+  },
+  {
+    text: "Your breath will tell you when you've gone too far.",
+    category: "cryptic",
+    notes: "Exact yoga teacher line. Batman voice makes 'gone too far' sound like Gotham at 3 AM. Works for any situation where someone's pushing limits."
+  },
+  {
+    text: "Slow your breathing. Everything else follows.",
+    category: "wise",
+    notes: "Yoga cue, trimmed. Batman growling this is a man who's learned this the hard way in the field. Genuinely good advice delivered with gravelly authority."
+  },
+  // --- SAVASANA / SURRENDER (Batman who can't rest) ---
+  {
+    text: "Let the floor hold you. I can't always.",
+    category: "reluctant",
+    notes: "Savasana cue + devastating crack in the armor. Batman admitting he can't always be there. The vulnerability after the growl. Heartplucker."
+  },
+  {
+    text: "Nothing to do. Nowhere to go. *clenches jaw*",
+    category: "reluctant",
+    notes: "Savasana instruction from the most driven person alive. The jaw clench betrays him. He's TRYING to teach surrender and can't do it himself. Comedy + ache."
+  },
+  {
+    text: "Your only job right now is to lie here.",
+    category: "wise",
+    notes: "Savasana cue, verbatim. Batman growling permission to do nothing. The authority figure giving you permission to rest. Works at 2 AM."
+  },
+  {
+    text: "Stop trying. That's the hardest part.",
+    category: "wise",
+    notes: "Savasana wisdom. Batman admitting that NOT doing is harder than doing. Growled self-awareness from someone who can't stop."
+  },
+  // --- ALIGNMENT AS LIFE ADVICE ---
+  {
+    text: "Unclench your jaw. You're not in a fight.",
+    category: "wise",
+    notes: "Tension release cue. Batman saying 'you're not in a fight' — from someone who's always in a fight. The irony IS the tenderness."
+  },
+  {
+    text: "Root down before you reach for anything.",
+    category: "wise",
+    notes: "Foundation yoga cue. Batman strategy. Works as life advice: get grounded before grabbing. 8 words, zero filler."
+  },
+  {
+    text: "Soften what you don't need. Keep what you do.",
+    category: "wise",
+    notes: "Yoga efficiency cue. Batman operational. Also: emotional advice about what to carry and what to release. Clean dual-read."
+  },
+  // --- RARE VULNERABILITY (the orphan underneath) ---
+  {
+    text: "You can always come back to child's pose.",
+    category: "reluctant",
+    notes: "The most universal yoga cue. From Batman — 'child' hits different. The orphan giving permission to be small. Quiet crescendo."
+  },
+  {
+    text: "Some nights you just survive. That counts.",
+    category: "wise",
+    notes: "Batman knows about surviving nights. Yoga teacher tough love meets Dark Knight vulnerability. Works for anyone in the thick of it."
+  },
+  {
+    text: "I train so the shaking stops. It never stops.",
+    category: "reluctant",
+    notes: "Yoga trembling cue inverted. Batman confession. He trains endlessly and still shakes. Devastating honesty from behind the mask."
+  },
+  // --- CHAOTIC (Batman teaching yoga IS chaotic) ---
+  {
+    text: "Open your heart to the ceiling. *glares at ceiling*",
+    category: "chaotic",
+    notes: "Chest opener instruction. Batman takes 'open your heart' as a tactical directive, then scans the ceiling for threats. Can't turn it off."
+  },
+  {
+    text: "Modify without apology. That's not weakness.",
+    category: "demanding",
+    notes: "Yoga teacher cue, exact. Batman reframe: modification as tactical adaptation, not failure. Works for any situation where someone's ashamed of their limits."
+  },
+  {
+    text: "If you lost your breath, you went too far.",
+    category: "cold",
+    notes: "Yoga breath cue, verbatim. Batman field assessment energy. Cold, clinical, true. Works for relationships, risk, ambition — anything where you overextended."
+  },
+  {
+    text: "Stay on your own mat. I mean it.",
+    category: "demanding",
+    notes: "Anti-comparison yoga cue. Batman growl adds threat. 'I mean it' = don't make me come over there. Works for comparison, jealousy, other people's business."
+  },
+  {
+    text: "Lengthen before you deepen. There's an order.",
+    category: "wise",
+    notes: "Alignment cue. Batman strategic sequencing. Works as relationship/life advice: expand before you commit. Preparation before depth."
+  },
+  {
+    text: "The stillness is the hardest pose. Do it anyway.",
+    category: "demanding",
+    notes: "Savasana truth. Batman commanding stillness — the man who can't sit still telling you to. The demand is also a confession."
+  },
+  {
+    text: "You showed up. Don't make me say it twice.",
+    category: "reluctant",
+    notes: "Yoga 'showing up is enough' meets Batman's inability to give a compliment cleanly. Reluctant warmth. The growled encouragement he can barely get out."
+  }
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  status: 'pending', // pending, kept, cut, edited
+  editedText: null
+}));
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+
+  state.forEach((item, i) => {
+    const wordCount = item.text.replace(/\*[^*]+\*/g, '').trim().split(/\s+/).length;
+    const displayText = item.editedText || item.text;
+
+    const div = document.createElement('div');
+    div.className = `item ${item.status === 'kept' ? 'kept' : ''} ${item.status === 'cut' ? 'cut' : ''} ${item.status === 'edited' ? 'edited' : ''}`;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">${escapeHtml(displayText)}</div>
+      <div class="item-meta">
+        <span class="cat-label">${item.category}</span>
+        <span class="word-count">${wordCount} words</span>
+      </div>
+      <div class="item-meta" style="color:#555; font-style:italic;">${escapeHtml(item.notes)}</div>
+      <div class="btn-row">
+        <button class="btn btn-keep ${item.status === 'kept' ? 'active' : ''}" onclick="setStatus(${i}, 'kept')">KEEP</button>
+        <button class="btn btn-cut ${item.status === 'cut' ? 'active' : ''}" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.status === 'edited' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(item.editedText || item.text)}</textarea>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function setStatus(i, status) {
+  state[i].status = state[i].status === status ? 'pending' : status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-area-${i}`);
+  el.classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`edit-text-${i}`).value.trim();
+  if (text && text !== state[i].text) {
+    state[i].editedText = text;
+    state[i].status = 'edited';
+  }
+  render();
+}
+
+function updateStats() {
+  const kept = state.filter(s => s.status === 'kept').length;
+  const cut = state.filter(s => s.status === 'cut').length;
+  const edited = state.filter(s => s.status === 'edited').length;
+  const pending = state.filter(s => s.status === 'pending').length;
+  document.getElementById('stat-keep').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edit').textContent = edited;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-total').textContent = state.length;
+}
+
+function updateExport() {
+  const kept = state.filter(s => s.status === 'kept' || s.status === 'edited');
+  const exported = kept.map(s => ({
+    text: s.editedText || s.text,
+    category: s.category
+  }));
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Review: Stressed Over Nothing (REDO)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: #16213e;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.4em;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .header .subtitle {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .stat-keep { color: #4ecca3; }
+        .stat-cut { color: #e94560; }
+        .stat-edit { color: #ffd93d; }
+        .stat-pending { color: #888; }
+
+        .response-card {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid #333;
+            transition: border-color 0.2s;
+        }
+
+        .response-card.kept { border-left-color: #4ecca3; }
+        .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+        .response-card.edited { border-left-color: #ffd93d; }
+
+        .response-number {
+            font-size: 0.75em;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .response-text {
+            font-size: 1.25em;
+            color: #fff;
+            margin-bottom: 8px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .response-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            background: #0f3460;
+            color: #a8b2d1;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .voice-badge {
+            color: #666;
+            font-size: 0.75em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.15s;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        .btn-keep { background: #4ecca3; color: #1a1a2e; }
+        .btn-cut { background: #e94560; color: #fff; }
+        .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+        .btn.active {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.visible {
+            display: block;
+        }
+
+        .edit-area textarea {
+            width: 100%;
+            background: #0f3460;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .edit-area .save-edit {
+            margin-top: 6px;
+            background: #ffd93d;
+            color: #1a1a2e;
+            padding: 4px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8em;
+        }
+
+        .export-section {
+            margin-top: 40px;
+            background: #16213e;
+            padding: 24px;
+            border-radius: 8px;
+        }
+
+        .export-section h2 {
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .export-section textarea {
+            width: 100%;
+            min-height: 300px;
+            background: #0a0a1a;
+            color: #4ecca3;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            resize: vertical;
+        }
+
+        .copy-btn {
+            margin-top: 8px;
+            background: #4ecca3;
+            color: #1a1a2e;
+            padding: 8px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .refrigerator-note {
+            background: #0f3460;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 0.85em;
+            color: #a8b2d1;
+            line-height: 1.5;
+        }
+
+        .refrigerator-note strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Batch Review: Stressed Over Nothing (REDO)</h1>
+    <div class="subtitle">Theme: Full cortisol investment in zero-stakes situations | 20 responses | 2026-02-15</div>
+    <div class="stats">
+        <span class="stat stat-keep">Keep: <span id="count-keep">0</span></span>
+        <span class="stat stat-cut">Cut: <span id="count-cut">0</span></span>
+        <span class="stat stat-edit">Edit: <span id="count-edit">0</span></span>
+        <span class="stat stat-pending">Pending: <span id="count-pending">20</span></span>
+    </div>
+</div>
+
+<div class="refrigerator-note">
+    <strong>Refrigerators:</strong> Surveillance/detective language (stakeout, case file, evidence board), weather report language (storm warnings for zero-stakes), sports commentary (play-by-play of doom-scrolling), physical comedy of humans vibrating with stress over nothing.<br>
+    <strong>Voices used:</strong> Conspiracy Cat, Reluctant Therapist Cat, Karen Cat, Detective Cat, Unimpressed Cat, Realist Cat, Competitive Cat, Judge Cat, Internet Cat, Street Cat, Feral Cat, Elder Cat<br>
+    <strong>Avoided:</strong> "Not your circus" (already exists), cortisol (already used), doom-scrolling (2x in pool), "you rehearsed" pattern, "you said X you meant Y" pattern
+</div>
+
+<div id="responses">
+
+    <!-- Response 1 -->
+    <div class="response-card" data-index="0">
+        <div class="response-number">#1 | Conspiracy Cat | Weather report refrigerator | Rhythm</div>
+        <div class="response-text">Storm advisory for a situation three zip codes away that doesn't know your name.</div>
+        <div class="response-meta">
+            <span class="category-badge">dramatic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(0, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(0, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(0)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-0">
+            <textarea id="edittext-0">Storm advisory for a situation three zip codes away that doesn't know your name.</textarea>
+            <button class="save-edit" onclick="saveEdit(0)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 2 -->
+    <div class="response-card" data-index="1">
+        <div class="response-number">#2 | Detective Cat | Surveillance refrigerator | Crescendo</div>
+        <div class="response-text">You've been running surveillance on a life that doesn't have you in the credits.</div>
+        <div class="response-meta">
+            <span class="category-badge">judgmental</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(1, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(1, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-1">
+            <textarea id="edittext-1">You've been running surveillance on a life that doesn't have you in the credits.</textarea>
+            <button class="save-edit" onclick="saveEdit(1)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 3 -->
+    <div class="response-card" data-index="2">
+        <div class="response-number">#3 | Unimpressed Cat | Sports commentary refrigerator | Rhythm</div>
+        <div class="response-text">Incredible. Full adrenaline. And the stakes are someone else's fence color.</div>
+        <div class="response-meta">
+            <span class="category-badge">indifferent</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(2, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(2, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-2">
+            <textarea id="edittext-2">Incredible. Full adrenaline. And the stakes are someone else's fence color.</textarea>
+            <button class="save-edit" onclick="saveEdit(2)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 4 -->
+    <div class="response-card" data-index="3">
+        <div class="response-number">#4 | Karen Cat | Physical comedy refrigerator | Crescendo</div>
+        <div class="response-text">You are shaking. Over something that will not be at your funeral.</div>
+        <div class="response-meta">
+            <span class="category-badge">judgmental</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(3, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(3, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-3">
+            <textarea id="edittext-3">You are shaking. Over something that will not be at your funeral.</textarea>
+            <button class="save-edit" onclick="saveEdit(3)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 5 -->
+    <div class="response-card" data-index="4">
+        <div class="response-number">#5 | Reluctant Therapist Cat | Detective refrigerator | Rhythm</div>
+        <div class="response-text">The case file is impressive. Zero of it involves you.</div>
+        <div class="response-meta">
+            <span class="category-badge">wise</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(4, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(4, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-4">
+            <textarea id="edittext-4">The case file is impressive. Zero of it involves you.</textarea>
+            <button class="save-edit" onclick="saveEdit(4)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 6 -->
+    <div class="response-card" data-index="5">
+        <div class="response-number">#6 | Feral Cat | Physical comedy refrigerator | Crescendo</div>
+        <div class="response-text">You're burning survival chemicals over a stranger's parking job. Your ancestors fought wolves.</div>
+        <div class="response-meta">
+            <span class="category-badge">judgmental</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(5, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(5, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-5">
+            <textarea id="edittext-5">You're burning survival chemicals over a stranger's parking job. Your ancestors fought wolves.</textarea>
+            <button class="save-edit" onclick="saveEdit(5)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 7 -->
+    <div class="response-card" data-index="6">
+        <div class="response-number">#7 | Elder Cat | Weather report refrigerator | Quiet</div>
+        <div class="response-text">*one ear rotates toward you* That's not your storm.</div>
+        <div class="response-meta">
+            <span class="category-badge">wise</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(6, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(6, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-6">
+            <textarea id="edittext-6">*one ear rotates toward you* That's not your storm.</textarea>
+            <button class="save-edit" onclick="saveEdit(6)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 8 -->
+    <div class="response-card" data-index="7">
+        <div class="response-number">#8 | Competitive Cat | Sports commentary refrigerator | Crescendo</div>
+        <div class="response-text">The dedication is Olympic. The event is someone else's relationship.</div>
+        <div class="response-meta">
+            <span class="category-badge">sassy</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(7, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(7, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-7">
+            <textarea id="edittext-7">The dedication is Olympic. The event is someone else's relationship.</textarea>
+            <button class="save-edit" onclick="saveEdit(7)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 9 -->
+    <div class="response-card" data-index="8">
+        <div class="response-number">#9 | Realist Cat | Physical comedy refrigerator | Rhythm</div>
+        <div class="response-text">Your jaw is clenched and nobody in this story knows you exist.</div>
+        <div class="response-meta">
+            <span class="category-badge">indifferent</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(8, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(8, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-8">
+            <textarea id="edittext-8">Your jaw is clenched and nobody in this story knows you exist.</textarea>
+            <button class="save-edit" onclick="saveEdit(8)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 10 -->
+    <div class="response-card" data-index="9">
+        <div class="response-number">#10 | Street Cat | Surveillance refrigerator | Rhythm</div>
+        <div class="response-text">Twelve hours on the stakeout. The suspect is a coworker's lunch.</div>
+        <div class="response-meta">
+            <span class="category-badge">chaotic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(9, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(9, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-9">
+            <textarea id="edittext-9">Twelve hours on the stakeout. The suspect is a coworker's lunch.</textarea>
+            <button class="save-edit" onclick="saveEdit(9)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 11 -->
+    <div class="response-card" data-index="10">
+        <div class="response-number">#11 | Judge Cat | Detective refrigerator | Crescendo</div>
+        <div class="response-text">The evidence board has string. The string connects nothing to you.</div>
+        <div class="response-meta">
+            <span class="category-badge">judgmental</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(10, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(10, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-10">
+            <textarea id="edittext-10">The evidence board has string. The string connects nothing to you.</textarea>
+            <button class="save-edit" onclick="saveEdit(10)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 12 -->
+    <div class="response-card" data-index="11">
+        <div class="response-number">#12 | Internet Cat | Sports commentary refrigerator | Rhythm</div>
+        <div class="response-text">Main character energy about a plotline you're not in.</div>
+        <div class="response-meta">
+            <span class="category-badge">sassy</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(11, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(11, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-11">
+            <textarea id="edittext-11">Main character energy about a plotline you're not in.</textarea>
+            <button class="save-edit" onclick="saveEdit(11)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 13 -->
+    <div class="response-card" data-index="12">
+        <div class="response-number">#13 | Conspiracy Cat | Surveillance refrigerator | Crescendo</div>
+        <div class="response-text">You built an entire intelligence operation and the target is a stranger's Instagram story.</div>
+        <div class="response-meta">
+            <span class="category-badge">unhinged</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(12, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(12, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-12">
+            <textarea id="edittext-12">You built an entire intelligence operation and the target is a stranger's Instagram story.</textarea>
+            <button class="save-edit" onclick="saveEdit(12)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 14 -->
+    <div class="response-card" data-index="13">
+        <div class="response-number">#14 | Reluctant Therapist Cat | Physical comedy refrigerator | Quiet</div>
+        <div class="response-text">*tail tip flicks* Your body thinks it's dying. It's a group chat.</div>
+        <div class="response-meta">
+            <span class="category-badge">wise</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(13, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(13, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-13">
+            <textarea id="edittext-13">*tail tip flicks* Your body thinks it's dying. It's a group chat.</textarea>
+            <button class="save-edit" onclick="saveEdit(13)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 15 -->
+    <div class="response-card" data-index="14">
+        <div class="response-number">#15 | Detective Cat | Weather report refrigerator | Rhythm</div>
+        <div class="response-text">Severe weather warning: you are about to have an opinion about someone who will never hear it.</div>
+        <div class="response-meta">
+            <span class="category-badge">cryptic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(14, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(14, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-14">
+            <textarea id="edittext-14">Severe weather warning: you are about to have an opinion about someone who will never hear it.</textarea>
+            <button class="save-edit" onclick="saveEdit(14)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 16 -->
+    <div class="response-card" data-index="15">
+        <div class="response-number">#16 | Unimpressed Cat | Physical comedy refrigerator | Crescendo</div>
+        <div class="response-text">*ears flatten* You have a pulse of 120 and a stake of zero.</div>
+        <div class="response-meta">
+            <span class="category-badge">indifferent</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(15, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(15, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-15">
+            <textarea id="edittext-15">*ears flatten* You have a pulse of 120 and a stake of zero.</textarea>
+            <button class="save-edit" onclick="saveEdit(15)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 17 -->
+    <div class="response-card" data-index="16">
+        <div class="response-number">#17 | Realist Cat | Sports commentary refrigerator | Rhythm</div>
+        <div class="response-text">And the crowd goes wild. The crowd is just you. In bed. About a celebrity.</div>
+        <div class="response-meta">
+            <span class="category-badge">chaotic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(16, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(16, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-16">
+            <textarea id="edittext-16">And the crowd goes wild. The crowd is just you. In bed. About a celebrity.</textarea>
+            <button class="save-edit" onclick="saveEdit(16)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 18 -->
+    <div class="response-card" data-index="17">
+        <div class="response-number">#18 | Elder Cat | Surveillance refrigerator | Quiet</div>
+        <div class="response-text">I've watched you investigate a stranger for three hours. You could have napped six times.</div>
+        <div class="response-meta">
+            <span class="category-badge">philosophical</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(17, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(17, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-17">
+            <textarea id="edittext-17">I've watched you investigate a stranger for three hours. You could have napped six times.</textarea>
+            <button class="save-edit" onclick="saveEdit(17)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 19 -->
+    <div class="response-card" data-index="18">
+        <div class="response-number">#19 | Karen Cat | Weather report + physical comedy | Crescendo</div>
+        <div class="response-text">BREAKING: local human declares state of emergency over someone being wrong on the internet.</div>
+        <div class="response-meta">
+            <span class="category-badge">dramatic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(18, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(18, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-18">
+            <textarea id="edittext-18">BREAKING: local human declares state of emergency over someone being wrong on the internet.</textarea>
+            <button class="save-edit" onclick="saveEdit(18)">Save Edit</button>
+        </div>
+    </div>
+
+    <!-- Response 20 -->
+    <div class="response-card" data-index="19">
+        <div class="response-number">#20 | Feral Cat | Physical comedy refrigerator | Rhythm</div>
+        <div class="response-text">Fight or flight kicked in. The threat is a paint swatch.</div>
+        <div class="response-meta">
+            <span class="category-badge">chaotic</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-keep" onclick="decide(19, 'keep')">KEEP</button>
+            <button class="btn btn-cut" onclick="decide(19, 'cut')">CUT</button>
+            <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-19">
+            <textarea id="edittext-19">Fight or flight kicked in. The threat is a paint swatch.</textarea>
+            <button class="save-edit" onclick="saveEdit(19)">Save Edit</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="export-section">
+    <h2>JSON Export (kept + edited only)</h2>
+    <textarea id="export-json" readonly></textarea>
+    <br>
+    <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+    { text: "Storm advisory for a situation three zip codes away that doesn't know your name.", category: "dramatic" },
+    { text: "You've been running surveillance on a life that doesn't have you in the credits.", category: "judgmental" },
+    { text: "Incredible. Full adrenaline. And the stakes are someone else's fence color.", category: "indifferent" },
+    { text: "You are shaking. Over something that will not be at your funeral.", category: "judgmental" },
+    { text: "The case file is impressive. Zero of it involves you.", category: "wise" },
+    { text: "You're burning survival chemicals over a stranger's parking job. Your ancestors fought wolves.", category: "judgmental" },
+    { text: "*one ear rotates toward you* That's not your storm.", category: "wise" },
+    { text: "The dedication is Olympic. The event is someone else's relationship.", category: "sassy" },
+    { text: "Your jaw is clenched and nobody in this story knows you exist.", category: "indifferent" },
+    { text: "Twelve hours on the stakeout. The suspect is a coworker's lunch.", category: "chaotic" },
+    { text: "The evidence board has string. The string connects nothing to you.", category: "judgmental" },
+    { text: "Main character energy about a plotline you're not in.", category: "sassy" },
+    { text: "You built an entire intelligence operation and the target is a stranger's Instagram story.", category: "unhinged" },
+    { text: "*tail tip flicks* Your body thinks it's dying. It's a group chat.", category: "wise" },
+    { text: "Severe weather warning: you are about to have an opinion about someone who will never hear it.", category: "cryptic" },
+    { text: "*ears flatten* You have a pulse of 120 and a stake of zero.", category: "indifferent" },
+    { text: "And the crowd goes wild. The crowd is just you. In bed. About a celebrity.", category: "chaotic" },
+    { text: "I've watched you investigate a stranger for three hours. You could have napped six times.", category: "philosophical" },
+    { text: "BREAKING: local human declares state of emergency over someone being wrong on the internet.", category: "dramatic" },
+    { text: "Fight or flight kicked in. The threat is a paint swatch.", category: "chaotic" }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function decide(index, decision) {
+    const card = document.querySelector(`[data-index="${index}"]`);
+    const prevDecision = decisions[index];
+    decisions[index] = decision;
+
+    card.className = 'response-card ' + (decision === 'keep' ? 'kept' : decision === 'cut' ? 'cut' : 'edited');
+
+    // Update button active states
+    card.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    card.querySelector(`.btn-${decision}`).classList.add('active');
+
+    // Show/hide edit area
+    if (decision === 'edit') {
+        document.getElementById(`edit-${index}`).classList.add('visible');
+    } else {
+        document.getElementById(`edit-${index}`).classList.remove('visible');
+    }
+
+    updateStats();
+    updateExport();
+}
+
+function toggleEdit(index) {
+    decide(index, 'edit');
+}
+
+function saveEdit(index) {
+    const textarea = document.getElementById(`edittext-${index}`);
+    editedTexts[index] = textarea.value;
+    // Update the display text
+    const card = document.querySelector(`[data-index="${index}"]`);
+    card.querySelector('.response-text').textContent = textarea.value;
+    updateExport();
+}
+
+function updateStats() {
+    const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+    decisions.forEach(d => {
+        if (d === 'keep') counts.keep++;
+        else if (d === 'cut') counts.cut++;
+        else if (d === 'edit') counts.edit++;
+        else counts.pending++;
+    });
+    document.getElementById('count-keep').textContent = counts.keep;
+    document.getElementById('count-cut').textContent = counts.cut;
+    document.getElementById('count-edit').textContent = counts.edit;
+    document.getElementById('count-pending').textContent = counts.pending;
+}
+
+function updateExport() {
+    const exported = [];
+    decisions.forEach((d, i) => {
+        if (d === 'keep') {
+            exported.push({ text: responses[i].text, category: responses[i].category });
+        } else if (d === 'edit') {
+            const editedText = editedTexts[i] || responses[i].text;
+            exported.push({ text: editedText, category: responses[i].category });
+        }
+    });
+    document.getElementById('export-json').value = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+    const textarea = document.getElementById('export-json');
+    textarea.select();
+    document.execCommand('copy');
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+// Initialize export
+updateExport();
+</script>
+
+</body>
+</html>

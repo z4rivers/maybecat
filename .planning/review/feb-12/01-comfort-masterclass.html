@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Comfort Masterclass — MaybeCat Review</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:20px;max-width:900px;margin:0 auto}.stats{position:sticky;top:0;background:#1a1a2e;padding:15px 0;border-bottom:1px solid #333;z-index:10;display:flex;gap:15px;font-size:14px;flex-wrap:wrap}.stat{padding:4px 12px;border-radius:12px}.sk{background:#4ecca322;color:#4ecca3}.sc{background:#e9456022;color:#e94560}.se{background:#ffd93d22;color:#ffd93d}.sp{background:#ffffff11;color:#888}h1{margin:20px 0 5px;font-size:24px}.desc{color:#888;margin-bottom:15px;font-size:14px;line-height:1.5}.item{background:#16213e;border-radius:8px;padding:16px;margin:10px 0;border-left:3px solid #333;transition:all .2s}.item.kept{border-left-color:#4ecca3}.item.cut{border-left-color:#e94560;opacity:.4}.item.edited{border-left-color:#ffd93d}.voice{font-size:12px;color:#4ecca3;margin-bottom:4px;font-weight:600}.cat{font-size:11px;color:#666;background:#ffffff11;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px}.text{font-size:18px;line-height:1.5;margin-bottom:10px}.actions{display:flex;gap:8px}.btn{padding:6px 16px;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600}.bk{background:#4ecca3;color:#000}.bc{background:#e94560;color:#fff}.be{background:#ffd93d;color:#000}.ea{display:none;margin-top:8px}.ea textarea{width:100%;background:#0f3460;color:#eee;border:1px solid #ffd93d;border-radius:4px;padding:8px;font-size:16px;resize:vertical;min-height:60px}.ea .btn{margin-top:4px}.export{margin-top:40px;padding:20px;background:#0f3460;border-radius:8px}.export h2{color:#4ecca3;margin-bottom:10px}.export pre{background:#1a1a2e;padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;max-height:400px;overflow-y:auto;white-space:pre-wrap}.export .btn{margin-top:8px}
+</style></head><body>
+<h1>Comfort Masterclass</h1>
+<p class="desc">All 39 cats on inner peace, getting comfortable, feeling great. Back to basics. Each cat's essential personality filtered through the simplest question: what does comfort mean to you?</p>
+<div class="stats"><span class="stat sk">Keep: <span id="kc">0</span></span><span class="stat sc">Cut: <span id="cc">0</span></span><span class="stat se">Edit: <span id="ec">0</span></span><span class="stat sp">Pending: <span id="pc">0</span></span></div>
+<div id="items"></div>
+<div class="export"><h2>Export (Keepers Only)</h2><pre id="ej">[]</pre><button class="btn bk" onclick="copy()">Copy JSON</button></div>
+<script id="d" type="application/json">
+[
+  {"text":"The warm spot is now. Not later. Not after you finish. Now.","category":"nurturing","voice":"Instant Gratification Cat"},
+  {"text":"Peace is a closed door and a full bowl.","category":"wise","voice":"Boundaries Cat"},
+  {"text":"Groomed. Stretched. Horizontal. Paradise.","category":"nurturing","voice":"Spa Cat"},
+  {"text":"Nothing is moving. Nothing is falling. Nothing \u2014 wait, what was THAT.","category":"chaotic","voice":"Hissy Cat"},
+  {"text":"Destroyed the blinds. Inner peace achieved.","category":"chaotic","voice":"Chaos Cat"},
+  {"text":"The bird is outside. I am inside. Both of us are exactly where we should be.","category":"poetic","voice":"Pensive Cat"},
+  {"text":"I fit into this space like I was designed for it. I was.","category":"wise","voice":"Lithe Cat"},
+  {"text":"Warm concrete. Full belly. No one chasing. Five stars.","category":"nurturing","voice":"Street Cat"},
+  {"text":"All eyes on me. Heart rate: settled. This is the natural order.","category":"demanding","voice":"Attention Cat"},
+  {"text":"Your heartbeat. My purr. We don't even have to talk.","category":"heartfelt","voice":"Loving Cat"},
+  {"text":"To want nothing is to have everything. I want almost nothing.","category":"existential","voice":"Philosopher Cat"},
+  {"text":"High ground. Low expectations. Immaculate.","category":"judgy","voice":"Judge Cat"},
+  {"text":"Who's relaxed? Is it you? Is it YOU? Yes it is. Good human.","category":"nurturing","voice":"Condescending Parent Cat"},
+  {"text":"Hay. Mouse. Quiet. Don't need more.","category":"wise","voice":"Barncat"},
+  {"text":"The pillow is fluffed. The lighting is correct. You may leave.","category":"demanding","voice":"Diva Cat"},
+  {"text":"I didn't mean to get comfortable here. But moving would be disruptive and I have observations about this ceiling.","category":"chaotic","voice":"Reluctant Therapist Cat"},
+  {"text":"My whiskers said this blanket. They've never been wrong.","category":"mystical","voice":"Prophet Cat"},
+  {"text":"After the ORDEAL of finding the RIGHT temperature, I have FINALLY settled. Do NOT adjust the thermostat.","category":"angry","voice":"Karen Cat"},
+  {"text":"...belly up. Don't tell anyone.","category":"heartfelt","voice":"Dog-Curious Cat"},
+  {"text":"This spot was taken. By me. Everyone else adjusted.","category":"cold","voice":"Badass Cat"},
+  {"text":"Comfort is temporary. But so is everything. Get horizontal while you can.","category":"existential","voice":"Dark Comedian Cat"},
+  {"text":"The sun has done this for four billion years. I've done it for twelve. We're both excellent at it.","category":"poetic","voice":"Old Soul Cat"},
+  {"text":"This? This IS the vibe.","category":"chaotic","voice":"Internet Cat"},
+  {"text":"You had me at warm laundry.","category":"heartfelt","voice":"Cult Reference Cat"},
+  {"text":"You look almost comfortable. Not as comfortable as me, obviously. But close.","category":"judgy","voice":"Backhanded Support Cat"},
+  {"text":"Optimal temperature. Minimal threat. Zero witnesses. Conditions: perfect.","category":"cold","voice":"Detective Cat"},
+  {"text":"Hold me. Don't touch me. Hold me tighter. Let go. Stay.","category":"chaotic","voice":"Contradiction Cat"},
+  {"text":"I should share this warm spot. I should. ...No.","category":"wise","voice":"Grudging Virtue Cat"},
+  {"text":"Warm. Eyes closed. Nothing's on fire. This is as good as it gets. And it's good.","category":"nurturing","voice":"Realist Cat"},
+  {"text":"The curtain makes stripes on the floor. I didn't ask for beauty. It arrived.","category":"poetic","voice":"Accidental Poet Cat"},
+  {"text":"Dude. Have you ever just... been warm? Like really FELT the warmth? ...Whoa.","category":"chaotic","voice":"Stoner Cat"},
+  {"text":"They don't want you to know about this spot behind the radiator.","category":"mystical","voice":"Conspiracy Cat"},
+  {"text":"Come closer. Closer. *purrs* ...Perfect distance.","category":"heartfelt","voice":"Flirt Cat"},
+  {"text":"Full belly. High ground. No enemies. Empire.","category":"cold","voice":"Feral Cat"},
+  {"text":"Ten thousand years and the best invention is still a patch of sun.","category":"wise","voice":"Elder Cat"},
+  {"text":"I'm more comfortable than you right now. Just so you know.","category":"judgy","voice":"Competitive Cat"},
+  {"text":"Mmmm... this is... yeah... *trails off*","category":"nurturing","voice":"Sleepy Cat"},
+  {"text":"Acceptable. Barely.","category":"cold","voice":"Unimpressed Cat"},
+  {"text":"I think I'm comfortable? Is this what comfortable feels like? ...Maybe.","category":"chaotic","voice":"Doubt Cat"}
+]
+</script>
+<script>
+const data=JSON.parse(document.getElementById('d').textContent);const D={};const el=document.getElementById('items');data.forEach((d,i)=>{el.innerHTML+=`<div class="item" id="i${i}">${d.voice?`<div class="voice">${d.voice}</div>`:''}<div class="cat">${d.category}</div><div class="text" id="t${i}">${d.text}</div><div class="actions"><button class="btn bk" onclick="dec(${i},'keep')">KEEP</button><button class="btn bc" onclick="dec(${i},'cut')">CUT</button><button class="btn be" onclick="dec(${i},'edit')">EDIT</button></div><div class="ea" id="e${i}"><textarea>${d.text}</textarea><button class="btn bk" onclick="sav(${i})">Save</button></div></div>`;});document.getElementById('pc').textContent=data.length;function dec(i,x){D[i]={d:x,text:document.getElementById('t'+i).textContent,cat:data[i].category};if(x==='edit'){document.getElementById('e'+i).style.display='block';return;}document.getElementById('i'+i).className='item '+(x==='keep'?'kept':'cut');upd();}function sav(i){const t=document.querySelector('#e'+i+' textarea').value;D[i]={d:'edit',text:t,cat:data[i].category};document.getElementById('i'+i).className='item edited';document.getElementById('t'+i).textContent=t;document.getElementById('e'+i).style.display='none';upd();}function upd(){const v=Object.values(D);document.getElementById('kc').textContent=v.filter(x=>x.d==='keep').length;document.getElementById('cc').textContent=v.filter(x=>x.d==='cut').length;document.getElementById('ec').textContent=v.filter(x=>x.d==='edit').length;document.getElementById('pc').textContent=data.length-v.length;const k=v.filter(x=>x.d==='keep'||x.d==='edit').map(x=>({text:x.text,category:x.cat}));document.getElementById('ej').textContent=JSON.stringify(k,null,2);}function copy(){navigator.clipboard.writeText(document.getElementById('ej').textContent);event.target.textContent='Copied!';setTimeout(()=>event.target.textContent='Copy JSON',2000);}
+</script>
+</body></html>

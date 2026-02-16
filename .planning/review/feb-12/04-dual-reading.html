@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Dual-Reading: Surface Clean, Underground Not — MaybeCat Review</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:20px;max-width:900px;margin:0 auto}.stats{position:sticky;top:0;background:#1a1a2e;padding:15px 0;border-bottom:1px solid #333;z-index:10;display:flex;gap:15px;font-size:14px;flex-wrap:wrap}.stat{padding:4px 12px;border-radius:12px}.sk{background:#4ecca322;color:#4ecca3}.sc{background:#e9456022;color:#e94560}.se{background:#ffd93d22;color:#ffd93d}.sp{background:#ffffff11;color:#888}h1{margin:20px 0 5px;font-size:24px}.desc{color:#888;margin-bottom:15px;font-size:14px;line-height:1.5}.item{background:#16213e;border-radius:8px;padding:16px;margin:10px 0;border-left:3px solid #333;transition:all .2s}.item.kept{border-left-color:#4ecca3}.item.cut{border-left-color:#e94560;opacity:.4}.item.edited{border-left-color:#ffd93d}.voice{font-size:12px;color:#4ecca3;margin-bottom:4px;font-weight:600}.cat{font-size:11px;color:#666;background:#ffffff11;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px}.text{font-size:18px;line-height:1.5;margin-bottom:10px}.actions{display:flex;gap:8px}.btn{padding:6px 16px;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600}.bk{background:#4ecca3;color:#000}.bc{background:#e94560;color:#fff}.be{background:#ffd93d;color:#000}.ea{display:none;margin-top:8px}.ea textarea{width:100%;background:#0f3460;color:#eee;border:1px solid #ffd93d;border-radius:4px;padding:8px;font-size:16px;resize:vertical;min-height:60px}.ea .btn{margin-top:4px}.export{margin-top:40px;padding:20px;background:#0f3460;border-radius:8px}.export h2{color:#4ecca3;margin-bottom:10px}.export pre{background:#1a1a2e;padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;max-height:400px;overflow-y:auto;white-space:pre-wrap}.export .btn{margin-top:8px}
+</style></head><body>
+<h1>Dual-Reading: Surface Clean, Underground Not</h1>
+<p class="desc">Highest hit-rate format. Clean reading on top, second meaning underneath. The G-surface / X-underneath structure. Two people should argue about what it means.</p>
+<div class="stats"><span class="stat sk">Keep: <span id="kc">0</span></span><span class="stat sc">Cut: <span id="cc">0</span></span><span class="stat se">Edit: <span id="ec">0</span></span><span class="stat sp">Pending: <span id="pc">0</span></span></div>
+<div id="items"></div>
+<div class="export"><h2>Export (Keepers Only)</h2><pre id="ej">[]</pre><button class="btn bk" onclick="copy()">Copy JSON</button></div>
+<script id="d" type="application/json">
+[
+  {"text": "You should come over.", "category": "heartfelt"},
+  {"text": "It's not done yet.", "category": "wise"},
+  {"text": "I'd stay up for that.", "category": "heartfelt"},
+  {"text": "You looked different in the light.", "category": "cold"},
+  {"text": "It needs more time in the dark.", "category": "wise"},
+  {"text": "The door isn't locked.", "category": "nurturing"},
+  {"text": "Already eaten.", "category": "cold"},
+  {"text": "That's going to leave a mark.", "category": "wise"},
+  {"text": "Careful with the soft parts.", "category": "nurturing"},
+  {"text": "Deeper than it looks.", "category": "mystical"},
+  {"text": "I know where you've been.", "category": "cold"},
+  {"text": "You keep coming back to this.", "category": "wise"},
+  {"text": "This one's got teeth.", "category": "judgy"},
+  {"text": "I didn't flinch.", "category": "cold"},
+  {"text": "It's better in the morning.", "category": "nurturing"},
+  {"text": "Touch it and find out.", "category": "chaotic"},
+  {"text": "Not what I ordered but I'll eat it.", "category": "wise"},
+  {"text": "Something's growing.", "category": "mystical"},
+  {"text": "You can't unring that bell.", "category": "cold"},
+  {"text": "Still warm.", "category": "nurturing"},
+  {"text": "The good ones don't announce themselves.", "category": "wise"},
+  {"text": "Finish what's on your plate.", "category": "wise"},
+  {"text": "Swallow it.", "category": "cold"},
+  {"text": "That's a lot of heat for something so small.", "category": "wise"},
+  {"text": "It only hurts the first time.", "category": "cold"}
+]
+</script>
+<script>
+const data=JSON.parse(document.getElementById('d').textContent);const D={};const el=document.getElementById('items');data.forEach((d,i)=>{el.innerHTML+=`<div class="item" id="i${i}">${d.voice?`<div class="voice">${d.voice}</div>`:''}<div class="cat">${d.category}</div><div class="text" id="t${i}">${d.text}</div><div class="actions"><button class="btn bk" onclick="dec(${i},'keep')">KEEP</button><button class="btn bc" onclick="dec(${i},'cut')">CUT</button><button class="btn be" onclick="dec(${i},'edit')">EDIT</button></div><div class="ea" id="e${i}"><textarea>${d.text}</textarea><button class="btn bk" onclick="sav(${i})">Save</button></div></div>`;});document.getElementById('pc').textContent=data.length;function dec(i,x){D[i]={d:x,text:document.getElementById('t'+i).textContent,cat:data[i].category};if(x==='edit'){document.getElementById('e'+i).style.display='block';return;}document.getElementById('i'+i).className='item '+(x==='keep'?'kept':'cut');upd();}function sav(i){const t=document.querySelector('#e'+i+' textarea').value;D[i]={d:'edit',text:t,cat:data[i].category};document.getElementById('i'+i).className='item edited';document.getElementById('t'+i).textContent=t;document.getElementById('e'+i).style.display='none';upd();}function upd(){const v=Object.values(D);document.getElementById('kc').textContent=v.filter(x=>x.d==='keep').length;document.getElementById('cc').textContent=v.filter(x=>x.d==='cut').length;document.getElementById('ec').textContent=v.filter(x=>x.d==='edit').length;document.getElementById('pc').textContent=data.length-v.length;const k=v.filter(x=>x.d==='keep'||x.d==='edit').map(x=>({text:x.text,category:x.cat}));document.getElementById('ej').textContent=JSON.stringify(k,null,2);}function copy(){navigator.clipboard.writeText(document.getElementById('ej').textContent);event.target.textContent='Copied!';setTimeout(()=>event.target.textContent='Copy JSON',2000);}
+</script>
+</body></html>

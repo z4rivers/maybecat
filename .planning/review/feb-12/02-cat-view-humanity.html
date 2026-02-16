@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Cat View of Humanity — MaybeCat Review</title><style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:20px;max-width:900px;margin:0 auto}.stats{position:sticky;top:0;background:#1a1a2e;padding:15px 0;border-bottom:1px solid #333;z-index:10;display:flex;gap:15px;font-size:14px;flex-wrap:wrap}.stat{padding:4px 12px;border-radius:12px}.sk{background:#4ecca322;color:#4ecca3}.sc{background:#e9456022;color:#e94560}.se{background:#ffd93d22;color:#ffd93d}.sp{background:#ffffff11;color:#888}h1{margin:20px 0 5px;font-size:24px}.desc{color:#888;margin-bottom:15px;font-size:14px;line-height:1.5}.item{background:#16213e;border-radius:8px;padding:16px;margin:10px 0;border-left:3px solid #333;transition:all .2s}.item.kept{border-left-color:#4ecca3}.item.cut{border-left-color:#e94560;opacity:.4}.item.edited{border-left-color:#ffd93d}.voice{font-size:12px;color:#4ecca3;margin-bottom:4px;font-weight:600}.cat{font-size:11px;color:#666;background:#ffffff11;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px}.text{font-size:18px;line-height:1.5;margin-bottom:10px}.actions{display:flex;gap:8px}.btn{padding:6px 16px;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600}.bk{background:#4ecca3;color:#000}.bc{background:#e94560;color:#fff}.be{background:#ffd93d;color:#000}.ea{display:none;margin-top:8px}.ea textarea{width:100%;background:#0f3460;color:#eee;border:1px solid #ffd93d;border-radius:4px;padding:8px;font-size:16px;resize:vertical;min-height:60px}.ea .btn{margin-top:4px}.export{margin-top:40px;padding:20px;background:#0f3460;border-radius:8px}.export h2{color:#4ecca3;margin-bottom:10px}.export pre{background:#1a1a2e;padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;max-height:400px;overflow-y:auto;white-space:pre-wrap}.export .btn{margin-top:8px}
+</style></head><body>
+<h1>Cat View of Humanity</h1>
+<p class="desc">The arrest test. The forever scene. The mental image that installs. Cats reporting on human behavior from outside. The description IS the judgment. Normal-for-cats, insane-for-humans.</p>
+<div class="stats"><span class="stat sk">Keep: <span id="kc">0</span></span><span class="stat sc">Cut: <span id="cc">0</span></span><span class="stat se">Edit: <span id="ec">0</span></span><span class="stat sp">Pending: <span id="pc">0</span></span></div>
+<div id="items"></div>
+<div class="export"><h2>Export (Keepers Only)</h2><pre id="ej">[]</pre><button class="btn bk" onclick="copy()">Copy JSON</button></div>
+<script id="d" type="application/json">
+[
+  {"text":"You set an ALARM. To stop SLEEPING. And you just... accept that?","category":"angry","voice":"Hissy Cat"},
+  {"text":"Voluntarily entering water. Every day. With no threat present.","category":"judgy","voice":"Feral Cat"},
+  {"text":"You put fabric on your body so other humans with fabric think you have status.","category":"wise","voice":"Philosopher Cat"},
+  {"text":"I watched you stare at a glowing rectangle for seven hours then say you're tired.","category":"judgy","voice":"Detective Cat"},
+  {"text":"You drive a metal box to a building to sit inside a different building.","category":"existential","voice":"Elder Cat"},
+  {"text":"Someone told you to sit in a specific chair for eight hours and you just... do that?","category":"cold","voice":"Feral Cat"},
+  {"text":"You pay someone to take your food and bring it back hot. Fascinating species.","category":"chaotic","voice":"Philosopher Cat"},
+  {"text":"I've never seen a species voluntarily reduce its sleep and call it ambition.","category":"wise","voice":"Old Soul Cat"},
+  {"text":"You're wearing shoes. Inside. Where it's safe. Explain.","category":"judgy","voice":"Judge Cat"},
+  {"text":"You picked up your own waste. And nobody even made you.","category":"chaotic","voice":"Street Cat"},
+  {"text":"You sit in a vehicle that doesn't move for an hour to reach a building you don't want to be in. Daily.","category":"existential","voice":"Realist Cat"},
+  {"text":"They serve you food and you say thank you to the person, not to the food.","category":"wise","voice":"Philosopher Cat"},
+  {"text":"You sleep in the SAME spot every night. By CHOICE.","category":"chaotic","voice":"Chaos Cat"},
+  {"text":"You talk to the box on the wall and food appears at the door. And you think I'm the mysterious one?","category":"meta","voice":"Prophet Cat"},
+  {"text":"Saw you apologize to a chair you bumped into.","category":"judgy","voice":"Judge Cat"},
+  {"text":"You lined up. Nobody was giving out food. You lined up FOR NOTHING.","category":"angry","voice":"Feral Cat"},
+  {"text":"Saw you type something, delete it, type it again, delete it, stare at the ceiling. The ceiling doesn't have answers either.","category":"cold","voice":"Detective Cat"},
+  {"text":"You reorganized the same objects in the same space and called it productive.","category":"judgy","voice":"Unimpressed Cat"},
+  {"text":"You waved at someone who wasn't waving at you. I would never recover.","category":"cold","voice":"Diva Cat"},
+  {"text":"You keep making eye contact with strangers and then immediately looking away. Pick a lane.","category":"judgy","voice":"Badass Cat"},
+  {"text":"I sat on someone's lap without asking and they loved it. You tried that on the subway and it was a situation.","category":"chaotic","voice":"Flirt Cat"},
+  {"text":"You wrapped a gift. Just so someone could destroy the wrapping.","category":"existential","voice":"Philosopher Cat"},
+  {"text":"You invite people into your home and then silently wish they'd leave.","category":"wise","voice":"Reluctant Therapist Cat"},
+  {"text":"Small talk. The bravest act of human fiction.","category":"cold","voice":"Pensive Cat"},
+  {"text":"You're concerned about what you look like while unconscious. I will never understand this species.","category":"judgy","voice":"Judge Cat"}
+]
+</script>
+<script>
+const data=JSON.parse(document.getElementById('d').textContent);const D={};const el=document.getElementById('items');data.forEach((d,i)=>{el.innerHTML+=`<div class="item" id="i${i}">${d.voice?`<div class="voice">${d.voice}</div>`:''}<div class="cat">${d.category}</div><div class="text" id="t${i}">${d.text}</div><div class="actions"><button class="btn bk" onclick="dec(${i},'keep')">KEEP</button><button class="btn bc" onclick="dec(${i},'cut')">CUT</button><button class="btn be" onclick="dec(${i},'edit')">EDIT</button></div><div class="ea" id="e${i}"><textarea>${d.text}</textarea><button class="btn bk" onclick="sav(${i})">Save</button></div></div>`;});document.getElementById('pc').textContent=data.length;function dec(i,x){D[i]={d:x,text:document.getElementById('t'+i).textContent,cat:data[i].category};if(x==='edit'){document.getElementById('e'+i).style.display='block';return;}document.getElementById('i'+i).className='item '+(x==='keep'?'kept':'cut');upd();}function sav(i){const t=document.querySelector('#e'+i+' textarea').value;D[i]={d:'edit',text:t,cat:data[i].category};document.getElementById('i'+i).className='item edited';document.getElementById('t'+i).textContent=t;document.getElementById('e'+i).style.display='none';upd();}function upd(){const v=Object.values(D);document.getElementById('kc').textContent=v.filter(x=>x.d==='keep').length;document.getElementById('cc').textContent=v.filter(x=>x.d==='cut').length;document.getElementById('ec').textContent=v.filter(x=>x.d==='edit').length;document.getElementById('pc').textContent=data.length-v.length;const k=v.filter(x=>x.d==='keep'||x.d==='edit').map(x=>({text:x.text,category:x.cat}));document.getElementById('ej').textContent=JSON.stringify(k,null,2);}function copy(){navigator.clipboard.writeText(document.getElementById('ej').textContent);event.target.textContent='Copied!';setTimeout(()=>event.target.textContent='Copy JSON',2000);}
+</script>
+</body></html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 17: Spock Observes Humans | MaybeCat Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+  .header h1 { font-size: 1.4em; color: #fff; margin-bottom: 5px; }
+  .header .subtitle { color: #888; font-size: 0.85em; margin-bottom: 10px; }
+  .stats { display: flex; gap: 20px; font-size: 0.9em; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .axis-declaration { background: #16213e; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 30px; font-size: 0.85em; line-height: 1.6; }
+  .axis-declaration strong { color: #4ecca3; }
+
+  .response-card { background: #16213e; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 15px; transition: border-color 0.2s; }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-number { color: #666; font-size: 0.75em; margin-bottom: 8px; }
+  .response-text { font-size: 1.15em; line-height: 1.5; color: #fff; margin-bottom: 5px; }
+  .response-meta { font-size: 0.75em; color: #666; margin-bottom: 12px; font-style: italic; }
+  .response-cat { font-size: 0.75em; color: #4ecca3; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+  .btn { border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 0.85em; font-weight: bold; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area { display: none; width: 100%; margin-top: 10px; }
+  .edit-area textarea { width: 100%; background: #0f1629; color: #fff; border: 1px solid #ffd93d; border-radius: 5px; padding: 10px; font-family: Georgia, serif; font-size: 1em; resize: vertical; min-height: 60px; }
+  .edit-area .btn { margin-top: 8px; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border: 1px solid #333; border-radius: 8px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 1.1em; }
+  .export-section pre { background: #0f1629; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.8em; max-height: 500px; overflow-y: auto; white-space: pre-wrap; }
+  .btn-copy { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Batch 17: Spock Observes Humans</h1>
+  <div class="subtitle">40 responses | Started from specific behaviors, not universal answers | Spock just reports what he sees</div>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="stat-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="stat-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pendingCount">40</span>/40</span>
+  </div>
+</div>
+
+<div class="axis-declaration">
+  <strong>METHOD:</strong> Started from 40 specific human behaviors. Spock-cat just reports what it sees.<br>
+  <strong>NO:</strong> Universal answers, inversions, scaffolds, rehearsal crutch.<br>
+  <strong>YES:</strong> Scenes. Pictures. The observation IS the whole thing.
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h2>Export (kept + edited responses)</h2>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+  <pre id="exportJson">[]</pre>
+</div>
+
+<script>
+const responses = [
+  { text: "Emergency procurement of a non-functional fabric mammal. Crisis management.", category: "judgy", scene: "Someone buying a giant teddy bear at CVS at 10pm on Feb 13" },
+  { text: "Surveillance continues. Subject unaware. Or aware. Both concerning.", category: "cold", scene: "Scrolling through an ex's Instagram stories" },
+  { text: "Two humans sharing a table and nothing else.", category: "cold", scene: "Couple at dinner both on their phones" },
+  { text: "The vehicle is serving as a decompression chamber.", category: "existential", scene: "Crying in a parked car outside a restaurant" },
+  { text: "Self-pollination. Efficient.", category: "cold", scene: "Buying yourself flowers" },
+  { text: "Simultaneously attending one date while shopping for the next.", category: "judgy", scene: "Swiping a dating app during Valentine's dinner" },
+  { text: "The pauses contain more information than the sentences between them.", category: "wise", scene: "Awkward first date silences" },
+  { text: "Fourteen cards evaluated. None sufficiently represented the emotion.", category: "judgy", scene: "Reading cards, putting them back, reading another" },
+  { text: "Scrolling backward through messages. The answers haven't changed.", category: "cold", scene: "Re-reading old text conversations alone" },
+  { text: "The concealment suggests awareness the behavior is inappropriate. Proceeding anyway.", category: "judgy", scene: "Checking phone under the table at dinner" },
+  { text: "Photograph captured. Intimacy simulation complete. Resume default behavior.", category: "cold", scene: "Couple takes a photo then immediately goes back to not talking" },
+  { text: "Full presentation. No audience.", category: "cold", scene: "Got dressed up but eating alone at the bar" },
+  { text: "Bought two steaks. Put one back.", category: "heartfelt", scene: "Shopping for dinner, adjusting from two portions to one" },
+  { text: "The empty chair has been checked four times. Still empty.", category: "heartfelt", scene: "Waiting at a reservation for 2, alone, watching the door" },
+  { text: "Hostility at reduced volume. The server is not fooled.", category: "cold", scene: "Couple whisper-arguing so the waiter doesn't hear" },
+  { text: "Application deleted. Application reinstalled. Elapsed time: forty minutes.", category: "cold", scene: "Deleting a dating app then redownloading it" },
+  { text: "Brief emotional discharge, then returning to the performance.", category: "cold", scene: "Crying in the restaurant bathroom then going back to the table" },
+  { text: "Purchased. Returned. The receipt says eight hours.", category: "cold", scene: "Buying lingerie and returning it the same day" },
+  { text: "Physical contact maintained despite visible discomfort. Protocol, presumably.", category: "cold", scene: "Couple holding hands but looking miserable" },
+  { text: "Consuming the holiday alone in a parking lot. By choice, reportedly.", category: "judgy", scene: "Stress-eating chocolate in a parking lot" },
+  { text: "Broadcasting affection to a group eliminates the risk of individual rejection.", category: "wise", scene: "Sending 'Happy Valentine's Day' in a group chat" },
+  { text: "The inbox has not changed in ninety seconds. Or the ninety before that.", category: "cold", scene: "Refreshing text messages waiting for a reply" },
+  { text: "Weaponized packaging.", category: "cold", scene: "Using a ring box for earrings" },
+  { text: "The clock has been consulted seven times. They're not coming.", category: "cold", scene: "Alone at a bar, keeps checking the time" },
+  { text: "Coordinated camouflage. Unclear predator.", category: "cold", scene: "Couple in matching outfits" },
+  { text: "A reservation was made, unmade, and mourned. All steps were solo.", category: "heartfelt", scene: "Making a dinner reservation and then cancelling it" },
+  { text: "Scheduled spontaneity. 7:00 PM.", category: "judgy", scene: "Setting an alarm labeled 'be romantic'" },
+  { text: "The search query answers itself.", category: "cold", scene: "Googling 'is it too late to send flowers'" },
+  { text: "One dessert, shared. One bill, divided.", category: "cold", scene: "Couple shares dessert but splits the check" },
+  { text: "Observing fictional humans succeed at the thing you're avoiding.", category: "existential", scene: "Watching a rom-com alone wrapped in a blanket" },
+  { text: "The price has been asked three times. The question is not about money.", category: "wise", scene: "At a jewelry store, keeps asking how much" },
+  { text: "Full preparation. Zero departure. The outfit deserved better.", category: "cold", scene: "Got dressed up to stay home" },
+  { text: "The dog cannot read. The card is for you.", category: "heartfelt", scene: "Buying a Valentine's card for their dog" },
+  { text: "Pre-entry emotional calibration. Duration: two songs.", category: "existential", scene: "Sitting in car listening to sad music before going inside" },
+  { text: "The smile was installed three seconds before the server arrived.", category: "cold", scene: "Couple just fought but performs happiness for the waiter" },
+  { text: "The unsent message has been edited nine times. It now says 'hey.'", category: "heartfelt", scene: "Drafting an 'I miss you' text and not sending it" },
+  { text: "One glass selected. Bottle purchased. Optimistic volume.", category: "chaotic", scene: "Buying wine for one" },
+  { text: "Redirecting emotional energy into deltoids. Suboptimal but functional.", category: "cold", scene: "At the gym on Valentine's night going extra hard" },
+  { text: "One of these smiles involves eye muscles.", category: "cold", scene: "Couple selfie where one person's smile doesn't reach their eyes" },
+  { text: "Fuel for the vehicle. Fuel for the human. One was planned.", category: "cold", scene: "Emergency chocolate and gas at the same stop" }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: '' }));
+
+function render() {
+  const container = document.getElementById('responses');
+  container.innerHTML = state.map((r, i) => `
+    <div class="response-card ${r.status === 'keep' ? 'kept' : r.status === 'cut' ? 'cut' : r.status === 'edit' ? 'edited' : ''}" id="card-${i}">
+      <div class="response-number">#${i + 1} / 40</div>
+      <div class="response-text">${r.status === 'edit' && r.editedText ? r.editedText : r.text}</div>
+      <div class="response-meta">${r.scene}</div>
+      <div class="response-cat">${r.category} &middot; ${countWords(r.text)}w</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${r.editedText || r.text}</textarea>
+        <select id="cat-${i}" style="margin-top:5px;background:#0f1629;color:#fff;border:1px solid #ffd93d;padding:5px;border-radius:4px;">
+          ${['mystical','nurturing','poetic','cold','angry','heartfelt','judgy','chaotic','wise','existential','demanding','meta'].map(c => `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="btn btn-keep" onclick="saveEdit(${i})" style="margin-left:8px;">SAVE</button>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function countWords(text) {
+  return text.replace(/[*]/g, '').split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`textarea-${i}`).value;
+  state[i].category = document.getElementById(`cat-${i}`).value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(r => counts[r.status] = (counts[r.status] || 0) + 1);
+  document.getElementById('keepCount').textContent = counts.keep;
+  document.getElementById('cutCount').textContent = counts.cut;
+  document.getElementById('editCount').textContent = counts.edit;
+  document.getElementById('pendingCount').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(r => r.status === 'keep' || r.status === 'edit')
+    .map(r => ({
+      text: r.status === 'edit' && r.editedText ? r.editedText : r.text,
+      category: r.category
+    }));
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

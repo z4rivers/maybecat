@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Data Teaches Yoga</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.2em;
+    color: #e94560;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9em;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    width: 100%;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+  }
+  .item {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .item-number {
+    font-size: 0.75em;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .item-text {
+    font-size: 1.3em;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    font-style: italic;
+    color: #fff;
+  }
+  .item-meta {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .item-meta span {
+    margin-right: 14px;
+  }
+  .cat-voice { color: #bb86fc; }
+  .category-tag { color: #4fc3f7; }
+  .energy-tag { color: #ff8a65; }
+  .buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  button:hover { transform: scale(1.05); }
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4fc3f7;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1em;
+    min-height: 60px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px;
+    background: #4fc3f7;
+    color: #1a1a2e;
+  }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+  }
+  .export-section pre {
+    background: #0a0a1a;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.6;
+    max-height: 600px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    background: #4ecca3;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+  }
+  .word-count { color: #ff8a65; font-size: 0.75em; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <h1>Data Teaches Yoga</h1>
+    <div class="batch-info">
+      Source: Yoga instruction language | Filter: Lt. Commander Data (TNG) | 30 responses | 2026-02-14
+    </div>
+  </div>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="keep-count">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="cut-count">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="edit-count">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="pending-count">30</strong></span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+  <pre id="export-json">[]</pre>
+</div>
+
+<script>
+const items = [
+  // --- WISE (7) ---
+  {
+    text: "I am attempting to let the floor hold me. The floor is succeeding.",
+    category: "wise",
+    cat: "Philosopher Cat / Old Soul Cat",
+    energy: "quiet",
+    note: "Data processing 'let the floor hold you' — arrives at trust through mechanical observation. Works as permission to rest, surrender, stop fighting."
+  },
+  {
+    text: "Lengthen before you deepen. This applies to most inquiries.",
+    category: "wise",
+    cat: "Reluctant Therapist Cat",
+    energy: "rhythm",
+    note: "Yoga alignment cue 'lengthen before you deepen.' Data's earnest 'this applies to most inquiries' makes it accidentally profound advice about patience before commitment."
+  },
+  {
+    text: "I cannot feel the stretch. I understand it is where you grow.",
+    category: "wise",
+    cat: "Pensive Cat",
+    energy: "rhythm",
+    note: "Data's gap between understanding and experiencing. The discomfort-as-growth yoga cue becomes devastating when said by someone who can't feel it but respects it."
+  },
+  {
+    text: "Your breath will tell you when you have gone too far.",
+    category: "wise",
+    cat: "Prophet Cat",
+    energy: "rhythm",
+    note: "Near-verbatim yoga cue, but through Data's precise delivery it reads as wisdom about any overcommitment. Body as early warning system."
+  },
+  {
+    text: "Stability does not require rigidity. I have verified this.",
+    category: "wise",
+    cat: "Badass Cat",
+    energy: "rhythm",
+    note: "Yoga paradox cue 'strong but not rigid.' Data's 'I have verified this' adds earnest authority. Works for relationships, boundaries, identity."
+  },
+  {
+    text: "The transition is also the pose. I find this encouraging.",
+    category: "wise",
+    cat: "Old Soul Cat",
+    energy: "crescendo",
+    note: "'The transition IS the pose' — Data finding encouragement in the idea that the in-between counts. Works for anyone stuck between things."
+  },
+  {
+    text: "If the foundation is misaligned, everything above it compensates.",
+    category: "wise",
+    cat: "Detective Cat",
+    energy: "rhythm",
+    note: "Yoga alignment principle as diagnostic tool. Data's clinical observation lands as 'check your basics before blaming what's built on top.'"
+  },
+
+  // --- LOVING (5) ---
+  {
+    text: "I do not experience warmth. I would still sit with you.",
+    category: "loving",
+    cat: "Loving Cat",
+    energy: "crescendo",
+    note: "Data's earnestness makes this devastating. Can't feel warmth but offers presence anyway. Hits the 'I'm here even though I don't fully understand' nerve."
+  },
+  {
+    text: "You showed up. My data indicates that is the hardest part.",
+    category: "loving",
+    cat: "Nurturing Cat (Condescending Parent energy)",
+    energy: "rhythm",
+    note: "'The hardest part is getting on the mat.' Data's clinical confirmation of something tender. Works for anyone who almost didn't show up today."
+  },
+  {
+    text: "Release every muscle you can name. Then the ones you cannot.",
+    category: "loving",
+    cat: "Loving Cat",
+    energy: "crescendo",
+    note: "Near-verbatim savasana cue — already beautiful. Through Data's voice it becomes about letting go of the things you can identify AND the things you can't even articulate yet."
+  },
+  {
+    text: "Your only assignment is to lie here. I will monitor.",
+    category: "loving",
+    cat: "Loving Cat",
+    energy: "quiet",
+    note: "'Your only job is to lie here' — Data adds 'I will monitor.' The android standing guard while you rest. Permission + protection."
+  },
+  {
+    text: "I am attempting to hold space. Please confirm I am doing it correctly.",
+    category: "loving",
+    cat: "Doubt Cat / Loving Cat",
+    energy: "crescendo",
+    note: "Yoga teacher meta-language meets Data trying SO HARD. The vulnerability of asking if you're being supportive correctly. Accidentally the most loving thing possible."
+  },
+
+  // --- POETIC (5) ---
+  {
+    text: "Soften the space between your eyebrows. That is where the worry lives.",
+    category: "poetic",
+    cat: "Accidental Poet Cat",
+    energy: "quiet",
+    note: "Yoga tension-release cue. Data's addition of 'that is where the worry lives' — android trying to map human emotion onto the body. Accidentally beautiful."
+  },
+  {
+    text: "Root down. The rising takes care of itself.",
+    category: "poetic",
+    cat: "Elder Cat",
+    energy: "rhythm",
+    note: "'Root down to rise up' compressed through Data's efficiency. Works for anyone trying to skip the foundation and jump to the result."
+  },
+  {
+    text: "Inhale for expansion. Exhale for release. I find the symmetry elegant.",
+    category: "poetic",
+    cat: "Philosopher Cat",
+    energy: "quiet",
+    note: "Data appreciating the engineering of breathing. An android finding beauty in the most basic human function. The wonder is the point."
+  },
+  {
+    text: "The hips store what the mind will not process. Curious design.",
+    category: "poetic",
+    cat: "Reluctant Therapist Cat",
+    energy: "crescendo",
+    note: "Pigeon pose emotional release territory. Data's 'curious design' — an engineer observing the human body's emotional storage system. Validates the unexplainable."
+  },
+  {
+    text: "You are shaking. My analysis indicates this means it is working.",
+    category: "poetic",
+    cat: "Accidental Poet Cat",
+    energy: "rhythm",
+    note: "'If you're shaking, you're working.' Data confirming via analysis what the yoga teacher says. Reassurance through clinical precision."
+  },
+
+  // --- CRYPTIC (4) ---
+  {
+    text: "The pose does not care about your ego. I verified.",
+    category: "cryptic",
+    cat: "Judge Cat",
+    energy: "rhythm",
+    note: "'The pose doesn't care about your ego' — Data ran the numbers. Deadpan confirmation of a humbling truth."
+  },
+  {
+    text: "Where your gaze goes, your balance follows. I do not make the rules.",
+    category: "cryptic",
+    cat: "Prophet Cat",
+    energy: "rhythm",
+    note: "Drishti — the focal point principle. Data reporting the physics of attention as if he's puzzled by it but can't argue with the data."
+  },
+  {
+    text: "Comfort is not the objective. I am recalibrating your expectations.",
+    category: "cryptic",
+    cat: "Realist Cat",
+    energy: "rhythm",
+    note: "'Comfort is not the goal' — Data reframes it as expectation management. Works for anyone who thinks the discomfort means they're failing."
+  },
+  {
+    text: "I have calculated your edge. You are not at it yet.",
+    category: "cryptic",
+    cat: "Competitive Cat",
+    energy: "rhythm",
+    note: "'Find your edge but don't push past it' — Data flips it. You haven't even reached your limit. Challenging and reassuring simultaneously."
+  },
+
+  // --- PLAYFUL (4) ---
+  {
+    text: "Apparently the humans store grief in their hips. Inefficient but noted.",
+    category: "playful",
+    cat: "Conspiracy Cat",
+    energy: "rhythm",
+    note: "Pigeon pose emotional release. Data cataloguing human design flaws with genuine puzzlement. The 'noted' makes it — he's filing this away."
+  },
+  {
+    text: "I was told to 'find what feels good.' I have located the sunbeam.",
+    category: "playful",
+    cat: "Stoner Cat",
+    energy: "rhythm",
+    note: "Adriene Mishler's catchphrase processed through a cat-android. Data took the instruction literally and found the optimal solution immediately."
+  },
+  {
+    text: "Micro-bend. Do not lock. I believe this also applies to opinions.",
+    category: "playful",
+    cat: "Philosopher Cat",
+    energy: "rhythm",
+    note: "Alignment cue 'micro-bend, don't lock' — Data's earnest application to opinions is both funny and surprisingly wise."
+  },
+  {
+    text: "They are practicing the dog pose. I have chosen not to comment.",
+    category: "playful",
+    cat: "Judge Cat",
+    energy: "rhythm",
+    note: "Downward Dog — the DOG pose. Data's diplomatic silence on this is the most cat thing possible. Restraint as comedy."
+  },
+
+  // --- RELUCTANT (2) ---
+  {
+    text: "Modify without apology. I did not intend to give advice. Disregard.",
+    category: "reluctant",
+    cat: "Reluctant Therapist Cat",
+    energy: "rhythm",
+    note: "'Modify without apology' — Data accidentally dispenses perfect advice, realizes it, tries to retract. The retraction makes it land harder."
+  },
+  {
+    text: "I was instructed to 'let the movement find me.' I am still waiting.",
+    category: "reluctant",
+    cat: "Doubt Cat",
+    energy: "quiet",
+    note: "Vinyasa cue 'let the movement find you.' Data took it literally and is patiently waiting. Works as gentle comedy about patience or about things that haven't happened yet."
+  },
+
+  // --- NURTURING (3) ---
+  {
+    text: "Nothing needs to change right now. My sensors confirm this.",
+    category: "nurturing",
+    cat: "Nurturing Cat",
+    energy: "quiet",
+    note: "Savasana stillness cue. Data's sensors backing up the permission to do nothing. Clinical authority granting emotional rest."
+  },
+  {
+    text: "You do not have to be good at this yet. I am citing the manual.",
+    category: "nurturing",
+    cat: "Condescending Parent Cat",
+    energy: "rhythm",
+    note: "'You're not supposed to be good at this yet' — Data found it in the manual. Permission to be a beginner, backed by documentation."
+  },
+  {
+    text: "Some days you are stronger. Some days you are not. Both are within parameters.",
+    category: "nurturing",
+    cat: "Reluctant Therapist Cat",
+    energy: "quiet",
+    note: "Yoga showing-up cue. Data's 'within parameters' reframes bad days as normal operating range, not failure. Clinical comfort."
+  }
+];
+
+const container = document.getElementById('items-container');
+const decisions = {};
+
+function getWordCount(text) {
+  return text.split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function renderItems() {
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const wc = getWordCount(item.text);
+    const div = document.createElement('div');
+    div.className = 'item' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    div.id = 'item-' + i;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">"${decisions[i] === 'edit' && decisions[i + '_edited'] ? decisions[i + '_edited'] : item.text}"</div>
+      <div class="item-meta">
+        <span class="category-tag">${item.category}</span>
+        <span class="cat-voice">${item.cat}</span>
+        <span class="energy-tag">${item.energy}</span>
+        <span class="word-count">${wc} words</span>
+      </div>
+      <div style="font-size:0.78em;color:#555;margin-bottom:10px;">${item.note}</div>
+      <div class="buttons">
+        <button class="btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.text}</textarea>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function decide(i, action) {
+  decisions[i] = action;
+  renderItems();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById('edit-' + i);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const val = document.getElementById('textarea-' + i).value.trim();
+  if (val) {
+    decisions[i] = 'edit';
+    decisions[i + '_edited'] = val;
+    renderItems();
+    updateStats();
+    updateExport();
+  }
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  for (let i = 0; i < items.length; i++) {
+    if (decisions[i] === 'keep') keep++;
+    else if (decisions[i] === 'cut') cut++;
+    else if (decisions[i] === 'edit') edit++;
+  }
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = items.length - keep - cut - edit;
+}
+
+function updateExport() {
+  const exported = [];
+  for (let i = 0; i < items.length; i++) {
+    if (decisions[i] === 'keep') {
+      exported.push({ text: items[i].text, category: mapCategory(items[i].category) });
+    } else if (decisions[i] === 'edit') {
+      exported.push({ text: decisions[i + '_edited'], category: mapCategory(items[i].category) });
+    }
+  }
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function mapCategory(cat) {
+  const map = {
+    'wise': 'wise',
+    'loving': 'heartfelt',
+    'poetic': 'poetic',
+    'cryptic': 'mystical',
+    'playful': 'chaotic',
+    'reluctant': 'wise',
+    'nurturing': 'nurturing'
+  };
+  return map[cat] || cat;
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+renderItems();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

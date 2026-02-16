@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 28: Medical Oddities — Historical Symptoms & Weird Side Effects</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+.stats-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 15px 20px; border-bottom: 2px solid #0f3460;
+  display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+}
+.stat { font-size: 14px; }
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.batch-title { font-size: 18px; font-weight: bold; color: #fff; margin-right: auto; }
+
+.card {
+  background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  border: 1px solid #0f3460; transition: border-color 0.3s;
+}
+.card.kept { border-color: #4ecca3; }
+.card.cut { border-color: #e94560; opacity: 0.5; }
+.card.edited { border-color: #ffd93d; }
+
+.response-text { font-size: 20px; line-height: 1.5; margin-bottom: 8px; color: #fff; }
+.response-category { font-size: 12px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.response-source { font-size: 11px; color: #9b59b6; margin-bottom: 12px; font-style: italic; }
+.response-list { font-size: 11px; color: #e67e22; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+  font-weight: 600; font-size: 13px; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn:hover { transform: scale(1.05); }
+.btn.active { outline: 3px solid #fff; }
+
+.edit-area {
+  width: 100%; margin-top: 10px; padding: 10px; background: #0f3460;
+  color: #fff; border: 1px solid #ffd93d; border-radius: 6px;
+  font-size: 16px; display: none; resize: vertical; min-height: 60px;
+}
+.edit-area.visible { display: block; }
+
+.export-section {
+  margin-top: 40px; padding: 20px; background: #16213e;
+  border-radius: 12px; border: 1px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 10px; }
+.export-block {
+  background: #0f3460; padding: 15px; border-radius: 8px;
+  font-family: monospace; font-size: 13px; white-space: pre-wrap;
+  max-height: 400px; overflow-y: auto; cursor: pointer; color: #e0e0e0;
+}
+.copy-btn {
+  margin-top: 10px; padding: 10px 20px; background: #4ecca3;
+  color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="stats-header">
+  <div class="batch-title">Batch 28: Medical Oddities (95)</div>
+  <div class="stat stat-keep">KEEP: <span id="keep-count">0</span></div>
+  <div class="stat stat-cut">CUT: <span id="cut-count">0</span></div>
+  <div class="stat stat-edit">EDIT: <span id="edit-count">0</span></div>
+  <div class="stat stat-pending">PENDING: <span id="pending-count">95</span></div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <h2>Export JSON (Keepers Only)</h2>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  // === LIST 1: HISTORICAL MEDICAL — Victorian/Archaic Diagnoses ===
+  { text: "Suffering from the vapours.", category: "existential", source: "Victorian diagnosis — catchall for women feeling faint, anxious, or emotional", list: "Historical" },
+  { text: "A case of green sickness.", category: "mystical", source: "16th-17th c. diagnosis for lovesick/anemic young women (chlorosis)", list: "Historical" },
+  { text: "Wandering womb.", category: "chaotic", source: "Ancient Greek / Hippocrates — the uterus was believed to roam the body causing symptoms", list: "Historical" },
+  { text: "Diagnosed with nostalgia.", category: "existential", source: "17th c. — nostalgia was a real medical diagnosis, especially for soldiers. Potentially fatal.", list: "Historical" },
+  { text: "Torpor of the liver.", category: "cold", source: "Victorian diagnosis — vague abdominal complaints", list: "Historical" },
+  { text: "Brain fever.", category: "chaotic", source: "19th c. catchall — any illness with fever and mental disturbance", list: "Historical" },
+  { text: "An excess of black bile.", category: "existential", source: "Humoral medicine — melancholia caused by too much black bile", list: "Historical" },
+  { text: "Suppressed perspiration.", category: "cold", source: "Victorian cause of death — sweat that didn't happen was believed dangerous", list: "Historical" },
+  { text: "Visitation of God.", category: "mystical", source: "17th-18th c. death certificate entry — unexplained death attributed to divine will", list: "Historical" },
+  { text: "Rising of the lights.", category: "mystical", source: "Old English diagnosis — believed to be lungs rising in the chest (croup/respiratory illness)", list: "Historical" },
+  { text: "Mortification.", category: "existential", source: "Historical term for gangrene/tissue death — also: embarrassment so severe it's medical", list: "Historical" },
+  { text: "Suffering an immoderate flux.", category: "chaotic", source: "Historical medical — excessive discharge of any bodily fluid", list: "Historical" },
+  { text: "Congestion of the brain.", category: "wise", source: "19th c. diagnosis — too much blood in the head", list: "Historical" },
+  { text: "Inflammation of the passions.", category: "demanding", source: "Victorian — emotional excess treated as physical illness", list: "Historical" },
+  { text: "A general decay of nature.", category: "existential", source: "18th c. death certificate — body just giving up, no specific cause", list: "Historical" },
+  { text: "Chronic hysteria with occasional fits.", category: "chaotic", source: "Victorian psychiatric diagnosis", list: "Historical" },
+  { text: "An overabundance of sanguine humour.", category: "chaotic", source: "Humoral medicine — too much blood, leading to excessive optimism/impulsiveness", list: "Historical" },
+  { text: "Excessive animal spirits.", category: "chaotic", source: "17th-18th c. — vital energy coursing too energetically through the nerves", list: "Historical" },
+
+  // === LIST 1: Trans-Allegheny Asylum Admission Reasons (1864-1889) ===
+  { text: "Admitted for disappointed love.", category: "heartfelt", source: "Trans-Allegheny Asylum admission records, 1864-1889", list: "Historical" },
+  { text: "Admitted for novel reading.", category: "judgy", source: "Trans-Allegheny Asylum — excessive fiction reading as cause of insanity", list: "Historical" },
+  { text: "Admitted for laziness.", category: "judgy", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for egotism.", category: "judgy", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for gathering in the head.", category: "mystical", source: "Trans-Allegheny Asylum — unclear what this even means", list: "Historical" },
+  { text: "Admitted for bad whiskey.", category: "chaotic", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for imaginary female trouble.", category: "cold", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for political excitement.", category: "chaotic", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for over-study of religion.", category: "mystical", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for superstition.", category: "mystical", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for dissolute habits.", category: "judgy", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for excessive tobacco use.", category: "judgy", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for religious enthusiasm.", category: "chaotic", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for domestic trouble.", category: "cold", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for marriage of son.", category: "cold", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for mental excitement.", category: "chaotic", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for fits and desertion of husband.", category: "chaotic", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+  { text: "Admitted for fever and jealousy.", category: "demanding", source: "Trans-Allegheny Asylum admission records", list: "Historical" },
+
+  // === LIST 1: Specific Historical Conditions ===
+  { text: "Bicycle face.", category: "judgy", source: "1890s — doctors warned cycling gave women a permanent anxious expression", list: "Historical" },
+  { text: "Railway spine.", category: "chaotic", source: "Victorian diagnosis — nervous damage from the vibrations of train travel", list: "Historical" },
+  { text: "Soldier's heart.", category: "heartfelt", source: "Civil War era — what we now call PTSD/anxiety, named for cardiac symptoms", list: "Historical" },
+  { text: "Masturbatory insanity.", category: "chaotic", source: "19th c. psychiatric diagnosis — self-explanatory and widely feared", list: "Historical" },
+  { text: "Moral insanity.", category: "judgy", source: "Victorian psychiatry — someone whose behavior was unacceptable but intellect intact", list: "Historical" },
+  { text: "Suffering from an overheated brain.", category: "chaotic", source: "19th c. medical diagnosis", list: "Historical" },
+  { text: "Dropsy of the brain.", category: "existential", source: "Historical — fluid accumulation in the skull (hydrocephalus)", list: "Historical" },
+  { text: "A putrid sore throat.", category: "cold", source: "18th c. term for severe tonsillitis/diphtheria", list: "Historical" },
+  { text: "Worm fit.", category: "chaotic", source: "Colonial era — convulsions attributed to intestinal worms", list: "Historical" },
+  { text: "Falling sickness.", category: "mystical", source: "Medieval term for epilepsy — once attributed to demonic possession", list: "Historical" },
+  { text: "King's Evil.", category: "mystical", source: "Medieval — scrofula (TB of lymph nodes), believed curable by royal touch", list: "Historical" },
+
+  // === LIST 1: First Merck Manual Recommendations (1899) ===
+  { text: "For angina: cocaine.", category: "chaotic", source: "First Merck Manual, 1899", list: "Historical" },
+  { text: "For constipation: strychnine.", category: "chaotic", source: "First Merck Manual, 1899", list: "Historical" },
+  { text: "For insomnia: coffee.", category: "chaotic", source: "First Merck Manual, 1899 (paradoxical)", list: "Historical" },
+  { text: "For asthma: cigarettes.", category: "chaotic", source: "19th century medical recommendation", list: "Historical" },
+  { text: "For melancholy: mercury.", category: "mystical", source: "Historical apothecary recommendation", list: "Historical" },
+  { text: "For hysteria: vigorous horseback riding.", category: "chaotic", source: "Victorian medical treatment", list: "Historical" },
+
+  // === LIST 1: Archaic Disease Names ===
+  { text: "The bloody flux.", category: "demanding", source: "Historical term for dysentery", list: "Historical" },
+  { text: "St. Vitus' Dance.", category: "chaotic", source: "Medieval — chorea, involuntary movement disorder", list: "Historical" },
+  { text: "The English Sweat.", category: "cold", source: "Tudor-era mysterious epidemic that killed within hours", list: "Historical" },
+
+  // === LIST 2: MODERN SIDE EFFECTS — Behavioral/Impulse Control ===
+  { text: "May cause pathological gambling.", category: "chaotic", source: "Dopamine agonists (Parkinson's drugs like ropinirole/pramipexole) — FDA-listed", list: "Modern" },
+  { text: "May cause compulsive shopping.", category: "chaotic", source: "Dopamine agonists — FDA-listed behavioral side effect", list: "Modern" },
+  { text: "May cause sleep driving.", category: "chaotic", source: "Ambien (zolpidem) — documented cases of driving while asleep", list: "Modern" },
+  { text: "May cause cooking while asleep.", category: "chaotic", source: "Ambien (zolpidem) — FDA warning, complex sleep behaviors", list: "Modern" },
+  { text: "May cause increased interest in sexual activity.", category: "demanding", source: "Dopamine agonists — FDA-listed compulsive behavior", list: "Modern" },
+  { text: "May cause compulsive eating.", category: "demanding", source: "Dopamine agonists — hyperphagia as documented side effect", list: "Modern" },
+  { text: "May cause aggressive behavior toward inanimate objects.", category: "chaotic", source: "Chantix (varenicline) — post-market reports", list: "Modern" },
+
+  // === LIST 2: Sensory/Perception Changes ===
+  { text: "May cause blue vision.", category: "mystical", source: "Viagra (sildenafil) — cyanopsia, everything looks blue-tinted", list: "Modern" },
+  { text: "May permanently change your eye color.", category: "mystical", source: "Latisse/bimatoprost (eyelash growth) — irreversible iris darkening", list: "Modern" },
+  { text: "May cause purple urine.", category: "chaotic", source: "Purple urine bag syndrome — urinary catheter + certain bacteria", list: "Modern" },
+  { text: "May cause your tears to change color.", category: "mystical", source: "Rifampin (antibiotic) — turns all body fluids orange/red", list: "Modern" },
+  { text: "May cause musical hallucinations.", category: "mystical", source: "Multiple medications — hearing music that isn't there", list: "Modern" },
+
+  // === LIST 2: Emotional/Psychological ===
+  { text: "May cause a sense of impending doom.", category: "existential", source: "IV iron infusions, ACE inhibitors, some antibiotics — FDA-listed", list: "Modern" },
+  { text: "May cause inability to cry.", category: "cold", source: "SSRIs — emotional blunting, documented", list: "Modern" },
+  { text: "May cause excessive yawning.", category: "cold", source: "SSRIs (especially paroxetine) — very common side effect", list: "Modern" },
+  { text: "May cause a feeling of unreality.", category: "existential", source: "Multiple medications — derealization/depersonalization", list: "Modern" },
+  { text: "May cause inappropriate happiness.", category: "chaotic", source: "Some anticonvulsants — euphoria listed as side effect", list: "Modern" },
+  { text: "May cause vivid, disturbing dreams.", category: "mystical", source: "Chantix, mefloquine, beta blockers — FDA warnings", list: "Modern" },
+
+  // === LIST 2: Physical Oddities ===
+  { text: "May cause your fingerprints to disappear.", category: "mystical", source: "Capecitabine (chemo drug) — hand-foot syndrome erases fingerprints", list: "Modern" },
+  { text: "May permanently turn your skin blue.", category: "mystical", source: "Colloidal silver — argyria, irreversible blue-gray skin", list: "Modern" },
+  { text: "Thinking abnormal.", category: "existential", source: "Actual listed side effect on FDA labels — wonderfully vague", list: "Modern" },
+  { text: "May cause spontaneous orgasm.", category: "chaotic", source: "Some SSRIs — documented paradoxical effect, especially with yawning", list: "Modern" },
+  { text: "May cause uncontrollable tongue movements.", category: "chaotic", source: "Antipsychotics — tardive dyskinesia", list: "Modern" },
+  { text: "May cause your sweat to smell like maple syrup.", category: "mystical", source: "Fenugreek supplements — widely reported", list: "Modern" },
+  { text: "May cause black hairy tongue.", category: "chaotic", source: "Multiple antibiotics — lingua villosa nigra, actual condition", list: "Modern" },
+  { text: "May cause sudden explosive diarrhea.", category: "chaotic", source: "Olestra (fat substitute) — FDA required label warning", list: "Modern" },
+  { text: "May cause retrograde ejaculation.", category: "chaotic", source: "Alpha blockers (tamsulosin) — FDA-listed", list: "Modern" },
+
+  // === LIST 2: Paradoxical Effects ===
+  { text: "May cause insomnia. (It's a sleeping pill.)", category: "existential", source: "Some sleep medications list insomnia as a side effect", list: "Modern" },
+  { text: "May increase risk of asthma death. (It's an asthma drug.)", category: "existential", source: "LABAs (long-acting beta agonists) — FDA black box warning", list: "Modern" },
+  { text: "May cause headache. (It's a headache medication.)", category: "existential", source: "Medication overuse headache — from overusing pain relievers", list: "Modern" },
+  { text: "May cause suicidal thoughts. (It's an antidepressant.)", category: "existential", source: "SSRIs — FDA black box warning for under-25", list: "Modern" },
+  { text: "May cause weight gain. (It's a diet pill.)", category: "existential", source: "Some appetite suppressants — paradoxical rebound effect", list: "Modern" },
+
+  // === LIST 2: Truly Strange ===
+  { text: "May cause hallucinations of snakes on walls.", category: "mystical", source: "Ambien — specific recurring hallucination type reported", list: "Modern" },
+  { text: "May cause the sensation of your head stretching.", category: "chaotic", source: "Alice in Wonderland syndrome — migraines, some medications", list: "Modern" },
+  { text: "May cause you to speak with a foreign accent.", category: "chaotic", source: "Foreign accent syndrome — rare neurological side effect", list: "Modern" },
+  { text: "May cause you to see faces in everything.", category: "mystical", source: "Pareidolia — enhanced by some dopaminergic medications", list: "Modern" },
+  { text: "May cause the feeling that your teeth are dissolving.", category: "existential", source: "Some chemotherapy drugs — oral mucositis/sensory changes", list: "Modern" },
+];
+
+const decisions = new Array(items.length).fill(null);
+const editedTexts = new Array(items.length).fill(null);
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = items.map((item, i) => `
+    <div class="card" id="card-${i}">
+      <div class="response-text">${editedTexts[i] || item.text}</div>
+      <div class="response-list">${item.list}</div>
+      <div class="response-category">${item.category}</div>
+      <div class="response-source">${item.source}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${decisions[i]==='keep'?'active':''}" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut ${decisions[i]==='cut'?'active':''}" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit ${decisions[i]==='edit'?'active':''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <textarea class="edit-area ${decisions[i]==='edit'?'visible':''}" id="edit-${i}"
+        oninput="updateEdit(${i}, this.value)"
+        placeholder="Edit the text...">${editedTexts[i] || item.text}</textarea>
+    </div>
+  `).join('');
+}
+
+function decide(i, status) {
+  if (decisions[i] === status) { decisions[i] = null; }
+  else { decisions[i] = status; }
+  if (status === 'edit') {
+    const area = document.getElementById(`edit-${i}`);
+    if (area) { area.classList.toggle('visible'); }
+  }
+  updateStats(); updateCardStyles(); updateExport();
+}
+function toggleEdit(i) { decide(i, 'edit'); }
+function updateEdit(i, val) { editedTexts[i] = val; updateExport(); }
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = decisions.filter(d => d==='keep').length;
+  document.getElementById('cut-count').textContent = decisions.filter(d => d==='cut').length;
+  document.getElementById('edit-count').textContent = decisions.filter(d => d==='edit').length;
+  document.getElementById('pending-count').textContent = decisions.filter(d => d===null).length;
+}
+
+function updateCardStyles() {
+  items.forEach((_, i) => {
+    const card = document.getElementById(`card-${i}`);
+    card.className = 'card';
+    if (decisions[i] === 'keep') card.classList.add('kept');
+    if (decisions[i] === 'cut') card.classList.add('cut');
+    if (decisions[i] === 'edit') card.classList.add('edited');
+  });
+}
+
+function updateExport() {
+  const keepers = items.map((item, i) => {
+    if (decisions[i] === 'keep') return { text: item.text, category: item.category };
+    if (decisions[i] === 'edit' && editedTexts[i]) return { text: editedTexts[i], category: item.category };
+    return null;
+  }).filter(Boolean);
+  document.getElementById('export-json').textContent = JSON.stringify(keepers, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+renderCards();
+</script>
+</body>
+</html>

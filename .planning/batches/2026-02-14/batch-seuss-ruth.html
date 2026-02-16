@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Dr. Seuss meets Dr. Ruth</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #eee; font-family: Georgia, serif; padding: 20px; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; border-bottom: 2px solid #333; padding: 16px 0; z-index: 100; margin-bottom: 24px; }
+  .stats { display: flex; gap: 24px; font-size: 18px; flex-wrap: wrap; }
+  .stats span { font-weight: bold; }
+  .keep-count { color: #4ecca3; }
+  .cut-count { color: #e94560; }
+  .edit-count { color: #ffd93d; }
+  .pending-count { color: #888; }
+  h1 { font-size: 28px; margin-bottom: 8px; color: #ffd93d; }
+  h2 { font-size: 18px; margin-bottom: 16px; color: #aaa; font-weight: normal; }
+  .item { background: #16213e; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; }
+  .item.cut { border-color: #e94560; opacity: 0.5; }
+  .item.edited { border-color: #ffd93d; }
+  .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .item-num { color: #666; font-size: 14px; }
+  .category { background: #0f3460; color: #e94560; padding: 3px 10px; border-radius: 99px; font-size: 13px; }
+  .text { font-size: 22px; line-height: 1.5; margin-bottom: 16px; color: #FEF3C7; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { border: none; padding: 8px 20px; border-radius: 8px; font-size: 15px; cursor: pointer; font-family: Georgia, serif; font-weight: bold; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { margin-top: 12px; display: none; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #ffd93d; border-radius: 8px; padding: 12px; font-size: 18px; font-family: Georgia, serif; resize: vertical; min-height: 60px; }
+  .edit-area button { margin-top: 8px; }
+  .export-section { margin-top: 40px; background: #16213e; border: 1px solid #333; border-radius: 12px; padding: 20px; }
+  .export-section h3 { color: #4ecca3; margin-bottom: 12px; }
+  .export-section pre { background: #0f3460; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 14px; color: #eee; white-space: pre-wrap; max-height: 600px; overflow-y: auto; }
+  .copy-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; margin-bottom: 12px; }
+  .section-label { font-size: 14px; color: #ffd93d; text-transform: uppercase; letter-spacing: 2px; margin: 24px 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Dr. Seuss meets Dr. Ruth</h1>
+  <h2>Whimsical cadence + frank directness &bull; 40 candidates</h2>
+  <div class="stats">
+    <div>Keep: <span class="keep-count" id="keep-count">0</span></div>
+    <div>Cut: <span class="cut-count" id="cut-count">0</span></div>
+    <div>Edit: <span class="edit-count" id="edit-count">0</span></div>
+    <div>Pending: <span class="pending-count" id="pending-count">40</span></div>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h3>Export (Keepers + Edits)</h3>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json">[]</pre>
+</div>
+
+<script>
+const items = [
+  { text: "The answer's yes, but only after no.", category: "wise" },
+  { text: "You're asking the wrong species, but I'll allow it.", category: "meta" },
+  { text: "What you want and what you need are having a fight.", category: "chaotic" },
+  { text: "The trying is the thing. The rest is just confetti.", category: "heartfelt" },
+  { text: "Darling, the fear means you care. That's the good part.", category: "nurturing" },
+  { text: "Some doors lock from the inside. Check your pockets.", category: "poetic" },
+  { text: "You already decided. Now you want permission.", category: "meta" },
+  { text: "Not every mountain needs climbing. Some need circling.", category: "wise" },
+  { text: "The question contains the answer. You're just scared of it.", category: "heartfelt" },
+  { text: "I'm so mad you waited this long I could scream.", category: "angry" },
+  { text: "Sweet thing, wrong and worth it often share a bed.", category: "nurturing" },
+  { text: "The moon pulls the tide. The tide ignores the moon.", category: "poetic" },
+  { text: "This is the third time you've asked. Still maybe.", category: "meta" },
+  { text: "The wanting teaches more than the having ever will.", category: "wise" },
+  { text: "Regret comes in two flavors. Pick the interesting one.", category: "chaotic" },
+  { text: "You're brave enough already. The rest is just walking.", category: "heartfelt" },
+  { text: "Livid. But also proud. Proceed with caution.", category: "angry" },
+  { text: "Honey, uncertainty is just excitement wearing a disguise.", category: "nurturing" },
+  { text: "Some seeds grow in the dark. Give it time.", category: "poetic" },
+  { text: "A cat can't answer what you already know.", category: "meta" },
+  { text: "The path that scares you might just fit better.", category: "wise" },
+  { text: "Yes and also no and definitely maybe. Hope that helps.", category: "chaotic" },
+  { text: "What you're feeling is called being alive. It counts.", category: "heartfelt" },
+  { text: "So angry I'm purring. That's how mad I am.", category: "angry" },
+  { text: "Dear heart, the wrong choice is still a choice. You're learning.", category: "nurturing" },
+  { text: "Rain doesn't ask permission. Neither should you.", category: "poetic" },
+  { text: "You want a sign. I'm a cat. Connect the dots.", category: "meta" },
+  { text: "Clarity comes after, not before. That's the deal.", category: "wise" },
+  { text: "The universe shrugged. But I didn't. Maybe.", category: "chaotic" },
+  { text: "The risk is proof you care. That's the whole point.", category: "heartfelt" },
+  { text: "Furious you doubted yourself. Now go fix it.", category: "angry" },
+  { text: "Love, being wrong is just being early. Keep going.", category: "nurturing" },
+  { text: "Stars burn out to make new light. You know this.", category: "poetic" },
+  { text: "Asking a cat won't change the truth. But here we are.", category: "meta" },
+  { text: "The detour is the destination. Always has been.", category: "wise" },
+  { text: "If it makes sense later, does it need to now?", category: "chaotic" },
+  { text: "You showed up. That's the hardest part finished.", category: "heartfelt" },
+  { text: "Seething. But also you're right. I hate that.", category: "angry" },
+  { text: "Sweetheart, messy and meaningful come in pairs.", category: "nurturing" },
+  { text: "I'm furious you're even considering this. Do it anyway.", category: "angry" },
+];
+
+const state = items.map((item, i) => ({ ...item, id: i, status: 'pending', editedText: '' }));
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => {
+    const statusClass = item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : '';
+    const displayText = item.editedText || item.text;
+    return `
+      <div class="item ${statusClass}" id="item-${i}">
+        <div class="item-header">
+          <span class="item-num">#${i + 1}</span>
+          <span class="category">${item.category}</span>
+        </div>
+        <div class="text">${displayText}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${item.text}</textarea>
+          <button class="btn btn-keep" onclick="saveEdit(${i})">SAVE &amp; KEEP</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  if (status !== 'edit') state[i].editedText = '';
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`textarea-${i}`);
+  state[i].editedText = textarea.value.trim();
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status] = (counts[s.status] || 0) + 1);
+  document.getElementById('keep-count').textContent = counts.keep;
+  document.getElementById('cut-count').textContent = counts.cut;
+  document.getElementById('edit-count').textContent = counts.edit;
+  document.getElementById('pending-count').textContent = counts.pending;
+
+  const keepers = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({ text: s.editedText || s.text, category: s.category }));
+  document.getElementById('export-json').textContent = JSON.stringify(keepers, null, 2);
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Bob Marley Teaches Yoga</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.1rem;
+    color: #ffd93d;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    width: 100%;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 2px;
+  }
+  .item {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .item-number {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .item-text {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    font-style: italic;
+    color: #fff;
+  }
+  .item-meta {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .item-meta span {
+    background: #0f3460;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb91; }
+  .btn-keep.active { box-shadow: 0 0 10px #4ecca3; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-cut.active { box-shadow: 0 0 10px #e94560; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .btn-edit.active { box-shadow: 0 0 10px #ffd93d; }
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #ffd93d;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 6px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  .export-section pre {
+    background: #0f3460;
+    color: #4ecca3;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3dbb91; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Bob Marley Teaches Yoga</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <strong id="keep-count">0</strong></span>
+    <span class="stat-cut">CUT: <strong id="cut-count">0</strong></span>
+    <span class="stat-edit">EDIT: <strong id="edit-count">0</strong></span>
+    <span class="stat-pending">PENDING: <strong id="pending-count">30</strong></span>
+  </div>
+  <div class="batch-info">Source: Yoga instruction language | Delivery: Bob Marley voice (warm, rhythmic, revolutionary patience) | 30 responses | 2026-02-14</div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  {
+    text: "Don't hold your breath through the hard part, mon.",
+    category: "wise",
+    note: "Breath cue + Marley warmth. Works for: any question about getting through something. Double read: holding back emotions."
+  },
+  {
+    text: "Soften your jaw. The fight is over.",
+    category: "nurturing",
+    note: "Tension release cue. Works for: letting go of anger, ending conflict. The body instruction IS the emotional release."
+  },
+  {
+    text: "Every little shake means it's working.",
+    category: "heartfelt",
+    note: "Marley's 'every little thing' rhythm on 'if you're shaking, you're working.' Double read: trembling/fear as sign of progress."
+  },
+  {
+    text: "Root down before you rise up. Always.",
+    category: "wise",
+    note: "Foundation cue. Revolutionary patience — you need ground beneath you first. Works for permission, ambition, starting over."
+  },
+  {
+    text: "Let the floor hold you awhile.",
+    category: "nurturing",
+    note: "Savasana surrender. Marley tenderness. Double read: let someone/something else carry the weight. Pure comfort."
+  },
+  {
+    text: "The pose you're avoiding? That's the one.",
+    category: "wise",
+    note: "Yoga hard truth + Marley's direct warmth. Works for: avoidance, procrastination, the question underneath the question."
+  },
+  {
+    text: "Breathe through it. Not around it.",
+    category: "demanding",
+    note: "Breath cue as life instruction. Don't dodge the feeling — go through. Gentle demand. Marley's 'face the truth' energy."
+  },
+  {
+    text: "Nothing to do. Nowhere to go. Rest now.",
+    category: "nurturing",
+    note: "Pure savasana = pure cat = pure Marley. Permission to stop. Works at 2 AM for anyone who needs to hear it."
+  },
+  {
+    text: "Your breath gonna tell you when you've gone too far.",
+    category: "wise",
+    note: "Yoga cue as wisdom. Marley's natural language. Double read: your body knows before your mind does. Trust it."
+  },
+  {
+    text: "Soft but not collapsed. You hear me?",
+    category: "heartfelt",
+    note: "Paradox cue. Revolutionary tenderness — be gentle without giving up. Works for: heartbreak, exhaustion, boundaries."
+  },
+  {
+    text: "Lengthen before you deepen. Every time.",
+    category: "wise",
+    note: "Alignment cue as life philosophy. Create space before going deeper. Marley patience. Works for relationships, decisions."
+  },
+  {
+    text: "The stillness is the practice, love.",
+    category: "poetic",
+    note: "Yin yoga truth + Marley's 'love' address. Doing nothing IS the work. Cat energy. Double read: being present IS enough."
+  },
+  {
+    text: "Unclench your fists. Open your palms.",
+    category: "nurturing",
+    note: "Body scan cue. Physical instruction that IS emotional instruction. From gripping to receiving. Two sentences, full revolution."
+  },
+  {
+    text: "Stay on your own mat. That's freedom.",
+    category: "wise",
+    note: "Comparison cue + Marley liberation. 'Your own mat' = your own path. Revolutionary self-focus. Works for jealousy, doubt."
+  },
+  {
+    text: "Settle in. We're gonna be here awhile.",
+    category: "heartfelt",
+    note: "Yin hold cue. Marley's patient warmth. Works for: grief, waiting, the long middle of things. Not rushing you."
+  },
+  {
+    text: "Find your edge. Don't push past it.",
+    category: "demanding",
+    note: "Classic yoga cue, pure Marley delivery. Know your limits but don't be afraid of them. Gentle demand with love underneath."
+  },
+  {
+    text: "Exhale longer than you inhale. Trust that.",
+    category: "poetic",
+    note: "Breath cue as prayer. The release is bigger than the intake. Marley's faith in letting go. Works for anxiety, control."
+  },
+  {
+    text: "You survived every hard pose so far.",
+    category: "heartfelt",
+    note: "Yoga encouragement + Marley's 'you're still standing' energy. 'Pose' works as 'situation/challenge.' Genuine comfort."
+  },
+  {
+    text: "Let the movement find you.",
+    category: "poetic",
+    note: "Flow cue. Marley's spiritual ease. Stop forcing — let it come. Works for: trying too hard, searching, waiting for answers."
+  },
+  {
+    text: "Strong but not rigid. That's the whole thing.",
+    category: "wise",
+    note: "Paradox cue. Marley's philosophy in six words and a landing. Applies to: character, relationships, principles, bodies, everything."
+  },
+  {
+    text: "Slow your breath down. Everything else follows.",
+    category: "nurturing",
+    note: "Breath cue as universal advice. Marley's rhythmic patience. Works for: panic, decisions, spiraling. The body leads the mind."
+  },
+  {
+    text: "You chose to be here. Stay with it.",
+    category: "demanding",
+    note: "Yoga tough love + Marley's steel underneath warmth. Accountability wrapped in encouragement. Don't run now."
+  },
+  {
+    text: "Release every muscle you can name. Then the ones you can't.",
+    category: "poetic",
+    note: "Savasana body scan. Marley's tender thoroughness. Double read: let go of what you know is hurting AND what you haven't faced yet."
+  },
+  {
+    text: "Modify without apology. That's your right.",
+    category: "wise",
+    note: "Yoga permission cue + Marley's liberation language. 'Your right' — revolutionary. Works for: doing things your own way."
+  },
+  {
+    text: "If you can still breathe, you can do this.",
+    category: "heartfelt",
+    note: "Yoga encouragement with Marley's genuine reassurance. The simplest bar. Works for: everything. Double read: you're alive, that's enough."
+  },
+  {
+    text: "Lean forward until you have to fly.",
+    category: "poetic",
+    note: "Crow pose cue. Marley freedom. The commitment required before the magic happens. Works for: leaps of faith, big decisions."
+  },
+  {
+    text: "Press down to lift up. That's the secret.",
+    category: "wise",
+    note: "Foundation cue. Paradox as revolution. You rise by grounding. Works for: humility, starting over, building anything real."
+  },
+  {
+    text: "Some days you bend. Some days you don't. Both valid.",
+    category: "nurturing",
+    note: "Yoga surrender truth. Marley's acceptance without pity. Works for: bad days, comparison, self-judgment. Grace."
+  },
+  {
+    text: "The transition is the whole pose, love.",
+    category: "heartfelt",
+    note: "Vinyasa wisdom. The in-between IS the thing. Marley's tender address. Works for: waiting, uncertainty, the messy middle."
+  },
+  {
+    text: "Where your gaze goes, everything follows.",
+    category: "wise",
+    note: "Drishti cue. Marley's vision. What you focus on determines your balance, your direction, your life. Simple, true, rhythmic."
+  }
+];
+
+const container = document.getElementById('items-container');
+const state = items.map((item, i) => ({
+  ...item,
+  id: i,
+  status: 'pending',
+  editedText: ''
+}));
+
+function render() {
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = `item ${item.status === 'keep' ? 'kept' : ''} ${item.status === 'cut' ? 'cut' : ''} ${item.status === 'edit' ? 'edited' : ''}`;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">${item.status === 'edit' && item.editedText ? item.editedText : item.text}</div>
+      <div class="item-meta">
+        <span>${item.category}</span>
+        <span style="background:none;color:#555;padding:0;">${item.note}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.status === 'keep' ? 'active' : ''}" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.status === 'cut' ? 'active' : ''}" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.status === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area ${item.status === 'edit' || item._editOpen ? 'visible' : ''}" id="edit-area-${i}">
+        <textarea id="edit-text-${i}" placeholder="Edit the response...">${item.editedText || item.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  updateStats();
+  updateExport();
+}
+
+function setStatus(i, status) {
+  state[i].status = state[i].status === status ? 'pending' : status;
+  state[i]._editOpen = false;
+  render();
+}
+
+function toggleEdit(i) {
+  if (state[i].status === 'edit') {
+    state[i].status = 'pending';
+    state[i]._editOpen = false;
+  } else {
+    state[i]._editOpen = true;
+    state[i].status = 'edit';
+  }
+  render();
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`edit-text-${i}`);
+  state[i].editedText = textarea.value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status] = (counts[s.status] || 0) + 1);
+  document.getElementById('keep-count').textContent = counts.keep;
+  document.getElementById('cut-count').textContent = counts.cut;
+  document.getElementById('edit-count').textContent = counts.edit;
+  document.getElementById('pending-count').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({
+      text: s.status === 'edit' && s.editedText ? s.editedText : s.text,
+      category: s.category
+    }));
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

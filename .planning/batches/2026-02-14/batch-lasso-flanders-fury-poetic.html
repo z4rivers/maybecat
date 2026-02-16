@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lasso + Flanders + Fury + Poetic — MaybeCat</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: Georgia, serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.4em; color: #FBBF24; margin-bottom: 4px; }
+  .sticky-header .subtitle { font-size: 0.8em; color: #888; margin-bottom: 8px; }
+  .stats { display: flex; gap: 20px; font-size: 0.9em; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+  .section-header { color: #EC4899; font-size: 1.1em; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+  .section-desc { font-size: 0.8em; color: #888; margin-bottom: 15px; }
+  .item { background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #444; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; } .item.cut { border-left-color: #e94560; opacity: 0.5; } .item.edited { border-left-color: #ffd93d; }
+  .item-text { font-size: 1.15em; line-height: 1.4; margin-bottom: 4px; color: #FEF3C7; }
+  .item-source { font-size: 0.75em; color: #888; margin-bottom: 10px; }
+  .item-warning { font-size: 0.7em; color: #e94560; margin-bottom: 6px; }
+  .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-family: Georgia, serif; font-size: 0.85em; transition: all 0.15s; }
+  .btn-keep { background: #1a3a2a; color: #4ecca3; border: 1px solid #4ecca3; }
+  .btn-keep:hover { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #3a1a1a; color: #e94560; border: 1px solid #e94560; }
+  .btn-cut:hover { background: #e94560; color: #1a1a2e; }
+  .btn-edit { background: #3a3a1a; color: #ffd93d; border: 1px solid #ffd93d; }
+  .btn-edit:hover { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; }
+  .edit-area textarea { width: 100%; background: #0f1629; color: #FEF3C7; border: 1px solid #ffd93d; border-radius: 4px; padding: 8px; font-family: Georgia, serif; font-size: 1em; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 6px; background: #ffd93d; color: #1a1a2e; border: none; font-weight: bold; }
+  .category-select { padding: 4px 8px; background: #0f1629; color: #e0e0e0; border: 1px solid #555; border-radius: 4px; font-family: Georgia, serif; font-size: 0.8em; }
+  .export-section { margin-top: 40px; padding: 20px; background: #0f1629; border-radius: 8px; border: 1px solid #333; }
+  .export-section h2 { color: #FBBF24; margin-bottom: 10px; }
+  .export-btn { padding: 10px 24px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-family: Georgia, serif; font-size: 1em; font-weight: bold; }
+  .export-btn:hover { background: #3dbb92; }
+  .export-output { margin-top: 12px; }
+  .export-output pre { background: #1a1a2e; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 0.8em; white-space: pre-wrap; color: #4ecca3; max-height: 400px; overflow-y: auto; }
+  .copy-btn { margin-top: 8px; padding: 6px 16px; background: #FBBF24; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-family: Georgia, serif; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Lasso + Flanders + Cat Fury + Poetic</h1>
+  <div class="subtitle">Targeting thin categories: angry, meta, nurturing, poetic, existential</div>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pending-count">0</span></span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export Keepers</h2>
+  <button class="export-btn" onclick="exportKeepers()">Generate JSON</button>
+  <div class="export-output" id="export-output"></div>
+</div>
+
+<script>
+const CATEGORIES = [
+  'mystical', 'nurturing', 'poetic', 'cold', 'angry', 'heartfelt',
+  'judgy', 'chaotic', 'wise', 'existential', 'demanding', 'meta'
+];
+
+const items = [
+  // ═══════════════════════════════════════════════
+  // TED LASSO CAT — nurturing, heartfelt, angry-but-wholesome, wise-folksy
+  // ═══════════════════════════════════════════════
+  { text: "I believe in you. It's becoming a problem.", section: "Ted Lasso Cat", category: "nurturing" },
+  { text: "Not angry. Just purring really intensely at these choices.", section: "Ted Lasso Cat", category: "angry" },
+  { text: "Uncomfortable? Perfect. That's where the magic is.", section: "Ted Lasso Cat", category: "nurturing" },
+  { text: "Will sit here radiating belief until you match it.", section: "Ted Lasso Cat", category: "nurturing" },
+  { text: "You say fine. I'm a cat. I know what fine means.", section: "Ted Lasso Cat", category: "demanding" },
+  { text: "Curiosity before judgment. Harder and it matters.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Not mad you failed. Mad you stopped trying.", section: "Ted Lasso Cat", category: "angry" },
+  { text: "Will outlive your self-sabotage. I have time.", section: "Ted Lasso Cat", category: "nurturing" },
+  { text: "Uncomfortable is where you learn. Cozy is where you die.", section: "Ted Lasso Cat", category: "angry" },
+  { text: "Doing it wrong and perfectly at the same time.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Better than you're pretending to be.", section: "Ted Lasso Cat", category: "heartfelt" },
+  { text: "Like chasing a laser pointer into traffic.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Doubt is the price of belief. Keep the receipt.", section: "Ted Lasso Cat", category: "existential" },
+  { text: "That thing where you lie about being fine. Doing it again.", section: "Ted Lasso Cat", category: "heartfelt" },
+  { text: "Gonna fail at this. Good. Means you're trying.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Forgive them. Free up space to win.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Be a goldfish. Forget the failure. Keep the lesson.", section: "Ted Lasso Cat", category: "wise" },
+  { text: "Miracles are just belief with better lighting.", section: "Ted Lasso Cat", category: "nurturing" },
+
+  // ═══════════════════════════════════════════════
+  // NED FLANDERS CAT — angry-but-nice, meta, nurturing-suspicious, poetic-passive-aggressive
+  // ═══════════════════════════════════════════════
+  { text: "Well, that's certainly a choice someone could make.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Going to sit in the other room and think kind thoughts about this.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Bless your heart. Truly. You'll need it.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "I'll just pray for you. Extensively.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "How wonderfully optimistic of you to think that would work.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Not angry. Just disappointed. In a loving way.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Per my last prayer, we need to discuss this.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Tried nothing and still out of ideas for you.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "May your path be as clear as your judgment. So: foggy.", section: "Ned Flanders Cat", category: "angry" },
+  { text: "Asking a cat. The cat thinks you're lost.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "Judging you. Gently. Very, very gently.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "We're both creatures of mystery. Yours is sadder.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "The oracle doesn't hedge. Oh wait, this one absolutely does.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "A holy animal. Mostly judging your life choices.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "We're having a moment. Regretting it.", section: "Ned Flanders Cat", category: "meta" },
+  { text: "Such courage! In someone so unprepared.", section: "Ned Flanders Cat", category: "nurturing" },
+  { text: "So brave. Foolishly, perhaps, but brave.", section: "Ned Flanders Cat", category: "nurturing" },
+  { text: "Deserve good things. Statistically unlikely, but you deserve them.", section: "Ned Flanders Cat", category: "nurturing" },
+  { text: "Trust yourself! It's everyone else who should be scared.", section: "Ned Flanders Cat", category: "nurturing" },
+  { text: "In the garden of choices, you picked the weed.", section: "Ned Flanders Cat", category: "poetic" },
+  { text: "The heart wants what it wants. Usually badly.", section: "Ned Flanders Cat", category: "poetic" },
+  { text: "Bloom where you're planted. Try not to wilt immediately.", section: "Ned Flanders Cat", category: "poetic" },
+  { text: "Everything works out. Some outcomes just work harder than others.", section: "Ned Flanders Cat", category: "cold" },
+
+  // ═══════════════════════════════════════════════
+  // ADORABLE CAT FURY — self-directed tiny rage
+  // ═══════════════════════════════════════════════
+  { text: "Going to sit with my back turned for exactly three minutes.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "One slow blink. That's all.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "Knock the water glass off the table. We'll both know why.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "The tail flick means I'm furious. Also adorable.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "Sitting on the thing you need. Final answer.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "One meow. One single, withering meow.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "My back is turned. Read every angle of it.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "Silent judgment from under the bed.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "An angry pounce on nothing. Directed at your life choices.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "Stare while I knock the pen off the desk. Slowly.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "My anger is tiny, precise, and devastating in its indifference.", section: "Adorable Cat Fury", category: "angry" },
+  { text: "Hiss twice, then walk away. The exit is the point.", section: "Adorable Cat Fury", category: "angry" },
+
+  // ═══════════════════════════════════════════════
+  // POETIC CAT — haiku-adjacent, beautiful fragments, nature metaphor
+  // ═══════════════════════════════════════════════
+  { text: "The old pond. You jumped in anyway.", section: "Poetic Cat", category: "poetic" },
+  { text: "Snow falls on snow. Nobody remembers the first one.", section: "Poetic Cat", category: "poetic" },
+  { text: "The silence after a question. That's the answer.", section: "Poetic Cat", category: "poetic" },
+  { text: "Light through leaves. Fleeting. All of it fleeting.", section: "Poetic Cat", category: "poetic" },
+  { text: "Even emptiness has a sound.", section: "Poetic Cat", category: "poetic" },
+  { text: "Dawn fog burns away. So did you, eventually.", section: "Poetic Cat", category: "poetic" },
+  { text: "A moment when nothing is wrong. Recognize it while it lasts.", section: "Poetic Cat", category: "poetic" },
+  { text: "The space between heartbeats. Live there.", section: "Poetic Cat", category: "poetic" },
+  { text: "Rainwater in the palm. Hold it. You can't.", section: "Poetic Cat", category: "poetic" },
+  { text: "The ache of passing things. That's all anyone gets.", section: "Poetic Cat", category: "poetic" },
+  { text: "Everything beautiful is ending. Start there.", section: "Poetic Cat", category: "existential" },
+  { text: "The thing you're afraid of already happened to someone else.", section: "Poetic Cat", category: "existential" },
+  { text: "Nothing lasts. Not even the moment you're sure you'll remember.", section: "Poetic Cat", category: "existential" },
+  { text: "Nine lives. You get one. Choose.", section: "Poetic Cat", category: "mystical" },
+  { text: "I saw you become the person you feared. You didn't notice.", section: "Poetic Cat", category: "mystical" },
+  { text: "The answer's always been behind you.", section: "Poetic Cat", category: "mystical" },
+];
+
+const decisions = new Map();
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  decisions.forEach(d => { if (d.status === 'keep') keep++; else if (d.status === 'cut') cut++; else if (d.status === 'edit') edit++; });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = items.length - keep - cut - edit;
+}
+
+function renderItems() {
+  const container = document.getElementById('items-container');
+  let currentSection = '';
+  let html = '';
+  const descs = {
+    "Ted Lasso Cat": "Aggressive belief, folksy wisdom, disappointed-but-still-rooting-for-you. Kindness as weapon.",
+    "Ned Flanders Cat": "Passive-aggressive niceness. So polite it's threatening. Bless your heart energy.",
+    "Adorable Cat Fury": "Self-directed tiny rage. The cat is furious but it comes out adorable.",
+    "Poetic Cat": "Beautiful fragments, haiku-adjacent, nature as emotional metaphor.",
+  };
+  items.forEach((item, i) => {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      html += `<h2 class="section-header">${currentSection}</h2>`;
+      if (descs[currentSection]) html += `<p class="section-desc">${descs[currentSection]}</p>`;
+    }
+    const d = decisions.get(i);
+    const cls = d ? d.status === 'keep' ? 'kept' : d.status === 'cut' ? 'cut' : 'edited' : '';
+    const wc = item.text.split(/\s+/).length;
+    const long = wc > 15;
+    html += `<div class="item ${cls}" id="item-${i}">
+      <div class="item-text">"${item.text}"</div>
+      ${long ? `<div class="item-warning">${wc} words — over 15 limit</div>` : ''}
+      <div class="item-source">${item.section} · ${item.category} · ${wc}w</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        <select class="category-select" id="cat-${i}" onchange="updateCat(${i})">
+          ${CATEGORIES.map(c=>`<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="ta-${i}">${item.text}</textarea>
+        <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  updateStats();
+}
+
+function decide(i, s) {
+  const c = document.getElementById(`cat-${i}`).value;
+  const t = decisions.has(i) && decisions.get(i).editedText ? decisions.get(i).editedText : items[i].text;
+  decisions.set(i, { status: s, text: t, category: c });
+  document.getElementById(`item-${i}`).className = 'item ' + (s==='keep'?'kept':s==='cut'?'cut':'edited');
+  updateStats();
+}
+function toggleEdit(i) { const e = document.getElementById(`edit-${i}`); e.style.display = e.style.display==='block'?'none':'block'; }
+function saveEdit(i) {
+  const t = document.getElementById(`ta-${i}`).value.trim();
+  const c = document.getElementById(`cat-${i}`).value;
+  decisions.set(i, { status: 'edit', text: t, editedText: t, category: c });
+  document.getElementById(`item-${i}`).className = 'item edited';
+  document.getElementById(`edit-${i}`).style.display = 'none';
+  document.getElementById(`item-${i}`).querySelector('.item-text').textContent = `"${t}"`;
+  updateStats();
+}
+function updateCat(i) { if (decisions.has(i)) decisions.get(i).category = document.getElementById(`cat-${i}`).value; }
+
+function exportKeepers() {
+  const k = [];
+  decisions.forEach((d,i) => {
+    if (d.status==='keep'||d.status==='edit') k.push({ text: d.editedText||d.text||items[i].text, category: d.category||items[i].category });
+  });
+  const j = JSON.stringify(k, null, 2);
+  document.getElementById('export-output').innerHTML = `<pre>${j.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</pre><button class="copy-btn" onclick="navigator.clipboard.writeText(window._j).then(()=>this.textContent='Copied!')">Copy JSON</button>`;
+  window._j = j;
+}
+
+renderItems();
+</script>
+</body>
+</html>

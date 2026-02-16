@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Review: The Office - Sweet Moments | 2026-02-14</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      padding-top: 180px;
+    }
+
+    .sticky-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #16213e;
+      border-bottom: 2px solid #0f3460;
+      padding: 16px 24px;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e94560;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: #8892b0;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stat {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .stat-total { color: #8892b0; }
+    .stat-kept { color: #4ecca3; }
+    .stat-cut { color: #e94560; }
+    .stat-edited { color: #ffd93d; }
+    .stat-pending { color: #6c7a99; }
+
+    .progress-bar {
+      flex: 1;
+      min-width: 200px;
+      height: 8px;
+      background: #0f3460;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-kept { background: #4ecca3; transition: width 0.3s; }
+    .progress-cut { background: #e94560; transition: width 0.3s; }
+    .progress-edited { background: #ffd93d; transition: width 0.3s; }
+
+    .batch-info {
+      font-size: 12px;
+      color: #6c7a99;
+      margin-top: 8px;
+    }
+
+    .response-card {
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .response-card.status-kept {
+      border-color: #4ecca3;
+      background: #16213e;
+    }
+
+    .response-card.status-cut {
+      border-color: #e94560;
+      background: #1a1520;
+      opacity: 0.6;
+    }
+
+    .response-card.status-edited {
+      border-color: #ffd93d;
+      background: #1a1d20;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-number {
+      font-size: 12px;
+      color: #6c7a99;
+      font-weight: 600;
+    }
+
+    .card-category {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .cat-heartfelt { background: #e9456022; color: #e94560; }
+    .cat-nurturing { background: #4ecca322; color: #4ecca3; }
+    .cat-poetic { background: #a78bfa22; color: #a78bfa; }
+    .cat-wise { background: #60a5fa22; color: #60a5fa; }
+    .cat-cryptic { background: #f59e0b22; color: #f59e0b; }
+    .cat-playful { background: #ec489922; color: #ec4899; }
+    .cat-demanding { background: #f9731622; color: #f97316; }
+    .cat-mystical { background: #8b5cf622; color: #8b5cf6; }
+
+    .response-text {
+      font-size: 20px;
+      line-height: 1.5;
+      color: #fff;
+      font-weight: 400;
+      margin-bottom: 16px;
+      letter-spacing: 0.2px;
+    }
+
+    .cat-voice {
+      font-size: 11px;
+      color: #6c7a99;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .btn {
+      padding: 8px 20px;
+      border: 2px solid;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-keep {
+      border-color: #4ecca3;
+      color: #4ecca3;
+    }
+    .btn-keep:hover, .btn-keep.active {
+      background: #4ecca3;
+      color: #1a1a2e;
+    }
+
+    .btn-cut {
+      border-color: #e94560;
+      color: #e94560;
+    }
+    .btn-cut:hover, .btn-cut.active {
+      background: #e94560;
+      color: #1a1a2e;
+    }
+
+    .btn-edit {
+      border-color: #ffd93d;
+      color: #ffd93d;
+    }
+    .btn-edit:hover, .btn-edit.active {
+      background: #ffd93d;
+      color: #1a1a2e;
+    }
+
+    .edit-area {
+      display: none;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .edit-area.visible { display: block; }
+
+    .edit-textarea {
+      width: 100%;
+      background: #0f3460;
+      border: 1px solid #ffd93d;
+      border-radius: 8px;
+      color: #fff;
+      padding: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .edit-textarea:focus {
+      outline: none;
+      border-color: #ffd93d;
+      box-shadow: 0 0 0 2px #ffd93d33;
+    }
+
+    .export-section {
+      margin-top: 48px;
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .export-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #4ecca3;
+      margin-bottom: 8px;
+    }
+
+    .export-subtitle {
+      font-size: 13px;
+      color: #6c7a99;
+      margin-bottom: 16px;
+    }
+
+    .export-textarea {
+      width: 100%;
+      background: #0a0f1e;
+      border: 1px solid #0f3460;
+      border-radius: 8px;
+      color: #4ecca3;
+      padding: 16px;
+      font-size: 13px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      resize: vertical;
+      min-height: 300px;
+    }
+
+    .copy-btn {
+      margin-top: 12px;
+      padding: 10px 24px;
+      background: #4ecca3;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover { background: #3db892; }
+    .copy-btn.copied { background: #ffd93d; }
+
+    .word-count {
+      font-size: 11px;
+      color: #6c7a99;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="header-title">Batch Review: The Office - Sweet Moments</div>
+  <div class="header-subtitle">The cat's soft side. Warm, sincere, heartplucking. "There's a lot of beauty in ordinary things."</div>
+  <div class="stats-row">
+    <span class="stat stat-total">Total: <span id="total-count">30</span></span>
+    <span class="stat stat-kept">Kept: <span id="kept-count">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat stat-edited">Edited: <span id="edited-count">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="pending-count">30</span></span>
+    <div class="progress-bar">
+      <div class="progress-kept" id="progress-kept" style="width: 0%"></div>
+      <div class="progress-cut" id="progress-cut" style="width: 0%"></div>
+      <div class="progress-edited" id="progress-edited" style="width: 0%"></div>
+    </div>
+  </div>
+  <div class="batch-info">2026-02-14 | Source: The Office (US) genuine moments research | Skew: warm/loving/sincere | 30 responses</div>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <div class="export-title">Export JSON (Kept + Edited only)</div>
+  <div class="export-subtitle">Updates live as you make decisions. Copy and paste into oracleResponses.ts</div>
+  <textarea class="export-textarea" id="export-json" readonly></textarea>
+  <button class="copy-btn" id="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "I just needed you to know. Once.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "Casino Night energy. The courage of saying it once, expecting nothing."
+  },
+  {
+    text: "*slow blink* You are everything.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "Three words that end arguments. Jim to Pam but works for any 2AM doubt."
+  },
+  {
+    text: "Still here. That's the whole answer.",
+    category: "nurturing",
+    voice: "Old Soul Cat",
+    note: "Presence as the response. The goodbye that matters is the one that doesn't happen."
+  },
+  {
+    text: "The ordinary stuff. That was always the point.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "Finale thesis. Dust motes, desk conversations, Tuesday mornings."
+  },
+  {
+    text: "It's just nice to win one.",
+    category: "heartfelt",
+    voice: "Reluctant Therapist Cat",
+    note: "Kevin's line. Small victories for people who've been losing quietly."
+  },
+  {
+    text: "*settles closer* I'm in no rush.",
+    category: "nurturing",
+    voice: "Pensive Cat",
+    note: "Michael about Holly. Ultimate cat energy -- patience isn't passive."
+  },
+  {
+    text: "Somewhere right now, this is the good old days.",
+    category: "wise",
+    voice: "Old Soul Cat",
+    note: "Andy's finale line relocated. Works for someone afraid to enjoy what they have."
+  },
+  {
+    text: "I am really proud of you.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "Michael at Pam's art show. Simple. Devastating. No decoration needed."
+  },
+  {
+    text: "*reaches one paw without getting up* Stay.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "The minimum gesture that means everything. Physical, specific, cat."
+  },
+  {
+    text: "Every place you've been became yours. That's the gift.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "Creed's finale line -- humans make any place home. Relocated through cat."
+  },
+  {
+    text: "You showed up. That was the whole thing.",
+    category: "wise",
+    voice: "Barncat",
+    note: "Michael showing up at the art show. Comfort food wisdom -- just showing up."
+  },
+  {
+    text: "The best trick is kindness. Catches everyone off guard.",
+    category: "wise",
+    voice: "Reluctant Therapist Cat",
+    note: "Jim's 'best prank ever' -- when the prank is love. Reframed as cat observation."
+  },
+  {
+    text: "You didn't know it was perfect until later. That's how it works.",
+    category: "poetic",
+    voice: "Old Soul Cat",
+    note: "Gas station proposal energy. Momentous things in mundane places."
+  },
+  {
+    text: "*purrs* Not advice. Just warmth.",
+    category: "nurturing",
+    voice: "Loving Cat",
+    note: "The cat as sanctuary. Presence > wisdom. 2026 energy."
+  },
+  {
+    text: "The real ones happen when nobody's watching.",
+    category: "wise",
+    voice: "Pensive Cat",
+    note: "Maid of the Mist wedding. The real ceremony is the private one."
+  },
+  {
+    text: "Took you long enough. Worth the wait though.",
+    category: "heartfelt",
+    voice: "Reluctant Therapist Cat",
+    note: "Jim waiting four years. Grudging admission that patience paid off."
+  },
+  {
+    text: "Whatever you're building, I can see it from here.",
+    category: "nurturing",
+    voice: "Pensive Cat",
+    note: "Michael seeing his window in Pam's painting. Someone noticing your work."
+  },
+  {
+    text: "You gave me a brain and didn't even know it.",
+    category: "heartfelt",
+    voice: "Old Soul Cat",
+    note: "Michael to Oscar. Gratitude from someone who couldn't articulate it."
+  },
+  {
+    text: "Go. I'll be fine. *won't be fine but means it anyway*",
+    category: "heartfelt",
+    voice: "Reluctant Therapist Cat",
+    note: "Every goodbye scene. Love means letting someone leave for their dream."
+  },
+  {
+    text: "Act fast. Life just isn't that long.",
+    category: "wise",
+    voice: "Elder Cat",
+    note: "Pam's finale monologue. Urgency from a creature with nine lives."
+  },
+  {
+    text: "*makes biscuits on your chest* This is the letter I never sent.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "The teapot note. Three years of unspoken words finally delivered through touch."
+  },
+  {
+    text: "Five feet away for four years. Don't do that.",
+    category: "wise",
+    voice: "Elder Cat",
+    note: "Pam's regret. Universal -- the thing right in front of you."
+  },
+  {
+    text: "The goodbye you didn't finish is the one that stays.",
+    category: "poetic",
+    voice: "Old Soul Cat",
+    note: "Jim and Michael never had that lunch. The unfinished ones haunt."
+  },
+  {
+    text: "*headbutts your hand* I don't do this for everyone.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "Selective tenderness. The cat choosing you specifically."
+  },
+  {
+    text: "Messy place, good people, weird story. You made it home.",
+    category: "nurturing",
+    voice: "Barncat",
+    note: "The whole Office thesis in cat language. Dunder Mifflin = any place you love."
+  },
+  {
+    text: "Momentous things happen in gas stations. Stay open.",
+    category: "wise",
+    voice: "Pensive Cat",
+    note: "Greg Daniels on the proposal location. Extraordinary moments, ordinary places."
+  },
+  {
+    text: "If there's anybody who can finish it, it's you.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    note: "Michael to Darryl. Belief in someone else's potential. Quiet and huge."
+  },
+  {
+    text: "*one ear rotates toward you* I heard every word. Even the ones you didn't say.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "The airport goodbye with no mic. What matters is said without sound."
+  },
+  {
+    text: "All my kids grew up. *stares at nothing* ...It's every parent's dream.",
+    category: "heartfelt",
+    voice: "Old Soul Cat",
+    note: "Michael's only line in the finale. Two sentences. Perfect."
+  },
+  {
+    text: "It all seems arbitrary. And then it's yours. And then it's everything.",
+    category: "poetic",
+    voice: "Accidental Poet Cat",
+    note: "Creed's finale speech. The arbitrary becoming sacred. Three beats."
+  }
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  status: 'pending',
+  editedText: ''
+}));
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = state.map((item, i) => {
+    const wordCount = item.text.split(/\s+/).length;
+    const catClass = `cat-${item.category}`;
+    const statusClass = item.status !== 'pending' ? `status-${item.status}` : '';
+    const editVisible = item.status === 'edited' ? 'visible' : '';
+
+    return `
+      <div class="response-card ${statusClass}" id="card-${i}">
+        <div class="card-header">
+          <span class="card-number">#${i + 1} <span class="word-count">${wordCount}w</span></span>
+          <span class="card-category ${catClass}">${item.category}</span>
+        </div>
+        <div class="response-text">${item.editedText || item.text}</div>
+        <div class="cat-voice">${item.voice} &mdash; ${item.note}</div>
+        <div class="action-buttons">
+          <button class="btn btn-keep ${item.status === 'kept' ? 'active' : ''}" onclick="setStatus(${i}, 'kept')">Keep</button>
+          <button class="btn btn-cut ${item.status === 'cut' ? 'active' : ''}" onclick="setStatus(${i}, 'cut')">Cut</button>
+          <button class="btn btn-edit ${item.status === 'edited' ? 'active' : ''}" onclick="toggleEdit(${i})">Edit</button>
+        </div>
+        <div class="edit-area ${editVisible}" id="edit-area-${i}">
+          <textarea class="edit-textarea" id="edit-text-${i}" oninput="updateEdit(${i})" placeholder="Edit response text...">${item.editedText || item.text}</textarea>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateStats();
+  updateExport();
+}
+
+function setStatus(index, status) {
+  if (state[index].status === status) {
+    state[index].status = 'pending';
+  } else {
+    state[index].status = status;
+    if (status === 'edited') {
+      state[index].editedText = state[index].editedText || state[index].text;
+    }
+  }
+  render();
+}
+
+function toggleEdit(index) {
+  if (state[index].status === 'edited') {
+    state[index].status = 'pending';
+  } else {
+    state[index].status = 'edited';
+    state[index].editedText = state[index].editedText || state[index].text;
+  }
+  render();
+  if (state[index].status === 'edited') {
+    const textarea = document.getElementById(`edit-text-${index}`);
+    if (textarea) textarea.focus();
+  }
+}
+
+function updateEdit(index) {
+  const textarea = document.getElementById(`edit-text-${index}`);
+  state[index].editedText = textarea.value;
+  updateExport();
+}
+
+function updateStats() {
+  const kept = state.filter(s => s.status === 'kept').length;
+  const cut = state.filter(s => s.status === 'cut').length;
+  const edited = state.filter(s => s.status === 'edited').length;
+  const pending = state.length - kept - cut - edited;
+  const total = state.length;
+
+  document.getElementById('kept-count').textContent = kept;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edited-count').textContent = edited;
+  document.getElementById('pending-count').textContent = pending;
+
+  document.getElementById('progress-kept').style.width = (kept / total * 100) + '%';
+  document.getElementById('progress-cut').style.width = (cut / total * 100) + '%';
+  document.getElementById('progress-edited').style.width = (edited / total * 100) + '%';
+}
+
+function updateExport() {
+  const exportData = state
+    .filter(s => s.status === 'kept' || s.status === 'edited')
+    .map(s => ({
+      text: s.status === 'edited' ? s.editedText : s.text,
+      category: s.category
+    }));
+
+  document.getElementById('export-json').value = JSON.stringify(exportData, null, 2);
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  document.execCommand('copy');
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = 'Copy to Clipboard';
+    btn.classList.remove('copied');
+  }, 2000);
+}
+
+render();
+</script>
+
+</body>
+</html>

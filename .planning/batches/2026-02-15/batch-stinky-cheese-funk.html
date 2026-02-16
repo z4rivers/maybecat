@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Stinky Cheese &mdash; The Funk of Life (REDO)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    padding: 20px;
+    padding-top: 150px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 24px;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .sticky-header h1 {
+    font-size: 1.15em;
+    color: #ffd93d;
+    margin-bottom: 4px;
+  }
+  .sticky-header .subtitle {
+    font-size: 0.78em;
+    color: #777;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .stat {
+    font-size: 0.9em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  .stat-keep { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; }
+  .stat-cut { background: #e9456022; color: #e94560; border: 1px solid #e94560; }
+  .stat-edit { background: #ffd93d22; color: #ffd93d; border: 1px solid #ffd93d; }
+  .stat-pending { background: #ffffff11; color: #888; border: 1px solid #555; }
+
+  .container { max-width: 880px; margin: 0 auto; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s, opacity 0.3s;
+  }
+  .response-card.kept { border-color: #4ecca3; border-width: 2px; }
+  .response-card.cut { border-color: #e94560; opacity: 0.4; }
+  .response-card.edited { border-color: #ffd93d; border-width: 2px; }
+
+  .response-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .response-number {
+    color: #555;
+    font-size: 0.82em;
+    font-family: sans-serif;
+  }
+  .category-badge {
+    font-size: 0.72em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: #0f3460;
+    color: #a8b2d1;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-family: sans-serif;
+  }
+  .response-text {
+    font-size: 1.3em;
+    line-height: 1.55;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .voice-note {
+    font-size: 0.73em;
+    color: #555;
+    margin-bottom: 14px;
+    font-family: sans-serif;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.88em;
+    font-family: sans-serif;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { background: #444; color: #ccc; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #ffd93d;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Georgia', serif;
+    font-size: 1.1em;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: sans-serif;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .export-section h2 {
+    color: #ffd93d;
+    margin-bottom: 12px;
+    font-size: 1.1em;
+  }
+  .export-section textarea {
+    width: 100%;
+    min-height: 300px;
+    background: #0a0a1a;
+    color: #4ecca3;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82em;
+    resize: vertical;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95em;
+    font-family: sans-serif;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Stinky Cheese &mdash; The Funk of Life (REDO v2)</h1>
+  <div class="subtitle">Refrigerator: cheese language &mdash; rinds, cultures, aging, caves, washed-rind, bloomy, veining, affinage, terroir, paste. 20 responses, 9 cat voices.</div>
+  <div class="stats-row">
+    <span class="stat stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="pending-count">20</span></span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="responses-container"></div>
+
+  <div class="export-section">
+    <h2>Export JSON (Keep + Edit only)</h2>
+    <textarea id="export-json" readonly></textarea>
+    <br>
+    <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+  </div>
+</div>
+
+<script>
+const responses = [
+  {
+    id: 1,
+    text: "Cave-aged. You can tell by the dark and the patience.",
+    category: "wise",
+    voice: "Elder Cat",
+    energy: "quiet"
+  },
+  {
+    id: 2,
+    text: "The rind is doing all the work and getting none of the credit.",
+    category: "wise",
+    voice: "Barncat",
+    energy: "rhythm"
+  },
+  {
+    id: 3,
+    text: "Washed-rind situation. Someone keeps showing up to make it worse and that\u2019s why it\u2019s magnificent.",
+    category: "philosophical",
+    voice: "Reluctant Therapist Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 4,
+    text: "You\u2019re not spoiled. You\u2019re cultured.",
+    category: "affectionate",
+    voice: "Badass Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 5,
+    text: "Blue veining. The cracks let the air in on purpose.",
+    category: "wise",
+    voice: "Old Soul Cat",
+    energy: "quiet"
+  },
+  {
+    id: 6,
+    text: "The people who can\u2019t handle the smell were never going to stay for the taste.",
+    category: "demanding",
+    voice: "Street Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 7,
+    text: "Bloomy on the outside. Running underneath.",
+    category: "cryptic",
+    voice: "Philosopher Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 8,
+    text: "Some relationships are Velveeta. Yours has terroir.",
+    category: "affectionate",
+    voice: "Reluctant Therapist Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 9,
+    text: "*sniffs* That\u2019s not a problem. That\u2019s a flavor profile.",
+    category: "indifferent",
+    voice: "Feral Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 10,
+    text: "You pasteurized yourself to be safe and now nothing tastes like anything.",
+    category: "judgmental",
+    voice: "Badass Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 11,
+    text: "Crumbly. Can\u2019t hold a shape. Best thing on the board.",
+    category: "affectionate",
+    voice: "Old Soul Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 12,
+    text: "The mold isn\u2019t the problem. The mold is the point.",
+    category: "philosophical",
+    voice: "Philosopher Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 13,
+    text: "Everybody wants triple-cr\u00e8me. Nobody wants to know what the cultures went through.",
+    category: "wise",
+    voice: "Barncat",
+    energy: "rhythm"
+  },
+  {
+    id: 14,
+    text: "Spreadable is just another word for no backbone.",
+    category: "judgmental",
+    voice: "Judge Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 15,
+    text: "Sharp. Getting sharper. Good.",
+    category: "demanding",
+    voice: "Badass Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 16,
+    text: "You opened the wrapper and the whole room knew. That\u2019s presence.",
+    category: "dramatic",
+    voice: "Flirt Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 17,
+    text: "They vacuum-sealed you and called it protection.",
+    category: "demanding",
+    voice: "Feral Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 18,
+    text: "Affinage \u2014 the art of turning neglect into depth. Some of you learned this young.",
+    category: "wise",
+    voice: "Elder Cat",
+    energy: "quiet"
+  },
+  {
+    id: 19,
+    text: "Mild is a choice. A boring one.",
+    category: "sassy",
+    voice: "Street Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 20,
+    text: "*one ear rotates* The nose on this. Magnificent.",
+    category: "chaotic",
+    voice: "Stoner Cat",
+    energy: "rhythm"
+  }
+];
+
+const state = {};
+
+function initState() {
+  responses.forEach(r => {
+    state[r.id] = { status: 'pending', editedText: null };
+  });
+}
+
+function renderCards() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+  responses.forEach(r => {
+    const s = state[r.id];
+    let cls = 'response-card';
+    if (s.status === 'keep') cls += ' kept';
+    if (s.status === 'cut') cls += ' cut';
+    if (s.status === 'edit') cls += ' edited';
+
+    const displayText = s.editedText || r.text;
+
+    const card = document.createElement('div');
+    card.className = cls;
+    card.id = 'card-' + r.id;
+    card.innerHTML = `
+      <div class="response-header">
+        <span class="response-number">#${r.id} \u00b7 ${r.energy}</span>
+        <span class="category-badge">${r.category}</span>
+      </div>
+      <div class="response-text">${displayText}</div>
+      <div class="voice-note">Voice: ${r.voice}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${r.id}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${r.id}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${r.id})">EDIT</button>
+        <button class="btn btn-reset" onclick="decide(${r.id}, 'pending')">RESET</button>
+      </div>
+      <div class="edit-area" id="edit-area-${r.id}">
+        <textarea id="edit-text-${r.id}">${displayText}</textarea>
+        <button class="save-edit" onclick="saveEdit(${r.id})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(id, status) {
+  state[id].status = status;
+  if (status !== 'edit') state[id].editedText = null;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const area = document.getElementById('edit-area-' + id);
+  if (area.style.display === 'block') {
+    area.style.display = 'none';
+  } else {
+    area.style.display = 'block';
+    const textarea = document.getElementById('edit-text-' + id);
+    textarea.focus();
+  }
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('edit-text-' + id);
+  state[id].editedText = textarea.value.trim();
+  state[id].status = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  Object.values(state).forEach(s => {
+    if (s.status === 'keep') keep++;
+    else if (s.status === 'cut') cut++;
+    else if (s.status === 'edit') edit++;
+    else pending++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach(r => {
+    const s = state[r.id];
+    if (s.status === 'keep' || s.status === 'edit') {
+      kept.push({
+        text: s.editedText || r.text,
+        category: r.category
+      });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  navigator.clipboard.writeText(textarea.value).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+initState();
+renderCards();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

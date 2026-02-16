@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimera Batch v1 - 2026-02-15</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .sticky-header h1 { font-size: 1.3em; color: #e94560; font-style: italic; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; }
+  .stats span { font-weight: bold; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .response-block {
+    background: #16213e; border-radius: 12px; padding: 28px; margin-bottom: 24px;
+    border-left: 4px solid #0f3460; transition: border-color 0.3s;
+  }
+  .response-block.kept { border-left-color: #4ecca3; }
+  .response-block.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-block.edited { border-left-color: #ffd93d; }
+
+  .response-number { color: #555; font-size: 0.8em; margin-bottom: 8px; }
+
+  .response-text {
+    font-size: 1.5em; font-style: italic; line-height: 1.5; color: #fff;
+    margin-bottom: 16px; padding: 8px 0;
+  }
+
+  .original-text {
+    font-size: 1.1em; font-style: italic; line-height: 1.4; color: #777;
+    margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.03);
+    border-radius: 6px; border-left: 2px solid #555;
+  }
+  .original-text .label { color: #999; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+  .edited-indicator {
+    display: inline-block; background: #ffd93d; color: #1a1a2e;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.7em;
+    font-weight: bold; text-transform: uppercase; margin-left: 8px;
+    font-style: normal;
+  }
+
+  .meta-line {
+    font-size: 0.85em; color: #888; margin-bottom: 6px; line-height: 1.5;
+  }
+  .meta-line strong { color: #aaa; }
+  .meta-label { color: #666; }
+
+  .parts-line {
+    font-size: 0.82em; color: #e94560; margin-top: 10px; padding: 8px 12px;
+    background: rgba(233, 69, 96, 0.08); border-radius: 6px; line-height: 1.6;
+    border-left: 2px solid #e94560;
+  }
+
+  .buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+    font-weight: bold; font-size: 0.9em; transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn:hover { transform: scale(1.05); }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .edit-area {
+    display: none; margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%; min-height: 100px; background: #0f3460; color: #fff;
+    border: 2px solid #ffd93d; border-radius: 6px; padding: 12px;
+    font-family: 'Georgia', serif; font-size: 1.1em; font-style: italic;
+    resize: vertical;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area .label {
+    color: #ffd93d; font-size: 0.75em; text-transform: uppercase;
+    letter-spacing: 1px; display: block; margin-bottom: 6px; font-weight: bold;
+  }
+
+  .export-section {
+    margin-top: 48px; padding: 24px; background: #16213e; border-radius: 12px;
+    border: 2px solid #0f3460;
+  }
+  .export-section h2 { color: #4ecca3; margin-bottom: 16px; }
+  .export-json {
+    width: 100%; min-height: 200px; background: #0f3460; color: #4ecca3;
+    border: 1px solid #4ecca3; border-radius: 6px; padding: 16px;
+    font-family: 'Consolas', monospace; font-size: 0.85em;
+    resize: vertical;
+  }
+  .copy-btn {
+    margin-top: 12px; padding: 10px 24px; background: #4ecca3; color: #1a1a2e;
+    border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;
+  }
+  .copy-btn:hover { background: #3dbb8f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Chimera Batch v1 &mdash; 20 Responses</h1>
+  <div class="stats">
+    <div><span class="stat-keep" id="keep-count">0</span> KEEP</div>
+    <div><span class="stat-cut" id="cut-count">0</span> CUT</div>
+    <div><span class="stat-edit" id="edit-count">0</span> EDIT</div>
+    <div><span class="stat-pending" id="pending-count">20</span> PENDING</div>
+  </div>
+</div>
+
+<div id="responses">
+
+<!-- RESPONSE 1 -->
+<div class="response-block" data-id="1">
+  <div class="response-number">#1</div>
+  <div class="response-text" id="display-1">Survived by everyone you stopped texting back.</div>
+  <div class="original-text" id="original-1" style="display:none;">
+    <span class="label">Original</span>
+    <div>Survived by everyone you stopped texting back.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> cold</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Detective Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Anthony Jeselnik (trapdoor punchline)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Obituary "survived by" structure (obituaries find) + dating bio "emotionally unavailable" energy (dating find) + product review "great product 10/10" whiplash compression (product reviews find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-1">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(1)">Survived by everyone you stopped texting back.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 2 -->
+<div class="response-block" data-id="2">
+  <div class="response-number">#2</div>
+  <div class="response-text" id="display-2">This aircraft is equipped to love you. Once.</div>
+  <div class="original-text" id="original-2" style="display:none;">
+    <span class="label">Original</span>
+    <div>This aircraft is equipped to love you. Once.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> cold</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Realist Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Tig Notaro (devastating pause before "once")</div>
+  <div class="parts-line"><strong>PARTS:</strong> Flight attendant "equipped to land on water... once" structure (flights find) + dating bio pro/con tragedy compression (dating find) + obituary "blinked and it was over" temporal collapse (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-2">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(2)">This aircraft is equipped to love you. Once.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 3 -->
+<div class="response-block" data-id="3">
+  <div class="response-number">#3</div>
+  <div class="response-text" id="display-3">Preceded in death by your confidence, your standards, and whatever that haircut was.</div>
+  <div class="original-text" id="original-3" style="display:none;">
+    <span class="label">Original</span>
+    <div>Preceded in death by your confidence, your standards, and whatever that haircut was.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> judgy</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Judge Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Nikki Glaser (fearless specificity, descending dignity)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Obituary "preceded in death by body parts" structure (obituaries find) + dating bio descending stakes pattern (dating find) + restaurant critic "taupe, biscuit, and fuck you" third-item escalation (restaurant find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-3">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(3)">Preceded in death by your confidence, your standards, and whatever that haircut was.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 4 -->
+<div class="response-block" data-id="4">
+  <div class="response-number">#4</div>
+  <div class="response-text" id="display-4">The extension cord is plugged into itself. You're the extension cord.</div>
+  <div class="original-text" id="original-4" style="display:none;">
+    <span class="label">Original</span>
+    <div>The extension cord is plugged into itself. You're the extension cord.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> wise</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Reluctant Therapist Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Marc Maron (neurotic, saying it out loud to himself)</div>
+  <div class="parts-line"><strong>PARTS:</strong> IT ticket "extension lead plugged into itself" self-referential loop (IT find) + medical chart deadpan clinical tone (institutional find) + Reddit "lock turns a door into a wall" clean reframe energy (reddit find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-4">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(4)">The extension cord is plugged into itself. You're the extension cord.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 5 -->
+<div class="response-block" data-id="5">
+  <div class="response-number">#5</div>
+  <div class="response-text" id="display-5">Not haunted. *blinks* Why would I say that if it were haunted.</div>
+  <div class="original-text" id="original-5" style="display:none;">
+    <span class="label">Original</span>
+    <div>Not haunted. *blinks* Why would I say that if it were haunted.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> chaotic</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Conspiracy Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Tim Robinson (committed to the wrong bit past the breaking point)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Real estate "Not haunted" sign denial-as-accusation (real estate find) + legal disclaimer self-undermining structure (warnings find) + product review "smiled and felt stupid" resigned awareness (product find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-5">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(5)">Not haunted. *blinks* Why would I say that if it were haunted.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 6 -->
+<div class="response-block" data-id="6">
+  <div class="response-number">#6</div>
+  <div class="response-text" id="display-6">Charming. Original features. Needs TLC. I'm describing you.</div>
+  <div class="original-text" id="original-6" style="display:none;">
+    <span class="label">Original</span>
+    <div>Charming. Original features. Needs TLC. I'm describing you.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> judgy</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Backhanded Support Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Taylor Tomlinson (self-deprecation with actual teeth)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Real estate euphemism dialect (real estate find) + dating bio "human equivalent of a typo" self-as-product energy (dating find) + restaurant critic "shades of taupe, biscuit, and fuck you" list-as-character-study (restaurant find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-6">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(6)">Charming. Original features. Needs TLC. I'm describing you.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 7 -->
+<div class="response-block" data-id="7">
+  <div class="response-number">#7</div>
+  <div class="response-text" id="display-7">Do not look into laser with remaining eye.</div>
+  <div class="original-text" id="original-7" style="display:none;">
+    <span class="label">Original</span>
+    <div>Do not look into laser with remaining eye.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> wise</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Elder Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Sam Morril (dark one-liner, trapdoor ending)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Warning label "remaining eye" (warnings find -- direct relocation, the word "remaining" implying damage already done) + medical chart "no previous history of suicides" casual-about-catastrophe tone (institutional find) + obituary compression engine (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-7">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(7)">Do not look into laser with remaining eye.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 8 -->
+<div class="response-block" data-id="8">
+  <div class="response-number">#8</div>
+  <div class="response-text" id="display-8">*one ear rotates toward you* I mean this in the nicest way possible, but I hope I never hear this story again.</div>
+  <div class="original-text" id="original-8" style="display:none;">
+    <span class="label">Original</span>
+    <div>*one ear rotates toward you* I mean this in the nicest way possible, but I hope I never hear this story again.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> angry</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Reluctant Therapist Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Hannibal Buress (casual delivery of an observation that shouldn't be that funny)</div>
+  <div class="parts-line"><strong>PARTS:</strong> ER nurse "I hope I never see you again" discharge phrase (institutional find) + specific cat action "one ear rotates" (skill file physical catalog) + dating bio "emotionally unavailable, single file line" confidence-as-red-flag (dating find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-8">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(8)">*one ear rotates toward you* I mean this in the nicest way possible, but I hope I never hear this story again.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 9 -->
+<div class="response-block" data-id="9">
+  <div class="response-number">#9</div>
+  <div class="response-text" id="display-9">Decide now which one you love more.</div>
+  <div class="original-text" id="original-9" style="display:none;">
+    <span class="label">Original</span>
+    <div>Decide now which one you love more.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> cold</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Feral Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Jerrod Carmichael (says the quiet part, uncomfortable truth)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Flight attendant oxygen mask "decide which child you love more" (flights find -- direct relocation into advice context) + court transcript "take a guess" deadpan energy (legal find) + obituary "death as avoidance of the election" choosing-via-not-choosing (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-9">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(9)">Decide now which one you love more.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 10 -->
+<div class="response-block" data-id="10">
+  <div class="response-number">#10</div>
+  <div class="response-text" id="display-10">She was constipated for most of her life. Then she got a divorce.</div>
+  <div class="original-text" id="original-10" style="display:none;">
+    <span class="label">Original</span>
+    <div>She was constipated for most of her life. Then she got a divorce.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> wise</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Old Soul Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Nate Bargatze (deadpan, Midwest-wholesome delivery on devastating observation)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Medical chart "constipated until 1989 divorce" (institutional find -- relocated almost whole, the clinical framing IS the joke) + obituary "competitive sickness" naming-what-nobody-says energy (obituaries find) + restaurant critic "people confuse me, food doesn't" four-word autobiography compression (restaurant find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-10">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(10)">She was constipated for most of her life. Then she got a divorce.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 11 -->
+<div class="response-block" data-id="11">
+  <div class="response-number">#11</div>
+  <div class="response-text" id="display-11">The opposite of talking isn't listening. It's waiting. I should know.</div>
+  <div class="original-text" id="original-11" style="display:none;">
+    <span class="label">Original</span>
+    <div>The opposite of talking isn't listening. It's waiting. I should know.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> existential</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Pensive Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Aparna Nancherla (quiet devastation, softest voice with sharpest point)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Fran Lebowitz "opposite of talking is waiting" reframe (institutional find) + cat's natural waiting-as-expertise (cat world) + dating bio "I need at least 2 weeks notice" brutal honesty about patience (dating find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-11">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(11)">The opposite of talking isn't listening. It's waiting. I should know.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 12 -->
+<div class="response-block" data-id="12">
+  <div class="response-number">#12</div>
+  <div class="response-text" id="display-12">If you want compliments, phone your mother.</div>
+  <div class="original-text" id="original-12" style="display:none;">
+    <span class="label">Original</span>
+    <div>If you want compliments, phone your mother.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> cold</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Street Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Fran Lebowitz (acerbic, no wasted syllable)</div>
+  <div class="parts-line"><strong>PARTS:</strong> A.A. Gill "phone your mother" six-word dismissal (restaurant find -- direct relocation, perfect as cat) + Netflix cease-and-desist "don't make us call your mom" (legal find) + dating bio "single file, orderly line" queue-management energy (dating find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-12">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(12)">If you want compliments, phone your mother.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 13 -->
+<div class="response-block" data-id="13">
+  <div class="response-number">#13</div>
+  <div class="response-text" id="display-13">You're borrowing happiness from tomorrow. The interest rate is brutal.</div>
+  <div class="original-text" id="original-13" style="display:none;">
+    <span class="label">Original</span>
+    <div>You're borrowing happiness from tomorrow. The interest rate is brutal.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> wise</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Barncat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Bill Burr (angry, exasperated, says what you're thinking louder)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Reddit "borrowing happiness from tomorrow" temporal debt metaphor (reddit find) + real estate/financial language "interest rate" (real estate find) + medical chart clinical-on-personal tone (institutional find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-13">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(13)">You're borrowing happiness from tomorrow. The interest rate is brutal.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 14 -->
+<div class="response-block" data-id="14">
+  <div class="response-number">#14</div>
+  <div class="response-text" id="display-14">Tootel them with vigor.</div>
+  <div class="original-text" id="original-14" style="display:none;">
+    <span class="label">Original</span>
+    <div>Tootel them with vigor.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> demanding</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Badass Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> James Acaster (British absurdism, commitment to the bit)</div>
+  <div class="parts-line"><strong>PARTS:</strong> 1962 Honda manual "tootel with vigor" escalation instruction (warnings find -- direct relocation into advice context, the formality IS the humor) + restaurant critic "if you want compliments" dismissive authority (restaurant find) + obituary "he grabbed life by the lapels" kinetic physicality (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-14">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(14)">Tootel them with vigor.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 15 -->
+<div class="response-block" data-id="15">
+  <div class="response-number">#15</div>
+  <div class="response-text" id="display-15">What happens when we die? We clean the room and admit a new patient.</div>
+  <div class="original-text" id="original-15" style="display:none;">
+    <span class="label">Original</span>
+    <div>What happens when we die? We clean the room and admit a new patient.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> existential</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Street Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Anthony Bourdain (raw honesty, no pretense, kitchen-shift energy)</div>
+  <div class="parts-line"><strong>PARTS:</strong> ER nurse dark humor "clean the room, admit new patient" (institutional find -- direct relocation, operational answer to philosophical question) + obituary "Doug died." refusal-to-perform compression (obituaries find) + IT "we should never get here" developer-panic existential energy (IT find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-15">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(15)">What happens when we die? We clean the room and admit a new patient.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 16 -->
+<div class="response-block" data-id="16">
+  <div class="response-number">#16</div>
+  <div class="response-text" id="display-16">Do not use beyond usage.</div>
+  <div class="original-text" id="original-16" style="display:none;">
+    <span class="label">Original</span>
+    <div>Do not use beyond usage.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> existential</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Philosopher Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Steven Wright (deadpan surreal, the tautology IS the wisdom)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Translated product manual "Do Not Use Beyond Usage" tautological instruction (warnings find -- direct relocation, accidentally the most profound instruction ever written) + reddit "a lock turns a door into a wall" clean reframe energy (reddit find) + obituary "blinked and it was over" temporal compression (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-16">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(16)">Do not use beyond usage.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 17 -->
+<div class="response-block" data-id="17">
+  <div class="response-number">#17</div>
+  <div class="response-text" id="display-17">*reaches one paw without getting up* Per my last email.</div>
+  <div class="original-text" id="original-17" style="display:none;">
+    <span class="label">Original</span>
+    <div>*reaches one paw without getting up* Per my last email.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> angry</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Karen Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Michelle Wolf (knows exactly where the line is, steps past it looking you in the eye)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Corporate "per my last email" passive-aggression (IT/corporate find) + cat action "reaches one paw without getting up" minimal-effort dominance (skill file physical catalog) + ER nurse "art of looking calm while mentally screaming" interior/exterior gap (institutional find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-17">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(17)">*reaches one paw without getting up* Per my last email.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 18 -->
+<div class="response-block" data-id="18">
+  <div class="response-number">#18</div>
+  <div class="response-text" id="display-18">It is day 87 and the doubts have accepted me as one of their own.</div>
+  <div class="original-text" id="original-18" style="display:none;">
+    <span class="label">Original</span>
+    <div>It is day 87 and the doubts have accepted me as one of their own.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> heartfelt</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Doubt Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Maria Bamford (completely alien perspective that's somehow the most human)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Amazon horse mask review "day 87 and the horses have accepted me" (product find -- structure relocated, horses swapped for doubts) + dating bio "I fall in love hard / I rarely fall in love" quiet tragedy (dating find) + IT "we should never get here" developer-note existential panic (IT find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-18">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(18)">It is day 87 and the doubts have accepted me as one of their own.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 19 -->
+<div class="response-block" data-id="19">
+  <div class="response-number">#19</div>
+  <div class="response-text" id="display-19">The last time I was someone's priority I was blocking the hallway.</div>
+  <div class="original-text" id="original-19" style="display:none;">
+    <span class="label">Original</span>
+    <div>The last time I was someone's priority I was blocking the hallway.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> heartfelt</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Old Soul Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Stavros Halkias (infectious warmth around darkness, the warmest nihilist)</div>
+  <div class="parts-line"><strong>PARTS:</strong> Dating bio "last time I was someone's type I was donating blood" structure (dating find -- "type" swapped for "priority," blood bank swapped for hallway obstruction) + cat behavior as physical punchline (cat world) + obituary "she spent it all, left me these lousy memories" rueful love (obituaries find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-19">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(19)">The last time I was someone's priority I was blocking the hallway.</textarea>
+  </div>
+</div>
+
+<!-- RESPONSE 20 -->
+<div class="response-block" data-id="20">
+  <div class="response-number">#20</div>
+  <div class="response-text" id="display-20">*pupils dilate* Go soothingly on the grease mud, as there lurks the skid demon.</div>
+  <div class="original-text" id="original-20" style="display:none;">
+    <span class="label">Original</span>
+    <div>*pupils dilate* Go soothingly on the grease mud, as there lurks the skid demon.</div>
+  </div>
+  <div class="meta-line"><strong>Category:</strong> mystical</div>
+  <div class="meta-line"><strong>Cat Voice:</strong> Prophet Cat</div>
+  <div class="meta-line"><strong>Comedian Filter:</strong> Julio Torres (surreal, finds personality in objects and phrases)</div>
+  <div class="parts-line"><strong>PARTS:</strong> 1962 Honda manual "go soothingly on the grease mud, the skid demon" (warnings find -- direct relocation, accidentally mythological prophecy) + cat action "pupils dilate" something-just-got-interesting (skill file) + Reddit "the raccoons have unionized" three-word-certainty-zero-context energy (reddit find)</div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(20)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-20">
+    <span class="label">Edited Version (this will be exported)</span>
+    <textarea placeholder="Edit the response..." oninput="handleEdit(20)">*pupils dilate* Go soothingly on the grease mud, as there lurks the skid demon.</textarea>
+  </div>
+</div>
+
+</div>
+
+<!-- EXPORT -->
+<div class="export-section">
+  <h2>JSON Export (kept responses)</h2>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <br>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const decisions = {};
+const editedTexts = {}; // Track edited versions
+const responses = {
+  1:  { text: "Survived by everyone you stopped texting back.", category: "cold" },
+  2:  { text: "This aircraft is equipped to love you. Once.", category: "cold" },
+  3:  { text: "Preceded in death by your confidence, your standards, and whatever that haircut was.", category: "judgy" },
+  4:  { text: "The extension cord is plugged into itself. You're the extension cord.", category: "wise" },
+  5:  { text: "Not haunted. *blinks* Why would I say that if it were haunted.", category: "chaotic" },
+  6:  { text: "Charming. Original features. Needs TLC. I'm describing you.", category: "judgy" },
+  7:  { text: "Do not look into laser with remaining eye.", category: "wise" },
+  8:  { text: "*one ear rotates toward you* I mean this in the nicest way possible, but I hope I never hear this story again.", category: "angry" },
+  9:  { text: "Decide now which one you love more.", category: "cold" },
+  10: { text: "She was constipated for most of her life. Then she got a divorce.", category: "wise" },
+  11: { text: "The opposite of talking isn't listening. It's waiting. I should know.", category: "existential" },
+  12: { text: "If you want compliments, phone your mother.", category: "cold" },
+  13: { text: "You're borrowing happiness from tomorrow. The interest rate is brutal.", category: "wise" },
+  14: { text: "Tootel them with vigor.", category: "demanding" },
+  15: { text: "What happens when we die? We clean the room and admit a new patient.", category: "existential" },
+  16: { text: "Do not use beyond usage.", category: "existential" },
+  17: { text: "*reaches one paw without getting up* Per my last email.", category: "angry" },
+  18: { text: "It is day 87 and the doubts have accepted me as one of their own.", category: "heartfelt" },
+  19: { text: "The last time I was someone's priority I was blocking the hallway.", category: "heartfelt" },
+  20: { text: "*pupils dilate* Go soothingly on the grease mud, as there lurks the skid demon.", category: "mystical" }
+};
+
+function decide(id, action) {
+  const block = document.querySelector(`[data-id="${id}"]`);
+  block.classList.remove('kept', 'cut', 'edited');
+
+  // Deselect if same action
+  if (decisions[id] === action) {
+    delete decisions[id];
+    // If closing edit mode, hide edit area and original text
+    if (action === 'edit') {
+      const editArea = document.getElementById(`edit-${id}`);
+      const originalText = document.getElementById(`original-${id}`);
+      if (editArea) editArea.classList.remove('visible');
+      if (originalText) originalText.style.display = 'none';
+      // Reset display text to original
+      const displayText = document.getElementById(`display-${id}`);
+      if (displayText) {
+        displayText.innerHTML = responses[id].text;
+      }
+    }
+  } else {
+    decisions[id] = action;
+    if (action === 'keep') block.classList.add('kept');
+    if (action === 'cut') block.classList.add('cut');
+    if (action === 'edit') block.classList.add('edited');
+  }
+
+  // Update active buttons
+  block.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (decisions[id]) {
+    const activeBtn = block.querySelector(`.btn-${decisions[id]}`);
+    if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById(`edit-${id}`);
+  const originalText = document.getElementById(`original-${id}`);
+  const wasVisible = editArea.classList.contains('visible');
+
+  if (wasVisible) {
+    // Closing edit mode - toggle off
+    editArea.classList.remove('visible');
+    if (originalText) originalText.style.display = 'none';
+    decide(id, 'edit'); // This will deselect
+  } else {
+    // Opening edit mode
+    editArea.classList.add('visible');
+    if (originalText) originalText.style.display = 'block';
+    decide(id, 'edit'); // Mark as edited
+  }
+}
+
+function handleEdit(id) {
+  const textarea = document.querySelector(`#edit-${id} textarea`);
+  const displayText = document.getElementById(`display-${id}`);
+
+  if (textarea && displayText) {
+    const newText = textarea.value;
+    editedTexts[id] = newText;
+
+    // Update display with edited indicator if text changed
+    const originalText = responses[id].text;
+    if (newText !== originalText) {
+      displayText.innerHTML = newText + '<span class="edited-indicator">Edited</span>';
+    } else {
+      displayText.innerHTML = newText;
+    }
+
+    updateExport();
+  }
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  for (const [id, action] of Object.entries(decisions)) {
+    if (action === 'keep') keep++;
+    if (action === 'cut') cut++;
+    if (action === 'edit') edit++;
+  }
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = 20 - keep - cut - edit;
+}
+
+function updateExport() {
+  const kept = [];
+  for (const [id, action] of Object.entries(decisions)) {
+    if (action === 'keep') {
+      kept.push(responses[id]);
+    }
+    if (action === 'edit') {
+      const editedText = editedTexts[id] || responses[id].text;
+      kept.push({ text: editedText, category: responses[id].category });
+    }
+  }
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+}
+
+// Initialize
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

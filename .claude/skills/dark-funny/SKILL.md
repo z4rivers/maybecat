@@ -554,6 +554,63 @@ Format:
 
 ---
 
+## The Chimera Method — How MaybeCat Gets Original
+
+You can't get original by being original. You get original by combining found things in ways nobody expected.
+
+### The Three Steps
+
+**1. Forage** — Collect parts from the museum. Browse aggregators, subreddits, product reviews, obituaries, warning labels, court transcripts, nurse humor, real estate listings. Collect raw language — phrases, structures, emotional moves. No cat, no advice. Just ingredients. Store in `.planning/finds/`.
+
+**2. Chop Shop** — Break finds down to their FUNCTIONAL parts. Not the whole phrase, but what makes it work:
+- The **structure** (escalation? anticlimax? bathos? the format IS the joke?)
+- The **word choice** (which single word is doing all the work?)
+- The **emotional move** (betrayal? resigned self-awareness? disproportionate drama?)
+- The **compression technique** (how did they say so much in so few words?)
+
+**3. Frankenstein** — Combine parts from DIFFERENT animals into new creatures:
+- Obituary compression + product review betrayal + Elder Cat = ?
+- Warning label authority + real estate euphemism + Street Cat = ?
+- Court transcript deadpan + nurse gallows humor + Reluctant Therapist Cat = ?
+
+### Why This Produces Originality
+
+No single source is recognizable in the output. The obituary structure is there but the language is from a warning label and the emotional territory is from a 1-star review. Nobody can point to the origin because it has three origins.
+
+### Why Direct Generation Fails
+
+When you ask the model to "generate cat responses about X," it constructs from its training data average — the most likely clever-sounding sentence about that topic. That's constructed cleverness. It's the middle. It's what everyone would say.
+
+The Chimera Method makes the middle structurally impossible because the inputs are already weird, already specific, already from three different worlds. The model's job shifts from INVENTING to ASSEMBLING — and assembly from strange parts produces strange results.
+
+### The Emotional Anchor Rule (CRITICAL)
+
+Random assembly produces random results. Weird + weird + weird = incomprehensible, not original. The chimera method failed at 60% when parts were combined randomly — the weird ones were three strangers talking about different events in the same room.
+
+**The fix:** Every chimera needs an emotional anchor FIRST.
+
+1. Start with the **emotional truth** — the thing the 2 AM person actually needs to hear (you already did the thing and can't undo it / you're scared but should go anyway / you need permission to stop trying)
+2. Find parts from different fridges that all **orbit that same truth** from different angles
+3. Combine parts that REINFORCE each other, not parts that just happen to be interesting separately
+
+**The test:** Three witnesses describing the same event from different angles = chimera. Three strangers describing different events in the same room = garbage.
+
+**What worked (parts served the same truth):**
+- "Not haunted. *blinks* Why would I say that if it were haunted." — real estate denial + conspiracy energy both serve: *the denial IS the confession*
+- "Day 87 and the doubts have accepted me as one of their own." — field report structure + belonging language both serve: *making peace with uncertainty*
+- "Tootel them with vigor." — absurd formality serves: *permission to go for it, delivered so strangely it bypasses resistance*
+
+**What failed (parts from different emotional planets):**
+- Found phrases that were interesting as language but didn't answer any question anyone asks at 2 AM
+- Weird for weird's sake — no emotional anchor underneath
+- Assembly where you can see the seams because the parts don't share a center of gravity
+
+### The Rule
+
+Every MaybeCat response should be a chimera — traceable to at least two different source worlds. If a response comes from only one place, it's not a chimera, it's a copy. If it comes from nowhere specific, it's constructed cleverness. Both are failures. And if the parts don't share an emotional anchor, it's just random noise wearing a costume.
+
+---
+
 ## The Scene Test — Responses That Install Images
 
 The best MaybeCat responses don't just read well — they **plant a mental image** that won't leave.
@@ -614,6 +671,47 @@ The cat doesn't editorialize. The cat REPORTS. The report is devastating.
 
 ### The Dorothy Parker Principle
 Wit has truth underneath it. Wisecracks are calisthenics with words. Stay on the truth side. If a response is clever but empty, it's a wisecrack. If it makes someone go quiet for a second before they laugh, it's wit.
+
+### The Agent Generation Failure (Feb 2026)
+
+Three batches of 20 responses each (60 total). Only 5 keepers. The failure pattern is clear and must be prevented:
+
+**What failed:** Agents generated "cat responses about [topic]" — surface-level topic + cat attitude. "The cringe is fresh. Let it age." is a greeting card. "You can't unfry an egg" is LinkedIn. "You're spiraling. I respect the commitment." is every Twitter reply. Twenty variations of "you care too much" in the stressed batch — same note, different metaphor stapled on.
+
+**What the 5 keepers did differently:**
+- "The evidence is still on your face" — crime scene fridge, physical, dual-reading
+- "You hit send. The universe hit receive" — scale flip, cosmic indifference
+- "Non-refundable and you knew that at checkout" — retail return fridge, relocated perfectly
+- "Brave and stupid share a parking lot" — original image that installs
+- "*sniffs* That's not a problem. That's a flavor profile" — cheese tasting fridge, cat action + reframe
+
+**The lesson:** "Generate responses about X" = garbage. "Open the fridge of [specific language world] and relocate what you find into cat answers" = keepers. The refrigerator is not a metaphor or decoration — it is the ENTIRE METHOD. Without a specific language source, the model defaults to constructed cleverness, which is the opposite of what MaybeCat needs.
+
+**Mandatory for all future batches:**
+- NEVER generate "responses about [topic]" — always specify 2-3 refrigerators with concrete language examples
+- Each response must be traceable to a source fridge — if you can't name where the language came from, the response is constructed and should be cut
+- The topic/concept is the TERRITORY, the fridge is the LANGUAGE SOURCE — these are different things
+- Average = death. The model's tendency toward the middle, toward common interpretations, toward safe cleverness is the enemy. Be intentional. Find the funk.
+
+### The Roast Overcorrection (Feb 2026)
+
+Too many responses were digs at the person asking. Roasting the user is funny in small doses — it's seasoning, not the meal. When every response is a "you're a mess" observation, it becomes mean instead of helpful.
+
+**The pattern that got cut:**
+- "Charming. Original features. Needs TLC. I'm describing you." → User cut "I'm describing you." The trimmed version is stronger because the reader does the work.
+- "You're borrowing happiness from tomorrow. The interest rate is brutal." → User cut "The interest rate is brutal." The metaphor landed without the explanation.
+
+**The lesson:**
+- The second sentence that EXPLAINS the roast always kills it
+- Trust the reader to make the connection
+- Mix warmth, wonder, absurdity, and quiet alongside the sharp — not every response needs to read the person
+- The best MaybeCat lines make people feel SEEN, not attacked
+- Roasts work when they're specific and surprising. They fail when they're the default mode.
+
+**Mandatory for future batches:**
+- No more than 30% of a batch should be direct digs at the asker
+- At least 20% should be warm, strange, or quietly profound
+- When in doubt, cut the roast sentence and trust the image
 
 ### Dynamic Range Reminder
 If every response is a 10, nothing is. The experience is the bomb, not every line. Rhythm responses (solid, on-brand, not trying to be THE moment) are what make the crescendos hit. A great album has tracks 4 and 7, not 12 bangers.

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimera Batch v3 - 2026-02-15</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .sticky-header h1 { font-size: 1.3em; color: #e94560; font-style: italic; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; }
+  .stats span { font-weight: bold; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .response-block {
+    background: #16213e; border-radius: 12px; padding: 28px; margin-bottom: 24px;
+    border-left: 4px solid #0f3460; transition: border-color 0.3s;
+  }
+  .response-block.kept { border-left-color: #4ecca3; }
+  .response-block.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-block.edited { border-left-color: #ffd93d; }
+
+  .response-number { color: #555; font-size: 0.8em; margin-bottom: 8px; }
+
+  .response-text {
+    font-size: 1.5em; font-style: italic; line-height: 1.5; color: #fff;
+    margin-bottom: 16px; padding: 8px 0;
+  }
+
+  .original-text {
+    font-size: 1.1em; font-style: italic; line-height: 1.4; color: #777;
+    margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.03);
+    border-radius: 6px; border-left: 2px solid #555;
+  }
+  .original-text .label { color: #999; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+  .edited-indicator {
+    display: inline-block; background: #ffd93d; color: #1a1a2e;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.7em;
+    font-weight: bold; text-transform: uppercase; margin-left: 8px;
+    font-style: normal;
+  }
+
+  .meta-line {
+    font-size: 0.85em; color: #888; margin-bottom: 6px; line-height: 1.5;
+  }
+  .meta-line strong { color: #aaa; }
+  .meta-label { color: #666; }
+
+  .energy-tag {
+    display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.72em;
+    font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 4px;
+  }
+  .energy-crescendo { background: #e94560; color: #fff; }
+  .energy-rhythm { background: #0f3460; color: #8899aa; }
+  .energy-quiet { background: #1a1a2e; color: #4ecca3; border: 1px solid #4ecca3; }
+
+  .parts-line {
+    font-size: 0.82em; color: #e94560; margin-top: 10px; padding: 8px 12px;
+    background: rgba(233, 69, 96, 0.08); border-radius: 6px; line-height: 1.6;
+    border-left: 2px solid #e94560;
+  }
+
+  .buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+    font-weight: bold; font-size: 0.9em; transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn:hover { transform: scale(1.05); }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .edit-area {
+    display: none; margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%; min-height: 100px; background: #0f3460; color: #fff;
+    border: 2px solid #ffd93d; border-radius: 6px; padding: 12px;
+    font-family: 'Georgia', serif; font-size: 1.1em; font-style: italic;
+    resize: vertical;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area .label {
+    color: #ffd93d; font-size: 0.75em; text-transform: uppercase;
+    letter-spacing: 1px; display: block; margin-bottom: 6px; font-weight: bold;
+  }
+
+  .save-btn {
+    margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e;
+    border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85em;
+  }
+  .save-btn:hover { background: #eec82c; }
+
+  .export-section {
+    margin-top: 48px; padding: 24px; background: #16213e; border-radius: 12px;
+    border: 2px solid #0f3460;
+  }
+  .export-section h2 { color: #4ecca3; margin-bottom: 16px; }
+  .export-json {
+    width: 100%; min-height: 200px; background: #0f3460; color: #4ecca3;
+    border: 1px solid #4ecca3; border-radius: 6px; padding: 16px;
+    font-family: 'Consolas', monospace; font-size: 0.85em;
+    resize: vertical;
+  }
+  .copy-btn {
+    margin-top: 12px; padding: 10px 24px; background: #4ecca3; color: #1a1a2e;
+    border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;
+  }
+  .copy-btn:hover { background: #3dbb8f; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Chimera Batch v3 &mdash; 25 Responses</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="stat-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="stat-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pendingCount">25</span></span>
+  </div>
+</div>
+
+<!-- RESPONSE 1 -->
+<div class="response-block" id="block-0" data-status="pending">
+  <div class="response-number">#1</div>
+  <div class="response-text" id="text-0">This aircraft is equipped to land on love. Once.</div>
+  <div class="meta-line"><strong>Category:</strong> cold &nbsp; <strong>Voice:</strong> Realist Cat &nbsp; <span class="energy-tag energy-crescendo">CRESCENDO</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I try again?" / "Can I trust this?" / "Will it work out?" (hope meets hard limits)<br>
+    <strong>Parts:</strong> flights-and-IT (water landing "once"), obituary compression, scouting criteria ("one-paced")
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(0, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(0, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(0)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-0">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-0">This aircraft is equipped to land on love. Once.</textarea>
+    <button class="save-btn" onclick="saveEdit(0)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 2 -->
+<div class="response-block" id="block-1" data-status="pending">
+  <div class="response-number">#2</div>
+  <div class="response-text" id="text-1">Stayed on well. Clearly beaten by winner.</div>
+  <div class="meta-line"><strong>Category:</strong> heartfelt &nbsp; <strong>Voice:</strong> Old Soul Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Did I make the right choice?" / "Am I enough?" / "Why do I keep losing?" (dignified defeat, endurance without victory)<br>
+    <strong>Parts:</strong> scouting-criteria (horse racing form "well-held"), obituary brevity ("Doug died."), Tig Notaro delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(1, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(1, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-1">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-1">Stayed on well. Clearly beaten by winner.</textarea>
+    <button class="save-btn" onclick="saveEdit(1)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 3 -->
+<div class="response-block" id="block-2" data-status="pending">
+  <div class="response-number">#3</div>
+  <div class="response-text" id="text-2">Scheme dependent. Only works in the right situation.</div>
+  <div class="meta-line"><strong>Category:</strong> wise &nbsp; <strong>Voice:</strong> Reluctant Therapist Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Is this normal?" / "Am I the problem?" / "Should I stay or go?" (you're not broken, you're misplaced)<br>
+    <strong>Parts:</strong> scouting-criteria (NFL draft term "scheme dependent"), dating-bios (warm LaCroix/fries metaphors), Nathan Fielder delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(2, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(2, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-2">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-2">Scheme dependent. Only works in the right situation.</textarea>
+    <button class="save-btn" onclick="saveEdit(2)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 4 -->
+<div class="response-block" id="block-3" data-status="pending">
+  <div class="response-number">#4</div>
+  <div class="response-text" id="text-3">The extension lead had been plugged into itself.</div>
+  <div class="meta-line"><strong>Category:</strong> existential &nbsp; <strong>Voice:</strong> Philosopher Cat &nbsp; <span class="energy-tag energy-crescendo">CRESCENDO</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Why do I keep doing this?" / "Am I wasting my time?" / "What's wrong with me?" (self-referential loops, trying to power yourself from yourself)<br>
+    <strong>Parts:</strong> flights-and-IT (actual IT support ticket), institutional-suffering (bureaucratic absurdity), Bo Burnham brevity
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(3, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(3, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-3">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-3">The extension lead had been plugged into itself.</textarea>
+    <button class="save-btn" onclick="saveEdit(3)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 5 -->
+<div class="response-block" id="block-4" data-status="pending">
+  <div class="response-number">#5</div>
+  <div class="response-text" id="text-4">Preceded in death by the relationship, the self-respect, and a really good hoodie.</div>
+  <div class="meta-line"><strong>Category:</strong> chaotic &nbsp; <strong>Voice:</strong> Dark Comedian Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I text them?" / "Will they come back?" / "Is it over?" (inventory of what a breakup actually costs)<br>
+    <strong>Parts:</strong> obituaries-realestate (Walter Bruhl "preceded in death by" body parts structure), dating-bios (red flag awareness), Anthony Jeselnik delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(4, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(4, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-4">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-4">Preceded in death by the relationship, the self-respect, and a really good hoodie.</textarea>
+    <button class="save-btn" onclick="saveEdit(4)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 6 -->
+<div class="response-block" id="block-5" data-status="pending">
+  <div class="response-number">#6</div>
+  <div class="response-text" id="text-5">*one ear rotates toward you* The ring fades. What remains is spaciousness.</div>
+  <div class="meta-line"><strong>Category:</strong> nurturing &nbsp; <strong>Voice:</strong> Old Soul Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Will it get better?" / "Does the pain stop?" / "Is it too late?" (the aftermath is not emptiness, it's room)<br>
+    <strong>Parts:</strong> purring-humming (singing bowl silence -- "the ring fades and what remains is spaciousness"), relationships-days-awkward (dent in carpet after furniture moves), Mr. Rogers delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(5, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(5, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-5">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-5">*one ear rotates toward you* The ring fades. What remains is spaciousness.</textarea>
+    <button class="save-btn" onclick="saveEdit(5)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 7 -->
+<div class="response-block" id="block-6" data-status="pending">
+  <div class="response-number">#7</div>
+  <div class="response-text" id="text-6">There may be fifty ways to leave your lover, but there are only four ways out of this.</div>
+  <div class="meta-line"><strong>Category:</strong> cold &nbsp; <strong>Voice:</strong> Realist Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I stay or go?" / "What are my options?" / "Am I trapped?" (the math of your actual exits)<br>
+    <strong>Parts:</strong> flights-and-IT (Southwest attendant oxygen mask briefing), roller-derby (limited exits, "suicide seats"), Bill Burr delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(6, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(6, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-6">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-6">There may be fifty ways to leave your lover, but there are only four ways out of this.</textarea>
+    <button class="save-btn" onclick="saveEdit(6)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 8 -->
+<div class="response-block" id="block-7" data-status="pending">
+  <div class="response-number">#8</div>
+  <div class="response-text" id="text-7">High floor, low ceiling. Reliable but will never surprise you.</div>
+  <div class="meta-line"><strong>Category:</strong> judgy &nbsp; <strong>Voice:</strong> Detective Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Is this the one?" / "Should I settle?" / "Am I wasting my time?" (the clinical verdict on something safe but limited)<br>
+    <strong>Parts:</strong> scouting-criteria (NFL draft term), real-estate euphemisms ("cozy" = small), restaurant-critics (dog show "nothing bad but nothing great from a gestalt perspective")
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(7, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(7, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-7">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-7">High floor, low ceiling. Reliable but will never surprise you.</textarea>
+    <button class="save-btn" onclick="saveEdit(7)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 9 -->
+<div class="response-block" id="block-8" data-status="pending">
+  <div class="response-number">#9</div>
+  <div class="response-text" id="text-8">We erased each other. But the ghost stayed.</div>
+  <div class="meta-line"><strong>Category:</strong> poetic &nbsp; <strong>Voice:</strong> Accidental Poet Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Will they come back?" / "Why can't I move on?" / "Is it really over?" (the deletion that doesn't delete)<br>
+    <strong>Parts:</strong> relationships-days-awkward (found whole -- personalscriptures substack), obituaries-realestate ("not haunted" energy), pheromones-scent (smell as memory detonation)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(8, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(8, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-8">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-8">We erased each other. But the ghost stayed.</textarea>
+    <button class="save-btn" onclick="saveEdit(8)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 10 -->
+<div class="response-block" id="block-9" data-status="pending">
+  <div class="response-number">#10</div>
+  <div class="response-text" id="text-9">Tootel them with vigor.</div>
+  <div class="meta-line"><strong>Category:</strong> demanding &nbsp; <strong>Voice:</strong> Badass Cat &nbsp; <span class="energy-tag energy-crescendo">CRESCENDO</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I say something?" / "Should I text them?" / "Should I go for it?" (absurd formality as permission to charge ahead)<br>
+    <strong>Parts:</strong> warnings-legal (1962 Honda manual "tootel the horn trumpet melodiously"), roller-derby ("go absolutely feral"), Jim Carrey unhinged energy
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(9, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(9, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-9">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-9">Tootel them with vigor.</textarea>
+    <button class="save-btn" onclick="saveEdit(9)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 11 -->
+<div class="response-block" id="block-10" data-status="pending">
+  <div class="response-number">#11</div>
+  <div class="response-text" id="text-10">Fleshy but tough and tenacious with loads of flavor and a bad attitude.</div>
+  <div class="meta-line"><strong>Category:</strong> judgy &nbsp; <strong>Voice:</strong> Judge Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "What do they really think of me?" / "Am I too much?" / "Am I enough?" (you as tasting note -- clinical authority that's accidentally a compliment)<br>
+    <strong>Parts:</strong> wildcard-vivid (wine tasting note), restaurant-critics (food critic language), scouting-criteria ("more ruggedly designed")
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(10, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(10, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-10">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-10">Fleshy but tough and tenacious with loads of flavor and a bad attitude.</textarea>
+    <button class="save-btn" onclick="saveEdit(10)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 12 -->
+<div class="response-block" id="block-11" data-status="pending">
+  <div class="response-number">#12</div>
+  <div class="response-text" id="text-11">The patient refused autopsy.</div>
+  <div class="meta-line"><strong>Category:</strong> meta &nbsp; <strong>Voice:</strong> Contradiction Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I look at this closer?" / "Do I want to know?" / "What if it's bad news?" (refusing to examine what's already dead)<br>
+    <strong>Parts:</strong> institutional-suffering (actual medical chart entry), obituaries-realestate (death as bureaucratic event), Mitch Hedberg deadpan
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(11, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(11, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-11">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-11">The patient refused autopsy.</textarea>
+    <button class="save-btn" onclick="saveEdit(11)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 13 -->
+<div class="response-block" id="block-12" data-status="pending">
+  <div class="response-number">#13</div>
+  <div class="response-text" id="text-12">Do not use beyond usage.</div>
+  <div class="meta-line"><strong>Category:</strong> wise &nbsp; <strong>Voice:</strong> Elder Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Am I wasting my time?" / "When do I stop?" / "How much more can I take?" (accidentally the most profound boundary ever set)<br>
+    <strong>Parts:</strong> warnings-legal (translated product manual), institutional-suffering (Kafka "slime of bureaucracy"), Steven Wright deadpan
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(12, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(12, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-12">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-12">Do not use beyond usage.</textarea>
+    <button class="save-btn" onclick="saveEdit(12)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 14 -->
+<div class="response-block" id="block-13" data-status="pending">
+  <div class="response-number">#14</div>
+  <div class="response-text" id="text-13">You will always be my first phone call from jail. Even if you're the one who put me there.</div>
+  <div class="meta-line"><strong>Category:</strong> heartfelt &nbsp; <strong>Voice:</strong> Loving Cat &nbsp; <span class="energy-tag energy-crescendo">CRESCENDO</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Does anyone actually care?" / "Can I trust this?" / "Is this real?" (loyalty that survives betrayal -- the commitment IS the answer)<br>
+    <strong>Parts:</strong> roller-derby (derby wife vows, found whole), dating-bios (pros/cons format), relationships-days-awkward ("us vs the issue")
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(13, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(13, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-13">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-13">You will always be my first phone call from jail. Even if you're the one who put me there.</textarea>
+    <button class="save-btn" onclick="saveEdit(13)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 15 -->
+<div class="response-block" id="block-14" data-status="pending">
+  <div class="response-number">#15</div>
+  <div class="response-text" id="text-14">Decorated in various shades of fine, okay, and fuck it.</div>
+  <div class="meta-line"><strong>Category:</strong> chaotic &nbsp; <strong>Voice:</strong> Street Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Am I doing okay?" / "Is this normal?" / "How do I feel?" (the real color palette of getting through the day)<br>
+    <strong>Parts:</strong> restaurant-critics (Jay Rayner "decorated in various shades of taupe, biscuit and fuck you"), real-estate euphemisms, Taylor Tomlinson delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(14, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(14, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-14">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-14">Decorated in various shades of fine, okay, and fuck it.</textarea>
+    <button class="save-btn" onclick="saveEdit(14)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 16 -->
+<div class="response-block" id="block-15" data-status="pending">
+  <div class="response-number">#16</div>
+  <div class="response-text" id="text-15">The first thing they teach you is how to fall. It's not a question of if.</div>
+  <div class="meta-line"><strong>Category:</strong> wise &nbsp; <strong>Voice:</strong> Barncat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "What if I fail?" / "Should I try?" / "Am I ready?" (falling is curriculum, not catastrophe)<br>
+    <strong>Parts:</strong> roller-derby (TIME Magazine essay -- "the first thing they teach you is how to fall safely"), scouting-criteria ("fresh meat"), Nate Bargatze delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(15, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(15, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-15">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-15">The first thing they teach you is how to fall. It's not a question of if.</textarea>
+    <button class="save-btn" onclick="saveEdit(15)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 17 -->
+<div class="response-block" id="block-16" data-status="pending">
+  <div class="response-number">#17</div>
+  <div class="response-text" id="text-16">Seeing ghosts. Reacting to pressure that isn't there.</div>
+  <div class="meta-line"><strong>Category:</strong> cold &nbsp; <strong>Voice:</strong> Reluctant Therapist Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Am I overthinking this?" / "Is this real or am I paranoid?" / "What if they're lying?" (anxiety named as scouting report)<br>
+    <strong>Parts:</strong> scouting-criteria (NFL "seeing ghosts" -- QB reacting to phantom rushers), superpowers (mind reading as curse), Marc Maron neurotic delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(16, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(16, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-16">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-16">Seeing ghosts. Reacting to pressure that isn't there.</textarea>
+    <button class="save-btn" onclick="saveEdit(16)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 18 -->
+<div class="response-block" id="block-17" data-status="pending">
+  <div class="response-number">#18</div>
+  <div class="response-text" id="text-17">We deserve better villains.</div>
+  <div class="meta-line"><strong>Category:</strong> demanding &nbsp; <strong>Voice:</strong> Diva Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Why does this keep happening?" / "Is this worth fighting about?" / "Should I let it go?" (your enemies aren't even good enough to be worth the energy)<br>
+    <strong>Parts:</strong> roller-derby (Whip It found whole), scouting-criteria (dismissive assessment), Dorothy Parker delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(17, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(17, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-17">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-17">We deserve better villains.</textarea>
+    <button class="save-btn" onclick="saveEdit(17)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 19 -->
+<div class="response-block" id="block-18" data-status="pending">
+  <div class="response-number">#19</div>
+  <div class="response-text" id="text-18">Go soothingly on the grease mud, as there lurks the skid demon.</div>
+  <div class="meta-line"><strong>Category:</strong> mystical &nbsp; <strong>Voice:</strong> Prophet Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I be careful?" / "What should I watch out for?" / "Am I being paranoid?" (formality + mythological warning = proceed, but the danger is real)<br>
+    <strong>Parts:</strong> warnings-legal (1962 Honda manual), pheromones-scent (invisible forces), wildcard-vivid (volcano eyewitness primal fear)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(18, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(18, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-18">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-18">Go soothingly on the grease mud, as there lurks the skid demon.</textarea>
+    <button class="save-btn" onclick="saveEdit(18)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 20 -->
+<div class="response-block" id="block-19" data-status="pending">
+  <div class="response-number">#20</div>
+  <div class="response-text" id="text-19">The officer does not care whether you are truly in love. The officer only cares whether you have submitted sufficient evidence.</div>
+  <div class="meta-line"><strong>Category:</strong> cold &nbsp; <strong>Voice:</strong> Judge Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Do they love me?" / "How do I know if it's real?" / "Can I trust this?" (love is irrelevant -- evidence is everything)<br>
+    <strong>Parts:</strong> international-dating (immigration interview guide, found whole), institutional-suffering (bureaucratic indifference), warnings-legal (legal language authority)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(19, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(19, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-19">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-19">The officer does not care whether you are truly in love. The officer only cares whether you have submitted sufficient evidence.</textarea>
+    <button class="save-btn" onclick="saveEdit(19)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 21 -->
+<div class="response-block" id="block-20" data-status="pending">
+  <div class="response-number">#21</div>
+  <div class="response-text" id="text-20">*reaches one paw without getting up* I mean this in the nicest way possible, but I hope I never see you again.</div>
+  <div class="meta-line"><strong>Category:</strong> nurturing &nbsp; <strong>Voice:</strong> Loving Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Will it get better?" / "Am I going to be okay?" / someone leaving a hard chapter (ER nurse goodbye -- "goodbye forever" as the kindest thing)<br>
+    <strong>Parts:</strong> institutional-suffering (ER nurse discharge phrase), movies-cry (the movie you love but can never rewatch), attractive-traits (tenderness from unexpected source)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(20, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(20, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(20)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-20">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-20">*reaches one paw without getting up* I mean this in the nicest way possible, but I hope I never see you again.</textarea>
+    <button class="save-btn" onclick="saveEdit(20)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 22 -->
+<div class="response-block" id="block-21" data-status="pending">
+  <div class="response-number">#22</div>
+  <div class="response-text" id="text-21">One of the most beautiful things I've ever seen. Can never see it again.</div>
+  <div class="meta-line"><strong>Category:</strong> heartfelt &nbsp; <strong>Voice:</strong> Accidental Poet Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I go back?" / "Why can't I move on?" / "Is it really over?" (the thing you love most is the thing you can't return to)<br>
+    <strong>Parts:</strong> movies-cry (found whole -- Grave of the Fireflies Reddit reaction), relationships-days-awkward ("the spark was there and then it wasn't"), pheromones-scent (memory as detonation)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(21, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(21, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(21)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-21">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-21">One of the most beautiful things I've ever seen. Can never see it again.</textarea>
+    <button class="save-btn" onclick="saveEdit(21)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 23 -->
+<div class="response-block" id="block-22" data-status="pending">
+  <div class="response-number">#23</div>
+  <div class="response-text" id="text-22">Looks like Tarzan, plays like Jane.</div>
+  <div class="meta-line"><strong>Category:</strong> judgy &nbsp; <strong>Voice:</strong> Competitive Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Can I trust them?" / "Are they what they seem?" / "Should I believe the hype?" (the universal gap between appearance and reality)<br>
+    <strong>Parts:</strong> scouting-criteria (NFL scouting glossary), dating-bios ("knight in shining armor / loser in tinfoil"), restaurant-critics ("the only garnish that would improve it would be a power cut")
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(22, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(22, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(22)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-22">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-22">Looks like Tarzan, plays like Jane.</textarea>
+    <button class="save-btn" onclick="saveEdit(22)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 24 -->
+<div class="response-block" id="block-23" data-status="pending">
+  <div class="response-number">#24</div>
+  <div class="response-text" id="text-23">*slow blink* To be overcome by something this good is a delectable form of defeat.</div>
+  <div class="meta-line"><strong>Category:</strong> poetic &nbsp; <strong>Voice:</strong> Pensive Cat &nbsp; <span class="energy-tag energy-rhythm">RHYTHM</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Should I give in?" / "Am I weak for wanting this?" / "Is it okay to stop fighting?" (surrender framed as victory)<br>
+    <strong>Parts:</strong> pheromones-scent (Beverly Nichols found whole -- "overcome by fragrance is a delectable form of defeat"), roller-derby (derby kisses -- damage as beauty), Oscar Wilde delivery
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(23, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(23, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(23)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-23">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-23">*slow blink* To be overcome by something this good is a delectable form of defeat.</textarea>
+    <button class="save-btn" onclick="saveEdit(23)">Save</button>
+  </div>
+</div>
+
+<!-- RESPONSE 25 -->
+<div class="response-block" id="block-24" data-status="pending">
+  <div class="response-number">#25</div>
+  <div class="response-text" id="text-24">*makes biscuits on your chest* Moved out freer and easier.</div>
+  <div class="meta-line"><strong>Category:</strong> nurturing &nbsp; <strong>Voice:</strong> Loving Cat &nbsp; <span class="energy-tag energy-quiet">QUIET</span></div>
+  <div class="parts-line">
+    <strong>Answers:</strong> "Did I make the right choice?" / "Was leaving the right thing?" / "Will I be okay on my own?" (livestock language as liberation -- you left, and it freed something in you)<br>
+    <strong>Parts:</strong> scouting-criteria (4-H livestock judging -- "moved out freer and easier"), relationships-days-awkward (relationship as thing that holds you in place), purring-humming (bone-healing frequencies)
+  </div>
+  <div class="buttons">
+    <button class="btn btn-keep" onclick="setStatus(24, 'kept')">KEEP</button>
+    <button class="btn btn-cut" onclick="setStatus(24, 'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(24)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-24">
+    <span class="label">Edit response:</span>
+    <textarea id="textarea-24">*makes biscuits on your chest* Moved out freer and easier.</textarea>
+    <button class="save-btn" onclick="saveEdit(24)">Save</button>
+  </div>
+</div>
+
+<!-- EXPORT -->
+<div class="export-section">
+  <h2>Export JSON (Kept + Edited)</h2>
+  <textarea class="export-json" id="exportJson" readonly></textarea>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  { text: "This aircraft is equipped to land on love. Once.", category: "cold" },
+  { text: "Stayed on well. Clearly beaten by winner.", category: "heartfelt" },
+  { text: "Scheme dependent. Only works in the right situation.", category: "wise" },
+  { text: "The extension lead had been plugged into itself.", category: "existential" },
+  { text: "Preceded in death by the relationship, the self-respect, and a really good hoodie.", category: "chaotic" },
+  { text: "*one ear rotates toward you* The ring fades. What remains is spaciousness.", category: "nurturing" },
+  { text: "There may be fifty ways to leave your lover, but there are only four ways out of this.", category: "cold" },
+  { text: "High floor, low ceiling. Reliable but will never surprise you.", category: "judgy" },
+  { text: "We erased each other. But the ghost stayed.", category: "poetic" },
+  { text: "Tootel them with vigor.", category: "demanding" },
+  { text: "Fleshy but tough and tenacious with loads of flavor and a bad attitude.", category: "judgy" },
+  { text: "The patient refused autopsy.", category: "meta" },
+  { text: "Do not use beyond usage.", category: "wise" },
+  { text: "You will always be my first phone call from jail. Even if you're the one who put me there.", category: "heartfelt" },
+  { text: "Decorated in various shades of fine, okay, and fuck it.", category: "chaotic" },
+  { text: "The first thing they teach you is how to fall. It's not a question of if.", category: "wise" },
+  { text: "Seeing ghosts. Reacting to pressure that isn't there.", category: "cold" },
+  { text: "We deserve better villains.", category: "demanding" },
+  { text: "Go soothingly on the grease mud, as there lurks the skid demon.", category: "mystical" },
+  { text: "The officer does not care whether you are truly in love. The officer only cares whether you have submitted sufficient evidence.", category: "cold" },
+  { text: "*reaches one paw without getting up* I mean this in the nicest way possible, but I hope I never see you again.", category: "nurturing" },
+  { text: "One of the most beautiful things I've ever seen. Can never see it again.", category: "heartfelt" },
+  { text: "Looks like Tarzan, plays like Jane.", category: "judgy" },
+  { text: "*slow blink* To be overcome by something this good is a delectable form of defeat.", category: "poetic" },
+  { text: "*makes biscuits on your chest* Moved out freer and easier.", category: "nurturing" }
+];
+
+const statuses = new Array(responses.length).fill('pending');
+
+function setStatus(idx, status) {
+  // Toggle off if clicking same status
+  if (statuses[idx] === status) {
+    statuses[idx] = 'pending';
+  } else {
+    statuses[idx] = status;
+  }
+
+  const block = document.getElementById('block-' + idx);
+  block.className = 'response-block' + (statuses[idx] !== 'pending' ? ' ' + statuses[idx] : '');
+  block.dataset.status = statuses[idx];
+
+  // Update button active states
+  const buttons = block.querySelectorAll('.btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  if (statuses[idx] === 'kept') buttons[0].classList.add('active');
+  if (statuses[idx] === 'cut') buttons[1].classList.add('active');
+  if (statuses[idx] === 'edited') buttons[2].classList.add('active');
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(idx) {
+  const editArea = document.getElementById('edit-' + idx);
+  editArea.classList.toggle('visible');
+}
+
+function saveEdit(idx) {
+  const textarea = document.getElementById('textarea-' + idx);
+  const newText = textarea.value.trim();
+  const textEl = document.getElementById('text-' + idx);
+
+  // Store original if first edit
+  if (!responses[idx].original) {
+    responses[idx].original = responses[idx].text;
+  }
+
+  responses[idx].text = newText;
+
+  // Show edited text with indicator
+  if (responses[idx].original && responses[idx].original !== newText) {
+    // Build display with original shown above
+    const block = document.getElementById('block-' + idx);
+    let origDiv = block.querySelector('.original-text');
+    if (!origDiv) {
+      origDiv = document.createElement('div');
+      origDiv.className = 'original-text';
+      textEl.parentNode.insertBefore(origDiv, textEl);
+    }
+    origDiv.innerHTML = '<span class="label">Original:</span>' + responses[idx].original;
+    textEl.innerHTML = newText + '<span class="edited-indicator">EDITED</span>';
+  } else {
+    textEl.textContent = newText;
+    const block = document.getElementById('block-' + idx);
+    let origDiv = block.querySelector('.original-text');
+    if (origDiv) origDiv.remove();
+  }
+
+  setStatus(idx, 'edited');
+  document.getElementById('edit-' + idx).classList.remove('visible');
+}
+
+function updateStats() {
+  const counts = { kept: 0, cut: 0, edited: 0, pending: 0 };
+  statuses.forEach(s => counts[s]++);
+  document.getElementById('keepCount').textContent = counts.kept;
+  document.getElementById('cutCount').textContent = counts.cut;
+  document.getElementById('editCount').textContent = counts.edited;
+  document.getElementById('pendingCount').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (statuses[i] === 'kept' || statuses[i] === 'edited') {
+      kept.push({ text: r.text, category: r.category });
+    }
+  });
+  document.getElementById('exportJson').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('exportJson');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+}
+
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Archie Energy</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 140px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 { font-size: 1.3em; margin-bottom: 4px; color: #e94560; }
+  .sticky-header .subtitle { font-size: 0.85em; color: #888; margin-bottom: 10px; }
+  .stats { display: flex; gap: 24px; font-size: 0.95em; flex-wrap: wrap; }
+  .stats .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+  .stat-count { font-weight: bold; font-size: 1.1em; }
+
+  .batch-info {
+    background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 24px;
+    border-left: 4px solid #e94560; font-size: 0.85em; color: #aaa; line-height: 1.6;
+  }
+  .batch-info strong { color: #e0e0e0; }
+
+  .response-card {
+    background: #16213e; border-radius: 8px; margin-bottom: 16px; padding: 20px;
+    border-left: 4px solid #0f3460; transition: border-color 0.3s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number { font-size: 0.75em; color: #555; margin-bottom: 4px; }
+  .response-text { font-size: 1.15em; line-height: 1.5; margin-bottom: 6px; color: #fff; font-style: italic; }
+  .response-category { font-size: 0.75em; color: #0f3460; background: #1a1a2e; display: inline-block; padding: 2px 10px; border-radius: 12px; margin-bottom: 12px; }
+  .response-voice { font-size: 0.7em; color: #666; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+
+  .edit-area { display: none; margin-top: 10px; width: 100%; }
+  .edit-area textarea { width: 100%; background: #1a1a2e; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 1em; resize: vertical; min-height: 60px; font-family: inherit; }
+  .edit-area .btn-save { margin-top: 6px; background: #ffd93d; color: #1a1a2e; }
+
+  .export-section { margin-top: 40px; background: #16213e; border-radius: 8px; padding: 20px; }
+  .export-section h2 { color: #4ecca3; margin-bottom: 12px; font-size: 1.1em; }
+  .export-section textarea { width: 100%; min-height: 300px; background: #1a1a2e; color: #4ecca3; border: 1px solid #0f3460; border-radius: 4px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.85em; }
+  .btn-copy { margin-top: 8px; background: #4ecca3; color: #1a1a2e; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Archie Energy Batch</h1>
+  <div class="subtitle">Love triangles, jealousy, will-she-won't-she, cat crazy. Riverdale but with whiskers. | 2026-02-15</div>
+  <div class="stats">
+    <div class="stat stat-keep"><span>KEEP:</span> <span class="stat-count" id="keep-count">0</span></div>
+    <div class="stat stat-cut"><span>CUT:</span> <span class="stat-count" id="cut-count">0</span></div>
+    <div class="stat stat-edit"><span>EDIT:</span> <span class="stat-count" id="edit-count">0</span></div>
+    <div class="stat stat-pending"><span>PENDING:</span> <span class="stat-count" id="pending-count">20</span></div>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Refrigerators:</strong> Archie Comics love triangles, Betty vs Veronica energy, boy/girl crazy translated to cat crazy, jealousy over attention, "will she won't she" indecision, devotion with attitude<br>
+  <strong>Cat Voices:</strong> Mix of Attention Cat, Diva Cat, Flirt Cat, Jealous energy, Demanding, Loving Cat, Contradiction Cat, Karen Cat, Detective Cat<br>
+  <strong>Delivery Mix:</strong> Direct address, jealous accusations, demands, ultimatums, love declarations with teeth<br>
+  <strong>Energy:</strong> ~3 crescendos, ~14 rhythm, ~3 quiet
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <textarea id="export-json" readonly></textarea>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    id: 1,
+    text: "You have two choices. I\u2019m both of them.",
+    category: "demanding",
+    voice: "Diva Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 2,
+    text: "I saw you pet another cat. We\u2019ll discuss this when you get home.",
+    category: "judgy",
+    voice: "Detective Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 3,
+    text: "Choose me. Or choose me. Those are your options.",
+    category: "demanding",
+    voice: "Attention Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 4,
+    text: "She likes you. She also likes him. Welcome to my life.",
+    category: "chaotic",
+    voice: "Reluctant Therapist Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 5,
+    text: "I\u2019m not jealous. I just need to know where you were, who you were with, and if they had fur.",
+    category: "chaotic",
+    voice: "Karen Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 6,
+    text: "Was she prettier than me? Don\u2019t answer that. Don\u2019t NOT answer that.",
+    category: "chaotic",
+    voice: "Contradiction Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 7,
+    text: "You looked at another cat\u2019s profile. I have screenshots.",
+    category: "cold",
+    voice: "Detective Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 8,
+    text: "I will wait for you. Not patiently. Not quietly. But I will wait.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    energy: "quiet"
+  },
+  {
+    id: 9,
+    text: "Pick one. No, not that one. The other one. No.",
+    category: "chaotic",
+    voice: "Contradiction Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 10,
+    text: "Every love triangle has a cat in the middle.",
+    category: "wise",
+    voice: "Philosopher Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 11,
+    text: "Your heart has room for two. I need all of it.",
+    category: "demanding",
+    voice: "Attention Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 12,
+    text: "Go ahead, make plans without me. See what happens to your favorite shoes.",
+    category: "angry",
+    voice: "Karen Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 13,
+    text: "I\u2019m the one you come home to. Remember that when you\u2019re out there choosing.",
+    category: "heartfelt",
+    voice: "Loving Cat",
+    energy: "quiet"
+  },
+  {
+    id: 14,
+    text: "Will I or won\u2019t I? Depends entirely on whether you deserve it.",
+    category: "cold",
+    voice: "Flirt Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 15,
+    text: "There\u2019s someone better out there. It\u2019s me. I\u2019m out there.",
+    category: "chaotic",
+    voice: "Competitive Cat",
+    energy: "crescendo"
+  },
+  {
+    id: 16,
+    text: "You smell like dog. This conversation is over.",
+    category: "cold",
+    voice: "Judge Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 17,
+    text: "Love me or don\u2019t. But don\u2019t love me medium.",
+    category: "demanding",
+    voice: "Diva Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 18,
+    text: "I\u2019m not complicated. Love me, feed me, never leave.",
+    category: "nurturing",
+    voice: "Loving Cat",
+    energy: "quiet"
+  },
+  {
+    id: 19,
+    text: "Crazy about you. Regular crazy about everyone else.",
+    category: "chaotic",
+    voice: "Flirt Cat",
+    energy: "rhythm"
+  },
+  {
+    id: 20,
+    text: "The answer is always yes when you\u2019re asking about me.",
+    category: "demanding",
+    voice: "Attention Cat",
+    energy: "rhythm"
+  }
+];
+
+const decisions = {};
+
+function renderResponses() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = responses.map(r => `
+    <div class="response-card" id="card-${r.id}" data-id="${r.id}">
+      <div class="response-number">#${r.id} &middot; ${r.energy}</div>
+      <div class="response-text" id="text-${r.id}">${escapeHtml(r.text)}</div>
+      <div class="response-category">${r.category}</div>
+      <div class="response-voice">${r.voice}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${r.id}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${r.id}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${r.id})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${r.id}">
+        <textarea id="editbox-${r.id}">${escapeHtml(r.text)}</textarea>
+        <button class="btn btn-save" onclick="saveEdit(${r.id})">Save Edit</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(id, decision) {
+  decisions[id] = decision;
+  const card = document.getElementById('card-' + id);
+  card.className = 'response-card ' + (decision === 'keep' ? 'kept' : decision === 'cut' ? 'cut' : 'edited');
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const area = document.getElementById('edit-' + id);
+  area.style.display = area.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(id) {
+  const newText = document.getElementById('editbox-' + id).value;
+  document.getElementById('text-' + id).textContent = newText;
+  const r = responses.find(r => r.id === id);
+  r.text = newText;
+  decisions[id] = 'edit';
+  const card = document.getElementById('card-' + id);
+  card.className = 'response-card edited';
+  document.getElementById('edit-' + id).style.display = 'none';
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  for (const d of Object.values(decisions)) {
+    if (d === 'keep') keep++;
+    else if (d === 'cut') cut++;
+    else if (d === 'edit') edit++;
+  }
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = responses.length - keep - cut - edit;
+}
+
+function updateExport() {
+  const exported = responses.filter(r => decisions[r.id] === 'keep' || decisions[r.id] === 'edit')
+    .map(r => ({ text: r.text, category: r.category }));
+  document.getElementById('export-json').value = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+renderResponses();
+updateExport();
+</script>
+</body>
+</html>

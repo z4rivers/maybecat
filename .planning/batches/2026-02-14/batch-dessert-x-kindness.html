@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Dessert Reviews × Random Acts of Kindness</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sticky-header h1 { font-size: 1.1rem; color: #e94560; flex-shrink: 0; }
+  .sticky-header .subtitle { font-size: 0.8rem; color: #888; flex-shrink: 0; }
+  .stats { display: flex; gap: 16px; margin-left: auto; flex-wrap: wrap; }
+  .stat { font-size: 0.85rem; font-weight: 600; }
+  .stat-total { color: #e0e0e0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .batch-info {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #aaa;
+  }
+  .batch-info strong { color: #e94560; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .response-number { font-size: 0.75rem; color: #555; font-weight: 600; }
+  .response-category { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 4px; background: #0f3460; color: #4ecca3; }
+  .response-source { font-size: 0.65rem; color: #666; margin-top: 4px; font-style: italic; }
+  .response-text { font-size: 1.15rem; line-height: 1.5; color: #fff; margin-bottom: 8px; font-style: italic; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .btn-undo { background: #333; color: #aaa; font-size: 0.7rem; padding: 4px 10px; }
+  .btn-undo:hover { background: #444; }
+
+  .decision-label { font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+  .decision-keep { color: #4ecca3; }
+  .decision-cut { color: #e94560; }
+  .decision-edit { color: #ffd93d; }
+
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #fff; border: 1px solid #4ecca3; border-radius: 4px; padding: 10px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { margin-top: 8px; background: #4ecca3; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; }
+
+  .export-section { margin-top: 40px; background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 20px; }
+  .export-section h2 { font-size: 1rem; color: #4ecca3; margin-bottom: 12px; }
+  .export-section textarea { width: 100%; min-height: 300px; background: #0a0a1a; color: #4ecca3; border: 1px solid #0f3460; border-radius: 4px; padding: 12px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.8rem; resize: vertical; }
+  .copy-btn { margin-top: 8px; background: #4ecca3; color: #1a1a2e; padding: 8px 20px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+  .copy-btn:hover { background: #3dbb92; }
+
+  .research-section {
+    background: #0f1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #666;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .research-section h3 { color: #e94560; font-size: 0.85rem; margin-bottom: 8px; }
+  .research-section h4 { color: #4ecca3; font-size: 0.75rem; margin: 8px 0 4px; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Dessert Reviews &times; Kindness</h1>
+  <span class="subtitle">30 responses | Recipe purple prose collides with earnest kindness instructions</span>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">30</span></span>
+    <span class="stat stat-keep">Keep: <span id="stat-keep">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="stat-edit">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="stat-pending">30</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Refrigerators:</strong> 5-star dessert recipe reviews (the purple prose of home bakers) &times; random acts of kindness lists (the earnest instructions of good people). The collision barely makes sense. That&rsquo;s the point.<br>
+  <strong>Why it works:</strong> Recipe reviews talk about food like it&rsquo;s a religious experience (&ldquo;sinfully rich,&rdquo; &ldquo;died and went to heaven,&rdquo; &ldquo;devoured in minutes&rdquo;). Kindness lists give precise instructions for goodness (&ldquo;slip a note,&rdquo; &ldquo;tape a quarter,&rdquo; &ldquo;scatter everywhere&rdquo;). When a cat mashes these together, you get instructions that sound like either dessert recipes, life advice, or both. Body parts included where they help.<br>
+  <strong>Cat voices:</strong> Nurturing Cat, Chaos Cat, Wise Cat, Demanding Cat, Elder Cat, Feral Cat
+</div>
+
+<div class="research-section">
+  <h3>Raw Research Highlights (scroll)</h3>
+  <h4>Dessert Review Language:</h4>
+  &bull; "moist, rich, and everything I needed" &bull; "devoured in minutes" &bull; "sinfully rich" &bull; "melts on your tongue" &bull; "almost too pretty to eat" &bull; "dangerously addictive" &bull; "I will never make another" &bull; "died and gone to heaven" &bull; "three layers of pure indulgence" &bull; "worth every calorie" &bull; "better than my ex-husband" &bull; "my family devoured this" &bull; "gone in no more than 5 minutes" &bull; "perfectly moist" &bull; "incredibly forgiving" &bull; "I couldn't stop eating it" &bull; "showstopper" &bull; "foolproof" &bull; "game changer" &bull; "life changing" &bull; "everyone asked for the recipe" &bull; "I almost licked the monitor"
+
+  <h4>Kindness List Language:</h4>
+  &bull; "leave a kind note on someone's car" &bull; "tape coins to a vending machine" &bull; "slip a message under their pillow" &bull; "scatter kindness like confetti" &bull; "hide a note in someone's pocket" &bull; "tuck a message in their favorite book" &bull; "surprise a stranger" &bull; "compliment a stranger" &bull; "return their cart" &bull; "hold the door" &bull; "bring something warm" &bull; "leave quarters at a laundromat" &bull; "your treat is on me, have a sweet day" &bull; "give your hardworking hands a rest" &bull; "sprinkle kindness everywhere you go" &bull; "paint a rock with a positive message" &bull; "leave books in libraries with bookmarks"
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <textarea id="export-json" readonly></textarea>
+  <br>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+  <span id="copy-status" style="margin-left: 12px; font-size: 0.8rem; color: #4ecca3;"></span>
+</div>
+
+<script>
+const responses = [
+  // === DESSERT LANGUAGE AS LIFE VERDICT ===
+  { text: "Moist, rich, and everything you needed.", category: "nurturing", source: "dessert review \u00d7 comfort" },
+  { text: "Worth every calorie.", category: "wise", source: "dessert review as life advice" },
+  { text: "Devoured in minutes. Never lasts long.", category: "cold", source: "dessert review as warning" },
+  { text: "Almost too pretty to eat.", category: "heartfelt", source: "dessert review as compliment" },
+  { text: "Sinfully rich and gone by morning.", category: "cold", source: "dessert review as... anything" },
+  { text: "Three layers of pure indulgence.", category: "demanding", source: "dessert review as oracle" },
+  { text: "Dangerously addictive. You were warned.", category: "cold", source: "dessert review as threat" },
+  { text: "Perfectly moist. Incredibly forgiving.", category: "heartfelt", source: "dessert as person description" },
+
+  // === KINDNESS INSTRUCTIONS AS CAT COMMANDS ===
+  { text: "Leave something sweet where they\u2019ll find it.", category: "wise", source: "kindness + dessert" },
+  { text: "Slip a note where they\u2019ll find it.", category: "wise", source: "kindness as cat instruction" },
+  { text: "Scatter it everywhere you go.", category: "chaotic", source: "kindness or dessert or cat hair" },
+  { text: "Tape a quarter to something. Walk away.", category: "chaotic", source: "kindness as chaos" },
+  { text: "Hide it for someone to find.", category: "mystical", source: "kindness as mystery" },
+  { text: "Bring something warm to someone who isn\u2019t expecting it.", category: "heartfelt", source: "kindness instruction" },
+  { text: "Return their cart. Cherish the silence.", category: "wise", source: "kindness + peace" },
+
+  // === THE COLLISION (barely makes sense) ===
+  { text: "Hold the door. Melt.", category: "chaotic", source: "kindness verb + dessert verb" },
+  { text: "Compliment a stranger. They\u2019ll devour it.", category: "wise", source: "kindness + consumption" },
+  { text: "Surprise a stranger. They\u2019ll ask for the recipe.", category: "chaotic", source: "kindness + dessert review" },
+  { text: "I couldn\u2019t stop. I won\u2019t apologize.", category: "demanding", source: "dessert review as confession" },
+  { text: "My family devoured this.", category: "cold", source: "ominous without context" },
+  { text: "I will never make another. This was the one.", category: "existential", source: "dessert finality as life" },
+  { text: "Gone by morning. Don\u2019t ask questions.", category: "cold", source: "dessert + mystery" },
+  { text: "Better than the last one.", category: "judgy", source: "dessert comparison as verdict" },
+  { text: "You are enough. Also, add more butter.", category: "chaotic", source: "kindness note + recipe advice" },
+
+  // === BODY PARTS ===
+  { text: "Melts on your tongue. Disappears fast.", category: "mystical", source: "dessert + tongue" },
+  { text: "Your tongue already knows.", category: "wise", source: "tongue + instinct" },
+  { text: "Rub the belly. Not yours.", category: "chaotic", source: "cat belly instruction" },
+  { text: "Trust your paws.", category: "wise", source: "cat body wisdom" },
+  { text: "Scratch behind the ears. Theirs, not yours.", category: "chaotic", source: "cat kindness instruction" },
+  { text: "Give your hardworking hands a rest.", category: "nurturing", source: "kindness as comfort" },
+];
+
+const container = document.getElementById('responses-container');
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function renderCards() {
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    card.id = 'card-' + i;
+    const displayText = editedTexts[i] || r.text;
+    card.innerHTML = `
+      <div class="response-header">
+        <span class="response-number">#${i + 1}</span>
+        <span class="response-category">${r.category}</span>
+      </div>
+      <div class="response-text">\u201c${displayText}\u201d</div>
+      <div class="response-source">${r.source}</div>
+      <div class="actions" id="actions-${i}">
+        ${decisions[i] ? `
+          <span class="decision-label decision-${decisions[i]}">${decisions[i].toUpperCase()}${decisions[i] === 'edit' ? ': \u201c' + (editedTexts[i] || r.text) + '\u201d' : ''}</span>
+          <button class="btn btn-undo" onclick="undo(${i})">Undo</button>
+        ` : `
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        `}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="edit-text-${i}">${r.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(i, decision) { decisions[i] = decision; renderCards(); updateStats(); updateExport(); }
+function undo(i) { decisions[i] = null; editedTexts[i] = null; renderCards(); updateStats(); updateExport(); }
+function showEdit(i) { document.getElementById('edit-' + i).classList.toggle('visible'); }
+function saveEdit(i) { editedTexts[i] = document.getElementById('edit-text-' + i).value; decisions[i] = 'edit'; renderCards(); updateStats(); updateExport(); }
+
+function updateStats() {
+  const keep = decisions.filter(d => d === 'keep').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edit = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-pending').textContent = pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (decisions[i] === 'edit') kept.push({ text: editedTexts[i] || r.text, category: r.category });
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  document.execCommand('copy');
+  const status = document.getElementById('copy-status');
+  status.textContent = 'Copied!';
+  setTimeout(() => status.textContent = '', 2000);
+}
+
+renderCards();
+updateExport();
+</script>
+</body>
+</html>

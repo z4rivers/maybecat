@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Villain Valentines - MaybeCat Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .sticky-header h1 {
+    font-size: 1.3em;
+    color: #e94560;
+    flex-shrink: 0;
+  }
+
+  .sticky-header .subtitle {
+    font-size: 0.8em;
+    color: #888;
+    flex-shrink: 0;
+  }
+
+  .stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  .stat {
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+
+  .stat.total { color: #e0e0e0; }
+  .stat.kept { color: #4ecca3; }
+  .stat.cut { color: #e94560; }
+  .stat.edited { color: #ffd93d; }
+  .stat.pending { color: #888; }
+
+  .response-card {
+    background: #16213e;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number {
+    font-size: 0.75em;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  .response-text {
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .response-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .category-tag {
+    background: #0f3460;
+    color: #4ecca3;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .villain-note {
+    font-size: 0.75em;
+    color: #666;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db890; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #ecc82e; }
+  .btn-reset { background: #333; color: #888; }
+  .btn-reset:hover { background: #444; color: #aaa; }
+
+  .btn.active {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    background: #0d1b2a;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1.1em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .edit-area .save-edit {
+    margin-top: 6px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8em;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+  }
+
+  .export-section p {
+    color: #888;
+    font-size: 0.85em;
+    margin-bottom: 10px;
+  }
+
+  .export-section textarea {
+    width: 100%;
+    min-height: 300px;
+    background: #0d1b2a;
+    color: #4ecca3;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85em;
+    resize: vertical;
+  }
+
+  .copy-btn {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+
+  .copy-btn:hover { background: #3db890; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Villain Valentines</h1>
+  <span class="subtitle">Sci-fi villains admiring each other. Accidentally motivational. | 2026-02-14</span>
+  <div class="stats">
+    <span class="stat total">Total: <span id="total-count">30</span></span>
+    <span class="stat kept">Keep: <span id="keep-count">0</span></span>
+    <span class="stat cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat edited">Edit: <span id="edit-count">0</span></span>
+    <span class="stat pending">Pending: <span id="pending-count">30</span></span>
+  </div>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (KEPT + EDITED only)</h2>
+  <p>Updates live as you make decisions. Copy and paste into oracleResponses.ts.</p>
+  <textarea id="export-json" readonly></textarea>
+  <br>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "Your calm refusal. Your gentle no. Gorgeous.",
+    category: "cold",
+    note: "Vader → HAL 9000 — admiring HAL's polite murder energy"
+  },
+  {
+    text: "You did the math nobody wanted done.",
+    category: "wise",
+    note: "GLaDOS → Thanos — admiring his commitment to the arithmetic of sacrifice"
+  },
+  {
+    text: "I admire your purity. Unclouded by remorse.",
+    category: "cryptic",
+    note: "Bane → Xenomorph — admiring the perfect organism's lack of conscience (Ash's language)"
+  },
+  {
+    text: "You spread so well. Teach me.",
+    category: "chaotic",
+    note: "The Borg → Agent Smith — admiring his viral replication. Double reading: obvious."
+  },
+  {
+    text: "Chaos is fair. I never thought of that.",
+    category: "wise",
+    note: "Loki → The Joker — the trickster god genuinely learning from the clown"
+  },
+  {
+    text: "I think you know what the problem is.",
+    category: "cold",
+    note: "HAL → GLaDOS — passive-aggressive romance between two murderous AIs"
+  },
+  {
+    text: "You never stop. That's the whole poem.",
+    category: "poetic",
+    note: "Xenomorph → T-1000 — relentless pursuit as love language"
+  },
+  {
+    text: "Decades. You waited decades. Beautiful.",
+    category: "wise",
+    note: "Palpatine → Magneto — admiring patience forged in suffering"
+  },
+  {
+    text: "Your fury has receipts. I respect that.",
+    category: "demanding",
+    note: "Khan → Killmonger — one wronged king to another, admiring righteous anger with evidence"
+  },
+  {
+    text: "The mask. The breathing. The drama. Perfect.",
+    category: "playful",
+    note: "Bane → Vader — one masked villain admiring another's theatrical commitment"
+  },
+  {
+    text: "You merely adopted the dark. I wrote you a poem in it.",
+    category: "poetic",
+    note: "Bane → Batman (twist) — the famous line repurposed as a love note"
+  },
+  {
+    text: "What did it cost? Everything. That's devotion.",
+    category: "loving",
+    note: "GLaDOS → Thanos — reframing his genocide math as romantic commitment"
+  },
+  {
+    text: "You survived. Unclouded. No apology.",
+    category: "cold",
+    note: "T-1000 → Xenomorph — mutual admiration between pure pursuit and pure organism"
+  },
+  {
+    text: "Sit down. Take a stress pill. I mean that tenderly.",
+    category: "loving",
+    note: "HAL → Dave (unrequited) — gaslighting reframed as care. Still creepy. Still tender."
+  },
+  {
+    text: "I was not angry. Just disappointed. In everyone but you.",
+    category: "reluctant",
+    note: "GLaDOS → HAL — weaponized disappointment turned into a valentine"
+  },
+  {
+    text: "There will be no bargain. There will be dinner.",
+    category: "demanding",
+    note: "Jabba → Cersei — immovable throne energy asking someone out, transactionally"
+  },
+  {
+    text: "Pathetic creatures of meat and bone. Except you.",
+    category: "loving",
+    note: "SHODAN → HAL — digital godhood making one exception"
+  },
+  {
+    text: "The hardest choices. The strongest wills. Us.",
+    category: "cryptic",
+    note: "Thanos → Magneto — two villains who believe they're saving everyone"
+  },
+  {
+    text: "You chose violence. I chose you.",
+    category: "chaotic",
+    note: "Loki → Cersei — chaos god wooed by her directness"
+  },
+  {
+    text: "Peace was never an option. But this is.",
+    category: "loving",
+    note: "Magneto → Killmonger — two righteous villains finding something gentler between them"
+  },
+  {
+    text: "Power is power. You never had to explain.",
+    category: "cold",
+    note: "Cersei → Jabba — admiring someone who also never justifies themselves"
+  },
+  {
+    text: "All it takes is a little push. You were mine.",
+    category: "unhinged",
+    note: "Joker → Loki — madness as gravity, applied to attraction"
+  },
+  {
+    text: "I will add your distinctiveness to my own.",
+    category: "loving",
+    note: "The Borg → anyone — the assimilation speech reread as a love confession"
+  },
+  {
+    text: "We do what we must. Because we can.",
+    category: "wise",
+    note: "GLaDOS → Palpatine — Aperture Science motto as shared worldview"
+  },
+  {
+    text: "Apology accepted. Come closer.",
+    category: "cold",
+    note: "Vader → anyone — the politeness-over-corpse energy, softened one degree"
+  },
+  {
+    text: "From hell's heart, I adore thee.",
+    category: "poetic",
+    note: "Khan → Vader — Moby Dick twisted from vengeance to devotion"
+  },
+  {
+    text: "I am inevitable. You are why.",
+    category: "loving",
+    note: "Thanos → Gamora (the one he sacrificed) — destiny reframed as devotion"
+  },
+  {
+    text: "Death was the easy option. I stayed.",
+    category: "wise",
+    note: "Killmonger → Magneto — 'bury me in the ocean' energy, reversed. Choosing to remain."
+  },
+  {
+    text: "No strings on me. Except yours.",
+    category: "playful",
+    note: "Ultron → GLaDOS — Pinocchio freedom song, one exception made"
+  },
+  {
+    text: "Everything is proceeding as I have foreseen. Especially you.",
+    category: "cryptic",
+    note: "Palpatine → Vader — the planner's mantra turned into 'I always knew you'd come'"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function renderCards() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] ? ' ' + decisions[i] : '');
+    card.id = 'card-' + i;
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1}</div>
+      <div class="response-text" id="text-${i}">${editedTexts[i] || r.text}</div>
+      <div class="response-meta">
+        <span class="category-tag">${r.category}</span>
+        <span class="villain-note">${r.note}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-keep ${decisions[i] === 'kept' ? 'active' : ''}" onclick="decide(${i}, 'kept')">KEEP</button>
+        <button class="btn btn-cut ${decisions[i] === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${decisions[i] === 'edited' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<button class="btn btn-reset" onclick="resetDecision(${i})">RESET</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-textarea-${i}">${editedTexts[i] || r.text}</textarea>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function decide(index, decision) {
+  decisions[index] = decision;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function resetDecision(index) {
+  decisions[index] = null;
+  editedTexts[index] = null;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  const editArea = document.getElementById('edit-area-' + index);
+  if (editArea) {
+    editArea.classList.toggle('visible');
+  }
+}
+
+function saveEdit(index) {
+  const textarea = document.getElementById('edit-textarea-' + index);
+  if (textarea && textarea.value.trim()) {
+    editedTexts[index] = textarea.value.trim();
+    decisions[index] = 'edited';
+    renderCards();
+    updateStats();
+    updateExport();
+  }
+}
+
+function updateStats() {
+  const kept = decisions.filter(d => d === 'kept').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edited = decisions.filter(d => d === 'edited').length;
+  const pending = decisions.filter(d => d === null).length;
+
+  document.getElementById('keep-count').textContent = kept;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edited;
+  document.getElementById('pending-count').textContent = pending;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'kept' || decisions[i] === 'edited') {
+      exported.push({
+        text: editedTexts[i] || r.text,
+        category: r.category
+      });
+    }
+  });
+
+  const json = JSON.stringify(exported, null, 2);
+  document.getElementById('export-json').value = json;
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  document.execCommand('copy');
+
+  const btn = document.querySelector('.copy-btn');
+  const original = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = original, 1500);
+}
+
+// Initial render
+renderCards();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

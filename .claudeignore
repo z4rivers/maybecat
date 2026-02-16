@@ -1,0 +1,22 @@
+# Batch review files (HTML exports, research notes)
+.planning/batches/
+.planning/review/
+
+# Archived/historical docs
+.planning/archive/
+
+# Research docs (reference only, not for coding)
+.planning/research/
+.planning/codebase/
+
+# Phase execution plans (GSD agent use only)
+.planning/phases/
+
+# SEO research (referenced by path in CLAUDE.md, not needed for indexing)
+.planning/seo-research/
+
+# Screenshots
+*.png
+
+# Worktree configs
+.claude/worktrees/

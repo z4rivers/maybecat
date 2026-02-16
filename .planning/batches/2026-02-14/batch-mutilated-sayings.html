@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Mutilated Sayings</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sticky-header h1 {
+    font-size: 1.1rem;
+    color: #e94560;
+    flex-shrink: 0;
+  }
+
+  .sticky-header .subtitle {
+    font-size: 0.8rem;
+    color: #888;
+    flex-shrink: 0;
+  }
+
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .stat-total { color: #e0e0e0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .batch-info {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #aaa;
+  }
+
+  .batch-info strong { color: #e94560; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .response-number {
+    font-size: 0.75rem;
+    color: #555;
+    font-weight: 600;
+  }
+
+  .response-category {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #0f3460;
+    color: #4ecca3;
+  }
+
+  .response-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .btn-undo { background: #333; color: #aaa; font-size: 0.7rem; padding: 4px 10px; }
+  .btn-undo:hover { background: #444; }
+
+  .decision-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  .decision-keep { color: #4ecca3; }
+  .decision-cut { color: #e94560; }
+  .decision-edit { color: #ffd93d; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .export-section h2 {
+    font-size: 1rem;
+    color: #4ecca3;
+    margin-bottom: 12px;
+  }
+
+  .export-section textarea {
+    width: 100%;
+    min-height: 300px;
+    background: #0a0a1a;
+    color: #4ecca3;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.8rem;
+    resize: vertical;
+  }
+
+  .copy-btn {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .copy-btn:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Mutilated Sayings</h1>
+  <span class="subtitle">30 responses | Mangled proverbs, near-rhymes, sideways truisms</span>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">30</span></span>
+    <span class="stat stat-keep">Keep: <span id="stat-keep">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="stat-edit">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="stat-pending">30</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Refrigerator:</strong> Familiar sayings the cat got wrong in a way that makes them MORE right. Truncated proverbs, subverted endings, near-rhymes that land sideways, truisms with the wrong conclusion that\u2019s actually the correct one. The SHAPE is recognizable. The landing is the cat\u2019s own.<br>
+  <strong>Why it works:</strong> Recognition + subversion. You hear \u201cPeople in glass houses\u201d and your brain auto-completes \u201c...shouldn\u2019t throw stones.\u201d But the cat just says \u201cshouldn\u2019t.\u201d Period. The truncation IS the wisdom. The familiar shape does half the work. The wrong ending does the rest.<br>
+  <strong>Cat voices:</strong> Chaos Cat, Judge Cat, Competitive Cat, Badass Cat, Realist Cat, Philosopher Cat, Feral Cat, Dark Comedian Cat, Elder Cat, Doubt Cat<br>
+  <strong>Energy:</strong> Mix of sharp (the wrong ending reveals truth), playful (the cat genuinely doesn\u2019t know the real version), and predatory (familiar phrases filtered through a hunter\u2019s worldview)
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (kept + edited only)</h2>
+  <textarea id="export-json" readonly></textarea>
+  <br>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+  <span id="copy-status" style="margin-left: 12px; font-size: 0.8rem; color: #4ecca3;"></span>
+</div>
+
+<script>
+const responses = [
+  // === TRUNCATED / SUBVERTED ===
+  { text: "People in glass houses shouldn\u2019t.", category: "cold" },
+  { text: "What doesn\u2019t kill you makes you weird.", category: "nurturing" },
+  { text: "The early bird can have it.", category: "judgy" },
+  { text: "Practice makes... something.", category: "chaotic" },
+  { text: "Curiosity killed the cat. Worth it.", category: "chaotic" },
+  { text: "When in Rome... actually, don\u2019t.", category: "wise" },
+  { text: "Every rose has its thorn. And?", category: "judgy" },
+  { text: "Slow and steady wins the... honestly I lost interest.", category: "chaotic" },
+
+  // === WRONG ENDING, MORE TRUE ===
+  { text: "Rome wasn\u2019t built in a day. It burned in one.", category: "cold" },
+  { text: "Good things come to those who stare.", category: "wise" },
+  { text: "If the shoe fits, it\u2019s probably not yours.", category: "judgy" },
+  { text: "Fool me once. There\u2019s no twice.", category: "cold" },
+  { text: "The road less traveled is less traveled for a reason.", category: "judgy" },
+  { text: "Truth will set you free. It\u2019s gonna hurt first.", category: "wise" },
+  { text: "Lightning never strikes twice. But I do.", category: "demanding" },
+  { text: "Hope for the best. Expect the rest.", category: "nurturing" },
+
+  // === PREDATOR REWRITES ===
+  { text: "Two birds, one stone. I like those odds.", category: "chaotic" },
+  { text: "What goes up must come down. I\u2019ll wait.", category: "cold" },
+  { text: "An eye for an eye. I have better eyes.", category: "demanding" },
+  { text: "Birds of a feather... honestly? Delicious.", category: "chaotic" },
+  { text: "Sticks and stones. Bring it.", category: "demanding" },
+
+  // === POSSESSIVE / SELF-SERVING TWISTS ===
+  { text: "The best things in life are mine.", category: "demanding" },
+  { text: "A penny for your thoughts. Counteroffer: silence.", category: "cold" },
+  { text: "Don\u2019t bite the hand that feeds you. Unless.", category: "chaotic" },
+  { text: "Money can\u2019t buy happiness. Treats, however.", category: "demanding" },
+  { text: "Better the devil you know. Hi.", category: "chaotic" },
+
+  // === DARK PRAGMATISM / SIDEWAYS TRUISMS ===
+  { text: "Honesty is the best policy. Second best: plausible deniability.", category: "cold" },
+  { text: "Where there\u2019s a will, there\u2019s a relative.", category: "cold" },
+  { text: "See no evil, hear no evil, speak no evil. But know.", category: "mystical" },
+  { text: "Blood is thicker than water. Water is more refreshing.", category: "wise" },
+];
+
+const container = document.getElementById('responses-container');
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = new Array(responses.length).fill(null);
+
+function renderCards() {
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    card.id = 'card-' + i;
+    const displayText = editedTexts[i] || r.text;
+    card.innerHTML = `
+      <div class="response-header">
+        <span class="response-number">#${i + 1}</span>
+        <span class="response-category">${r.category}</span>
+      </div>
+      <div class="response-text">\u201c${displayText}\u201d</div>
+      <div class="actions" id="actions-${i}">
+        ${decisions[i] ? `
+          <span class="decision-label decision-${decisions[i]}">${decisions[i].toUpperCase()}${decisions[i] === 'edit' ? ': \u201c' + (editedTexts[i] || r.text) + '\u201d' : ''}</span>
+          <button class="btn btn-undo" onclick="undo(${i})">Undo</button>
+        ` : `
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        `}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="edit-text-${i}">${r.text}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(i, decision) {
+  decisions[i] = decision;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function undo(i) {
+  decisions[i] = null;
+  editedTexts[i] = null;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function showEdit(i) {
+  document.getElementById('edit-' + i).classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  editedTexts[i] = document.getElementById('edit-text-' + i).value;
+  decisions[i] = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const keep = decisions.filter(d => d === 'keep').length;
+  const cut = decisions.filter(d => d === 'cut').length;
+  const edit = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-pending').textContent = pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      kept.push({ text: editedTexts[i] || r.text, category: r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const textarea = document.getElementById('export-json');
+  textarea.select();
+  document.execCommand('copy');
+  const status = document.getElementById('copy-status');
+  status.textContent = 'Copied!';
+  setTimeout(() => status.textContent = '', 2000);
+}
+
+renderCards();
+updateExport();
+</script>
+</body>
+</html>

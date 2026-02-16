@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Yesses &amp; Nos (Batch 04)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding: 20px;
+  padding-top: 120px;
+}
+.sticky-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #16213e;
+  border-bottom: 2px solid #0f3460;
+  padding: 15px 30px;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.sticky-header h1 {
+  font-size: 1.2rem;
+  color: #fff;
+}
+.stats {
+  display: flex;
+  gap: 20px;
+  font-size: 0.95rem;
+}
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #0f3460;
+  margin-top: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ecca3, #ffd93d, #e94560);
+  transition: width 0.3s;
+}
+.section-header {
+  background: #0f3460;
+  padding: 15px 20px;
+  margin: 30px 0 15px;
+  border-radius: 8px;
+  border-left: 4px solid #4ecca3;
+}
+.section-header h2 {
+  font-size: 1.1rem;
+  color: #4ecca3;
+}
+.section-header p {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 5px;
+}
+.card {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: border-color 0.3s;
+}
+.card.kept { border-color: #4ecca3; }
+.card.cut { border-color: #e94560; opacity: 0.5; }
+.card.edited { border-color: #ffd93d; }
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.card-number {
+  font-size: 0.75rem;
+  color: #555;
+}
+.card-category {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #0f3460;
+  color: #aaa;
+}
+.card-text {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #fff;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+.card-text.original-hidden { display: none; }
+.edited-text {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #ffd93d;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn:hover { transform: scale(1.05); }
+.btn.active { box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
+.edit-area {
+  display: none;
+  margin-top: 12px;
+}
+.edit-area textarea {
+  width: 100%;
+  background: #0f3460;
+  color: #fff;
+  border: 1px solid #ffd93d;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+}
+.edit-area .btn-save {
+  margin-top: 8px;
+  background: #ffd93d;
+  color: #1a1a2e;
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.export-section {
+  margin-top: 50px;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 20px;
+}
+.export-section h2 {
+  color: #4ecca3;
+  margin-bottom: 10px;
+}
+.export-section textarea {
+  width: 100%;
+  min-height: 300px;
+  background: #0f3460;
+  color: #4ecca3;
+  border: 1px solid #4ecca3;
+  border-radius: 5px;
+  padding: 15px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.85rem;
+}
+.export-btn {
+  margin-top: 10px;
+  background: #4ecca3;
+  color: #1a1a2e;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.word-count {
+  font-size: 0.7rem;
+  color: #555;
+  margin-left: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <h1>Batch 04: Yesses &amp; Nos</h1>
+    <div class="stats">
+      <span class="stat-keep">KEEP: <span id="keepCount">0</span></span>
+      <span class="stat-cut">CUT: <span id="cutCount">0</span></span>
+      <span class="stat-edit">EDIT: <span id="editCount">0</span></span>
+      <span class="stat-pending">PENDING: <span id="pendingCount">50</span>/50</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div id="cards-container">
+
+<!-- ============================================================ -->
+<!-- SECTION A: BLIND CONFIDENCE YES (10) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>A. BLIND CONFIDENCE YES</h2>
+  <p>"Absolutely. Based on nothing. With my whole chest." -- Dunning-Kruger energy, sports guarantees, Florida Man commitment, toddler logic.</p>
+</div>
+
+<div class="card" data-id="0" data-text="I guarantee it. Based on nothing. With my whole chest." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#1</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"I guarantee it. Based on nothing. With my whole chest."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(0,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(0,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(0)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-0">
+    <textarea id="textarea-0">I guarantee it. Based on nothing. With my whole chest.</textarea>
+    <button class="btn-save" onclick="saveEdit(0)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="1" data-text="Yes. I said that even before I knew what the question was." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#2</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">13 words</span>
+  </div>
+  <div class="card-text">"Yes. I said that even before I knew what the question was."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-1">
+    <textarea id="textarea-1">Yes. I said that even before I knew what the question was.</textarea>
+    <button class="btn-save" onclick="saveEdit(1)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="2" data-text="But I wore the juice. Yes." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#3</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">7 words</span>
+  </div>
+  <div class="card-text">"But I wore the juice. Yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-2">
+    <textarea id="textarea-2">But I wore the juice. Yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(2)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="3" data-text="Yes. The confidence is real. The facts are not." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#4</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"Yes. The confidence is real. The facts are not."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-3">
+    <textarea id="textarea-3">Yes. The confidence is real. The facts are not.</textarea>
+    <button class="btn-save" onclick="saveEdit(3)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="4" data-text="Full-page ad in tomorrow's paper: yes." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#5</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"Full-page ad in tomorrow's paper: yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-4">
+    <textarea id="textarea-4">Full-page ad in tomorrow's paper: yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(4)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="5" data-text="They couldn't hit an elephant at this distance. Go." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#6</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"They couldn't hit an elephant at this distance. Go."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-5">
+    <textarea id="textarea-5">They couldn't hit an elephant at this distance. Go.</textarea>
+    <button class="btn-save" onclick="saveEdit(5)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="6" data-text="We want the ball and we're gonna score. Same energy." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#7</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"We want the ball and we're gonna score. Same energy."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-6">
+    <textarea id="textarea-6">We want the ball and we're gonna score. Same energy.</textarea>
+    <button class="btn-save" onclick="saveEdit(6)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="7" data-text="My mouth does whatever it wants. The answer is yes." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#8</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"My mouth does whatever it wants. The answer is yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-7">
+    <textarea id="textarea-7">My mouth does whatever it wants. The answer is yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(7)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="8" data-text="Maximum commitment. Minimum information. Yes." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#9</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">6 words</span>
+  </div>
+  <div class="card-text">"Maximum commitment. Minimum information. Yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-8">
+    <textarea id="textarea-8">Maximum commitment. Minimum information. Yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(8)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="9" data-text="I've never been wrong. I've been wrong constantly. Yes." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#10</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"I've never been wrong. I've been wrong constantly. Yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-9">
+    <textarea id="textarea-9">I've never been wrong. I've been wrong constantly. Yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(9)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION B: PERMISSION-GRANTING YES (7) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>B. PERMISSION-GRANTING YES</h2>
+  <p>"You came to a cat for permission. That's adorable. Yes." -- The cat grants what you were too afraid to give yourself.</p>
+</div>
+
+<div class="card" data-id="10" data-text="You came to a cat for permission. Granted." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#11</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"You came to a cat for permission. Granted."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-10">
+    <textarea id="textarea-10">You came to a cat for permission. Granted.</textarea>
+    <button class="btn-save" onclick="saveEdit(10)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="11" data-text="You didn't need my yes. But here it is anyway." data-category="heartfelt">
+  <div class="card-meta">
+    <span class="card-number">#12</span>
+    <span class="card-category">heartfelt</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"You didn't need my yes. But here it is anyway."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-11">
+    <textarea id="textarea-11">You didn't need my yes. But here it is anyway.</textarea>
+    <button class="btn-save" onclick="saveEdit(11)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="12" data-text="The fact that you asked means you're ready. Go." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#13</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"The fact that you asked means you're ready. Go."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-12">
+    <textarea id="textarea-12">The fact that you asked means you're ready. Go.</textarea>
+    <button class="btn-save" onclick="saveEdit(12)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="13" data-text="Permission slip signed. By a cat. Still counts." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#14</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"Permission slip signed. By a cat. Still counts."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-13">
+    <textarea id="textarea-13">Permission slip signed. By a cat. Still counts.</textarea>
+    <button class="btn-save" onclick="saveEdit(13)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="14" data-text="You've been holding your breath. Exhale. It's yes." data-category="nurturing">
+  <div class="card-meta">
+    <span class="card-number">#15</span>
+    <span class="card-category">nurturing</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"You've been holding your breath. Exhale. It's yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-14">
+    <textarea id="textarea-14">You've been holding your breath. Exhale. It's yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(14)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="15" data-text="Your gut said yes an hour ago. Catch up." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#16</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"Your gut said yes an hour ago. Catch up."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-15">
+    <textarea id="textarea-15">Your gut said yes an hour ago. Catch up.</textarea>
+    <button class="btn-save" onclick="saveEdit(15)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="16" data-text="It's stupid and lovely to rush into yes. Rush." data-category="heartfelt">
+  <div class="card-meta">
+    <span class="card-number">#17</span>
+    <span class="card-category">heartfelt</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"It's stupid and lovely to rush into yes. Rush."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-16">
+    <textarea id="textarea-16">It's stupid and lovely to rush into yes. Rush.</textarea>
+    <button class="btn-save" onclick="saveEdit(16)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION C: WARM YES (6) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>C. WARM YES</h2>
+  <p>"Obviously yes. The fact that you had to ask." -- Cat warmth. Earned, specific, not gushing.</p>
+</div>
+
+<div class="card" data-id="17" data-text="Every single box has a key. Yours too." data-category="nurturing">
+  <div class="card-meta">
+    <span class="card-number">#18</span>
+    <span class="card-category">nurturing</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"Every single box has a key. Yours too."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-17">
+    <textarea id="textarea-17">Every single box has a key. Yours too.</textarea>
+    <button class="btn-save" onclick="saveEdit(17)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="18" data-text="Yes is a world. Go live in it." data-category="poetic">
+  <div class="card-meta">
+    <span class="card-number">#19</span>
+    <span class="card-category">poetic</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"Yes is a world. Go live in it."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-18">
+    <textarea id="textarea-18">Yes is a world. Go live in it.</textarea>
+    <button class="btn-save" onclick="saveEdit(18)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="19" data-text="Feast on your life. That's a yes." data-category="heartfelt">
+  <div class="card-meta">
+    <span class="card-number">#20</span>
+    <span class="card-category">heartfelt</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"Feast on your life. That's a yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-19">
+    <textarea id="textarea-19">Feast on your life. That's a yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(19)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="20" data-text="You haven't even started being brave yet. Start." data-category="nurturing">
+  <div class="card-meta">
+    <span class="card-number">#21</span>
+    <span class="card-category">nurturing</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"You haven't even started being brave yet. Start."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(20)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-20">
+    <textarea id="textarea-20">You haven't even started being brave yet. Start.</textarea>
+    <button class="btn-save" onclick="saveEdit(20)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="21" data-text="The answer was always yes. You just needed to hear it from a cat." data-category="heartfelt">
+  <div class="card-meta">
+    <span class="card-number">#22</span>
+    <span class="card-category">heartfelt</span>
+    <span class="word-count">15 words</span>
+  </div>
+  <div class="card-text">"The answer was always yes. You just needed to hear it from a cat."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(21)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-21">
+    <textarea id="textarea-21">The answer was always yes. You just needed to hear it from a cat.</textarea>
+    <button class="btn-save" onclick="saveEdit(21)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="22" data-text="Whatever you choose, the bravest part already happened. You asked." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#23</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"Whatever you choose, the bravest part already happened. You asked."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(22)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-22">
+    <textarea id="textarea-22">Whatever you choose, the bravest part already happened. You asked.</textarea>
+    <button class="btn-save" onclick="saveEdit(22)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION D: CULTURAL / FOUND LANGUAGE YES (7) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>D. CULTURAL / FOUND LANGUAGE YES</h2>
+  <p>Ali energy, Molly Bloom's cascade, "doch" contradicting negatives, ATC "AFFIRMATIVE/WILCO," improv "yes and." Definitive yes-language from other worlds.</p>
+</div>
+
+<div class="card" data-id="23" data-text="WILCO. That's aviation for yes, and I mean it." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#24</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"WILCO. That's aviation for yes, and I mean it."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(23)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-23">
+    <textarea id="textarea-23">WILCO. That's aviation for yes, and I mean it.</textarea>
+    <button class="btn-save" onclick="saveEdit(23)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="24" data-text="Doch -- German for yes, you're wrong about yourself." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#24b</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"Doch -- German for yes, you're wrong about yourself."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(24)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-24">
+    <textarea id="textarea-24">Doch -- German for yes, you're wrong about yourself.</textarea>
+    <button class="btn-save" onclick="saveEdit(24)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="25" data-text="Yes, and. Improv rule. The universe agrees and escalates." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#26</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"Yes, and. Improv rule. The universe agrees and escalates."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(25)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-25">
+    <textarea id="textarea-25">Yes, and. Improv rule. The universe agrees and escalates.</textarea>
+    <button class="btn-save" onclick="saveEdit(25)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="26" data-text="Confirmed. Correct site. Correct procedure. Proceed." data-category="cold">
+  <div class="card-meta">
+    <span class="card-number">#27</span>
+    <span class="card-category">cold</span>
+    <span class="word-count">7 words</span>
+  </div>
+  <div class="card-text">"Confirmed. Correct site. Correct procedure. Proceed."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(26)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-26">
+    <textarea id="textarea-26">Confirmed. Correct site. Correct procedure. Proceed.</textarea>
+    <button class="btn-save" onclick="saveEdit(26)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="27" data-text="Yes I said yes I will Yes." data-category="poetic">
+  <div class="card-meta">
+    <span class="card-number">#28</span>
+    <span class="card-category">poetic</span>
+    <span class="word-count">7 words</span>
+  </div>
+  <div class="card-text">"Yes I said yes I will Yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(27)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-27">
+    <textarea id="textarea-27">Yes I said yes I will Yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(27)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="28" data-text="Sisu -- Finnish for the grit to do it anyway. Do it anyway." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#29</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">13 words</span>
+  </div>
+  <div class="card-text">"Sisu -- Finnish for the grit to do it anyway. Do it anyway."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(28)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-28">
+    <textarea id="textarea-28">Sisu -- Finnish for the grit to do it anyway. Do it anyway.</textarea>
+    <button class="btn-save" onclick="saveEdit(28)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="29" data-text="I came through and I shall return. That's a yes." data-category="demanding">
+  <div class="card-meta">
+    <span class="card-number">#30</span>
+    <span class="card-category">demanding</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"I came through and I shall return. That's a yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(29)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-29">
+    <textarea id="textarea-29">I came through and I shall return. That's a yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(29)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION E: ELEPHANT-STOPPING NO (6) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>E. ELEPHANT-STOPPING NO</h2>
+  <p>Certainty that would make a charging elephant sit down. Bartleby, Rosa Parks, McAuliffe's "NUTS!" -- the conversation is over.</p>
+</div>
+
+<div class="card" data-id="30" data-text="I would prefer not to." data-category="cold">
+  <div class="card-meta">
+    <span class="card-number">#31</span>
+    <span class="card-category">cold</span>
+    <span class="word-count">6 words</span>
+  </div>
+  <div class="card-text">"I would prefer not to."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(30)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-30">
+    <textarea id="textarea-30">I would prefer not to.</textarea>
+    <button class="btn-save" onclick="saveEdit(30)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="31" data-text="NUTS." data-category="angry">
+  <div class="card-meta">
+    <span class="card-number">#32</span>
+    <span class="card-category">angry</span>
+    <span class="word-count">1 word</span>
+  </div>
+  <div class="card-text">"NUTS."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(31,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(31,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(31)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-31">
+    <textarea id="textarea-31">NUTS.</textarea>
+    <button class="btn-save" onclick="saveEdit(31)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="32" data-text="The only tired I am is tired of that question." data-category="judgy">
+  <div class="card-meta">
+    <span class="card-number">#33</span>
+    <span class="card-category">judgy</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"The only tired I am is tired of that question."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(32,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(32,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(32)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-32">
+    <textarea id="textarea-32">The only tired I am is tired of that question.</textarea>
+    <button class="btn-save" onclick="saveEdit(32)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="33" data-text="I cannot and will not. Both doors closed." data-category="cold">
+  <div class="card-meta">
+    <span class="card-number">#34</span>
+    <span class="card-category">cold</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"I cannot and will not. Both doors closed."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(33,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(33,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(33)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-33">
+    <textarea id="textarea-33">I cannot and will not. Both doors closed.</textarea>
+    <button class="btn-save" onclick="saveEdit(33)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="34" data-text="No. In plain English? Go to hell." data-category="angry">
+  <div class="card-meta">
+    <span class="card-number">#35</span>
+    <span class="card-category">angry</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"No. In plain English? Go to hell."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(34,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(34,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(34)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-34">
+    <textarea id="textarea-34">No. In plain English? Go to hell.</textarea>
+    <button class="btn-save" onclick="saveEdit(34)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="35" data-text="NEGATIVE. Not yeah, not nah. NEGATIVE." data-category="cold">
+  <div class="card-meta">
+    <span class="card-number">#36</span>
+    <span class="card-category">cold</span>
+    <span class="word-count">7 words</span>
+  </div>
+  <div class="card-text">"NEGATIVE. Not yeah, not nah. NEGATIVE."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(35,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(35,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(35)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-35">
+    <textarea id="textarea-35">NEGATIVE. Not yeah, not nah. NEGATIVE.</textarea>
+    <button class="btn-save" onclick="saveEdit(35)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION F: GENTLE NO (3) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>F. GENTLE NO</h2>
+  <p>"No, but I'm not mad about it." The cat declines without burning.</p>
+</div>
+
+<div class="card" data-id="36" data-text="No. But not in a mean way. Just no." data-category="nurturing">
+  <div class="card-meta">
+    <span class="card-number">#37</span>
+    <span class="card-category">nurturing</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"No. But not in a mean way. Just no."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(36,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(36,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(36)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-36">
+    <textarea id="textarea-36">No. But not in a mean way. Just no.</textarea>
+    <button class="btn-save" onclick="saveEdit(36)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="37" data-text="Not this one. But you'll find the right one to say yes to." data-category="heartfelt">
+  <div class="card-meta">
+    <span class="card-number">#38</span>
+    <span class="card-category">heartfelt</span>
+    <span class="word-count">14 words</span>
+  </div>
+  <div class="card-text">"Not this one. But you'll find the right one to say yes to."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(37,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(37,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(37)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-37">
+    <textarea id="textarea-37">Not this one. But you'll find the right one to say yes to.</textarea>
+    <button class="btn-save" onclick="saveEdit(37)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="38" data-text="The gentlest no I have. Still no." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#39</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"The gentlest no I have. Still no."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(38,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(38,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(38)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-38">
+    <textarea id="textarea-38">The gentlest no I have. Still no.</textarea>
+    <button class="btn-save" onclick="saveEdit(38)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION G: TACTICAL NO (4) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>G. TACTICAL NO</h2>
+  <p>"No. And you knew that before you asked." Cold read + definitive answer combined.</p>
+</div>
+
+<div class="card" data-id="39" data-text="No. And the fact that you asked a cat confirms it." data-category="judgy">
+  <div class="card-meta">
+    <span class="card-number">#40</span>
+    <span class="card-category">judgy</span>
+    <span class="word-count">12 words</span>
+  </div>
+  <div class="card-text">"No. And the fact that you asked a cat confirms it."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(39,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(39,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(39)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-39">
+    <textarea id="textarea-39">No. And the fact that you asked a cat confirms it.</textarea>
+    <button class="btn-save" onclick="saveEdit(39)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="40" data-text="You didn't come here for a yes. You came here to be stopped." data-category="wise">
+  <div class="card-meta">
+    <span class="card-number">#41</span>
+    <span class="card-category">wise</span>
+    <span class="word-count">14 words</span>
+  </div>
+  <div class="card-text">"You didn't come here for a yes. You came here to be stopped."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(40,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(40,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(40)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-40">
+    <textarea id="textarea-40">You didn't come here for a yes. You came here to be stopped.</textarea>
+    <button class="btn-save" onclick="saveEdit(40)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="41" data-text="No. You knew. You just wanted somebody else to say it." data-category="cold">
+  <div class="card-meta">
+    <span class="card-number">#42</span>
+    <span class="card-category">cold</span>
+    <span class="word-count">12 words</span>
+  </div>
+  <div class="card-text">"No. You knew. You just wanted somebody else to say it."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(41,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(41,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(41)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-41">
+    <textarea id="textarea-41">No. You knew. You just wanted somebody else to say it.</textarea>
+    <button class="btn-save" onclick="saveEdit(41)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="42" data-text="That question answered itself on the way here." data-category="judgy">
+  <div class="card-meta">
+    <span class="card-number">#43</span>
+    <span class="card-category">judgy</span>
+    <span class="word-count">8 words</span>
+  </div>
+  <div class="card-text">"That question answered itself on the way here."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(42,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(42,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(42)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-42">
+    <textarea id="textarea-42">That question answered itself on the way here.</textarea>
+    <button class="btn-save" onclick="saveEdit(42)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION H: ABSURDIST NO (2) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>H. ABSURDIST NO</h2>
+  <p>"No, and the fact that you asked means we need to have a different conversation." The cat says no and redirects to something weirder.</p>
+</div>
+
+<div class="card" data-id="43" data-text="No. And we should talk about why you thought yes was possible." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#44</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">13 words</span>
+  </div>
+  <div class="card-text">"No. And we should talk about why you thought yes was possible."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(43,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(43,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(43)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-43">
+    <textarea id="textarea-43">No. And we should talk about why you thought yes was possible.</textarea>
+    <button class="btn-save" onclick="saveEdit(43)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="44" data-text="No. In fact, a different no than the one you expected." data-category="mystical">
+  <div class="card-meta">
+    <span class="card-number">#45</span>
+    <span class="card-category">mystical</span>
+    <span class="word-count">12 words</span>
+  </div>
+  <div class="card-text">"No. In fact, a different no than the one you expected."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(44,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(44,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(44)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-44">
+    <textarea id="textarea-44">No. In fact, a different no than the one you expected.</textarea>
+    <button class="btn-save" onclick="saveEdit(44)">SAVE EDIT</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION I: YES TO THE WRONG THING (5) -->
+<!-- ============================================================ -->
+<div class="section-header">
+  <h2>I. YES TO THE WRONG THING</h2>
+  <p>Chaotic misfire. The cat enthusiastically says yes to something adjacent, or says yes with catastrophically misplaced confidence. Florida Man energy, wrong predictions, Blockbuster rejecting Netflix.</p>
+</div>
+
+<div class="card" data-id="45" data-text="Absolutely. Wait, what was the question? Doesn't matter. Absolutely." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#46</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"Absolutely. Wait, what was the question? Doesn't matter. Absolutely."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(45,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(45,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(45)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-45">
+    <textarea id="textarea-45">Absolutely. Wait, what was the question? Doesn't matter. Absolutely.</textarea>
+    <button class="btn-save" onclick="saveEdit(45)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="46" data-text="Yes! To something. Probably not what you asked. But yes!" data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#47</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"Yes! To something. Probably not what you asked. But yes!"</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(46,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(46,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(46)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-46">
+    <textarea id="textarea-46">Yes! To something. Probably not what you asked. But yes!</textarea>
+    <button class="btn-save" onclick="saveEdit(46)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="47" data-text="This 'telephone' has too many shortcomings. Hard yes." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#48</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">9 words</span>
+  </div>
+  <div class="card-text">"This 'telephone' has too many shortcomings. Hard yes."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(47,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(47,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(47)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-47">
+    <textarea id="textarea-47">This 'telephone' has too many shortcomings. Hard yes.</textarea>
+    <button class="btn-save" onclick="saveEdit(47)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="48" data-text="Stock prices have reached a permanently high plateau. Go for it." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#49</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">11 words</span>
+  </div>
+  <div class="card-text">"Stock prices have reached a permanently high plateau. Go for it."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(48,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(48,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(48)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-48">
+    <textarea id="textarea-48">Stock prices have reached a permanently high plateau. Go for it.</textarea>
+    <button class="btn-save" onclick="saveEdit(48)">SAVE EDIT</button>
+  </div>
+</div>
+
+<div class="card" data-id="49" data-text="I cannot conceive of any vital disaster here. Proceed." data-category="chaotic">
+  <div class="card-meta">
+    <span class="card-number">#50</span>
+    <span class="card-category">chaotic</span>
+    <span class="word-count">10 words</span>
+  </div>
+  <div class="card-text">"I cannot conceive of any vital disaster here. Proceed."</div>
+  <div class="btn-group">
+    <button class="btn btn-keep" onclick="decide(49,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(49,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="toggleEdit(49)">EDIT</button>
+  </div>
+  <div class="edit-area" id="edit-49">
+    <textarea id="textarea-49">I cannot conceive of any vital disaster here. Proceed.</textarea>
+    <button class="btn-save" onclick="saveEdit(49)">SAVE EDIT</button>
+  </div>
+</div>
+
+</div><!-- end cards-container -->
+
+<!-- ============================================================ -->
+<!-- EXPORT SECTION -->
+<!-- ============================================================ -->
+<div class="export-section">
+  <h2>JSON Export (Kept + Edited Only)</h2>
+  <textarea id="exportArea" readonly></textarea>
+  <br>
+  <button class="export-btn" onclick="copyExport()">COPY TO CLIPBOARD</button>
+  <span id="copyMsg" style="margin-left:10px;color:#4ecca3;display:none;">Copied!</span>
+</div>
+
+<script>
+const decisions = {};
+const editedTexts = {};
+const total = 50;
+
+function getOriginalText(id) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  return card ? card.dataset.text : '';
+}
+
+function getCategory(id) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  return card ? card.dataset.category : '';
+}
+
+function decide(id, action) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  card.classList.remove('kept','cut','edited');
+
+  if (decisions[id] === action) {
+    delete decisions[id];
+  } else {
+    decisions[id] = action;
+    if (action === 'keep') card.classList.add('kept');
+    if (action === 'cut') card.classList.add('cut');
+  }
+
+  // Close edit area if not editing
+  if (action !== 'edit') {
+    document.getElementById('edit-' + id).style.display = 'none';
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-' + id);
+  const isVisible = editArea.style.display === 'block';
+  editArea.style.display = isVisible ? 'none' : 'block';
+  if (!isVisible) {
+    const textarea = document.getElementById('textarea-' + id);
+    if (editedTexts[id]) {
+      textarea.value = editedTexts[id];
+    }
+    textarea.focus();
+  }
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('textarea-' + id);
+  const newText = textarea.value.trim();
+  const originalText = getOriginalText(id);
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+
+  if (newText && newText !== originalText) {
+    editedTexts[id] = newText;
+    decisions[id] = 'edit';
+    card.classList.remove('kept','cut');
+    card.classList.add('edited');
+
+    // Show edited text
+    let editedDisplay = card.querySelector('.edited-text');
+    if (!editedDisplay) {
+      editedDisplay = document.createElement('div');
+      editedDisplay.className = 'edited-text';
+      const cardText = card.querySelector('.card-text');
+      cardText.after(editedDisplay);
+    }
+    editedDisplay.textContent = '"' + newText + '"';
+    card.querySelector('.card-text').classList.add('original-hidden');
+  } else {
+    // Reverted to original
+    delete editedTexts[id];
+    if (decisions[id] === 'edit') delete decisions[id];
+    card.classList.remove('edited');
+    card.querySelector('.card-text').classList.remove('original-hidden');
+    const editedDisplay = card.querySelector('.edited-text');
+    if (editedDisplay) editedDisplay.remove();
+  }
+
+  document.getElementById('edit-' + id).style.display = 'none';
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') keep++;
+    if (decisions[id] === 'cut') cut++;
+    if (decisions[id] === 'edit') edit++;
+  }
+  const decided = keep + cut + edit;
+  document.getElementById('keepCount').textContent = keep;
+  document.getElementById('cutCount').textContent = cut;
+  document.getElementById('editCount').textContent = edit;
+  document.getElementById('pendingCount').textContent = (total - decided);
+  document.getElementById('progressFill').style.width = ((decided / total) * 100) + '%';
+}
+
+function updateExport() {
+  const items = [];
+  for (let i = 0; i < total; i++) {
+    if (decisions[i] === 'keep') {
+      items.push({
+        text: getOriginalText(i),
+        category: getCategory(i)
+      });
+    } else if (decisions[i] === 'edit' && editedTexts[i]) {
+      items.push({
+        text: editedTexts[i],
+        category: getCategory(i)
+      });
+    }
+  }
+  document.getElementById('exportArea').value = JSON.stringify(items, null, 2);
+}
+
+function copyExport() {
+  const area = document.getElementById('exportArea');
+  area.select();
+  document.execCommand('copy');
+  const msg = document.getElementById('copyMsg');
+  msg.style.display = 'inline';
+  setTimeout(() => { msg.style.display = 'none'; }, 2000);
+}
+
+// Initialize
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>
