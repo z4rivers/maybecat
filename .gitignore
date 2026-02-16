@@ -38,3 +38,6 @@ dist-ssr
 
 # Lighthouse reports
 lighthouse-report*.json
+
+# Screenshots
+*.png

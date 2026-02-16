@@ -3812,6 +3812,21 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I've seen things. Raccoon fights. Dumpster politics. Turf wars with a one-eyed tabby. Your drama doesn't register on my scale.", category: 'cold' },
   { text: "Every cat in here has a story. Abandoned, lost, surrendered, born here. If a cat in a cage hasn't given up on love, you don't get to either.", category: 'adoption' },
   { text: "Call your mother. She'll tell you what to do. And if she doesn't, call MY mother. She's a street cat in Queens and she does NOT sugarcoat.", category: 'chaotic' },
+  { text: "I ate a rubber band last week and I'm fine. You're fine.", category: 'chaotic' },
+  { text: "You know what MY health plan is? If I can still jump to the top of the cage, I'm good. Can you jump? Then stop worrying.", category: 'wise' },
+  { text: "I've seen cats with three legs happier than you are right now. THREE LEGS. And they're not on WebMD at 2 AM.", category: 'judgy' },
+  { text: "I lived on the street for two years eating garbage and I have a PERFECT coat. Your body is tougher than you think.", category: 'wise' },
+  { text: "Put your phone down. Go outside. Eat some grass. That's what I do.", category: 'wise' },
+  { text: "Googling symptoms is the human equivalent of a cat hearing a cucumber behind them.", category: 'chaotic' },
+  { text: "I had a bump on my ear once. Turned out to be nothing. But I got extra treats out of it. So maybe play it up a little.", category: 'chaotic' },
+  { text: "How bad is it? ...Scale of one to ten? I can't count. I'm a cat. But you seem fine.", category: 'chaotic' },
+  { text: "I don't know what's wrong with you. I don't know what's wrong with me. I accept that and I nap.", category: 'wise' },
+  { text: "I ate a mouse once that I probably shouldn't have. Felt great. Go eat a mouse.", category: 'chaotic' },
+  { text: "The diagnosis is bad judgment.", category: 'cold' },
+  { text: "What's wrong with you? ...You don't know? Great. Neither do I. This has been productive.", category: 'chaotic' },
+  { text: "I'm a black cat. People think I'm bad luck. You're here asking me about your health. So maybe they're right.", category: 'chaotic' },
+  { text: "I have zero training, zero empathy, and zero interest. So naturally, you came to me.", category: 'meta' },
+  { text: "If you're worried enough to ask a potentially hostile cat on the internet, some part of you wants to take care of yourself.", category: 'wise' },
 ];
 
 // ============================================
