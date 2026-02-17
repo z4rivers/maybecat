@@ -537,7 +537,6 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   { text: "Let yourself be silently drawn by the strange pull of what you really love.", category: 'wise', attribution: 'Rumi' },
   { text: "Be patient toward all that is unsolved in your heart.", category: 'nurturing', attribution: 'Rilke' },
-  { text: "Forever is composed of nows.", category: 'existential', attribution: 'Emily Dickinson' },
 
   // ============================================
   // ATTITUDE - Don't test me energy
@@ -927,7 +926,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I contain multitudes. Mostly fur and attitude.", category: 'existential' },
   { text: "The question is not 'why are we here' but 'is this the best spot?'", category: 'existential' },
   { text: "Reality is what happens between naps.", category: 'existential' },
-  { text: "You hit send. The universe is WAITING to hit receive.", category: 'existential' },
+  { text: "You hit send. The universe will hit receive.", category: 'existential' },
 
   // ============================================
   // DEMANDING - Wants something, transactional
@@ -1033,7 +1032,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Time is a flat circle and I have been chasing it.", category: 'existential' },
   { text: "I am one with the sunbeam. The sunbeam is one with me.", category: 'mystical' },
   { text: "The cardboard speaks truths the furniture cannot.", category: 'mystical' },
-  { text: "I should eat something. But what is eating, really?", category: 'existential' },
   { text: "We should order something.", category: 'chaotic' },
   { text: "I would destroy an entire rotisserie chicken right now.", category: 'chaotic' },
   { text: "Imagine if kibble was, like, infinite.", category: 'chaotic' },
