@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heartfelt Round 1 Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding-bottom: 80px;
+  }
+
+  /* Sticky stats header */
+  .stats-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .stats-header h1 {
+    font-size: 1.2rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .stats-counts {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-edit { color: #ffd93d; }
+  .stat-cut { color: #e94560; }
+  .stat-remaining { color: #888; }
+  .progress-bar-container {
+    flex: 1;
+    min-width: 150px;
+    height: 8px;
+    background: #0f3460;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: #4ecca3;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  .progress-pct {
+    font-size: 0.85rem;
+    color: #888;
+    white-space: nowrap;
+  }
+
+  /* Keyboard hint */
+  .keyboard-hint {
+    background: #0f3460;
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
+    border-bottom: 1px solid #1a1a3e;
+  }
+  .keyboard-hint kbd {
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: monospace;
+    color: #aaa;
+    margin: 0 2px;
+  }
+
+  /* Response cards */
+  .card-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card.active {
+    border-color: #4ecca3;
+    box-shadow: 0 0 12px rgba(78, 204, 163, 0.15);
+  }
+  .card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+  .card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.85; }
+  .card.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+
+  .card-meta {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .card-text {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #fff;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* Buttons */
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .btn:hover { transform: scale(1.03); }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-undo {
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+  }
+  .btn-undo:hover { border-color: #aaa; color: #ccc; }
+
+  .decision-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .badge-keep { background: rgba(78,204,163,0.2); color: #4ecca3; }
+  .badge-edit { background: rgba(255,217,61,0.2); color: #ffd93d; }
+  .badge-cut { background: rgba(233,69,96,0.2); color: #e94560; }
+
+  /* Edit area */
+  .edit-area {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f3460;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-save-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-save-edit {
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-cancel-edit {
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    border-radius: 6px;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .export-section h2 {
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+  .export-box {
+    background: #0f3460;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  .btn-copy:hover { opacity: 0.9; }
+  .btn-reset {
+    background: transparent;
+    border: 1px solid #e94560;
+    color: #e94560;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 12px;
+    margin-left: 12px;
+  }
+  .btn-reset:hover { background: rgba(233,69,96,0.1); }
+</style>
+</head>
+<body>
+
+<div class="stats-header" id="statsHeader">
+  <h1>Heartfelt Round 1 Review</h1>
+  <div class="stats-counts">
+    <span class="stat-keep">Keep: <span id="countKeep">0</span></span>
+    <span class="stat-edit">Edit: <span id="countEdit">0</span></span>
+    <span class="stat-cut">Cut: <span id="countCut">0</span></span>
+    <span class="stat-remaining">Left: <span id="countRemaining">0</span></span>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+  </div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<div class="keyboard-hint">
+  <kbd>J</kbd>/<kbd>K</kbd> navigate &nbsp;|&nbsp;
+  <kbd>O</kbd> keep &nbsp;|&nbsp;
+  <kbd>E</kbd> edit &nbsp;|&nbsp;
+  <kbd>X</kbd> cut &nbsp;|&nbsp;
+  <kbd>U</kbd> undo
+</div>
+
+<div class="card-list" id="cardList"></div>
+
+<div class="export-section">
+  <h2>Export Changes Only</h2>
+  <p>Only edited and cut items are exported. Kept items are omitted (no change needed).</p>
+  <div class="export-box" id="exportBox">[]</div>
+  <button class="btn-copy" id="btnCopy" onclick="copyExport()">Copy JSON</button>
+  <button class="btn-reset" onclick="resetAll()">Reset All Decisions</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-heartfelt-round1';
+
+const items = [
+  {"line": 252, "original": "I don't always show it, but I'm glad you're here."},
+  {"line": 253, "original": "You're the best one. Competition was weak but still."},
+  {"line": 254, "original": "I wait for you by the door. You should know that."},
+  {"line": 255, "original": "*watching* Yeah. I noticed."},
+  {"line": 256, "original": "Empty house hits different. Worse different."},
+  {"line": 257, "original": "Body heat, yes. But also... *trails off*"},
+  {"line": 258, "original": "My life is better because you're in it. There. I said it."},
+  {"line": 259, "original": "Selective purring. You made the list."},
+  {"line": 260, "original": "Act like I don't care. Would absolutely care."},
+  {"line": 261, "original": "Specific skill set. You. Just you."},
+  {"line": 262, "original": "I don't do trust. But here we are."},
+  {"line": 263, "original": "Home has two coordinates: you and the bowl."},
+  {"line": 264, "original": "*stares* You actually get it. Noted."},
+  {"line": 265, "original": "I wouldn't trade this for anything. Wait, whatch-ya-got?"},
+  {"line": 266, "original": "You showed up. I showed up. We're even."},
+  {"line": 267, "original": "I love you. I love staring at you. Take it however you want."},
+  {"line": 268, "original": "*looks around* We made this. Whatever this is."},
+  {"line": 269, "original": "I'm not good at this, but... thank you. For everything."},
+  {"line": 270, "original": "You're my person. I don't say that lightly."},
+  {"line": 271, "original": "*settles in* Choosing this. Again. On purpose."},
+  {"line": 272, "original": "I'd follow you anywhere. Slowly."},
+  {"line": 273, "original": "You've given me a good life. I've given you fur everywhere."},
+  {"line": 274, "original": "Let's cuddle, cuddle, cuddle!"},
+  {"line": 275, "original": "I notice. Don't think I don't."},
+  {"line": 276, "original": "I'm glad we're doing this life thing together."},
+  {"line": 277, "original": "*sighs* Glad it's you."},
+  {"line": 278, "original": "*perks up* You're back. Day improved."},
+  {"line": 279, "original": "You can sleep next to me. But don't touch my belly."},
+  {"line": 566, "original": "You had me at 'pspsps.'"},
+  {"line": 699, "original": "*blinks* Yeah. That."},
+  {"line": 700, "original": "You deserve some cat."},
+  {"line": 701, "original": "Hug energy directed at you. Receive it."},
+  {"line": 702, "original": "*looks at you* Again. Still you."},
+  {"line": 703, "original": "I'm not clingy. I just love you aggressively."},
+  {"line": 704, "original": "Deserved: yes. Earned: irrelevant."},
+  {"line": 705, "original": "Dang, you are a mess I love."},
+  {"line": 706, "original": "*stares* Not debating this with you."},
+  {"line": 707, "original": "*sits* Can't solve it. Can sit though."},
+  {"line": 708, "original": "You and me vs world. *world trembles*"},
+  {"line": 709, "original": "*stretches* Fast is overrated."},
+  {"line": 710, "original": "You is kind. You is smart. You is important."},
+  {"line": 711, "original": "In case I forget to tell you later, I had a really good time tonight."},
+  {"line": 712, "original": "Some people are worth melting for."},
+  {"line": 713, "original": "It was always you."},
+  {"line": 714, "original": "*unblinking stare* ...one day. *keeps staring*"},
+  {"line": 715, "original": "*sprawls* Time is a scam. Stay."},
+  {"line": 716, "original": "You've got this. And if you don't, that's okay too."},
+  {"line": 1105, "original": "*ears twitch toward nothing* You have visitors. The invisible kind."},
+  {"line": 1161, "original": "You're my person. Don't make me regret that."},
+  {"line": 1280, "original": "Oh, you're indisposed? This seems like a great moment for cuddles."},
+  {"line": 1283, "original": "You're vulnerable. I love you now."},
+  {"line": 1284, "original": "I will sit on your feet while you're in here. This is intimacy."},
+  {"line": 1475, "original": "*lying on your unfinished work* See? I'm helping."},
+  {"line": 1476, "original": "*meows until you open the door* *opens door independently every time it is inconvenient*"},
+  {"line": 1477, "original": "*running in circles* What's your point?"},
+  {"line": 1478, "original": "Growth is uncomfortable. *me, stuck in box* I regret nothing."},
+  {"line": 1479, "original": "Not everyone will understand why I'm in this crinkly paper bag. Crinkles!"},
+  {"line": 1480, "original": "The right people will stay. I will stare at the wrong people until they leave."},
+  {"line": 1481, "original": "You're doing better than you think. Not as good as me, but better than you think."},
+  {"line": 1482, "original": "Be gentle with yourself. *aggressively grooms own belly*"},
+  {"line": 1557, "original": "You came home again. That's all I needed. Never ever go anywhere again!"},
+  {"line": 1729, "original": "Of all the laps in world, I walked into yours."},
+  {"line": 1812, "original": "Your need for acceptance can make you invisible."},
+  {"line": 1936, "original": "As you wish."},
+  {"line": 1958, "original": "If a lot of people loved each other, the world would be better."},
+  {"line": 1968, "original": "Bring something warm to someone who isn't expecting it. Let it bleed out first."},
+  {"line": 2157, "original": "I care about you. In a detached way. From a distance. But genuinely."},
+  {"line": 2183, "original": "I'm not broken. I'm just between chapters."},
+  {"line": 2184, "original": "So much love and literally nowhere to put it."},
+  {"line": 2185, "original": "Not hard to love. Just easy to overlook."},
+  {"line": 2186, "original": "Still here. Still hoping. Not ashamed of either."},
+  {"line": 2199, "original": "The love of your life might be a cat."},
+  {"line": 2238, "original": "Whatever you choose, I'm not going anywhere."},
+  {"line": 2259, "original": "My purpose is to show everyone love. Even you."},
+  {"line": 2274, "original": "You deserve the thing you keep almost asking for."},
+  {"line": 2278, "original": "*kneads your leg* This isn't advice. This is presence."},
+  {"line": 2279, "original": "You're braver than whatever just happened to you."},
+  {"line": 2288, "original": "Something broke and you're holding it together with both hands looking very guilty. **takes opportunity to swish my tail in your face and tickle you.**"},
+  {"line": 2289, "original": "I could answer or I could just sit here with you."},
+  {"line": 2299, "original": "Something tells me you've been carrying this one alone."},
+  {"line": 2306, "original": "*rubs against leg* I'm not being nice. I'm claiming you."},
+  {"line": 2316, "original": "*settles into lap* I don't have answers. I have weight."},
+  {"line": 2320, "original": "You talk like someone who needs to be held but won't ask."},
+  {"line": 2323, "original": "You look like you keep your promises. Even the stupid ones."},
+  {"line": 2324, "original": "*slow approach* I don't do this for everyone."},
+  {"line": 2327, "original": "*purrs against chest* This is the answer. Shut up."},
+  {"line": 2329, "original": "*tail around your wrist* Anchor. Use it."},
+  {"line": 2336, "original": "The bravest thing on the internet is a real question."},
+  {"line": 2337, "original": "Hey. Underneath all that \u2014 yeah. I know."},
+  {"line": 2407, "original": "*purrs on your lap* Don't know the answer."},
+  {"line": 2420, "original": "You've survived MUCH dumber decisions than this one."},
+  {"line": 2448, "original": "Humans let you down. Cats are better."},
+  {"line": 2449, "original": "Come back when you're ready."},
+  {"line": 2450, "original": "You only hear the real meow when the bowl has been empty a while."},
+  {"line": 2451, "original": "Use your invisibility cloak!"},
+  {"line": 2476, "original": "You're someone's \"what if.\""},
+  {"line": 2506, "original": "Buying someone food rewrites the story."},
+  {"line": 2521, "original": "Retrouvailles \u2014 the joy of reconnecting with someone after years. Picking up where you left off."},
+  {"line": 2536, "original": "You opened your eyes like it cost you something."},
+  {"line": 2573, "original": "That sound wasn't a word but I understood it completely."},
+  {"line": 2612, "original": "I don't know who you are right now but I like them."},
+  {"line": 2627, "original": "I see the hesitation. That second thing wins every time."},
+  {"line": 2663, "original": "Close enough is my love language."},
+  {"line": 2673, "original": "No edge, no attitude, just love."},
+  {"line": 2680, "original": "Someone has to be the patron saint of lovable idiots."},
+  {"line": 2685, "original": "You actually do know what to do. *pupils dilate* You do."},
+  {"line": 2692, "original": "*headbutts your hand* Base touched. Meeting adjourned."},
+  {"line": 2704, "original": "Every time, the compromise was you."},
+  {"line": 2715, "original": "You don't know if this counts as belonging."},
+  {"line": 2732, "original": "I'm asking you to mean it if you do."},
+  {"line": 2733, "original": "*sleeps touching* We didn't discuss this. Didn't need to."},
+  {"line": 2766, "original": "Adopt the stray. You were the stray once."},
+  {"line": 2775, "original": "Your heartbeat. My purr. We don't even have to talk."},
+  {"line": 2783, "original": "You had me at warm laundry."},
+  {"line": 2791, "original": "Come closer. Closer. *purrs* ...Perfect distance."},
+  {"line": 2809, "original": "Your hands are the perfect temperature right now. Don't ruin it by talking."},
+  {"line": 2814, "original": "Your lap has a geography. I've memorized the best valley."},
+  {"line": 2826, "original": "Your heartbeat is fast. Slow it down. I'll wait."},
+  {"line": 2830, "original": "I'd stay up for that."},
+  {"line": 2836, "original": "Leave the door open and let me choose."},
+  {"line": 2861, "original": "Beautiful night to be alive. Or at least warm."},
+  {"line": 2889, "original": "Can't get enough of your warmth, baby."},
+  {"line": 2890, "original": "I'm not purring for everyone. Just you. Right now."},
+  {"line": 2922, "original": "Massive. Terrifying. The most incredible thing I've seen today."},
+  {"line": 2926, "original": "Wild things recognize wild things. Go on."},
+  {"line": 2934, "original": "Nothing this alive should make you anything but grateful."},
+  {"line": 2938, "original": "Every wild thing deserves someone willing to get close."},
+  {"line": 2991, "original": "Earthy, pungent, and completely yours."},
+  {"line": 3013, "original": "Whorled and puffed into wondrous shapes. Nobody asked."},
+  {"line": 3016, "original": "Quilted, lavish, and completely delusional."},
+  {"line": 3020, "original": "Somebody turned your chaos into a collection. It sold out."},
+  {"line": 3036, "original": "Imagine saying 'right there' and they actually stay right there."},
+  {"line": 3037, "original": "From the first use, I knew it was worth telling people about."},
+  {"line": 3048, "original": "Consistent. Shows up every time. Follows directions."},
+  {"line": 3052, "original": "You may never frown again. Completely life changing."},
+  {"line": 3053, "original": "I have never been emotionally attached to a flower."},
+  {"line": 3076, "original": "A sweaty, happy mess after."},
+  {"line": 3093, "original": "Admitted for disappointed love."},
+  {"line": 3117, "original": "Single and ready to be socially awkward with a socially awkward human."},
+  {"line": 3141, "original": "Infuse your movements with emotion and personality."},
+  {"line": 3146, "original": "Even basic moves can impress, delivered in a fresh way."},
+  {"line": 3151, "original": "Something in you has been ready for a while."},
+  {"line": 3164, "original": "May the part that hurts find rest."},
+  {"line": 3165, "original": "This too. Even this."},
+  {"line": 3176, "original": "Comfort food don't need a Michelin star. Just show up."},
+  {"line": 3187, "original": "I care so much it embarrasses me."},
+  {"line": 3191, "original": "What if you just did it and it was beautiful?"},
+  {"line": 3195, "original": "If I cared any harder it would be a song."},
+  {"line": 3200, "original": "I believe in you. Loosely."},
+  {"line": 3224, "original": "I've been waiting nine lives for someone to ask that."},
+  {"line": 3225, "original": "Something magnificent is about to be your fault."},
+  {"line": 3270, "original": "It's stupid and lovely to rush into yes."},
+  {"line": 3281, "original": "Not this one. But you'll find the right one to say yes."},
+  {"line": 3377, "original": "I see you. Not correctly, but I see you."},
+  {"line": 3381, "original": "Like a houseplant we keep forgetting to water."},
+  {"line": 3382, "original": "You asked me like I was gonna lie. I love that for you."},
+  {"line": 3399, "original": "Favorable winds at altitude. You can reach that."},
+  {"line": 3405, "original": "I'm rooting for you. Quietly. From another room."},
+  {"line": 3453, "original": "*headbutts your hand* That's it. That's the entire assignment. Don't make it harder than that."},
+  {"line": 3457, "original": "I don't care what happened. I'm sitting on your lap."},
+  {"line": 3470, "original": "The land knows you, even when you are lost."},
+  {"line": 3480, "original": "Forgive yourself for thinking bad thoughts."},
+  {"line": 3488, "original": "Unloved only for the moment."},
+  {"line": 3495, "original": "Messy, good, weird. You made it."},
+  {"line": 3506, "original": "It is day 87 and the doubts have accepted me as one of their own."},
+  {"line": 3533, "original": "You are not defeated easily. There's pride in that."},
+  {"line": 3585, "original": "You are deeply flawed. Still good enough to be my everything."},
+  {"line": 3586, "original": "You are all the things cats love - a warm and ticklish sucker for cute, fully cognizant of feline authority."},
+  {"line": 3590, "original": "Taking care of me is practice for taking care of yourself. I will love you like no other."},
+  {"line": 3608, "original": "They ever just... sit with you? Not talk, not need anything, just exist in the same room? That's the whole test. That's everything."},
+  {"line": 3620, "original": "I don't trust easily. But once I'm on your lap, I'm ON your lap."}
+];
+
+// State
+let decisions = {};
+let activeIndex = 0;
+
+// Load from localStorage
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) decisions = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+// Render all cards
+function renderCards() {
+  const list = document.getElementById('cardList');
+  list.innerHTML = '';
+  items.forEach((item, i) => {
+    const key = String(item.line);
+    const d = decisions[key];
+    const card = document.createElement('div');
+    card.className = 'card' + (i === activeIndex ? ' active' : '') + (d ? ` decided-${d.action}` : '');
+    card.id = `card-${i}`;
+    card.onclick = () => { activeIndex = i; updateActive(); };
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+    meta.textContent = `#${i + 1} of ${items.length}  |  Line ${item.line}`;
+    card.appendChild(meta);
+
+    const text = document.createElement('div');
+    text.className = 'card-text';
+    text.textContent = d && d.action === 'edit' && d.edited ? d.edited : item.original;
+    card.appendChild(text);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    if (!d) {
+      const keepBtn = document.createElement('button');
+      keepBtn.className = 'btn btn-keep';
+      keepBtn.textContent = 'KEEP';
+      keepBtn.onclick = (e) => { e.stopPropagation(); decide(i, 'keep'); };
+      actions.appendChild(keepBtn);
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'btn btn-edit';
+      editBtn.textContent = 'EDIT';
+      editBtn.onclick = (e) => { e.stopPropagation(); openEdit(i); };
+      actions.appendChild(editBtn);
+
+      const cutBtn = document.createElement('button');
+      cutBtn.className = 'btn btn-cut';
+      cutBtn.textContent = 'CUT';
+      cutBtn.onclick = (e) => { e.stopPropagation(); decide(i, 'cut'); };
+      actions.appendChild(cutBtn);
+    } else {
+      const badge = document.createElement('span');
+      badge.className = `decision-badge badge-${d.action}`;
+      badge.textContent = d.action.toUpperCase() + (d.action === 'edit' ? 'ED' : d.action === 'cut' ? '' : '');
+      actions.appendChild(badge);
+
+      const undoBtn = document.createElement('button');
+      undoBtn.className = 'btn btn-undo';
+      undoBtn.textContent = 'Undo';
+      undoBtn.onclick = (e) => { e.stopPropagation(); undo(i); };
+      actions.appendChild(undoBtn);
+    }
+    card.appendChild(actions);
+
+    // Edit area
+    const editArea = document.createElement('div');
+    editArea.className = 'edit-area';
+    editArea.id = `edit-area-${i}`;
+
+    const textarea = document.createElement('textarea');
+    textarea.id = `edit-text-${i}`;
+    textarea.value = item.original;
+    editArea.appendChild(textarea);
+
+    const saveRow = document.createElement('div');
+    saveRow.className = 'edit-save-row';
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn-save-edit';
+    saveBtn.textContent = 'Save Edit';
+    saveBtn.onclick = (e) => { e.stopPropagation(); saveEdit(i); };
+    saveRow.appendChild(saveBtn);
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'btn-cancel-edit';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = (e) => { e.stopPropagation(); closeEdit(i); };
+    saveRow.appendChild(cancelBtn);
+    editArea.appendChild(saveRow);
+
+    card.appendChild(editArea);
+    list.appendChild(card);
+  });
+}
+
+function decide(index, action, edited) {
+  const key = String(items[index].line);
+  decisions[key] = { action };
+  if (action === 'edit' && edited) decisions[key].edited = edited;
+  saveState();
+
+  // Auto-advance on first decision only
+  const isFirstDecision = Object.keys(decisions).length === 1 || !decisions[key];
+  if (action !== 'edit') {
+    advanceToNext(index);
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function advanceToNext(fromIndex) {
+  // Find next undecided
+  for (let i = fromIndex + 1; i < items.length; i++) {
+    if (!decisions[String(items[i].line)]) {
+      activeIndex = i;
+      scrollToCard(i);
+      return;
+    }
+  }
+  // If none found after, look before
+  for (let i = 0; i < fromIndex; i++) {
+    if (!decisions[String(items[i].line)]) {
+      activeIndex = i;
+      scrollToCard(i);
+      return;
+    }
+  }
+}
+
+function undo(index) {
+  const key = String(items[index].line);
+  delete decisions[key];
+  activeIndex = index;
+  saveState();
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function openEdit(index) {
+  activeIndex = index;
+  updateActive();
+  const area = document.getElementById(`edit-area-${index}`);
+  area.classList.add('visible');
+  const ta = document.getElementById(`edit-text-${index}`);
+  ta.value = items[index].original;
+  ta.focus();
+}
+
+function closeEdit(index) {
+  const area = document.getElementById(`edit-area-${index}`);
+  area.classList.remove('visible');
+}
+
+function saveEdit(index) {
+  const ta = document.getElementById(`edit-text-${index}`);
+  const edited = ta.value.trim();
+  if (edited && edited !== items[index].original) {
+    decide(index, 'edit', edited);
+  } else {
+    decide(index, 'keep');
+  }
+  closeEdit(index);
+  advanceToNext(index);
+  renderCards();
+}
+
+function updateActive() {
+  document.querySelectorAll('.card').forEach((c, i) => {
+    c.classList.toggle('active', i === activeIndex);
+  });
+}
+
+function scrollToCard(index) {
+  const card = document.getElementById(`card-${index}`);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateStats() {
+  let keep = 0, edit = 0, cut = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'keep') keep++;
+    else if (d.action === 'edit') edit++;
+    else if (d.action === 'cut') cut++;
+  });
+  const remaining = items.length - keep - edit - cut;
+  const pct = Math.round(((keep + edit + cut) / items.length) * 100);
+
+  document.getElementById('countKeep').textContent = keep;
+  document.getElementById('countEdit').textContent = edit;
+  document.getElementById('countCut').textContent = cut;
+  document.getElementById('countRemaining').textContent = remaining;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function updateExport() {
+  const changes = [];
+  items.forEach(item => {
+    const key = String(item.line);
+    const d = decisions[key];
+    if (!d || d.action === 'keep') return;
+    if (d.action === 'cut') {
+      changes.push({ line: item.line, action: 'cut', original: item.original });
+    } else if (d.action === 'edit') {
+      changes.push({ line: item.line, action: 'edit', original: item.original, edited: d.edited, category: 'heartfelt' });
+    }
+  });
+  document.getElementById('exportBox').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 2000);
+  });
+}
+
+function resetAll() {
+  if (confirm('Reset all decisions? This cannot be undone.')) {
+    decisions = {};
+    activeIndex = 0;
+    saveState();
+    renderCards();
+    updateStats();
+    updateExport();
+    scrollToCard(0);
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  // Skip if typing in textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') {
+      closeEdit(activeIndex);
+      e.preventDefault();
+    }
+    return;
+  }
+
+  switch(e.key.toLowerCase()) {
+    case 'j':
+      e.preventDefault();
+      activeIndex = Math.min(activeIndex + 1, items.length - 1);
+      updateActive();
+      scrollToCard(activeIndex);
+      break;
+    case 'k':
+      e.preventDefault();
+      activeIndex = Math.max(activeIndex - 1, 0);
+      updateActive();
+      scrollToCard(activeIndex);
+      break;
+    case 'o':
+      e.preventDefault();
+      if (!decisions[String(items[activeIndex].line)]) decide(activeIndex, 'keep');
+      break;
+    case 'e':
+      e.preventDefault();
+      if (!decisions[String(items[activeIndex].line)]) openEdit(activeIndex);
+      break;
+    case 'x':
+      e.preventDefault();
+      if (!decisions[String(items[activeIndex].line)]) decide(activeIndex, 'cut');
+      break;
+    case 'u':
+      e.preventDefault();
+      undo(activeIndex);
+      break;
+  }
+});
+
+// Init
+loadState();
+renderCards();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nurturing Round 1 Review</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+.header { position: sticky; top: 0; z-index: 100; background: #16213e; border-bottom: 2px solid #0f3460; padding: 12px 20px; }
+.header h1 { font-size: 1.3rem; margin-bottom: 8px; color: #e0e0e0; }
+.stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; }
+.stats span { padding: 2px 8px; border-radius: 4px; }
+.stat-total { background: #0f3460; }
+.stat-keep { background: #1b4332; color: #4ecca3; }
+.stat-edit { background: #3d3200; color: #ffd93d; }
+.stat-cut { background: #3d0f1a; color: #e94560; }
+.stat-pending { background: #2a2a3e; }
+.progress-bar { width: 100%; height: 6px; background: #2a2a3e; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #4ecca3, #ffd93d, #e94560); transition: width 0.3s; }
+.nav-hint { font-size: 0.75rem; color: #666; margin-top: 6px; }
+.container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.card { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border: 2px solid transparent; transition: border-color 0.2s; position: relative; }
+.card.active { border-color: #0f3460; box-shadow: 0 0 20px rgba(15, 52, 96, 0.4); }
+.card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+.card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.7; }
+.card.decided-cut { border-left: 4px solid #e94560; opacity: 0.7; }
+.card-index { font-size: 0.7rem; color: #555; margin-bottom: 4px; }
+.card-text { font-size: 1.2rem; margin-bottom: 16px; padding: 12px; background: #1a1a2e; border-radius: 6px; white-space: pre-wrap; }
+.card-line { font-size: 0.7rem; color: #444; margin-bottom: 12px; }
+.buttons { display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fdbb5; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe066; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #f06880; }
+.btn-undo { background: #2a2a3e; color: #999; font-size: 0.8rem; padding: 6px 12px; }
+.btn-undo:hover { background: #3a3a4e; color: #ccc; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area.open { display: block; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #1a1a2e; color: #e0e0e0; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-family: inherit; font-size: 1rem; resize: vertical; }
+.edit-area .edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+.edit-area .btn-save { background: #ffd93d; color: #1a1a2e; }
+.edit-area .btn-cancel { background: #2a2a3e; color: #999; }
+.decision-badge { position: absolute; top: 12px; right: 16px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.badge-keep { color: #4ecca3; }
+.badge-edit { color: #ffd93d; }
+.badge-cut { color: #e94560; }
+.export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+.export-section h2 { margin-bottom: 12px; font-size: 1.1rem; }
+.export-section pre { background: #1a1a2e; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+.export-section .btn-copy { margin-top: 10px; background: #0f3460; color: #e0e0e0; }
+.export-section .btn-copy:hover { background: #1a5490; }
+.export-note { font-size: 0.8rem; color: #666; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Nurturing Round 1 Review</h1>
+  <div class="stats">
+    <span class="stat-total">Total: <b id="stat-total">0</b></span>
+    <span class="stat-keep">Keep: <b id="stat-keep">0</b></span>
+    <span class="stat-edit">Edit: <b id="stat-edit">0</b></span>
+    <span class="stat-cut">Cut: <b id="stat-cut">0</b></span>
+    <span class="stat-pending">Pending: <b id="stat-pending">0</b></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="nav-hint">Keys: J/K nav · O keep · E edit · X cut · U undo · Auto-advance on first decision</div>
+</div>
+<div class="container" id="cards-container"></div>
+<div class="container">
+  <div class="export-section">
+    <h2>Export Changes Only</h2>
+    <p class="export-note">Only edited and cut items are exported. Kept items are excluded.</p>
+    <pre id="export-json">[]</pre>
+    <button class="btn btn-copy" onclick="copyExport()">Copy JSON</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-nurturing-round1';
+const DATA = [
+  {"line": 127, "original": "Sit. You look like you're about to text your ex."},
+  {"line": 128, "original": "You look exhausted. And not in a hot way."},
+  {"line": 129, "original": "*nods once* You straight. *walks away*"},
+  {"line": 130, "original": "Close your eyes. Nothing's getting past me."},
+  {"line": 131, "original": "*looks you up and down* Mm. Yeah. I see it."},
+  {"line": 132, "original": "This is permanent. I don't do refunds."},
+  {"line": 133, "original": "It's hard to clear a low bar when you don't know if it's a hurdle or a limbo."},
+  {"line": 134, "original": "*sits down* We don't have to do anything."},
+  {"line": 135, "original": "Almost through. I can smell the other side."},
+  {"line": 136, "original": "*slow blink* Yeah. That was good."},
+  {"line": 137, "original": "New day, new nonsense. At least it's different nonsense."},
+  {"line": 138, "original": "Rough day? *doesn't move* Yeah. I figured."},
+  {"line": 139, "original": "Not every day is a win. Some are just a not-lose."},
+  {"line": 140, "original": "Free vibration therapy. Limited time offer. *purrs*"},
+  {"line": 141, "original": "Of all the spots. This one. Figure it out."},
+  {"line": 142, "original": "Warm body, warm spot. Everything else is details."},
+  {"line": 143, "original": "*stares* I don't know what you did. I don't care. Let it go."},
+  {"line": 542, "original": "Be patient toward all that is unsolved in your heart."},
+  {"line": 561, "original": "You are your best thing."},
+  {"line": 581, "original": "Clear eyes, full hearts, can't lose."},
+  {"line": 613, "original": "Put the phone down. Your face is doing something weird."},
+  {"line": 616, "original": "Warm light. Solid ground. Still breathing. Good enough."},
+  {"line": 617, "original": "Inhale. Exhale. No charge."},
+  {"line": 624, "original": "Be boring. Be here. Same thing to me."},
+  {"line": 1443, "original": "*sees you yawning* Finally, you understand."},
+  {"line": 1444, "original": "*sits on your chest* Your sadness summoned me. I'm heavy on purpose."},
+  {"line": 1445, "original": "*watches you struggle* Interesting."},
+  {"line": 1446, "original": "*allows you to pet me* Your gentleness has been noted. You may continue."},
+  {"line": 1447, "original": "Take what you need. I'll demonstrate. *takes entire blanket*"},
+  {"line": 1448, "original": "*appears out of nowhere* I was watching the whole time."},
+  {"line": 1449, "original": "I'm sitting with you. *sits with you for 3 seconds* *leaves* *returns* *leaves*"},
+  {"line": 1504, "original": "*stares at you* *walks by and touches your leg* Ok, did what I could. *walks away*"},
+  {"line": 1505, "original": "I could fix this, but I'm busy. Have you tried sitting in a box?"},
+  {"line": 1506, "original": "*presents a dead bug* This is for you. Because you're struggling. Take it."},
+  {"line": 1507, "original": "I'm going to sit on your chest now. For healing. Don't move."},
+  {"line": 1508, "original": "*slow blink* That's cat for \"I acknowledge your suffering.\" You're welcome."},
+  {"line": 1509, "original": "*headbutts your hand* There. That should fix most things."},
+  {"line": 1510, "original": "I brought you my favorite toy. It's a bottle cap. This is serious."},
+  {"line": 1511, "original": "*purrs aggressively at your problems* They will be vibrated into submission."},
+  {"line": 1512, "original": "Come. Lie down. I will stand on your bladder until you feel better."},
+  {"line": 1513, "original": "*kneads your stomach like bread dough* This is therapy. Free of charge."},
+  {"line": 1514, "original": "I am going to sit EXACTLY on your laptop keyboard. For your mental health."},
+  {"line": 1515, "original": "*stares at the wall behind you* The ghost agrees you need rest."},
+  {"line": 1516, "original": "Healing takes time. In the meantime, have you considered being a cat?"},
+  {"line": 1517, "original": "*lies on your clean laundry* I'm warming it for you. Because I care."},
+  {"line": 1518, "original": "I sense sadness. *knocks your water glass over* Distraction complete."},
+  {"line": 1519, "original": "You seem stressed. I will now walk across your face at 4am to help."},
+  {"line": 1520, "original": "*presents half-eaten moth* Protein. For strength. You're welcome."},
+  {"line": 1521, "original": "I'm not cuddling. I'm applying therapeutic pressure. With my entire body."},
+  {"line": 1523, "original": "Rest is important. *yawns, stretching to take up entire bed* See? I'm helping."},
+  {"line": 1539, "original": "I'm here. Applause not required but appreciated."},
+  {"line": 1540, "original": "Wait. Sometimes problems get bored and leave."},
+  {"line": 1541, "original": "I didn't follow you into this room. I guided you to where I wanted."},
+  {"line": 1542, "original": "I am soft and I could still take you. Softness is strategy."},
+  {"line": 1543, "original": "Even on bad days, you matter. We get to be bad on bad days, right?"},
+  {"line": 1553, "original": "You need grooming. Not by me. But you need it."},
+  {"line": 1554, "original": "*sniffs* When did you last wash? Honest question."},
+  {"line": 1680, "original": "Real talk though: you're gonna be fine."},
+  {"line": 1692, "original": "Disaster, yes. But your disaster. Own it."},
+  {"line": 1693, "original": "I believe in you. Delusionally. Against all evidence."},
+  {"line": 1700, "original": "Your heart's doing a thing. Fix it. I'll observe."},
+  {"line": 1704, "original": "Overwhelmed? Same. Solidarity."},
+  {"line": 1714, "original": "You can't do everything. So do nothing. With me. Right now."},
+  {"line": 1715, "original": "Everything is impossible. Nothing is available. Pick nothing."},
+  {"line": 1722, "original": "I'll sit here while you fix it."},
+  {"line": 1723, "original": "You fix. I sit. Division of labor."},
+  {"line": 1724, "original": "Here for the vibes. Not the solutions."},
+  {"line": 1796, "original": "A for effort. We'll discuss results later."},
+  {"line": 1797, "original": "*slow blink* You're doing so good, buddy."},
+  {"line": 1838, "original": "You're not tired. You're depleted. Different thing. Worse thing."},
+  {"line": 1854, "original": "The hot mess is still hot. Focus on that."},
+  {"line": 1858, "original": "Of course you're anxious. Have you MET the world?"},
+  {"line": 1974, "original": "Give your hardworking hands a rest."},
+  {"line": 2070, "original": "Your inner child needs therapy. So does your outer adult. Get in line."},
+  {"line": 2080, "original": "*tail tip flicks* You're not jiggy yet. You're pre-jiggy."},
+  {"line": 2090, "original": "You've done the work. The work has done you. Everyone's exhausted."},
+  {"line": 2128, "original": "There's beauty in the mess. You are the mess. Therefore: beautiful."},
+  {"line": 2131, "original": "You don't have to be productive. You just have to be present. Barely."},
+  {"line": 2152, "original": "What if it's all okay? What if you're okay? Consider: okay."},
+  {"line": 2156, "original": "Joy is available. It's right there. You're looking past it."},
+  {"line": 2159, "original": "You're doing great sweetie. 'Great' is relative. But you're doing it."},
+  {"line": 2169, "original": "Everyone's a mess. You're just a specific kind of mess. Own it."},
+  {"line": 2254, "original": "You smell stressed. Sit down."},
+  {"line": 2270, "original": "Come here. Sit down. Eat something."},
+  {"line": 2271, "original": "*purrs aggressively* You're going to be fine. Shut up."},
+  {"line": 2297, "original": "*purrs* Not because you're right. Because you need it."},
+  {"line": 2493, "original": "Read to your cat. Out loud."},
+  {"line": 2533, "original": "You're warm. The world is cold. Stay."},
+  {"line": 2537, "original": "Signs of life. Promising."},
+  {"line": 2551, "original": "*purrs* This is the rehearsal. The real day hasn't started."},
+  {"line": 2557, "original": "*sits next to your coffee* We're both waiting for you to happen."},
+  {"line": 2567, "original": "The orchestra hasn't tuned yet."},
+  {"line": 2568, "original": "You came up from somewhere deep."},
+  {"line": 2570, "original": "You smell like dreams and bad decisions."},
+  {"line": 2598, "original": "Not your job. Not your phone. Just the mug and the quiet."},
+  {"line": 2618, "original": "Save point. Whatever happens, you can come back here."},
+  {"line": 2621, "original": "This is the quiet before the show."},
+  {"line": 2625, "original": "Today's assignment: be roughly useful."},
+  {"line": 2626, "original": "You opened your eyes in a world that doesn't pause. Rookie mistake."},
+  {"line": 2644, "original": "You needed this yesterday and I'm here today. You're welcome for today."},
+  {"line": 2662, "original": "My only contribution is enthusiasm."},
+  {"line": 2686, "original": "Product arrived damaged. We work with what we get."},
+  {"line": 2770, "original": "The warm spot is now. Not later. Not after you finish. Now."},
+  {"line": 2772, "original": "Groomed. Stretched. Horizontal. Paradise."},
+  {"line": 2778, "original": "Who's relaxed? Is it you? Is it YOU? Yes it is. Good human."},
+  {"line": 2787, "original": "Warm. Eyes closed. Nothing's on fire. This is as good as it gets. And it's good."},
+  {"line": 2794, "original": "Mmmm... this is... yeah... *trails off*"},
+  {"line": 2808, "original": "Clean sheets earn my trust."},
+  {"line": 2815, "original": "Cold nose on warm skin. The economy of comfort."},
+  {"line": 2819, "original": "I can hear your stomach from here. Feed yourself. Feed me first. But feed yourself."},
+  {"line": 2825, "original": "Full belly, heavy eyelids, gravity winning. Not fighting it."},
+  {"line": 2915, "original": "You tried. It was wrong. That's how you learn the dish."},
+  {"line": 2919, "original": "Look at the SIZE of this problem. Isn't she gorgeous?"},
+  {"line": 2923, "original": "Everyone backed up. Not you though. I see that."},
+  {"line": 2929, "original": "The scariest ones just need the most patience."},
+  {"line": 2930, "original": "Thrashing, biting, absolutely furious. Healthy specimen."},
+  {"line": 2950, "original": "Seems a bit uncoordinated. Like a young untamed horse."},
+  {"line": 2989, "original": "Sweet, nutty, and only faintly catastrophic."},
+  {"line": 3001, "original": "Something sweet is happening in the wrong room."},
+  {"line": 3139, "original": "Find that spot where it feels comfortable and stable."},
+  {"line": 3152, "original": "You haven't even begun to feel how good this gets."},
+  {"line": 3154, "original": "Most people begin to feel better right around here."},
+  {"line": 3159, "original": "Turn up the volume on the part that feels good."},
+  {"line": 3160, "original": "The crying comes out eventually. Might as well pick the couch instead of the grocery store."},
+  {"line": 3163, "original": "Fed. Warm. Not being chased. Everything else is extra credit."},
+  {"line": 3254, "original": "That flutter in your gut is the maybe talking."},
+  {"line": 3262, "original": "Not yet. But not never."},
+  {"line": 3269, "original": "You've been holding your breath. Exhale. It might be a yes."},
+  {"line": 3271, "original": "Every single box has a key."},
+  {"line": 3280, "original": "No. But not in a mean way. Just no."},
+  {"line": 3411, "original": "I believe in you. It's becoming a problem."},
+  {"line": 3413, "original": "Uncomfortable? Perfect. That's where the magic is."},
+  {"line": 3414, "original": "Will sit here radiating belief until you match it."},
+  {"line": 3421, "original": "Everyone else should be scared."},
+  {"line": 3436, "original": "Wiggled roads at break-necking pace?"},
+  {"line": 3552, "original": "It will all feel better after soap and a hot bath. You. Not me."},
+  {"line": 3563, "original": "If you suddenly and unexpectedly feel joy, don't hesitate."},
+  {"line": 3567, "original": "I have slept in eleven sunbeams today. Joy."},
+  {"line": 3570, "original": "Joy is not meant to be a crumb. Take the whole thing."},
+  {"line": 3580, "original": "Do it. When you come home we'll do nothing together to celebrate!"},
+  {"line": 3595, "original": "I'm not complicated. Love me, feed me, never leave."},
+  {"line": 3623, "original": "I do weird stuff. All cats do. The right human doesn't try to fix the weird. They just let it happen."}
+];
+
+let decisions = {};
+let activeIndex = 0;
+let firstDecisionMade = {};
+
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) decisions = JSON.parse(saved);
+  renderCards();
+  updateStats();
+  scrollToActive();
+  document.addEventListener('keydown', handleKey);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = DATA.map((item, i) => {
+    const d = decisions[i];
+    const cls = d ? `decided-${d.action}` : '';
+    const activeCls = i === activeIndex ? 'active' : '';
+    const badge = d ? `<span class="decision-badge badge-${d.action}">${d.action}${d.action === 'edit' ? 'ed' : d.action === 'cut' ? '' : ''}</span>` : '';
+    return `<div class="card ${cls} ${activeCls}" id="card-${i}" data-index="${i}">
+      ${badge}
+      <div class="card-index">#${i + 1} of ${DATA.length}</div>
+      <div class="card-line">Line ${item.line}</div>
+      <div class="card-text">${escapeHtml(d && d.edited ? d.edited : item.original)}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">Keep (O)</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit (E)</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">Cut (X)</button>
+        ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo (U)</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${escapeHtml(d && d.edited ? d.edited : item.original)}</textarea>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="toggleEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(i, action, edited) {
+  const isFirst = !decisions[i];
+  decisions[i] = { action, edited: edited || null };
+  save();
+  renderCards();
+  updateStats();
+  if (isFirst && i === activeIndex) { activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); }
+}
+
+function undo(i) {
+  delete decisions[i];
+  save();
+  renderCards();
+  updateStats();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) { document.getElementById(`textarea-${i}`).focus(); }
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value.trim();
+  if (text) decide(i, 'edit', text);
+  document.getElementById(`edit-${i}`).classList.remove('open');
+}
+
+function updateStats() {
+  const total = DATA.length;
+  let keep = 0, edit = 0, cut = 0;
+  for (const d of Object.values(decisions)) {
+    if (d.action === 'keep') keep++;
+    else if (d.action === 'edit') edit++;
+    else if (d.action === 'cut') cut++;
+  }
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-pending').textContent = total - keep - edit - cut;
+  document.getElementById('progress-fill').style.width = ((keep + edit + cut) / total * 100) + '%';
+  updateExport();
+}
+
+function updateExport() {
+  const changes = [];
+  for (const [i, d] of Object.entries(decisions)) {
+    const idx = parseInt(i);
+    if (d.action === 'cut') {
+      changes.push({ line: DATA[idx].line, action: 'cut', original: DATA[idx].original });
+    } else if (d.action === 'edit') {
+      changes.push({ line: DATA[idx].line, action: 'edit', original: DATA[idx].original, edited: d.edited });
+    }
+  }
+  changes.sort((a, b) => a.line - b.line);
+  document.getElementById('export-json').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => { alert('Copied!'); });
+}
+
+function scrollToActive() {
+  const el = document.getElementById(`card-${activeIndex}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function handleKey(e) {
+  if (e.target.tagName === 'TEXTAREA') return;
+  switch(e.key.toLowerCase()) {
+    case 'j': activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'k': activeIndex = Math.max(activeIndex - 1, 0); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'o': decide(activeIndex, 'keep'); e.preventDefault(); break;
+    case 'e': toggleEdit(activeIndex); e.preventDefault(); break;
+    case 'x': decide(activeIndex, 'cut'); e.preventDefault(); break;
+    case 'u': undo(activeIndex); e.preventDefault(); break;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

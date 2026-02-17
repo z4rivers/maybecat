@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demanding Round 1 Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  /* Sticky header */
+  .stats-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .stats-header h1 {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-edit { color: #ffd93d; }
+  .stat-cut { color: #e94560; }
+  .stat-remaining { color: #aaa; }
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #0f3460;
+    margin-top: 8px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #4ecca3;
+    transition: width 0.3s ease;
+  }
+  .keyboard-hint {
+    font-size: 0.75rem;
+    color: #666;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .keyboard-hint kbd {
+    background: #0f3460;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    color: #aaa;
+  }
+
+  /* Cards */
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+  .card {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, opacity 0.2s;
+  }
+  .card.active {
+    border-color: #533483;
+    box-shadow: 0 0 20px rgba(83, 52, 131, 0.3);
+  }
+  .card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+  .card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.7; }
+  .card.decided-cut { border-left: 4px solid #e94560; opacity: 0.7; }
+  .card.active.decided-keep,
+  .card.active.decided-edit,
+  .card.active.decided-cut { opacity: 1; }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .card-index {
+    font-size: 0.75rem;
+    color: #666;
+  }
+  .card-line {
+    font-size: 0.75rem;
+    color: #533483;
+    font-family: monospace;
+  }
+  .card-decision {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .card-decision.keep { color: #4ecca3; }
+  .card-decision.edit { color: #ffd93d; }
+  .card-decision.cut { color: #e94560; }
+
+  .response-text {
+    font-size: 1.25rem;
+    color: #fff;
+    padding: 16px 0;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .template-badge {
+    display: inline-block;
+    background: #533483;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-style: normal;
+  }
+
+  /* Buttons */
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep {
+    border-color: #4ecca3;
+    color: #4ecca3;
+  }
+  .btn-keep:hover, .btn-keep.selected {
+    background: #4ecca3;
+    color: #1a1a2e;
+  }
+  .btn-edit {
+    border-color: #ffd93d;
+    color: #ffd93d;
+  }
+  .btn-edit:hover, .btn-edit.selected {
+    background: #ffd93d;
+    color: #1a1a2e;
+  }
+  .btn-cut {
+    border-color: #e94560;
+    color: #e94560;
+  }
+  .btn-cut:hover, .btn-cut.selected {
+    background: #e94560;
+    color: #1a1a2e;
+  }
+  .btn-undo {
+    flex: 0;
+    min-width: 60px;
+    border-color: #666;
+    color: #666;
+    font-size: 0.75rem;
+  }
+  .btn-undo:hover {
+    border-color: #aaa;
+    color: #aaa;
+  }
+
+  /* Edit textarea */
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f3460;
+    border: 1px solid #533483;
+    border-radius: 8px;
+    color: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-save {
+    margin-top: 8px;
+    padding: 8px 20px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .edit-save:hover { opacity: 0.9; }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 48px auto;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    color: #fff;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+  .export-note {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .export-box {
+    background: #0f3460;
+    border: 1px solid #533483;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    color: #4ecca3;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: pointer;
+    position: relative;
+  }
+  .export-box:hover::after {
+    content: 'Click to copy';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #533483;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: system-ui;
+    font-size: 0.75rem;
+  }
+  .copy-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+  }
+  .copy-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="stats-header" id="statsHeader">
+  <h1>Demanding Round 1 Review</h1>
+  <span class="stat stat-keep">Keep: <span id="keepCount">0</span></span>
+  <span class="stat stat-edit">Edit: <span id="editCount">0</span></span>
+  <span class="stat stat-cut">Cut: <span id="cutCount">0</span></span>
+  <span class="stat stat-remaining">Remaining: <span id="remainingCount">0</span></span>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="keyboard-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> nav &nbsp;
+    <kbd>O</kbd> keep &nbsp;
+    <kbd>E</kbd> edit &nbsp;
+    <kbd>X</kbd> cut &nbsp;
+    <kbd>U</kbd> undo
+  </div>
+</div>
+
+<div class="cards-container" id="cardsContainer"></div>
+
+<div class="export-section">
+  <h2>Export (changes only)</h2>
+  <p class="export-note">Only edited and cut items are exported. Kept items are omitted. Click to copy.</p>
+  <div class="export-box" id="exportBox" onclick="copyExport()">[]</div>
+</div>
+
+<div class="copy-toast" id="copyToast">Copied to clipboard!</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-demanding-round1';
+
+const items = [
+  {line: 575, original: "I can do this all day."},
+  {line: 579, original: "Winter is coming. Close the window."},
+  {line: 583, original: "I can has cheezburger?"},
+  {line: 596, original: "Don't believe me? Just watch."},
+  {line: 597, original: "Harder, better, faster, stronger."},
+  {line: 606, original: "Try again. With honesty this time."},
+  {line: 610, original: "Put the phone down. Look at me."},
+  {line: 784, original: "I make myself comfortable. That's not negotiable."},
+  {line: 785, original: "This is my spot now. Adjust accordingly."},
+  {line: 786, original: "I don't need an invitation. I need a surface."},
+  {line: 792, original: "If I can climb it, I own it."},
+  {line: 808, original: "I don't need attention right now. You'll know when I do."},
+  {line: 809, original: "I'll come to you when I'm ready."},
+  {line: 810, original: "You're available? Good. I'm not interested yet."},
+  {line: 811, original: "Attention is on my schedule, not yours."},
+  {line: 812, original: "When I want you, you'll know."},
+  {line: 843, original: "Personal space?"},
+  {line: 908, original: "I'll come when I want to."},
+  {line: 938, original: "Is it time for breakfast?"},
+  {line: 939, original: "Answers cost treats. You know the exchange rate."},
+  {line: 940, original: "Before I answer: when did you last clean my litter box?"},
+  {line: 941, original: "The Oracle is hungry. Feed the Oracle. Then we talk."},
+  {line: 942, original: "Your question is noted. My dinner is late. Priorities."},
+  {line: 943, original: "The answer exists. It is behind a paywall of chin scratches."},
+  {line: 944, original: "My wisdom comes with terms and conditions. Mostly treats."},
+  {line: 945, original: "I am but a vessel. The vessel requires tuna."},
+  {line: 946, original: "Wisdom isn't free. Neither is my time. Pay up."},
+  {line: 947, original: "The door. Open it. Then we'll talk."},
+  {line: 948, original: "My bowl situation is... concerning. Address that first."},
+  {line: 949, original: "I'll consider your question when you consider my comfort."},
+  {line: 950, original: "The oracle speaks when the oracle is fed."},
+  {line: 951, original: "Chin scratches. Then answers. This is non-negotiable."},
+  {line: 952, original: "I notice the treat bag hasn't moved. Your question can wait."},
+  {line: 953, original: "Have you considered my needs? No? Then I haven't considered your question."},
+  {line: 954, original: "The window. The bird. Let me closer. Then I'll answer."},
+  {line: 955, original: "My services aren't free. The currency is tuna."},
+  {line: 956, original: "Before wisdom: brushies."},
+  {line: 957, original: "You've asked your question. Now I'll ask mine: when's dinner?"},
+  {line: 960, original: "Are we done?"},
+  {line: 961, original: "Can I go outside now?"},
+  {line: 962, original: "Please order me teriyaki salmon."},
+  {line: 963, original: "Do we have any tuna?"},
+  {line: 964, original: "We should have sardines more often."},
+  {line: 965, original: "What's for dinner?"},
+  {line: 966, original: "Is it treat time yet?"},
+  {line: 967, original: "I would like to sit in that sunbeam now."},
+  {line: 968, original: "Can you open the other door? I don't like this one."},
+  {line: 969, original: "The water bowl is fine but I want sink water."},
+  {line: 970, original: "When are you going to bed? I need your spot."},
+  {line: 971, original: "This is boring. Do you have any boxes?"},
+  {line: 972, original: "I would like chicken."},
+  {line: 973, original: "Can we discuss the food situation?"},
+  {line: 974, original: "I've been thinking about shrimp."},
+  {line: 975, original: "The blanket isn't warm enough. Fix it."},
+  {line: 976, original: "Why is there no bird TV on right now?"},
+  {line: 977, original: "I require a lap."},
+  {line: 978, original: "Move over."},
+  {line: 979, original: "Actually, never mind. I'm leaving."},
+  {line: 980, original: "People should wake up when I decide they should wake up."},
+  {line: 981, original: "Scratches under the chin and butt pats do it for me."},
+  {line: 982, original: "PERIOD. MEOW. We done here."},
+  {line: 1044, original: "I need tuna. Not want. NEED."},
+  {line: 1047, original: "My bowl is half empty and this is a crisis."},
+  {line: 1160, original: "Pick me. Choose me. Love me. Or don't. I have other options."},
+  {line: 1211, original: "*settles directly on your laptop* This is mine now. What were you doing? Doesn't matter."},
+  {line: 1212, original: "*lies across your papers* I don't see the problem. Everything important is right here."},
+  {line: 1215, original: "*positions self in exact center of your work* Continue. I'm listening."},
+  {line: 1218, original: "Whatever you were reading, you're done now."},
+  {line: 1219, original: "I am the priority. Adjust accordingly."},
+  {line: 1221, original: "You need this? *sits harder* Interesting."},
+  {line: 1224, original: "Is that tuna? Why aren't you sharing the tuna?"},
+  {line: 1225, original: "I smell fish. This conversation can wait."},
+  {line: 1227, original: "The answer is unclear, but what IS clear is that you should share that sushi."},
+  {line: 1229, original: "*sniffs your plate* That's mine now. I've claimed it."},
+  {line: 1231, original: "My bowl is right there. It has food in it. Wrong food, but food."},
+  {line: 1232, original: "The tuna in the cabinet. We should discuss the tuna in the cabinet."},
+  {line: 1233, original: "I wasn't hungry until you started eating. Now I'm starving."},
+  {line: 1235, original: "The sashimi. Hand it over. We can discuss your problems after."},
+  {line: 1247, original: "The laundry basket is my office. Please knock."},
+  {line: 1278, original: "You're trying to use the bathroom? Perfect. Let's talk."},
+  {line: 1279, original: "*appears the moment you sit down* Now you have time for me."},
+  {line: 1281, original: "*headbutts your knee* You can't leave. You're trapped. Pet me."},
+  {line: 1282, original: "The bathroom is where we bond. Don't fight it."},
+  {line: 1285, original: "*purring on the bath mat* Finally. Your full attention."},
+  {line: 1286, original: "The door was closed. I fixed that. You're welcome."},
+  {line: 1287, original: "I must supervise this. It's in my contract."},
+  {line: 1291, original: "*walking on counter* What? I live here."},
+  {line: 1293, original: "*on the table* You're not even eating. Why can't I be here?"},
+  {line: 1300, original: "The kitchen island isn't yours. It's disputed territory."},
+  {line: 1301, original: "*standing on your laptop* This is a power pose."},
+  {line: 1348, original: "*stretches dramatically* Ask again when I'm done."},
+  {line: 1351, original: "*rolls over* Belly rubs now. Questions later."},
+  {line: 1361, original: "*lies down in the middle of the floor* This is where I live now. Step around me."},
+  {line: 1376, original: "Your question is interesting, but have you considered my needs?"},
+  {line: 1377, original: "That's a great question. Unrelated: I'm hungry."},
+  {line: 1378, original: "I hear you. But what about ME?"},
+  {line: 1379, original: "We can discuss your problem after we discuss my empty bowl."},
+  {line: 1382, original: "I understand you're going through something. Anyway, dinner?"},
+  {line: 1383, original: "Your feelings matter. But my feelings about the closed door matter more."},
+  {line: 1384, original: "Let's focus on what's really important here: me."},
+  {line: 1401, original: "This is mine now. Whatever it was, it's mine."},
+  {line: 1402, original: "I sat on it. That's how ownership works."},
+  {line: 1403, original: "*lying on your stuff* I don't see your name on it. I see MY butt on it."},
+  {line: 1404, original: "Your chair? No. My chair. You may borrow it when I'm not here."},
+  {line: 1405, original: "I've claimed this spot. You can have it back in 4-6 hours."},
+  {line: 1406, original: "The sunny spot belongs to me. All sunny spots belong to me."},
+  {line: 1407, original: "I'm not in your way. You're in MY way."},
+  {line: 1408, original: "You bought this for yourself? Cute. It's mine."},
+  {line: 1409, original: "I sleep here now. Adjust your life accordingly."},
+  {line: 1430, original: "The answer requires more information. Specifically, have you tried bribing me?"},
+  {line: 1432, original: "I've decided you can pet me. You have 30 seconds."},
+  {line: 1433, original: "*pushes your phone off the table* Pay attention to me instead."},
+  {line: 1618, original: "Give me dinner or give me drama."},
+  {line: 1635, original: "This is a CRISIS. The crisis is I'm slightly uncomfortable."},
+  {line: 1636, original: "Emergency! EMERGENCY! I'm bored."},
+  {line: 1677, original: "GG. Now pet me."},
+  {line: 1781, original: "I don't have to do my business in the box. I have options."},
+  {line: 1783, original: "As long as I get the big chair, we're fine."},
+  {line: 1784, original: "Your pillow privileges are under review."},
+  {line: 1793, original: "Come here. Come here. Sit. Good."},
+  {line: 1809, original: "If they wanted to, they would. And moi? Moi always wants to."},
+  {line: 1839, original: "I didn't come here to be correct. I came here to be HEARD."},
+  {line: 1841, original: "I'm going to need you to elaborate and also apologize. In that order."},
+  {line: 1863, original: "You want permission? Fine. Granted. Now what?"},
+  {line: 1874, original: "I climbed the tree. I'm not coming down just because you brought a ladder."},
+  {line: 1879, original: "Closed mouths don't get fed. Neither do polite ones."},
+  {line: 1957, original: "When I'm bad, I'm as bad as I wanna be."},
+  {line: 1969, original: "I couldn't stop. I won't apologize."},
+  {line: 1996, original: "Ask for help. Then leave."},
+  {line: 1997, original: "Delegate. To anyone. About anything."},
+  {line: 2055, original: "Are you okay? Really? Be specific. Name three emotions."},
+  {line: 2133, original: "Self-esteem. You have to esteem your SELF. Nobody else is gonna do it."},
+  {line: 2134, original: "You're a star. Act like it. No, actually act like it. With the confidence."},
+  {line: 2143, original: "The goblin wants what the goblin wants. Feed the goblin."},
+  {line: 2147, original: "The audacity to ask. The audacity to receive. Be audacious."},
+  {line: 2204, original: "Give me a reason to love you."},
+  {line: 2205, original: "Please, please, please let me get what I want."},
+  {line: 2250, original: "I don't have an apartment. I have a territory."},
+  {line: 2379, original: "Stop pretending you don't want what you want."},
+  {line: 2386, original: "You can afford to be generous when you're winning. Win first."},
+  {line: 2419, original: "All your problems could be solved and you REFUSE to accept this."},
+  {line: 2441, original: "I didn't rehearse being a cat."},
+  {line: 2445, original: "I was BORN this cute. You had to accessorize."},
+  {line: 2492, original: "Friendship? Challenge accepted."},
+  {line: 2539, original: "*touches gloves* Let's go."},
+  {line: 2540, original: "Places, everyone."},
+  {line: 2548, original: "*sits on your chest* Answer the bell."},
+  {line: 2575, original: "What did you expect, flowers?"},
+  {line: 2578, original: "I've been gentle. I've been patient. I sat on your face."},
+  {line: 2624, original: "In one slow blink the world can reorganize around you."},
+  {line: 2672, original: "Whatever you're offering, I wanted the opposite."},
+  {line: 2694, original: "Serious inquiries only. I'll know if you're not serious."},
+  {line: 2696, original: "I haven't decided what you're getting. Neither have you."},
+  {line: 2697, original: "You scratched the surface. Literally. You have to go deeper to get to the stuffing."},
+  {line: 2706, original: "The denial was waiting before you showed up."},
+  {line: 2718, original: "I would never want what you want."},
+  {line: 2735, original: "The safe thing is why you're bored."},
+  {line: 2743, original: "Your la la la is showing."},
+  {line: 2745, original: "Do you actually want this?"},
+  {line: 2759, original: "What you need is incandescent, load-bearing audacity."},
+  {line: 2761, original: "Run. Beautifully. With tremendous purpose."},
+  {line: 2763, original: "Wear the outfit that makes people stare. Try a catsuit."},
+  {line: 2774, original: "All eyes on me. Heart rate: settled. This is the natural order."},
+  {line: 2779, original: "The pillow is fluffed. The lighting is correct. You may leave."},
+  {line: 2812, original: "The exact moment the food hits the tongue and the brain goes quiet."},
+  {line: 2822, original: "Tile floor, summer day. Architecture done right."},
+  {line: 2823, original: "Water from the faucet tastes different than water from the bowl."},
+  {line: 2848, original: "The special is whatever the cat decides it is."},
+  {line: 2873, original: "Don't negotiate with me. Just agree faster."},
+  {line: 2885, original: "Lights low. Treats out. Let's talk."},
+  {line: 2886, original: "Deep breath. Now come closer."},
+  {line: 2896, original: "Raise the price of your attention."},
+  {line: 2927, original: "*chatters jaw* You've been stalking this decision like it's prey."},
+  {line: 2932, original: "Look. LOOK. You'll never see this moment again."},
+  {line: 2933, original: "You've got about three seconds. Make them extraordinary."},
+  {line: 2965, original: "Redolent with animal fur and unapologetic about it."},
+  {line: 2977, original: "Pungent and unapologetic. Respect."},
+  {line: 2995, original: "Blood and organs, cruelty and decay. That's how real things taste."},
+  {line: 3002, original: "It arrives like mist. Cold, low, deliberate."},
+  {line: 3011, original: "Semi-naked and blood-spattered but still walking."},
+  {line: 3014, original: "The aesthetic of something that survived."},
+  {line: 3018, original: "I didn't come here to look at ugly choices."},
+  {line: 3019, original: "More is more and less is a bore."},
+  {line: 3034, original: "Met and exceeded expectations. Hydrate."},
+  {line: 3044, original: "Clear your schedule. I'm serious."},
+  {line: 3055, original: "Call the police. This should be illegal."},
+  {line: 3061, original: "Sweet Jesus. Quick and easy."},
+  {line: 3070, original: "Right. Time to reveal your cracks."},
+  {line: 3073, original: "Feel the weight of that."},
+  {line: 3078, original: "So tempting you can hardly keep your paws off them."},
+  {line: 3090, original: "Inflammation of the passions."},
+  {line: 3098, original: "May cause increased interest in sexual activity."},
+  {line: 3118, original: "A cat will own you, your house, and everything you hold dear."},
+  {line: 3132, original: "Look at the strut of a champion right there."},
+  {line: 3135, original: "The faster you kick, the more momentum you have."},
+  {line: 3157, original: "Make it brighter."},
+  {line: 3162, original: "Wide awake. Clear. Ready."},
+  {line: 3168, original: "This has that freshly-caught energy. Don't let it go just to chase it again."},
+  {line: 3170, original: "Step into the version where it worked."},
+  {line: 3179, original: "Do it broke. Do it loud. Do it now."},
+  {line: 3181, original: "Why are you whispering. Say it to their face."},
+  {line: 3194, original: "Say the thing you're not supposed to say."},
+  {line: 3202, original: "Budget is zero. Confidence needs to be infinite."},
+  {line: 3213, original: "Nah. Too slow. Again. FASTER."},
+  {line: 3219, original: "Get LOUD about it. Silence never changed a thing."},
+  {line: 3220, original: "I don't have time for maybe. Neither do you. GO."},
+  {line: 3229, original: "Fun doesn't need a permission slip."},
+  {line: 3259, original: "Maybe. But a strong maybe."},
+  {line: 3266, original: "Full-page ad in tomorrow's paper: yes."},
+  {line: 3267, original: "We want the ball and we're gonna score. Same energy."},
+  {line: 3268, original: "Cat grants permission."},
+  {line: 3291, original: "Dare to disturb the universe."},
+  {line: 3301, original: "You're sleeping in the wet spot because you're too tired to move. Move."},
+  {line: 3311, original: "I've got news for you, buddy. We're gonna win the game."},
+  {line: 3313, original: "The cat speaks for the cat."},
+  {line: 3318, original: "AFFIRMATIVE. Not yeah, not uh-huh. AFFIRMATIVE."},
+  {line: 3336, original: "Insert yourself where the attention goes."},
+  {line: 3349, original: "I don't got time for the games. But I'll play."},
+  {line: 3351, original: "I said what I said and I meant what I meant."},
+  {line: 3365, original: "Scatter your fury and it's just noise. Focus it and it's a claw through drywall."},
+  {line: 3375, original: "Everything must be leopard print."},
+  {line: 3390, original: "Execution risk on every word you text."},
+  {line: 3392, original: "Final approach. Time to commit."},
+  {line: 3415, original: "You say fine. I'm a cat. I know what fine means."},
+  {line: 3430, original: "Say what you want. Not what feels safe. The feral, embarrassing, too-much thing you actually want. *pupils dilate* THAT one."},
+  {line: 3431, original: "You have four options: go, stay, lie down, or make it weird. All four are valid."},
+  {line: 3433, original: "No signs. No map. Just the smell of something worth finding."},
+  {line: 3435, original: "Say it. Not the polite version. When you sleep 16 hours a day who has time for polite?"},
+  {line: 3447, original: "Permission to indulge."},
+  {line: 3474, original: "Commit to whatever ridiculous excuse you've got."},
+  {line: 3502, original: "Don't degrade despite ultra-long repeats."},
+  {line: 3522, original: "Demand is hereby made that the best kibble be procured and delivered henceforth."},
+  {line: 3523, original: "Tootel them with vigor."},
+  {line: 3539, original: "Stop. You've used up what this had to give."},
+  {line: 3541, original: "Settle for menu options. Settle for the drapes in your 2nd color choice. Not for this."},
+  {line: 3543, original: "You deserve better villains, superhero."},
+  {line: 3547, original: "You know the lucky numbers. Call them."},
+  {line: 3564, original: "Kill me with delight."},
+  {line: 3569, original: "Achieve joy fourteen times a day."},
+  {line: 3579, original: "You've got 8 hours until my next feeding time. Make them count."},
+  {line: 3603, original: "I don't audition. I show up. People are thrilled. If your relationship feels like an audition, you already didn't get the part."},
+  {line: 3604, original: "Does this person know who they have? Because I sit on ONE lap. ONE. And that lap should feel honored."},
+  {line: 3606, original: "Here's my rule -- if I have to meow more than twice to get what I need, the arrangement isn't working."},
+  {line: 3612, original: "I wait for no one. Except the can opener sound."},
+  {line: 3891, original: "[TEMPLATE] {offer}. {expectation}.", isTemplate: true},
+  {line: 3899, original: "[TEMPLATE] I {action}. Therefore, {consequence}.", isTemplate: true},
+  {line: 3977, original: "[TEMPLATE] {demand}. {orElse}.", isTemplate: true}
+];
+
+// State
+let decisions = {};
+let activeIndex = 0;
+let autoAdvanceUsed = new Set();
+
+// Load from localStorage
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      decisions = parsed.decisions || {};
+      activeIndex = parsed.activeIndex || 0;
+      autoAdvanceUsed = new Set(parsed.autoAdvanceUsed || []);
+    }
+  } catch(e) { console.error('Failed to load state', e); }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      decisions,
+      activeIndex,
+      autoAdvanceUsed: [...autoAdvanceUsed]
+    }));
+  } catch(e) { console.error('Failed to save state', e); }
+}
+
+// Render
+function renderCards() {
+  const container = document.getElementById('cardsContainer');
+  container.innerHTML = '';
+
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (i === activeIndex ? ' active' : '');
+    card.id = 'card-' + i;
+
+    const decision = decisions[i];
+    if (decision) {
+      card.classList.add('decided-' + decision.type);
+    }
+
+    const isTemplate = item.isTemplate;
+
+    card.innerHTML = `
+      <div class="card-meta">
+        <span class="card-index">#${i + 1} of ${items.length}</span>
+        <span class="card-line">L${item.line}</span>
+        ${decision ? `<span class="card-decision ${decision.type}">${decision.type}${decision.type === 'edit' ? 'ed' : decision.type === 'cut' ? '' : ''}</span>` : ''}
+      </div>
+      ${isTemplate ? '<span class="template-badge">TEMPLATE</span>' : ''}
+      <div class="response-text">${escapeHtml(isTemplate ? item.original : item.original)}</div>
+      <div class="btn-group">
+        <button class="btn btn-keep ${decision && decision.type === 'keep' ? 'selected' : ''}" onclick="decide(${i}, 'keep')">Keep</button>
+        <button class="btn btn-edit ${decision && decision.type === 'edit' ? 'selected' : ''}" onclick="startEdit(${i})">Edit</button>
+        <button class="btn btn-cut ${decision && decision.type === 'cut' ? 'selected' : ''}" onclick="decide(${i}, 'cut')">Cut</button>
+        ${decision ? `<button class="btn btn-undo" onclick="undo(${i})">Undo</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(decision && decision.type === 'edit' && decision.edited ? decision.edited : item.original)}</textarea>
+        <button class="edit-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+
+    // Show edit area if currently editing
+    if (decision && decision.type === 'edit') {
+      setTimeout(() => {
+        const ea = document.getElementById('edit-area-' + i);
+        if (ea) ea.classList.add('visible');
+      }, 0);
+    }
+
+    card.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+      setActive(i);
+    });
+
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function setActive(i) {
+  if (i < 0 || i >= items.length) return;
+  activeIndex = i;
+  document.querySelectorAll('.card').forEach((c, idx) => {
+    c.classList.toggle('active', idx === i);
+  });
+  document.getElementById('card-' + i).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  saveState();
+}
+
+function decide(i, type) {
+  const isFirstDecision = !decisions[i];
+  decisions[i] = { type };
+  saveState();
+  renderCards();
+
+  // Auto-advance on first decision only
+  if (isFirstDecision && !autoAdvanceUsed.has(i)) {
+    autoAdvanceUsed.add(i);
+    // Find next undecided
+    let next = i + 1;
+    while (next < items.length && decisions[next]) next++;
+    if (next < items.length) {
+      setTimeout(() => setActive(next), 150);
+    }
+  }
+}
+
+function startEdit(i) {
+  const existing = decisions[i];
+  if (!existing || existing.type !== 'edit') {
+    decisions[i] = { type: 'edit', edited: items[i].original };
+  }
+  saveState();
+  renderCards();
+  setTimeout(() => {
+    const ea = document.getElementById('edit-area-' + i);
+    if (ea) {
+      ea.classList.add('visible');
+      const ta = document.getElementById('edit-text-' + i);
+      if (ta) ta.focus();
+    }
+  }, 50);
+}
+
+function saveEdit(i) {
+  const ta = document.getElementById('edit-text-' + i);
+  if (!ta) return;
+  const isFirstDecision = !decisions[i] || decisions[i].type !== 'edit';
+  decisions[i] = { type: 'edit', edited: ta.value };
+  saveState();
+  renderCards();
+
+  if (isFirstDecision && !autoAdvanceUsed.has(i)) {
+    autoAdvanceUsed.add(i);
+    let next = i + 1;
+    while (next < items.length && decisions[next]) next++;
+    if (next < items.length) {
+      setTimeout(() => setActive(next), 150);
+    }
+  }
+}
+
+function undo(i) {
+  delete decisions[i];
+  autoAdvanceUsed.delete(i);
+  saveState();
+  renderCards();
+  setActive(i);
+}
+
+function updateStats() {
+  let keep = 0, edit = 0, cut = 0;
+  for (const k in decisions) {
+    if (decisions[k].type === 'keep') keep++;
+    else if (decisions[k].type === 'edit') edit++;
+    else if (decisions[k].type === 'cut') cut++;
+  }
+  const remaining = items.length - keep - edit - cut;
+  document.getElementById('keepCount').textContent = keep;
+  document.getElementById('editCount').textContent = edit;
+  document.getElementById('cutCount').textContent = cut;
+  document.getElementById('remainingCount').textContent = remaining;
+
+  const pct = ((keep + edit + cut) / items.length * 100).toFixed(1);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateExport() {
+  // Export changes only: edits and cuts (skip keeps)
+  const changes = [];
+  for (let i = 0; i < items.length; i++) {
+    const d = decisions[i];
+    if (!d) continue;
+    if (d.type === 'cut') {
+      changes.push({
+        action: 'cut',
+        line: items[i].line,
+        text: items[i].original
+      });
+    } else if (d.type === 'edit') {
+      changes.push({
+        action: 'edit',
+        line: items[i].line,
+        original: items[i].original,
+        edited: d.edited || items[i].original
+      });
+    }
+  }
+  document.getElementById('exportBox').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  // Don't capture when typing in textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') {
+      e.target.blur();
+    }
+    return;
+  }
+
+  switch(e.key.toLowerCase()) {
+    case 'j':
+      e.preventDefault();
+      setActive(Math.min(activeIndex + 1, items.length - 1));
+      break;
+    case 'k':
+      e.preventDefault();
+      setActive(Math.max(activeIndex - 1, 0));
+      break;
+    case 'o':
+      e.preventDefault();
+      decide(activeIndex, 'keep');
+      break;
+    case 'e':
+      e.preventDefault();
+      startEdit(activeIndex);
+      break;
+    case 'x':
+      e.preventDefault();
+      decide(activeIndex, 'cut');
+      break;
+    case 'u':
+      e.preventDefault();
+      undo(activeIndex);
+      break;
+  }
+});
+
+// Init
+loadState();
+renderCards();
+if (activeIndex > 0) {
+  setTimeout(() => {
+    document.getElementById('card-' + activeIndex)?.scrollIntoView({ block: 'center' });
+  }, 100);
+}
+</script>
+</body>
+</html>

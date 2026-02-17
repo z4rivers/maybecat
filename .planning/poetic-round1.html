@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poetic Round 1 Review</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+.header { position: sticky; top: 0; z-index: 100; background: #16213e; border-bottom: 2px solid #0f3460; padding: 12px 20px; }
+.header h1 { font-size: 1.3rem; margin-bottom: 8px; color: #e0e0e0; }
+.stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; }
+.stats span { padding: 2px 8px; border-radius: 4px; }
+.stat-total { background: #0f3460; }
+.stat-keep { background: #1b4332; color: #4ecca3; }
+.stat-edit { background: #3d3200; color: #ffd93d; }
+.stat-cut { background: #3d0f1a; color: #e94560; }
+.stat-pending { background: #2a2a3e; }
+.progress-bar { width: 100%; height: 6px; background: #2a2a3e; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #4ecca3, #ffd93d, #e94560); transition: width 0.3s; }
+.nav-hint { font-size: 0.75rem; color: #666; margin-top: 6px; }
+.container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.card { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border: 2px solid transparent; transition: border-color 0.2s; position: relative; }
+.card.active { border-color: #0f3460; box-shadow: 0 0 20px rgba(15, 52, 96, 0.4); }
+.card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+.card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.7; }
+.card.decided-cut { border-left: 4px solid #e94560; opacity: 0.7; }
+.card-index { font-size: 0.7rem; color: #555; margin-bottom: 4px; }
+.card-text { font-size: 1.2rem; margin-bottom: 16px; padding: 12px; background: #1a1a2e; border-radius: 6px; white-space: pre-wrap; }
+.card-line { font-size: 0.7rem; color: #444; margin-bottom: 12px; }
+.buttons { display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fdbb5; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe066; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #f06880; }
+.btn-undo { background: #2a2a3e; color: #999; font-size: 0.8rem; padding: 6px 12px; }
+.btn-undo:hover { background: #3a3a4e; color: #ccc; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area.open { display: block; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #1a1a2e; color: #e0e0e0; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-family: inherit; font-size: 1rem; resize: vertical; }
+.edit-area .edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+.edit-area .btn-save { background: #ffd93d; color: #1a1a2e; }
+.edit-area .btn-cancel { background: #2a2a3e; color: #999; }
+.decision-badge { position: absolute; top: 12px; right: 16px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.badge-keep { color: #4ecca3; }
+.badge-edit { color: #ffd93d; }
+.badge-cut { color: #e94560; }
+.export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+.export-section h2 { margin-bottom: 12px; font-size: 1.1rem; }
+.export-section pre { background: #1a1a2e; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+.export-section .btn-copy { margin-top: 10px; background: #0f3460; color: #e0e0e0; }
+.export-section .btn-copy:hover { background: #1a5490; }
+.export-note { font-size: 0.8rem; color: #666; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Poetic Round 1 Review</h1>
+  <div class="stats">
+    <span class="stat-total">Total: <b id="stat-total">0</b></span>
+    <span class="stat-keep">Keep: <b id="stat-keep">0</b></span>
+    <span class="stat-edit">Edit: <b id="stat-edit">0</b></span>
+    <span class="stat-cut">Cut: <b id="stat-cut">0</b></span>
+    <span class="stat-pending">Pending: <b id="stat-pending">0</b></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="nav-hint">Keys: J/K nav · O keep · E edit · X cut · U undo · Auto-advance on first decision</div>
+</div>
+<div class="container" id="cards-container"></div>
+<div class="container">
+  <div class="export-section">
+    <h2>Export Changes Only</h2>
+    <p class="export-note">Only edited and cut items are exported. Kept items are excluded.</p>
+    <pre id="export-json">[]</pre>
+    <button class="btn btn-copy" onclick="copyExport()">Copy JSON</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-poetic-round1';
+const DATA = [
+  {"line": 151, "original": "The empty bowl waits. / I wait beside it, patient. / We are both hungry."},
+  {"line": 152, "original": "Cherry blossoms fall. / I bat one. It escapes me. / This is still a win."},
+  {"line": 153, "original": "The cricket is loud. / I am louder. Then silence. / Balance is restored."},
+  {"line": 154, "original": "Autumn moon rising. / I have opinions about it. / I keep them inside."},
+  {"line": 155, "original": "Rain taps the window. / I could nap, or I could watch. / I choose both at once."},
+  {"line": 156, "original": "I knocked it over. / It was between me and sun. / I have no regrets."},
+  {"line": 157, "original": "You think I'm asleep. / I am watching everything. / Especially you."},
+  {"line": 158, "original": "The red dot escapes. / Every time, I think: this time. / Next time I'm going for the hand."},
+  {"line": 159, "original": "Three AM is when / the truth reveals itself to me. / You should be awake."},
+  {"line": 160, "original": "This box is too small. / And yet I am inside it. / Explain this. You can't."},
+  {"line": 163, "original": "The scratched furniture holds our history."},
+  {"line": 164, "original": "This fur on your clothes is a gift. Accept it."},
+  {"line": 165, "original": "The broken vase was ugly anyway."},
+  {"line": 166, "original": "Nothing lasts. Especially my interest."},
+  {"line": 167, "original": "Imperfect is still perfect. Look at me."},
+  {"line": 594, "original": "We found love in a hopeless place."},
+  {"line": 1450, "original": "*licks your face* Salty. Your tears are tiny oceans. I have sailed them all."},
+  {"line": 1451, "original": "I hear your heartbeat. It's fast. Are you dying?"},
+  {"line": 1452, "original": "*curls up on your important documents* The world IS waiting. I'm on top of it."},
+  {"line": 1453, "original": "Rest now. I'll walk on your face at 4am. Dream while you can."},
+  {"line": 1454, "original": "The stars are just the universe purring. The universe learned it from me."},
+  {"line": 1455, "original": "There is a warmth in you. I'm going to sit on it."},
+  {"line": 1456, "original": "*batting at your hair* I find you here, in this tangle. It's mine now."},
+  {"line": 1457, "original": "*in a box* Come, rest in the hollow of this box. There's room. Barely."},
+  {"line": 1458, "original": "Let go. I will catch it. *misses* That didn't count. Let go again."},
+  {"line": 1524, "original": "Life is hard. *slowly pushes pencil off desk while maintaining eye contact* But go on."},
+  {"line": 1525, "original": "The sun hits the floor in a rectangle of warmth. I claim it. You may watch."},
+  {"line": 1526, "original": "I sit. I stare. Meaning arrives. Or doesn't. I don't actually care."},
+  {"line": 1527, "original": "*falls asleep mid-bath* Sometimes beauty requires... zzzz."},
+  {"line": 1528, "original": "This cardboard box contains multitudes. And me. Mostly me."},
+  {"line": 1529, "original": "*sits in exact center of your important papers* I am art. Your papers are my canvas."},
+  {"line": 1530, "original": "I have been sleeping for 16 hours. And yet. The exhaustion."},
+  {"line": 1531, "original": "*contemplates own reflection in water bowl* Who is that handsome stranger?"},
+  {"line": 1532, "original": "*stretches one leg straight up* Beauty is not comfortable. But it is necessary."},
+  {"line": 1533, "original": "The vacuum approaches. I stand my ground. I run. Both are dignified."},
+  {"line": 1534, "original": "*lies dramatically on back* I could use a belly rub. I could also attack. Life is risk."},
+  {"line": 1544, "original": "Heavy clouds pass through. / I watch from the windowsill. / Weather is for outside."},
+  {"line": 1545, "original": "Night comes for us all. / I own the night. And breakfast. / Both will arrive."},
+  {"line": 1546, "original": "One breath, then the next. / I match my breathing to yours. / Just like the cats in the scary movies / Still trust me?"},
+  {"line": 1547, "original": "The wound knows healing. / I lick mine and then I nap. / Same prescription. Try."},
+  {"line": 1548, "original": "I have claimed you. Your flaws are irrelevant to this arrangement."},
+  {"line": 1549, "original": "Scratches tell stories. Every mark on the furniture is a memory."},
+  {"line": 1550, "original": "Lie down. Be warm. Let the purring do its work."},
+  {"line": 1555, "original": "The vacuum always stops eventually. And then quiet returns. Patience."},
+  {"line": 2196, "original": "It took me four months to sit on your lap. Now I won't leave."},
+  {"line": 2433, "original": "You rang the bell. Now watch me dance."},
+  {"line": 2434, "original": "THAT HURT. And it woke something up."},
+  {"line": 2435, "original": "I BENT. And now I'm snapping back."},
+  {"line": 2436, "original": "The quiet was the reload."},
+  {"line": 2437, "original": "The bruise faded. The lesson didn't."},
+  {"line": 2438, "original": "Watch the quiet ones. We've been practicing."},
+  {"line": 2473, "original": "The tea went cold."},
+  {"line": 2511, "original": "Mamihlapinatapai \u2014 the wordless look between two people who both want to start something but neither will."},
+  {"line": 2512, "original": "Fernweh \u2014 homesick for a place you've never been."},
+  {"line": 2520, "original": "Chrysalism \u2014 the peace of being inside during a thunderstorm."},
+  {"line": 2522, "original": "Voorpret \u2014 the pleasure of anticipation. The joy lives in the waiting."},
+  {"line": 2523, "original": "Duende \u2014 the haunting emotional power of great art. When something touches you and you can't explain why."},
+  {"line": 2593, "original": "It's in the space between the first sip and the first thought."},
+  {"line": 2599, "original": "It needs to swirl before it settles."},
+  {"line": 2602, "original": "Long exposure. Everything's there. Just soft."},
+  {"line": 2608, "original": "The morning has a sound before the smell. It's the cat-box."},
+  {"line": 2681, "original": "Words feel like too much but silence feels like too little."},
+  {"line": 2711, "original": "Sometimes you hear what you need from someone who wasn't talking to you or from a cat."},
+  {"line": 2713, "original": "At what point does the bluff become the truth?"},
+  {"line": 2714, "original": "The junk drawer is the most honest place in a home."},
+  {"line": 2719, "original": "You flinched at your own decision. Noted."},
+  {"line": 2720, "original": "I walk into a room like I'm not sure the room is real."},
+  {"line": 2726, "original": "The door opens. Could be for me. Usually isn't."},
+  {"line": 2728, "original": "\"Available.\" They could just say waiting."},
+  {"line": 2788, "original": "The curtain makes stripes on the floor. I didn't ask for beauty. It arrived."},
+  {"line": 2806, "original": "Sunbeam hits the fur and the fur heats the skin and the skin heats the bones."},
+  {"line": 2813, "original": "Rain on the window. Warm on this side. The glass is the only thing doing any work today."},
+  {"line": 2817, "original": "The heavy blanket presses down and somehow that pressure is freedom."},
+  {"line": 2824, "original": "The yawn that takes over your whole face. Surrender."},
+  {"line": 2992, "original": "Someone buried that feeling for a hundred days. Now it's translucent."},
+  {"line": 3140, "original": "Tap lightly with your fingertips. It gives you a sense of weightlessness."},
+  {"line": 3142, "original": "Your body knows it before your brain does. Let the dumb part of you lead."},
+  {"line": 3190, "original": "I made the answer. It's a garden now."},
+  {"line": 3233, "original": "Moshikashitara \u2014 perhaps, if by some terrifying chance."},
+  {"line": 3238, "original": "Ojala \u2014 eight centuries of hoping, in one breath."},
+  {"line": 3251, "original": "You're in the hour that belongs to neither day nor night."},
+  {"line": 3256, "original": "Answers are much sharper than possibilities."},
+  {"line": 3272, "original": "yes is a world / & in this world of yes live / (skilfully curled) / all worlds \u2014 e.e. cummings"},
+  {"line": 3276, "original": "...and yes I said yes I will Yes."},
+  {"line": 3304, "original": "Shilly-shally \u2014 from 'Shall I? Shall I?'"},
+  {"line": 3321, "original": "We need multiple words for 'yes' because one isn't enough."},
+  {"line": 3437, "original": "Weirdish wild space gardens."},
+  {"line": 3471, "original": "A light breath of wind ruffles the surface of the water."},
+  {"line": 3500, "original": "Allow your reverb decay trails to continue."},
+  {"line": 3503, "original": "Fail and flutter, until everything sits just right."},
+  {"line": 3504, "original": "Delay creates a softness that fades naturally."},
+  {"line": 3516, "original": "Soften what is not required for survival."},
+  {"line": 3521, "original": "Such a fine, sunny day, and I have to go."},
+  {"line": 3537, "original": "Over. Done with. Erased. Still on your mind."},
+  {"line": 3542, "original": "*slow blink* To be overcome by something this good is a delectable form of defeat."},
+  {"line": 3558, "original": "What's left when the ringing stops is yours."},
+  {"line": 3573, "original": "Lost in the dark caverns. That's not a warning. That's directions."}
+];
+
+let decisions = {};
+let activeIndex = 0;
+let firstDecisionMade = {};
+
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) decisions = JSON.parse(saved);
+  renderCards();
+  updateStats();
+  scrollToActive();
+  document.addEventListener('keydown', handleKey);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = DATA.map((item, i) => {
+    const d = decisions[i];
+    const cls = d ? `decided-${d.action}` : '';
+    const activeCls = i === activeIndex ? 'active' : '';
+    const badge = d ? `<span class="decision-badge badge-${d.action}">${d.action}${d.action === 'edit' ? 'ed' : d.action === 'cut' ? '' : ''}</span>` : '';
+    return `<div class="card ${cls} ${activeCls}" id="card-${i}" data-index="${i}">
+      ${badge}
+      <div class="card-index">#${i + 1} of ${DATA.length}</div>
+      <div class="card-line">Line ${item.line}</div>
+      <div class="card-text">${escapeHtml(d && d.edited ? d.edited : item.original)}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">Keep (O)</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit (E)</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">Cut (X)</button>
+        ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo (U)</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${escapeHtml(d && d.edited ? d.edited : item.original)}</textarea>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="toggleEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(i, action, edited) {
+  const isFirst = !decisions[i];
+  decisions[i] = { action, edited: edited || null };
+  save();
+  renderCards();
+  updateStats();
+  if (isFirst && i === activeIndex) { activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); }
+}
+
+function undo(i) {
+  delete decisions[i];
+  save();
+  renderCards();
+  updateStats();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) { document.getElementById(`textarea-${i}`).focus(); }
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value.trim();
+  if (text) decide(i, 'edit', text);
+  document.getElementById(`edit-${i}`).classList.remove('open');
+}
+
+function updateStats() {
+  const total = DATA.length;
+  let keep = 0, edit = 0, cut = 0;
+  for (const d of Object.values(decisions)) {
+    if (d.action === 'keep') keep++;
+    else if (d.action === 'edit') edit++;
+    else if (d.action === 'cut') cut++;
+  }
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-pending').textContent = total - keep - edit - cut;
+  document.getElementById('progress-fill').style.width = ((keep + edit + cut) / total * 100) + '%';
+  updateExport();
+}
+
+function updateExport() {
+  const changes = [];
+  for (const [i, d] of Object.entries(decisions)) {
+    const idx = parseInt(i);
+    if (d.action === 'cut') {
+      changes.push({ line: DATA[idx].line, action: 'cut', original: DATA[idx].original });
+    } else if (d.action === 'edit') {
+      changes.push({ line: DATA[idx].line, action: 'edit', original: DATA[idx].original, edited: d.edited });
+    }
+  }
+  changes.sort((a, b) => a.line - b.line);
+  document.getElementById('export-json').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => { alert('Copied!'); });
+}
+
+function scrollToActive() {
+  const el = document.getElementById(`card-${activeIndex}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function handleKey(e) {
+  if (e.target.tagName === 'TEXTAREA') return;
+  switch(e.key.toLowerCase()) {
+    case 'j': activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'k': activeIndex = Math.max(activeIndex - 1, 0); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'o': decide(activeIndex, 'keep'); e.preventDefault(); break;
+    case 'e': toggleEdit(activeIndex); e.preventDefault(); break;
+    case 'x': decide(activeIndex, 'cut'); e.preventDefault(); break;
+    case 'u': undo(activeIndex); e.preventDefault(); break;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

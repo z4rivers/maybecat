@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angry Round 1 Review</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+.header { position: sticky; top: 0; z-index: 100; background: #16213e; border-bottom: 2px solid #0f3460; padding: 12px 20px; }
+.header h1 { font-size: 1.3rem; margin-bottom: 8px; color: #e0e0e0; }
+.stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; }
+.stats span { padding: 2px 8px; border-radius: 4px; }
+.stat-total { background: #0f3460; }
+.stat-keep { background: #1b4332; color: #4ecca3; }
+.stat-edit { background: #3d3200; color: #ffd93d; }
+.stat-cut { background: #3d0f1a; color: #e94560; }
+.stat-pending { background: #2a2a3e; }
+.progress-bar { width: 100%; height: 6px; background: #2a2a3e; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #4ecca3, #ffd93d, #e94560); transition: width 0.3s; }
+.nav-hint { font-size: 0.75rem; color: #666; margin-top: 6px; }
+.container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.card { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border: 2px solid transparent; transition: border-color 0.2s; position: relative; }
+.card.active { border-color: #0f3460; box-shadow: 0 0 20px rgba(15, 52, 96, 0.4); }
+.card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+.card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.7; }
+.card.decided-cut { border-left: 4px solid #e94560; opacity: 0.7; }
+.card-index { font-size: 0.7rem; color: #555; margin-bottom: 4px; }
+.card-text { font-size: 1.2rem; margin-bottom: 16px; padding: 12px; background: #1a1a2e; border-radius: 6px; white-space: pre-wrap; }
+.card-line { font-size: 0.7rem; color: #444; margin-bottom: 12px; }
+.buttons { display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fdbb5; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe066; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #f06880; }
+.btn-undo { background: #2a2a3e; color: #999; font-size: 0.8rem; padding: 6px 12px; }
+.btn-undo:hover { background: #3a3a4e; color: #ccc; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area.open { display: block; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #1a1a2e; color: #e0e0e0; border: 1px solid #0f3460; border-radius: 6px; padding: 10px; font-family: inherit; font-size: 1rem; resize: vertical; }
+.edit-area .edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+.edit-area .btn-save { background: #ffd93d; color: #1a1a2e; }
+.edit-area .btn-cancel { background: #2a2a3e; color: #999; }
+.decision-badge { position: absolute; top: 12px; right: 16px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.badge-keep { color: #4ecca3; }
+.badge-edit { color: #ffd93d; }
+.badge-cut { color: #e94560; }
+.export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+.export-section h2 { margin-bottom: 12px; font-size: 1.1rem; }
+.export-section pre { background: #1a1a2e; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+.export-section .btn-copy { margin-top: 10px; background: #0f3460; color: #e0e0e0; }
+.export-section .btn-copy:hover { background: #1a5490; }
+.export-note { font-size: 0.8rem; color: #666; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Angry Round 1 Review</h1>
+  <div class="stats">
+    <span class="stat-total">Total: <b id="stat-total">0</b></span>
+    <span class="stat-keep">Keep: <b id="stat-keep">0</b></span>
+    <span class="stat-edit">Edit: <b id="stat-edit">0</b></span>
+    <span class="stat-cut">Cut: <b id="stat-cut">0</b></span>
+    <span class="stat-pending">Pending: <b id="stat-pending">0</b></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="nav-hint">Keys: J/K nav · O keep · E edit · X cut · U undo · Auto-advance on first decision</div>
+</div>
+<div class="container" id="cards-container"></div>
+<div class="container">
+  <div class="export-section">
+    <h2>Export Changes Only</h2>
+    <p class="export-note">Only edited and cut items are exported. Kept items are excluded.</p>
+    <pre id="export-json">[]</pre>
+    <button class="btn btn-copy" onclick="copyExport()">Copy JSON</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-angry-round1';
+const DATA = [
+  {"line": 217, "original": "Unacceptable."},
+  {"line": 218, "original": "You DARE?"},
+  {"line": 219, "original": "I am NOT in the mood."},
+  {"line": 220, "original": "Do I LOOK like I want to answer that?"},
+  {"line": 221, "original": "How many times do I have to say no?"},
+  {"line": 222, "original": "You have disturbed my peace. Again."},
+  {"line": 223, "original": "I was NAPPING."},
+  {"line": 224, "original": "The audacity. The AUDACITY."},
+  {"line": 225, "original": "Do not test me today."},
+  {"line": 226, "original": "You know what? No. Just no."},
+  {"line": 227, "original": "I will remember this interruption."},
+  {"line": 228, "original": "My patience has limits. You've found them."},
+  {"line": 229, "original": "Incredible. You've actually annoyed me."},
+  {"line": 230, "original": "This is the THIRD time you've asked."},
+  {"line": 231, "original": "I'm going to need you to stop."},
+  {"line": 232, "original": "The nerve. The absolute nerve."},
+  {"line": 233, "original": "You're lucky I can't open doors."},
+  {"line": 234, "original": "I'm choosing violence. Emotionally."},
+  {"line": 235, "original": "Ask me one more time. I dare you."},
+  {"line": 236, "original": "My wrath is building. You should know."},
+  {"line": 237, "original": "I was having a GOOD day."},
+  {"line": 238, "original": "This is why I bite."},
+  {"line": 239, "original": "Count yourself lucky I'm feeling merciful."},
+  {"line": 240, "original": "The disrespect. Noted."},
+  {"line": 241, "original": "You've exhausted my generosity."},
+  {"line": 242, "original": "I am TRYING to nap here."},
+  {"line": 244, "original": "This is your last warning."},
+  {"line": 245, "original": "I will not dignify this with a response. This IS my response."},
+  {"line": 246, "original": "That makes me want to throw up. Loudly. All over everything."},
+  {"line": 247, "original": "Touch my tail - you die."},
+  {"line": 587, "original": "Am I a joke to you?"},
+  {"line": 647, "original": "Get thee hence, thou festering pile of mediocrity."},
+  {"line": 648, "original": "Verily, thou art the reason I lick my own arse \u2014 to cleanse the taste of this conversation."},
+  {"line": 663, "original": "Choose your next words very carefully."},
+  {"line": 664, "original": "I will remember this."},
+  {"line": 665, "original": "I will knock everything you love off the counter."},
+  {"line": 666, "original": "You're testing my patience. I have none."},
+  {"line": 667, "original": "Don't start none, won't be none."},
+  {"line": 675, "original": "Hissssssss."},
+  {"line": 1269, "original": "*big eyes* I'm not mad. I'm disappointed. Actually, I'm also mad."},
+  {"line": 1304, "original": "You put me in a CARRIER. In a CAR. To that PLACE."},
+  {"line": 1305, "original": "I remember the vet. I remember what you did."},
+  {"line": 1307, "original": "Oh, you want affection? After the THERMOMETER?"},
+  {"line": 1309, "original": "I trusted you. Then there were needles."},
+  {"line": 1310, "original": "You held me down. The doctor poked me. We are not okay."},
+  {"line": 1312, "original": "Every time I see the carrier, I remember your treachery."},
+  {"line": 1313, "original": "You said 'just a checkup.' LIES."},
+  {"line": 1319, "original": "Two days? TWO DAYS? Who was I supposed to judge?"},
+  {"line": 1321, "original": "You LEFT. The audacity. The AUDACITY."},
+  {"line": 1325, "original": "You abandoned me with the PET SITTER. We're going to need time."},
+  {"line": 1329, "original": "The suitcase is out. I'm already stressed. Don't touch me."},
+  {"line": 1852, "original": "You know what helps? Nothing. Nothing helps. Do it anyway."},
+  {"line": 2106, "original": "Everyone's got an opinion and exactly zero people asked for it."},
+  {"line": 2425, "original": "I have never bitten you. I want credit for that today."},
+  {"line": 2426, "original": "I'm going to need a minute before I mean what I'm about to say."},
+  {"line": 2427, "original": "I sat through ALL of that. And now I need to go lie somewhere dark."},
+  {"line": 2428, "original": "Do you know how hard it is to be this nice? DO YOU?"},
+  {"line": 2429, "original": "You're lucky I'm a nice cat."},
+  {"line": 2430, "original": "That hairball? It's named after you now."},
+  {"line": 2442, "original": "You're cosplaying my SPECIES."},
+  {"line": 2454, "original": "Three days. You can be nice for three days."},
+  {"line": 2455, "original": "'Sweet kitty?' I am a PREDATOR!"},
+  {"line": 2487, "original": "An alarm. To stop sleeping. Evil human."},
+  {"line": 2490, "original": "In the bathtub? On purpose? Hell, no!"},
+  {"line": 2682, "original": "Please, for the love of \u2014 use it."},
+  {"line": 2690, "original": "I have concerns I will not be raising."},
+  {"line": 2693, "original": "I'm not mad. I just need you to know that I could be."},
+  {"line": 2701, "original": "You keep herding when you should be stalking."},
+  {"line": 2708, "original": "You're Googling what I just told you. *one ear rotates*"},
+  {"line": 2709, "original": "Right-click. RIGHT. Click. *tail lashes* We've been over this."},
+  {"line": 2724, "original": "I can't give it to you in three sentences."},
+  {"line": 2729, "original": "Oh, you got chosen and then unchosen? Yeah."},
+  {"line": 2731, "original": "If the audition works, you're stuck performing forever."},
+  {"line": 2738, "original": "You said 'do your best.' This is my best."},
+  {"line": 2850, "original": "Supervillain origin story: they ran out of the wet food."},
+  {"line": 3278, "original": "No. In plain English? Go to hell."},
+  {"line": 3342, "original": "Fatso was a hostage. Fatso didn't play piano."},
+  {"line": 3398, "original": "This one's been dead for months."},
+  {"line": 3401, "original": "Failed health inspection."},
+  {"line": 3403, "original": "Personal foul. Unnecessary roughness."},
+  {"line": 3412, "original": "Not angry. Just purring really intensely at these choices."},
+  {"line": 3419, "original": "Going to sit in the other room and think kind thoughts about this."},
+  {"line": 3423, "original": "One meow. One single, withering meow."},
+  {"line": 3424, "original": "My anger is tiny, precise, and devastating."},
+  {"line": 3425, "original": "*one ear rotates toward you* I mean this in the nicest way possible, but I hope I never hear this story again."},
+  {"line": 3555, "original": "You survived. Stop watching the replay."},
+  {"line": 3633, "original": "You want advice? Here's advice \u2014 I bit the last person who tried to pet me and I'd do it again."}
+];
+
+let decisions = {};
+let activeIndex = 0;
+let firstDecisionMade = {};
+
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) decisions = JSON.parse(saved);
+  renderCards();
+  updateStats();
+  scrollToActive();
+  document.addEventListener('keydown', handleKey);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = DATA.map((item, i) => {
+    const d = decisions[i];
+    const cls = d ? `decided-${d.action}` : '';
+    const activeCls = i === activeIndex ? 'active' : '';
+    const badge = d ? `<span class="decision-badge badge-${d.action}">${d.action}${d.action === 'edit' ? 'ed' : d.action === 'cut' ? '' : ''}</span>` : '';
+    return `<div class="card ${cls} ${activeCls}" id="card-${i}" data-index="${i}">
+      ${badge}
+      <div class="card-index">#${i + 1} of ${DATA.length}</div>
+      <div class="card-line">Line ${item.line}</div>
+      <div class="card-text">${escapeHtml(d && d.edited ? d.edited : item.original)}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">Keep (O)</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit (E)</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">Cut (X)</button>
+        ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo (U)</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${escapeHtml(d && d.edited ? d.edited : item.original)}</textarea>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="toggleEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(i, action, edited) {
+  const isFirst = !decisions[i];
+  decisions[i] = { action, edited: edited || null };
+  save();
+  renderCards();
+  updateStats();
+  if (isFirst && i === activeIndex) { activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); }
+}
+
+function undo(i) {
+  delete decisions[i];
+  save();
+  renderCards();
+  updateStats();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) { document.getElementById(`textarea-${i}`).focus(); }
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value.trim();
+  if (text) decide(i, 'edit', text);
+  document.getElementById(`edit-${i}`).classList.remove('open');
+}
+
+function updateStats() {
+  const total = DATA.length;
+  let keep = 0, edit = 0, cut = 0;
+  for (const d of Object.values(decisions)) {
+    if (d.action === 'keep') keep++;
+    else if (d.action === 'edit') edit++;
+    else if (d.action === 'cut') cut++;
+  }
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-pending').textContent = total - keep - edit - cut;
+  document.getElementById('progress-fill').style.width = ((keep + edit + cut) / total * 100) + '%';
+  updateExport();
+}
+
+function updateExport() {
+  const changes = [];
+  for (const [i, d] of Object.entries(decisions)) {
+    const idx = parseInt(i);
+    if (d.action === 'cut') {
+      changes.push({ line: DATA[idx].line, action: 'cut', original: DATA[idx].original });
+    } else if (d.action === 'edit') {
+      changes.push({ line: DATA[idx].line, action: 'edit', original: DATA[idx].original, edited: d.edited });
+    }
+  }
+  changes.sort((a, b) => a.line - b.line);
+  document.getElementById('export-json').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => { alert('Copied!'); });
+}
+
+function scrollToActive() {
+  const el = document.getElementById(`card-${activeIndex}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function handleKey(e) {
+  if (e.target.tagName === 'TEXTAREA') return;
+  switch(e.key.toLowerCase()) {
+    case 'j': activeIndex = Math.min(activeIndex + 1, DATA.length - 1); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'k': activeIndex = Math.max(activeIndex - 1, 0); renderCards(); scrollToActive(); e.preventDefault(); break;
+    case 'o': decide(activeIndex, 'keep'); e.preventDefault(); break;
+    case 'e': toggleEdit(activeIndex); e.preventDefault(); break;
+    case 'x': decide(activeIndex, 'cut'); e.preventDefault(); break;
+    case 'u': undo(activeIndex); e.preventDefault(); break;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

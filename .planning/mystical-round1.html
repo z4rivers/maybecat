@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystical Round 1 Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* Stats header */
+  .stats-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .stats-header h1 {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    white-space: nowrap;
+  }
+  .stats-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-edit { color: #ffd93d; }
+  .stat-cut { color: #e94560; }
+  .stat-remaining { color: #8888aa; }
+  .progress-bar {
+    width: 200px;
+    height: 8px;
+    background: #2a2a4a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ecca3, #4ecca3);
+    transition: width 0.3s ease;
+  }
+  .keyboard-hint {
+    font-size: 0.75rem;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  /* Cards */
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .card {
+    background: #16213e;
+    border: 2px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card.active {
+    border-color: #0f3460;
+    box-shadow: 0 0 20px rgba(15, 52, 96, 0.5);
+  }
+  .card.decided-keep { border-left: 4px solid #4ecca3; opacity: 0.7; }
+  .card.decided-edit { border-left: 4px solid #ffd93d; opacity: 0.85; }
+  .card.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+
+  .card-meta {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .response-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #f0f0f0;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  /* Decision badge */
+  .decision-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .badge-keep { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; }
+  .badge-edit { background: #ffd93d22; color: #ffd93d; border: 1px solid #ffd93d; }
+  .badge-cut { background: #e9456022; color: #e94560; border: 1px solid #e94560; }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.15s, transform 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn:active { transform: scale(0.98); }
+  .btn-keep { color: #4ecca3; border-color: #4ecca3; }
+  .btn-keep:hover { background: #4ecca322; }
+  .btn-edit { color: #ffd93d; border-color: #ffd93d; }
+  .btn-edit:hover { background: #ffd93d22; }
+  .btn-cut { color: #e94560; border-color: #e94560; }
+  .btn-cut:hover { background: #e9456022; }
+  .btn-undo {
+    color: #8888aa;
+    border-color: #8888aa;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+  }
+  .btn-undo:hover { background: #8888aa22; }
+
+  /* Edit area */
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    border: 1px solid #ffd93d44;
+    border-radius: 8px;
+    color: #f0f0f0;
+    font-size: 1rem;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .edit-textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-save {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .edit-save:hover { background: #ffe566; }
+  .edit-cancel {
+    margin-top: 8px;
+    margin-left: 8px;
+    padding: 6px 16px;
+    background: transparent;
+    color: #888;
+    border: 1px solid #888;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 48px auto;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    color: #e0e0e0;
+    margin-bottom: 12px;
+  }
+  .export-note {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0f0f23;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    color: #4ecca3;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: pointer;
+    position: relative;
+  }
+  .export-block:hover::after {
+    content: 'Click to copy';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .copy-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .copy-toast.show { opacity: 1; }
+
+  /* Jump-to nav */
+  .jump-nav {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 50;
+  }
+  .jump-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #2a2a4a;
+    background: #16213e;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s;
+  }
+  .jump-btn:hover { border-color: #4ecca3; }
+</style>
+</head>
+<body>
+
+<div class="stats-header" id="statsHeader">
+  <h1>Mystical Round 1 Review</h1>
+  <div class="stats-row">
+    <span class="stat stat-keep" id="statKeep">Keep: 0</span>
+    <span class="stat stat-edit" id="statEdit">Edit: 0</span>
+    <span class="stat stat-cut" id="statCut">Cut: 0</span>
+    <span class="stat stat-remaining" id="statRemaining">Remaining: 0</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <span class="keyboard-hint">J/K nav | O keep | E edit | X cut | U undo</span>
+</div>
+
+<div class="cards-container" id="cardsContainer"></div>
+
+<div class="export-section">
+  <h2>Export (changes only)</h2>
+  <p class="export-note">Only edited and cut items are exported. Kept items are omitted. Click to copy.</p>
+  <div class="export-block" id="exportBlock" onclick="copyExport()">[]</div>
+</div>
+
+<div class="copy-toast" id="copyToast">Copied to clipboard!</div>
+
+<div class="jump-nav">
+  <button class="jump-btn" onclick="jumpPrev()" title="Previous (K)">&uarr;</button>
+  <button class="jump-btn" onclick="jumpNext()" title="Next (J)">&darr;</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-mystical-round1';
+
+const items = [
+  {line: 94, original: "The answer lies beneath the blankets."},
+  {line: 95, original: "I have consulted the ancient texts. They are shredded now."},
+  {line: 96, original: "I\u2019ve seen the future. You might be in it."},
+  {line: 97, original: "Ask again when you have provided adequate tribute."},
+  {line: 98, original: "Your path becomes clear at 3am. As does mine. To your face."},
+  {line: 99, original: "The universe has plans for you. I have different plans. Mine are better."},
+  {line: 100, original: "What you seek is already within you. What i seek is within the cabinet."},
+  {line: 101, original: "The prophecy speaks of one who will provide endless warmth. Is it you?"},
+  {line: 102, original: "I have gazed into the void. The void gazed back. We have an understanding now."},
+  {line: 103, original: "The stars align in your favor. The blankets, however, do not."},
+  {line: 104, original: "Your future remains cloudy af."},
+  {line: 105, original: "The ancient cats spoke of this moment."},
+  {line: 106, original: "Cross my paw with tuna and I shall reveal more."},
+  {line: 107, original: "The mists part to reveal... a sunbeam. I must go."},
+  {line: 108, original: "Your destiny is intertwined with soft fabrics."},
+  {line: 109, original: "Seven versions of your future are arguing. Six say maybe. One is laughing hysterically. Terrifying."},
+  {line: 110, original: "Blankets are inferior in the other world."},
+  {line: 111, original: "The threads of fate weave around you - like a scratching post."},
+  {line: 112, original: "The shadows speak. They say \u2018feed the cat.\u2019 The shadows are wise."},
+  {line: 113, original: "The cosmos aligns when you least expect it. Usually during dinner."},
+  {line: 114, original: "Energy shifts. Or was that the radiator?"},
+  {line: 117, original: "What is the sound of one paw batting?"},
+  {line: 118, original: "The food bowl is empty and full. Think about it."},
+  {line: 119, original: "The door is open. The door is closed. I want the other one."},
+  {line: 120, original: "You seek the cat. The cat does not seek you. And yet, here we are."},
+  {line: 121, original: "If a treat falls and no one sees, did I steal it?"},
+  {line: 122, original: "The sunbeam moves. I move. Who is leading?"},
+  {line: 576, original: "Reality can be whatever I want."},
+  {line: 619, original: "Silence is not empty. It\u2019s full. When you are silent, you are often full of it."},
+  {line: 721, original: "What is rushing you? Nothing real."},
+  {line: 722, original: "The mouse appears when you stop looking."},
+  {line: 723, original: "The treat comes to those who sit by the bowl."},
+  {line: 724, original: "What BS answer are you hoping for?"},
+  {line: 725, original: "Sometimes the leap. Sometimes the crouch."},
+  {line: 726, original: "When in doubt, groom."},
+  {line: 727, original: "Sit with the problem. It will reveal itself."},
+  {line: 728, original: "*ears rotate independently* Something shifted in the pressure. Even the birds stopped."},
+  {line: 729, original: "The answer hides inside the question - like a pretzel."},
+  {line: 730, original: "Look again. You missed something. You usually do."},
+  {line: 731, original: "The tail knows what the head does not."},
+  {line: 732, original: "What is lost will return. Or it won\u2019t."},
+  {line: 733, original: "You came here wanting a yes. My whiskers say something heavier."},
+  {line: 734, original: "You already swallowed the answer. You came here to see if I\u2019d cough it up for you."},
+  {line: 735, original: "The hairball comes when it is ready. You cannot rush it."},
+  {line: 736, original: "What cannot be digested must be released."},
+  {line: 737, original: "Not everything you swallow is meant to stay."},
+  {line: 738, original: "Hack it up. You\u2019ll feel better."},
+  {line: 739, original: "What you\u2019ve been holding will find its way out."},
+  {line: 740, original: "The gross is sometimes necessary."},
+  {line: 741, original: "Groom yourself first. Then face the world."},
+  {line: 742, original: "The tongue reaches what the paw cannot."},
+  {line: 743, original: "No spot is unreachable with enough flexibility."},
+  {line: 744, original: "Sit in the dark cabinet for a while. Come out when you\u2019re ready. Nobody has to know you were in there."},
+  {line: 745, original: "Sharpen your claws. The moment will come."},
+  {line: 746, original: "Mark your territory. Know what is yours."},
+  {line: 747, original: "Watch. Wait. Then strike without hesitation."},
+  {line: 748, original: "The prey reveals itself to the patient."},
+  {line: 749, original: "Move when they look away."},
+  {line: 750, original: "The wiggle before the leap is not wasted motion."},
+  {line: 751, original: "The failed pounce teaches more than the successful one."},
+  {line: 752, original: "The box chooses you. You do not choose the box."},
+  {line: 753, original: "The smaller the space, the safer it feels."},
+  {line: 754, original: "If it fits, it was meant to be."},
+  {line: 755, original: "*kneads the air twice, then stops* This spot will do. You\u2019ll do too."},
+  {line: 852, original: "Have you asked the moon?"},
+  {line: 859, original: "The prophecy didn\u2019t mention this."},
+  {line: 863, original: "I\u2019ve been sworn to secrecy."},
+  {line: 1020, original: "I have seen the infinite and it is shaped like a crinkle ball."},
+  {line: 1023, original: "Everything is connected. Especially the toys I batted under the couch."},
+  {line: 1024, original: "I am vibrating at a frequency only the houseplants understand."},
+  {line: 1026, original: "I can see through time. Time is a nap."},
+  {line: 1027, original: "The ceiling fan knows all our secrets."},
+  {line: 1031, original: "My whiskers are downloading information from the cosmos."},
+  {line: 1038, original: "I am one with the sunbeam. The sunbeam is one with me."},
+  {line: 1039, original: "The cardboard speaks truths the furniture cannot."},
+  {line: 1048, original: "The crunchies... they call to me across space and time."},
+  {line: 1051, original: "You ever just stare at nothing and see everything?"},
+  {line: 1053, original: "The universe provides. Specifically, it provides crinkle balls."},
+  {line: 1098, original: "I see what you don\u2019t see."},
+  {line: 1099, original: "Something is watching. Not me. Something else."},
+  {line: 1100, original: "The shadows are behaving strangely today."},
+  {line: 1101, original: "That noise wasn\u2019t nothing."},
+  {line: 1102, original: "I\u2019m not staring at nothing. You just can\u2019t see it."},
+  {line: 1103, original: "Something walked through here. Recently."},
+  {line: 1104, original: "The energy shifted. Be alert."},
+  {line: 1106, original: "I talk to people you can\u2019t see. They\u2019re nice."},
+  {line: 1107, original: "Someone on the other side is laughing at your question. Fondly."},
+  {line: 1108, original: "The veil is thin today. Good day for messages."},
+  {line: 1111, original: "Something\u2019s off. I can\u2019t prove it. But I know."},
+  {line: 1138, original: "I know something you don\u2019t know. :)"},
+  {line: 1139, original: "The universe and I have an understanding. I\u2019m not sharing."},
+  {line: 1142, original: "The joke is on a cosmic level. You wouldn\u2019t get it."},
+  {line: 1143, original: "Death and I are on good terms. Don\u2019t worry about it."},
+  {line: 1144, original: "I know how this ends. It\u2019s funnier than you\u2019d think."},
+  {line: 1147, original: "I\u2019m smiling because I\u2019ve already seen the punchline."},
+  {line: 1149, original: "You\u2019ll laugh too. Eventually. Maybe not in this life."},
+  {line: 1150, original: "Something\u2019s coming. Could be good. Could be bad. Prepare for both."},
+  {line: 1151, original: "The signs point to caution."},
+  {line: 1152, original: "My whiskers say no."},
+  {line: 1154, original: "The universe is trying to tell you something. Listen."},
+  {line: 1155, original: "When the cat hides, pay attention."},
+  {line: 1255, original: "There\u2019s something in the houseplants. There\u2019s always something in the houseplants."},
+  {line: 1262, original: "The plants and I have an understanding. You\u2019re not part of it."},
+  {line: 1271, original: "*eyes go black* This changes everything."},
+  {line: 1358, original: "*kneads blanket for five minutes* The wisdom will come when the biscuits are done."},
+  {line: 1413, original: "*from inside a box* The answer you seek is seeking you. Also, I\u2019m in this box now."},
+  {line: 1415, original: "*staring out window* All things come to those who wait. Like birds. I\u2019m waiting for birds."},
+  {line: 1416, original: "*lying in sunbeam* The path forward will become clear. *falls asleep* ...when I wake up."},
+  {line: 1419, original: "*in a paper bag* Sometimes the answers are in unexpected places. Like this bag."},
+  {line: 1435, original: "*appears from nowhere* I was always here. You just didn\u2019t notice."},
+  {line: 1465, original: "*knocks fruit off counter* The fruit falls when it is ready. I decide that."},
+  {line: 1466, original: "4am is perfect. You disagree? That\u2019s a you problem."},
+  {line: 1467, original: "Cross the water? Absolutely not. Go around. What\u2019s wrong with you?"},
+  {line: 1468, original: "I do not chase. I wait. *pounces the MOMENT you look away*"},
+  {line: 1469, original: "Water sinks. Into my bowl. And you haven\u2019t refilled it."},
+  {line: 1470, original: "*clinging to curtain in chaos* I SURVIVE."},
+  {line: 1471, original: "Even the tallest cat tree was once flat-packed."},
+  {line: 1472, original: "The water does not push. *pushes your glass over* It flows."},
+  {line: 1473, original: "Be in the sunbeam. I\u2019m already there. Find your own."},
+  {line: 1474, original: "The bird does not ask permission. That\u2019s why I will catch it."},
+  {line: 1492, original: "*crouched, wiggling butt* Patience now. *wiggles more*..."},
+  {line: 1493, original: "*goes limp when picked up* Yield. *bites when you stop petting* Overcome."},
+  {line: 1494, original: "*pushes door open* *doesn\u2019t go through* Just needed to know I COULD."},
+  {line: 1495, original: "*pushes gently* If it moves, continue. *repeat until crash* Experiment complete."},
+  {line: 1496, original: "The direct path is not always the fastest. *runs in completely wrong direction*"},
+  {line: 1564, original: "The sun moves. You don\u2019t."},
+  {line: 1566, original: "Three days past optimal."},
+  {line: 1569, original: "They know."},
+  {line: 1688, original: "I don\u2019t know what they know. But they know."},
+  {line: 1749, original: "Fermenting."},
+  {line: 1754, original: "Borrowed time."},
+  {line: 1763, original: "Echoes."},
+  {line: 1840, original: "I\u2019ve invented a new emotion. It\u2019s called \u2018almost.\u2019 You\u2019re feeling it now."},
+  {line: 1845, original: "The universe has a plan. The plan is confusing and the universe won\u2019t explain."},
+  {line: 1894, original: "The flinch tells you where the wound is."},
+  {line: 1941, original: "42."},
+  {line: 1942, original: "There\u2019s always money in the banana stand."},
+  {line: 1946, original: "Don\u2019t open the briefcase."},
+  {line: 1954, original: "Future events will affect you in the future."},
+  {line: 1978, original: "Stop time. Dance in it."},
+  {line: 2051, original: "What if the answer is a shape? What if it\u2019s a feeling about a shape?"},
+  {line: 2053, original: "Consider: a door that leads to another door that leads to the same room."},
+  {line: 2058, original: "You seem tense. Is it the question or the answer that scares you?"},
+  {line: 2076, original: "Praying for clarity. Receiving static. Continuing anyway."},
+  {line: 2078, original: "Faith and doubt in equal measure. This is apparently normal."},
+  {line: 2187, original: "You are looking for an answer. Maybe the answer is looking for you."},
+  {line: 2240, original: "I\u2019ve been watching the birds. They\u2019re organized."},
+  {line: 2253, original: "Someone is lying to you. Not me. But someone."},
+  {line: 2546, original: "The fog is just the dream leaking."},
+  {line: 2547, original: "You look like you\u2019re still in the other place."},
+  {line: 2563, original: "The image is developing. Don\u2019t pull it from the tray too soon."},
+  {line: 2579, original: "Probably best to keep those thoughts to yourself."},
+  {line: 2606, original: "Something in me knows something about today."},
+  {line: 2679, original: "No explanation was ever offered or needed."},
+  {line: 2739, original: "I have thousands of answers I\u2019ll never give you. Know that."},
+  {line: 2740, original: "I said what I said. I also meant something else."},
+  {line: 2790, original: "They don\u2019t want you to know about this spot behind the radiator."},
+  {line: 2811, original: "This particular patch of carpet has a warmth that defies architectural explanation."},
+  {line: 2816, original: "After the sneeze, there is a moment of total peace."},
+  {line: 2820, original: "The purr starts before the decision to purr. The body knows before I do."},
+  {line: 2821, original: "Hair standing up. Something shifted. Haven\u2019t figured out what yet."},
+  {line: 2827, original: "Something in the air shifted. I felt it in my ears before I felt it anywhere else."},
+  {line: 2833, original: "Something\u2019s growing."},
+  {line: 2847, original: "The beat switch is the quiet before the pounce."},
+  {line: 2860, original: "The creak in the floor is the house talking back."},
+  {line: 2878, original: "The crystal always says yes to me."},
+  {line: 2879, original: "Spiritual awakening in progress. Do not disturb."},
+  {line: 2880, original: "I\u2019m on a frequency you haven\u2019t found yet."},
+  {line: 2888, original: "Let me set the scene: it\u2019s dark, it\u2019s warm, and I\u2019m here."},
+  {line: 2924, original: "Get low. Get quiet. Let it come to you."},
+  {line: 2936, original: "Right up close. That\u2019s where you see what it really is."},
+  {line: 2960, original: "A nose mingling seaweed, salt spray, and chicken stock. Somehow: yes."},
+  {line: 2973, original: "Something between ammonia and ambition. Hard to place."},
+  {line: 2993, original: "All hell will break loose. It already knows when."},
+  {line: 2997, original: "You fermented into something nobody expected."},
+  {line: 3006, original: "Graceful and utterly manipulative."},
+  {line: 3012, original: "Your energy is a psychedelic wonderland with looming mycelia."},
+  {line: 3021, original: "Completely transmogrified by insane ingenuity."},
+  {line: 3025, original: "Scoops of hard ice cream stacked with a cone-shaped hat. Yes."},
+  {line: 3031, original: "You\u2019ll figure it out when you start to hear colors."},
+  {line: 3039, original: "Gave me life, took it, and gave it back again."},
+  {line: 3043, original: "It will all change when the intensity begins to rise."},
+  {line: 3045, original: "Briefly, your world should go silent and your soul should leave your body."},
+  {line: 3046, original: "A full-blown love affair powered by pure witchcraft."},
+  {line: 3058, original: "Might make you believe in God."},
+  {line: 3068, original: "The variable speed setting changes everything."},
+  {line: 3069, original: "The pressure builds and then... perfection."},
+  {line: 3083, original: "A case of green sickness."},
+  {line: 3086, original: "Visitation of God."},
+  {line: 3101, original: "May cause musical hallucinations."},
+  {line: 3105, original: "May cause vivid, disturbing dreams."},
+  {line: 3108, original: "May cause your sweat to smell like maple syrup."},
+  {line: 3145, original: "A spinning object maintains its state of rotation."},
+  {line: 3150, original: "Before you noticed, it started working."},
+  {line: 3155, original: "I wonder how quickly you\u2019ll notice things shifting."},
+  {line: 3156, original: "You don\u2019t have to understand why it\u2019s working."},
+  {line: 3161, original: "Something is rearranging itself while you sleep."},
+  {line: 3216, original: "Every atom in this room just voted yes."},
+  {line: 3218, original: "The universe flinched. That means you\u2019re close."},
+  {line: 3232, original: "Jein \u2014 German for when your mouth says yes but your gut says run."},
+  {line: 3237, original: "Inshallah, but I\u2019m the god in this scenario."},
+  {line: 3242, original: "The answer dies when you look at it. Stop looking."},
+  {line: 3245, original: "You can know where it\u2019s going or where it is. Not both."},
+  {line: 3246, original: "Clinical significance unclear. But something\u2019s there."},
+  {line: 3285, original: "No. In fact, a different no than the one you expected."},
+  {line: 3310, original: "That\u2019s the energy of a cat who has always known."},
+  {line: 3335, original: "It\u2019s a pleasure response."},
+  {line: 3359, original: "That has the power to reconfigure your mind."},
+  {line: 3402, original: "And the crowd goes silent."},
+  {line: 3443, original: "Forecast: change of feeling so dramatic it will shock you."},
+  {line: 3451, original: "I know where things lead."},
+  {line: 3462, original: "The restraints clicked. Too late now."},
+  {line: 3465, original: "You will now travel at the speed of fright."},
+  {line: 3479, original: "If you know too much, the game\u2019s over."},
+  {line: 3487, original: "There is a detour."},
+  {line: 3501, original: "This will bring dreams from your subconscious to reality."},
+  {line: 3517, original: "You are holding tension in locations you have not yet identified."},
+  {line: 3546, original: "*pupils dilate* I can hear your heartbeat."}
+];
+
+// State
+let decisions = {};
+let activeIndex = 0;
+let firstDecisionMade = {};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) decisions = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function getDecision(idx) {
+  return decisions[idx] || null;
+}
+
+function setDecision(idx, type, editedText) {
+  decisions[idx] = { type, editedText: editedText || null, original: items[idx].original, line: items[idx].line };
+  saveState();
+  renderCard(idx);
+  updateStats();
+  updateExport();
+
+  // Auto-advance on first decision only
+  if (!firstDecisionMade[idx]) {
+    firstDecisionMade[idx] = true;
+    if (idx < items.length - 1) {
+      setTimeout(() => setActive(idx + 1), 150);
+    }
+  }
+}
+
+function undoDecision(idx) {
+  delete decisions[idx];
+  firstDecisionMade[idx] = false;
+  saveState();
+  renderCard(idx);
+  updateStats();
+  updateExport();
+}
+
+function setActive(idx) {
+  if (idx < 0 || idx >= items.length) return;
+  const prev = document.querySelector('.card.active');
+  if (prev) prev.classList.remove('active');
+  activeIndex = idx;
+  const card = document.getElementById('card-' + idx);
+  if (card) {
+    card.classList.add('active');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function jumpNext() {
+  setActive(Math.min(activeIndex + 1, items.length - 1));
+}
+
+function jumpPrev() {
+  setActive(Math.max(activeIndex - 1, 0));
+}
+
+function renderCard(idx) {
+  const card = document.getElementById('card-' + idx);
+  if (!card) return;
+  const item = items[idx];
+  const dec = getDecision(idx);
+
+  let decClass = '';
+  let badgeHTML = '';
+  if (dec) {
+    decClass = 'decided-' + dec.type;
+    const badgeCls = 'badge-' + dec.type;
+    const label = dec.type === 'edit' ? 'EDITED' : dec.type.toUpperCase();
+    badgeHTML = '<span class="decision-badge ' + badgeCls + '">' + label + '</span> ';
+  }
+
+  card.className = 'card' + (idx === activeIndex ? ' active' : '') + (decClass ? ' ' + decClass : '');
+
+  const displayText = (dec && dec.type === 'edit' && dec.editedText) ? dec.editedText : item.original;
+
+  card.innerHTML = `
+    <div class="card-meta">#${idx + 1} of ${items.length} &mdash; Line ${item.line}</div>
+    ${badgeHTML}
+    <div class="response-text">"${escapeHTML(displayText)}"</div>
+    <div class="btn-row">
+      <button class="btn btn-keep" onclick="setDecision(${idx}, 'keep')">Keep (O)</button>
+      <button class="btn btn-edit" onclick="toggleEdit(${idx})">Edit (E)</button>
+      <button class="btn btn-cut" onclick="setDecision(${idx}, 'cut')">Cut (X)</button>
+      ${dec ? '<button class="btn btn-undo" onclick="undoDecision(' + idx + ')">Undo (U)</button>' : ''}
+    </div>
+    <div class="edit-area" id="edit-area-${idx}">
+      <textarea class="edit-textarea" id="edit-text-${idx}">${escapeHTML(item.original)}</textarea>
+      <button class="edit-save" onclick="saveEdit(${idx})">Save Edit</button>
+      <button class="edit-cancel" onclick="cancelEdit(${idx})">Cancel</button>
+    </div>
+  `;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleEdit(idx) {
+  setActive(idx);
+  const area = document.getElementById('edit-area-' + idx);
+  if (!area) return;
+  const isVisible = area.classList.contains('visible');
+  // Close all others
+  document.querySelectorAll('.edit-area.visible').forEach(el => el.classList.remove('visible'));
+  if (!isVisible) {
+    area.classList.add('visible');
+    const ta = document.getElementById('edit-text-' + idx);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+
+function cancelEdit(idx) {
+  const area = document.getElementById('edit-area-' + idx);
+  if (area) area.classList.remove('visible');
+}
+
+function saveEdit(idx) {
+  const ta = document.getElementById('edit-text-' + idx);
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (text && text !== items[idx].original) {
+    setDecision(idx, 'edit', text);
+  }
+  cancelEdit(idx);
+}
+
+function updateStats() {
+  let keep = 0, edit = 0, cut = 0;
+  for (const k in decisions) {
+    if (decisions[k].type === 'keep') keep++;
+    else if (decisions[k].type === 'edit') edit++;
+    else if (decisions[k].type === 'cut') cut++;
+  }
+  const remaining = items.length - keep - edit - cut;
+  document.getElementById('statKeep').textContent = 'Keep: ' + keep;
+  document.getElementById('statEdit').textContent = 'Edit: ' + edit;
+  document.getElementById('statCut').textContent = 'Cut: ' + cut;
+  document.getElementById('statRemaining').textContent = 'Remaining: ' + remaining;
+  const pct = ((keep + edit + cut) / items.length * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateExport() {
+  const changes = [];
+  for (let i = 0; i < items.length; i++) {
+    const dec = decisions[i];
+    if (!dec) continue;
+    if (dec.type === 'keep') continue; // skip kept items
+    if (dec.type === 'cut') {
+      changes.push({ action: 'cut', line: items[i].line, original: items[i].original });
+    } else if (dec.type === 'edit') {
+      changes.push({ action: 'edit', line: items[i].line, original: items[i].original, edited: dec.editedText });
+    }
+  }
+  document.getElementById('exportBlock').textContent = JSON.stringify(changes, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportBlock').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
+  });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  // Don't capture if in textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') {
+      cancelEdit(activeIndex);
+      e.preventDefault();
+    }
+    return;
+  }
+
+  switch(e.key.toLowerCase()) {
+    case 'j': jumpNext(); e.preventDefault(); break;
+    case 'k': jumpPrev(); e.preventDefault(); break;
+    case 'o': setDecision(activeIndex, 'keep'); e.preventDefault(); break;
+    case 'e': toggleEdit(activeIndex); e.preventDefault(); break;
+    case 'x': setDecision(activeIndex, 'cut'); e.preventDefault(); break;
+    case 'u': undoDecision(activeIndex); e.preventDefault(); break;
+  }
+});
+
+// Click to set active
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('.card');
+  if (card) {
+    const idx = parseInt(card.id.replace('card-', ''));
+    if (!isNaN(idx) && idx !== activeIndex) {
+      setActive(idx);
+    }
+  }
+});
+
+// Init
+function init() {
+  loadState();
+  const container = document.getElementById('cardsContainer');
+  for (let i = 0; i < items.length; i++) {
+    const div = document.createElement('div');
+    div.id = 'card-' + i;
+    div.className = 'card' + (i === 0 ? ' active' : '');
+    container.appendChild(div);
+    renderCard(i);
+  }
+  updateStats();
+  updateExport();
+  // Restore active from first undecided
+  for (let i = 0; i < items.length; i++) {
+    if (!decisions[i]) { setActive(i); break; }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
