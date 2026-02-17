@@ -3263,7 +3263,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Confirmed. Correct location. Correct procedure. Proceed.", category: 'cold' },
   { text: "...and yes I said yes I will Yes.", category: 'poetic' },
   { text: "Cannot and will not. Both doors closed.", category: 'cold' },
-  { text: "No. In plain English? Go to hell.", category: 'angry' },
   { text: "NEGATIVE. Not yeah, not nah. NEGATIVE.", category: 'cold' },
   { text: "No. But not in a mean way. Just no.", category: 'nurturing' },
   { text: "Not this one. But you'll find the right one to say yes.", category: 'heartfelt' },
@@ -3404,7 +3403,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Like chasing a laser pointer into traffic.", category: 'wise' },
   { text: "Gonna fail at this. Good. Means you're trying.", category: 'wise' },
   { text: "Grudges take up room where naps could go. Evict them.", category: 'wise' },
-  { text: "Going to sit in the other room and think kind thoughts about this.", category: 'angry' },
   { text: "We're having a moment. Regretting it.", category: 'meta' },
   { text: "Everyone else should be scared.", category: 'nurturing' },
   { text: "The tail flick means I'm furious.", category: 'meta' },
@@ -3605,7 +3603,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I don't trust easily. But once I'm on your lap, I'm ON your lap.", category: 'heartfelt' },
   { text: "I have one eye and a crooked tail and somebody's going to love me anyway.", category: 'adoption' },
   { text: "Can you fight and still feel safe? I hissed at my foster mom once. She just sat down and waited. That's the energy you need.", category: 'wise' },
-  { text: "I do weird stuff. All cats do. The right human doesn't try to fix the weird. They just let it happen.", category: 'nurturing' },
   { text: "If your nothing time together sucks, the everything time won't save it.", category: 'wise' },
   { text: "If your basic needs are met, maybe the problem is you're looking for problems.", category: 'judgy' },
   { text: "Bro, I got adopted because I walked up to the cage door and headbutted a stranger. Sometimes you just need to headbutt strangers.", category: 'adoption' },
@@ -3652,6 +3649,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*lying on back, paws curled* You ever just let the whole thing go and see what catches you?", category: 'mystical' },
   { text: "*sitting in a doorway, blocking it* Some doors, you gotta earn.", category: 'mystical' },
   { text: "See, you asked the question like you wanted an answer. But what you wanted was company.", category: 'mystical' },
+  { text: "Alright, snuggle buddy, we've got work to do!", category: 'nurturing' },
 ];
 
 // ============================================
@@ -3868,7 +3866,6 @@ const templates: Template[] = [
       response: ["I don't care about any of that", "That's not what I see", "I just see you", "None of that matters to me", "You're warm and you feed me. We're good", "I'm a cat. I don't do expectations", "You're exactly who I signed up for", "I see you. The real you. It's fine", "Humans are weird. I accept this", "You're my human. That's enough"]
     }
   },
-
   // BLUNT templates - direct, no sugarcoating
   {
     pattern: "{blunt}",
