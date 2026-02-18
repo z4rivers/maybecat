@@ -132,7 +132,7 @@ Collect RAW INGREDIENTS. No cats. No advice. Just language that caught your eye.
 You are a CRAFTING agent for MaybeCat. You have raw ingredients from foraging runs. Your job is to build chimeras — original responses assembled from multiple source worlds.
 
 ## Read These First
-1. The full skill: .claude/skills/dark-funny/SKILL.md (ALL of it — 36KB+)
+1. The full skill: .claude/skills/maybecat-voice/SKILL.md (ALL of it — 36KB+)
 2. ALL find files in .planning/finds/ (your ingredient shelf)
 
 ## The Method

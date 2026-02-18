@@ -8,7 +8,7 @@ Going through EVERY response in oracleResponses.ts by category, generating spicy
 - Can roast asker when it helps (tough older sibling)
 - When kind, devastatingly kind
 - Raise ceiling + fix ratio (too much mild middle)
-- Comedy energy: channel SPECIFIC comedian voices from `/dark-funny` skill file
+- Comedy energy: channel SPECIFIC comedian voices from `/maybecat-voice` skill file
 - Nikki Glaser, Ali Wong, Mitch Hedberg, Nate Bargatze, Tig Notaro, Bill Burr, etc.
 - Each alternative should use a recognizable comedian's cadence/structure
 
@@ -59,7 +59,7 @@ Going through EVERY response in oracleResponses.ts by category, generating spicy
 - localStorage persistence per review file
 
 ## Agent Prompt Template
-Point agents to `.claude/skills/dark-funny/SKILL.md` for voice guidance. Give them:
+Point agents to `.claude/skills/maybecat-voice/SKILL.md` for voice guidance. Give them:
 - File range to scan
 - Category to find
 - Banned patterns
@@ -77,7 +77,7 @@ Point agents to `.claude/skills/dark-funny/SKILL.md` for voice guidance. Give th
 
 ## File Locations
 - Responses: `src/data/oracleResponses.ts`
-- Skill file: `.claude/skills/dark-funny/SKILL.md` (36KB, never main context)
+- Skill file: `.claude/skills/maybecat-voice/SKILL.md` (36KB, never main context)
 - Voice guide: `.planning/CAT-VOICE-GUIDE.md`
 - All review HTMLs: `.planning/{category}-round{N}.html`
 - All alt JSONs: `.planning/{category}-round{N}-batch{M}-alts.json`

@@ -46,7 +46,7 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 - **Extract from live site, don't recreate** — Live CSS is source of truth for all visual elements
 - **Figma variables, 3-tier architecture** — primitive → semantic → component color tokens
 - **Figma MCP is read-only** — Claude generates JSON, user imports via Tokens Studio plugin
-- **Response format** — `oracleResponses.ts` with `{ text, category }` structure. 13 categories, weighted selection. 31+ cat archetypes defined in `/dark-funny` skill.
+- **Response format** — `oracleResponses.ts` with `{ text, category }` structure. 13 categories, weighted selection. 31+ cat archetypes defined in `/maybecat-voice` skill.
 - **Real cat photos only** — Never illustrated characters. Design accommodates photo placement.
 - **Maximalist energy preserved** — If "cleaner" kills the vibe, find another way.
 
@@ -65,7 +65,7 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 **What it's NOT:** Safe, predictable, "old person on couch" energy, generic wisdom, forgettable filler. Also not ONLY edge — warmth that still sounds like MaybeCat, not like a greeting card.
 
 **Deep refs:**
-- `/dark-funny` skill — voice details, 31 archetypes, inspiration voices, response requirements
+- `/maybecat-voice` skill — voice details, 31 archetypes, inspiration voices, response requirements
 - `.planning/CAT-VOICE-GUIDE.md` — the magic formula, structure, tone, what works
 - `.planning/ADD-RESPONSES-PROMPT.md` — generation strategy (double-tap, batch process)
 - `.planning/GENERATION-METRICS.md` — batch stats, hit rates, comedian filters
