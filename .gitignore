@@ -31,6 +31,7 @@ dist-ssr
 .agents/
 .continue/
 .cursor/
+.claude/worktrees/
 
 # Batch review files
 *-batch-review.html
