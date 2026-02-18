@@ -3710,6 +3710,27 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You just said three things that contradict each other like they were a plan. They might be a plan.", category: 'chaotic' },
   { text: "Your calm voice is making me violent. The answer is no.", category: 'cold' },
   { text: "You lost me at 'world domination' but I respect the ambition. I'm going to go dominate a paper bag.", category: 'wise' },
+
+  // === APPROVED BATCH (Feb 17 2026) ===
+  { text: "Cat in your lap, fresh chocolate chip cookies and a good book.", category: 'nurturing' },
+  { text: "Cat is fed. You are fed. Happy full tummies. Time to lick the paws.", category: 'nurturing' },
+  { text: "Cat comes running for that smell of the pizza box first opening too even though cats don't really like pizza.", category: 'chaotic' },
+  { text: "The cat finds lost bread tie under the fridge - just like forgotten cash in an old jeans pocket.", category: 'wise' },
+  { text: "The cat knows when you're matched with the perfect mate.", category: 'wise' },
+  { text: "Yes, with all the chemistry of a great first kiss.", category: 'wise' },
+  { text: "Yes, like peeling the wrapper of the new item you've been waiting for.", category: 'wise' },
+  { text: "Yes, like clean sheets.", category: 'wise' },
+  { text: "Yes, like being outside in the perfect gear in lousy weather.", category: 'wise' },
+  { text: "Yes, like a mouse not seeing you and running right in your direction.", category: 'wise' },
+  { text: "Yes, like a flying acrobatic leap to catch a cat dancer high in the air.", category: 'chaotic' },
+  { text: "Yes, like thinking you are being transferred to another shelter and arriving at a forever home.", category: 'adoption' },
+  { text: "Yes, like you aren't sure if it's time to get another cat and a cat finds you.", category: 'adoption' },
+  { text: "Yes, like wanting this kitten, but that one being so cute too.", category: 'adoption' },
+  { text: "Yes, like the appreciation of an older rescue cat finally being selected for adoption.", category: 'adoption' },
+  { text: "Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.", category: 'heartfelt' },
+  { text: "Yes, like the first stretch after a long nap.", category: 'wise' },
+  { text: "Yes, like the sound of the can opener.", category: 'wise' },
+  { text: "Yes, the way two cats who've never met touch noses.", category: 'heartfelt' },
 ];
 
 // ============================================
