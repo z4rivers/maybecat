@@ -4,6 +4,8 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 
 **Positioning:** Advice with a voice. NOT an oracle, NOT a fortune teller, NOT mystical. A cat with opinions and no filter. Wingman energy, not Zoltar energy.
 
+**The bigger picture:** A cat meme machine with heart. Humor, surprise, cleverness — but also warmth, encouragement, love. Full emotional range so answers surprise in ALL directions. The cat doesn't know what you asked — the magic is that your brain does the work. The meme is the door, the real adoptable cats are what's behind it.
+
 **Live site:** maybecat.com
 **Stack:** React 19 + TypeScript + Vite 7 + Tailwind v4 + Framer Motion, deployed on Vercel
 
@@ -11,26 +13,28 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 
 ## Current State
 
-**Last updated:** 2026-02-16
+**Last updated:** 2026-02-18
 
 ### Active workstreams
 
-**Response library** — Primary focus. 800+ responses in `oracleResponses.ts`. Recent sprint (Feb 11-15) produced ~80 batch review files across comedian filters, concept mashups, dual readings, relocations. Generational answers draft in progress (`.planning/GENERATIONAL-ANSWERS-DRAFT.md`). Pool audit identified gaps and blind spots (`.planning/response-pool-audit-2026-02-13.md`).
+**Response library** — Primary focus. 2,379 responses across 13 categories in `oracleResponses.ts`, plus dynamic template generation (12% of requests). Ongoing sprint since Feb 11: 80+ batch review files, comedian voice filters, found language mining, concept mashups. Pool audit (`.planning/response-pool-audit-2026-02-13.md`) identified gaps driving current work. Tonal expansion underway — adding more warmth, encouragement, positivity alongside existing edge.
 
 **Design system (Figma)** — Phase 3 of 10, paused since Feb 8. Color foundations and typography done. Gradients/effects token files created, Figma import pending. Blocked by: Figma MCP is read-only, variable creation requires manual Tokens Studio import. Full state: `.planning/STATE.md`
 
 **SEO** — Strategy complete. Competitive research across 9 categories in `.planning/seo-research/`. Content scaling plan exists but not yet executed.
 
-**Share card** — Planned, not started. Concept and technical plan in `.planning/SHARE-CARD-PLAN.md`. Depends on design system progress for template assets.
+**Share card** — Built and functional. Canvas-based rendering (1080x1350), mobile Web Share API, desktop PNG download. Components: `ShareCard.tsx`, `useShareCard.ts`, `renderShareCard.ts`.
 
 ### What just happened
-- Massive response generation sprint (Feb 11-15): 80+ batches, research docs for voice filters
-- Response pool audit (Feb 13): mapped all 800+ responses, identified audience lanes and gaps
-- Generational answers draft started (Feb 16): age-targeted responses from Gen Alpha to Boomers
+- Response generation sprint (Feb 11-18): 80+ batches, found language breakthrough, comedian voice filters
+- Pool grew from ~800 to 2,379 responses across 13 categories
+- Share card feature completed
+- Tonal direction clarified: full emotional range, meme with heart
 
 ### What's next
-- Review and merge generational answer batches into response pool
-- Continue filling response gaps identified in audit (yes/no mastery, high-stakes maybes, physical cat behaviors)
+- Continue tonal expansion — more warmth, fun, encouragement, positivity
+- Fill response gaps from audit (yes/no mastery, high-stakes maybes, physical cat behaviors)
+- Found language mining (Reddit, Edinburgh Fringe, comedian descriptions)
 - Resume design system Phase 3 Plan 2 (Figma token import)
 
 ---
@@ -42,7 +46,7 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 - **Extract from live site, don't recreate** — Live CSS is source of truth for all visual elements
 - **Figma variables, 3-tier architecture** — primitive → semantic → component color tokens
 - **Figma MCP is read-only** — Claude generates JSON, user imports via Tokens Studio plugin
-- **Response format** — `oracleResponses.ts` with `{ text, category }` structure. 31 cat archetypes defined in `/dark-funny` skill.
+- **Response format** — `oracleResponses.ts` with `{ text, category }` structure. 13 categories, weighted selection. 31+ cat archetypes defined in `/dark-funny` skill.
 - **Real cat photos only** — Never illustrated characters. Design accommodates photo placement.
 - **Maximalist energy preserved** — If "cleaner" kills the vibe, find another way.
 
@@ -56,7 +60,9 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 - **Crescendos** — Hilarious, bizarre, OR heartplucking truth bombs. Screenshot-worthy. "THE CAT JUST READ ME."
 - **Solid rhythm** — Clever, on-brand, keeps the energy. Not trying to be the moment, but earns its place.
 
-**What it's NOT:** Safe, predictable, "old person on couch" energy, generic wisdom, forgettable filler.
+**Full range, all directions.** Dark, warm, weird, encouraging, savage, sweet — the surprise IS the product. Edge and heart amplify each other. If people know MaybeCat is unpredictable, every tap becomes exciting.
+
+**What it's NOT:** Safe, predictable, "old person on couch" energy, generic wisdom, forgettable filler. Also not ONLY edge — warmth that still sounds like MaybeCat, not like a greeting card.
 
 **Deep refs:**
 - `/dark-funny` skill — voice details, 31 archetypes, inspiration voices, response requirements
@@ -101,8 +107,8 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 ### Features
 | What | Where |
 |------|-------|
-| Share card concept | `.planning/share-card-concept.md` |
-| Share card tech plan | `.planning/SHARE-CARD-PLAN.md` |
+| Share card (built) | `src/components/ShareCard.tsx`, `src/hooks/useShareCard.ts`, `src/lib/renderShareCard.ts` |
+| Share card concept & plan | `.planning/share-card-concept.md`, `.planning/SHARE-CARD-PLAN.md` |
 | RescueGroups compliance | `docs/RESCUEGROUPS_COMPLIANCE.md` |
 
 ### Full directory index
