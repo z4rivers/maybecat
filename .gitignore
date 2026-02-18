@@ -41,3 +41,7 @@ lighthouse-report*.json
 
 # Screenshots
 *.png
+
+# Scraper output and storage
+scripts/scraper/output/
+scripts/scraper/storage/
