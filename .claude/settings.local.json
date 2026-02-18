@@ -61,7 +61,11 @@
       "Bash(tail:*)",
       "Bash(head:*)",
       "Bash(echo:*)",
-      "WebFetch"
+      "WebFetch",
+      "Bash(node -e:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(npx tsx:*)"
     ]
   }
 }
