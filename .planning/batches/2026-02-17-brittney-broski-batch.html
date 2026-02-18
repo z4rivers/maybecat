@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brittney Broski Lens Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Brittney Broski Lens Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Brittney Broski as generation lens — her REACTOR energy (stimulus > outsized reaction, register shifts, dramatic treatment of mundane situations) filtered through 6 "unusual refrigerators" of found language. Each response relocates the vocabulary and structure of a specific professional/cultural world into cat answers. No cat behaviors as anchors; the product context IS the cat. Spread across 8 categories. Fridges: Victorian etiquette manuals, wine tasting notes, true crime podcast narration, dog show commentary, auction house language, deep sea creature descriptions.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "One does not simply 'go for it.' One prepares, agonizes, then does it anyway while apologizing.", category: "wise", source: "Victorian etiquette manuals — the absurd formality of propriety relocated into modern paralysis. 'One does not simply' borrows the rigid third-person construction. The comedy is the Victorian structure describing exactly what you did last Tuesday." },
+            { id: 2, text: "It is considered unseemly to want something this badly. Want it anyway.", category: "demanding", source: "Victorian etiquette manuals — 'it is considered unseemly' is pure etiquette-manual phrasing. The pivot from prohibition to command. Works for: should I go for it, am I too much, is it okay to want this." },
+            { id: 3, text: "A lady never reveals her browser history. A gentleman never asks.", category: "cold", source: "Victorian etiquette manuals — the 'a lady never / a gentleman never' construction applied to modern shame. Dual-read: literally about search history, or about whatever you're hiding. The Victorian frame makes the modern content funnier." },
+            { id: 4, text: "One must maintain composure. *composure visibly cracking* Magnificent.", category: "chaotic", source: "Victorian etiquette manuals + Broski energy — the register shift from formal instruction to real-time collapse. 'Composure visibly cracking' is the stage direction contradicting the script. 'Magnificent' is the Broski outsized reaction to disaster." },
+            { id: 5, text: "Notes of unresolved tension with a lingering finish of 'I should have said something.'", category: "existential", source: "Wine tasting notes — 'notes of' and 'lingering finish' are direct tasting vocabulary. Relocated: the pretentious precision of flavor language describing an emotional aftertaste. Works for: should I have spoken up, did I miss my chance, why do I still think about it." },
+            { id: 6, text: "Bold. Full-bodied. Undertones of panic. Pairs well with regret.", category: "judgy", source: "Wine tasting notes — clinical assessment structure. 'Bold,' 'full-bodied,' 'undertones,' 'pairs well with' are all tasting card language. The pivot from compliment to diagnosis. Reads as: you, described by a sommelier who sees too much." },
+            { id: 7, text: "Bright on the nose. Complex midpalate. The aftertaste is where it gets honest.", category: "wise", source: "Wine tasting notes — 'nose,' 'midpalate,' 'aftertaste' are technical tasting progression. Relocated: first impressions lie, the middle is confusing, truth comes after. Layered advice disguised as a tasting note." },
+            { id: 8, text: "Oaky. Aggressive. Performs well under pressure but collapses in the finish.", category: "cold", source: "Wine tasting notes — a wine review that's clearly about a person. 'Collapses in the finish' is devastating because it's the moment that matters. Dog show + wine hybrid energy." },
+            { id: 9, text: "What happened next would surprise no one. Except you.", category: "judgy", source: "True crime podcast narration — 'what happened next' is the classic suspense structure. The twist: the surprise is only yours. Everyone else saw it coming. Works for: relationship red flags, bad decisions, ignored warnings." },
+            { id: 10, text: "The evidence was there the whole time. You just liked the suspect.", category: "cold", source: "True crime podcast narration — 'evidence' and 'suspect' are case language. Relocated: you knew but didn't want to know, because wanting is louder than knowing. Dual-read: about a crush, a job, a situation you stayed in too long." },
+            { id: 11, text: "Investigators would later describe the situation as 'entirely preventable.' Proceed.", category: "chaotic", source: "True crime podcast narration — the post-incident official report voice. 'Entirely preventable' is the forensic conclusion. 'Proceed' is the cat giving permission anyway. The gap between the warning and the blessing IS the comedy." },
+            { id: 12, text: "And then, for reasons still unclear to detectives, they texted back.", category: "chaotic", source: "True crime podcast narration — the breathless narrator describing an inexplicable turn in the case. 'For reasons still unclear to detectives' treats a text message like an unsolved crime. Broski energy: treats the mundane as earth-shattering." },
+            { id: 13, text: "Excellent form. Questionable judgment. Still, the crowd is charmed.", category: "wise", source: "Dog show commentary — 'excellent form,' 'questionable judgment' is the clinical assessment language. 'The crowd is charmed' pivots to validation. Works for: am I making a fool of myself, should I keep going, is this working." },
+            { id: 14, text: "Disqualified on temperament. Gorgeous on the stack.", category: "heartfelt", source: "Dog show commentary — 'disqualified on temperament' and 'on the stack' (the posed stance) are judging terms. Relocated: you're too much personality for the format, but the form is perfect. Backhanded compliment that's actually all compliment." },
+            { id: 15, text: "Strong gait. Good structure. But the handler has no control.", category: "judgy", source: "Dog show commentary — full Westminster judging language. 'The handler has no control' is the devastating pivot. Dual-read: you're fine, the person managing you (boss, partner, your own brain) is the problem." },
+            { id: 16, text: "Best in show was never the goal. You just wanted to be in the ring.", category: "heartfelt", source: "Dog show commentary — 'best in show' and 'in the ring' are competition terms. Relocated: the quiet admission that participation, not winning, was the real want. Warm without being soft. Works for: am I wasting my time, is this enough, why am I still trying." },
+            { id: 17, text: "Lot 1: one (1) perfectly good opportunity, lightly neglected. Opening bid is showing up.", category: "wise", source: "Auction house language — 'Lot 1,' 'one (1),' 'lightly neglected,' 'opening bid' are catalog and bidding terms. The parenthetical precision. Relocated: your situation described as an auction item. The minimum bid reframes the ask as small." },
+            { id: 18, text: "Going once. Going twice. You hesitated. Someone else didn't.", category: "cold", source: "Auction house language — the countdown structure creates urgency. 'You hesitated' breaks the auction rhythm with direct address. 'Someone else didn't' is the consequence. Works for: missed chances, slow decisions, what-ifs." },
+            { id: 19, text: "Reserve price not met. Raise your standards or lower your ask.", category: "demanding", source: "Auction house language — 'reserve price not met' means the minimum acceptable wasn't reached. Relocated: the binary directive. Either you want more or you accept less. No third option. Boundaries Cat through auction vocabulary." },
+            { id: 20, text: "Sold. To the person who wasn't overthinking it.", category: "judgy", source: "Auction house language — 'Sold. To the person who...' is the auctioneer's hammer-fall declaration. The punchline names exactly what lost you the lot: your head. Works for: should I have acted faster, did I miss it, why do I do this." },
+            { id: 21, text: "You generate your own light. Most things that deep do.", category: "heartfelt", source: "Deep sea creature descriptions — bioluminescence as metaphor without calling it that. 'That deep' is both depth-in-ocean and depth-in-feeling. The science fact (deep sea creatures produce their own light) becomes the most sincere compliment in the batch." },
+            { id: 22, text: "Pressure makes diamonds and also those translucent fish with no face. Either way, you survive.", category: "existential", source: "Deep sea creature descriptions — the cliche 'pressure makes diamonds' extended to its actual biological truth: pressure also makes alien creatures. 'Translucent fish with no face' is the image that installs. Survival reframed as weird, not glamorous." },
+            { id: 23, text: "Bioluminescent. Meaning: you're only visible when you choose to be. Use that.", category: "wise", source: "Deep sea creature descriptions — the marine biology term given a definition that's technically accurate AND advice. 'Use that' is the directive. Works for: should I say something, should I show them, am I invisible." },
+            { id: 24, text: "Built for the dark. Adapted. Thriving where nothing was supposed to.", category: "heartfelt", source: "Deep sea creature descriptions — the language of deep-sea biology ('adapted,' 'thriving,' pressure zones). Relocated: you weren't supposed to survive this environment, but you did, and now you're native to it. Quiet crescendo." },
+            { id: 25, text: "Some creatures only exist at depths nobody visits. Doesn't make them less real.", category: "existential", source: "Deep sea creature descriptions — the scientific fact that we've mapped more of the moon than the deep ocean. Relocated: validation for the parts of yourself nobody sees. Works for: does anyone understand me, am I too much, is this normal." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

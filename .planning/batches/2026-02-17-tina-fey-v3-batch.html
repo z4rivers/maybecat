@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tina Fey v3 Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tina Fey v3 Batch &mdash; Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items &mdash; ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Tina Fey lens &mdash; the specific detail that reveals everything, naming dynamics with surgical precision, neurotic competence, the eye-roll you can hear. Filtered through 6 unusual refrigerators: <em>museum exhibit placards, gymnastics/figure skating scoring, recipe instructions gone wrong, air traffic control, real estate euphemisms, competitive baking show</em>. Answer-first. Found language relocated, not constructed. No default cat behavior anchors. 10 categories. 13 cat voices represented.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only &mdash; cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "Untitled, 2024. Mixed media on anxiety. Artist present but unavailable for comment.", category: "existential", source: "MUSEUM EXHIBIT PLACARD. Relocated: gallery wall language applied to a person's current state. The institutional deadpan frames personal chaos as curated art. 'Unavailable for comment' = checked out but still standing there." },
+            { id: 2, text: "Stuck the landing but the judges saw the face you made on the way down.", category: "judgy", source: "GYMNASTICS SCORING. Relocated: competitive judging language for life decisions. You got the outcome, but the execution revealed everything. The face is the tell." },
+            { id: 3, text: "Fold gently into the conversation. You did not fold gently. You kneaded.", category: "wise", source: "RECIPE INSTRUCTIONS GONE WRONG. Relocated: baking technique as interpersonal criticism. 'Fold' vs 'knead' = finesse vs force. Works for: did I come on too strong, should I have been softer." },
+            { id: 4, text: "You are cleared for approach. Maintain altitude. Do not descend to their level.", category: "demanding", source: "AIR TRAFFIC CONTROL. Relocated: cockpit instruction as life directive. Clipped, urgent, authoritative. The pivot from standard ATC language to 'their level' reframes the whole thing." },
+            { id: 5, text: "Cozy. Sun-drenched. Walking distance to your mistakes.", category: "judgy", source: "REAL ESTATE EUPHEMISMS. Relocated: listing copy where the third detail betrays the first two. 'Cozy' and 'sun-drenched' are the bait. 'Walking distance to your mistakes' is the actual property." },
+            { id: 6, text: "The flavors are confused but the ambition is undeniable.", category: "wise", source: "COMPETITIVE BAKING SHOW. Relocated: judge's critique that's somehow both devastating and encouraging. Works across: messy relationships, career pivots, chaotic plans. The ambition earns respect even when the execution doesn't." },
+            { id: 7, text: "Figurative. Oil on burned bridge. Private collection.", category: "cold", source: "MUSEUM EXHIBIT PLACARD. Relocated: gallery catalog entry describing a ruined relationship as artwork. 'Oil on burned bridge' is the medium. 'Private collection' = you're keeping this damage to yourself." },
+            { id: 8, text: "Deduction for the wobble. But nobody expected the triple.", category: "heartfelt", source: "GYMNASTICS SCORING. Relocated: scoring language where the penalty is acknowledged but the attempt is honored. Works for: I messed up but tried something big, was it worth it." },
+            { id: 9, text: "Let rest for 20 minutes before serving. You are not letting anything rest.", category: "wise", source: "RECIPE INSTRUCTIONS GONE WRONG. Relocated: baking patience applied to human impatience. The instruction is correct. The observation is personal. Works for: should I text back, should I bring it up again." },
+            { id: 10, text: "Abort landing. Runway is not clear. Circle back.", category: "cold", source: "AIR TRAFFIC CONTROL. Relocated: emergency abort language as relationship/situation directive. Clipped. No explanation. The brevity IS the urgency." },
+            { id: 11, text: "Full of character. What they mean is the floors are uneven and nothing shuts properly.", category: "judgy", source: "REAL ESTATE EUPHEMISMS. Relocated: decoded listing language. 'Full of character' is the euphemism; the second sentence is the translation. Works for: should I trust what they're telling me." },
+            { id: 12, text: "Underbaked in the center but the crust committed.", category: "heartfelt", source: "COMPETITIVE BAKING SHOW. Relocated: baking judge assessment where the outside held together even though the inside isn't done. Works for: am I ready, am I enough, is this good enough to show people." },
+            { id: 13, text: "Study of a person about to do something they already decided to do. Pencil on napkin, 3 AM.", category: "existential", source: "MUSEUM EXHIBIT PLACARD. Relocated: artwork description that names the asker's situation. The medium (pencil on napkin, 3 AM) is the evidence. The 'about to do' / 'already decided' tension IS the piece." },
+            { id: 14, text: "Degree of difficulty was a 9.7. Execution was a 4.2. Still showed up.", category: "wise", source: "GYMNASTICS SCORING. Relocated: numeric scoring applied to a life attempt. The gap between difficulty and execution is acknowledged. 'Still showed up' reframes the numbers. Works for: I tried and failed, was it worth it." },
+            { id: 15, text: "Season to taste. You have been over-seasoning everything since 2019.", category: "judgy", source: "RECIPE INSTRUCTIONS GONE WRONG. Relocated: cooking direction + personal timeline. The year makes it specific enough to sting. Works for: am I doing too much, should I tone it down." },
+            { id: 16, text: "Turbulence is normal at this altitude. Keep climbing.", category: "nurturing", source: "AIR TRAFFIC CONTROL. Relocated: pilot reassurance as life encouragement. 'At this altitude' implies they've already climbed. The turbulence is a sign of progress, not failure." },
+            { id: 17, text: "Priced to sell. The desperation is load-bearing.", category: "cold", source: "REAL ESTATE EUPHEMISMS. Relocated: listing language where 'priced to sell' reveals the seller's position. 'Load-bearing' is structural engineering crossed with real estate = the desperation is holding the whole thing up." },
+            { id: 18, text: "The sponge didn't rise but the baker wept and that's entertainment.", category: "chaotic", source: "COMPETITIVE BAKING SHOW. Relocated: baking show moment where failure + emotion = compelling TV. Works for: my plan fell apart, I embarrassed myself. The reframe: your disaster is watchable." },
+            { id: 19, text: "Acquired through questionable means. On permanent display.", category: "chaotic", source: "MUSEUM EXHIBIT PLACARD. Relocated: art provenance language applied to a person or situation. The gap between 'questionable means' and 'permanent display' = the audacity of keeping what you shouldn't have." },
+            { id: 20, text: "Full marks for commitment. Deduction for looking at the audience mid-flight.", category: "demanding", source: "GYMNASTICS SCORING. Relocated: judging language where the flaw is seeking approval during the attempt. Works for: should I care what people think, am I performing for others." },
+            { id: 21, text: "Do not substitute. You always substitute. That's why it tastes like that.", category: "cold", source: "RECIPE INSTRUCTIONS GONE WRONG. Relocated: baking instruction as life diagnosis. 'That's why it tastes like that' lands because everyone knows what 'that' refers to in their own situation." },
+            { id: 22, text: "Mayday is for emergencies. This is not that. Adjust.", category: "cold", source: "AIR TRAFFIC CONTROL. Relocated: emergency protocol language to scale-check the asker's panic. Clipped. Unsympathetic. The one-word 'Adjust.' is the instruction." },
+            { id: 23, text: "Move-in ready. Previous owner left in a hurry. Don't ask why.", category: "chaotic", source: "REAL ESTATE EUPHEMISMS. Relocated: listing copy where the red flags are barely hidden. Works for: should I pursue this, is this a good opportunity. The answer is 'yes but also something is wrong here.'" },
+            { id: 24, text: "You added a personal twist nobody asked for. Bold. Possibly fatal.", category: "chaotic", source: "COMPETITIVE BAKING SHOW. Relocated: judge commentary on unauthorized creativity. 'Bold. Possibly fatal.' is the dual-read. Works for: did I go too far, should I have followed the rules." },
+            { id: 25, text: "Restored. Some original features lost in the process. Still on view.", category: "heartfelt", source: "MUSEUM EXHIBIT PLACARD. Relocated: conservation note about artwork applied to a person. 'Some original features lost' = you've changed through what you survived. 'Still on view' = you're still here, still visible, still worth looking at." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

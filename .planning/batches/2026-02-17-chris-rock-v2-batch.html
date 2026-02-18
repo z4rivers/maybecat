@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chris Rock v2 Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Chris Rock v2 Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Method:</strong> Chris Rock LENS (escalation structure, the binary that names the gap, zero diplomatic language) applied through 6 unusual refrigerators: poker terminology, wrestling commentary, weather warnings, car mechanic diagnostics, movie trailer voice, Yelp reviews. Answer-first. No default cat behaviors. No boring-people/drudgery observations (v1 territory). No cat-reports-on-humans (v1 territory). No shelter-cat perspective (v1 territory). Each response is layered to work across many questions. Mix of verdicts + observations across 8+ categories. Cats: Badass, Street, Realist, Elder, Competitive, Feral, Diva, Detective, Reluctant Therapist, Judge.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "All in.", category: "demanding", source: "POKER. \"All in\" — the moment you stop hedging. Two words, complete verdict. Works for: should I tell them, should I quit, should I go. The escalation is in the simplicity — no qualifier, no hedge, no exit." },
+            { id: 2, text: "That noise? That's your transmission. You can keep driving. But you heard it.", category: "wise", source: "CAR MECHANIC. The honest mechanic who tells you what's actually wrong and then lets you decide. Relocated: the diagnosis without the prescription. The \"but you heard it\" is the Rock escalation — starts reasonable (that noise), builds to the obvious truth (you already know)." },
+            { id: 3, text: "FROM THE TOP ROPE.", category: "chaotic", source: "WRESTLING. The announce call when someone commits to the most dramatic possible move. Two-word verdict that works as pure encouragement, pure chaos, or pure warning depending on the question. Absurd commitment energy." },
+            { id: 4, text: "Conditions are favorable for development.", category: "mystical", source: "WEATHER. Actual meteorological language for when a storm MIGHT form. Relocated: the answer is maybe-yes but with scientific detachment. Works for: is this going somewhere, do they like me, will this work out. The clinical language makes the hope underneath funnier." },
+            { id: 5, text: "Would not recommend. Two stars. The second star is for effort.", category: "judgy", source: "YELP REVIEW. The 2-star review structure — not mad enough for 1, too honest for 3. Relocated: verdict on whatever the person is considering. The \"second star is for effort\" is the Rock quiet-moment-after-the-hit." },
+            { id: 6, text: "That's a heel turn and you know it.", category: "cold", source: "WRESTLING. \"Heel turn\" — when the good guy reveals they were the villain all along. Relocated: the cat naming what the person is doing or what was done to them. The \"and you know it\" is Rock's zero-diplomatic-language energy." },
+            { id: 7, text: "In a world where you actually did the thing... you'd already know.", category: "existential", source: "MOVIE TRAILER. \"In a world where...\" structure subverted — the epic framing applied to the person's paralysis. The trailer promises a movie that doesn't exist yet because they haven't started it. Rock escalation: starts with the epic frame, lands on the obvious truth." },
+            { id: 8, text: "Totaled. But still driving. Respect.", category: "heartfelt", source: "CAR MECHANIC. The mechanic's assessment of a car that should not be functional but somehow is. Relocated: describing the asker's current state. Three fragments. The \"Respect\" flips it from diagnosis to admiration. Warm, not a roast." },
+            { id: 9, text: "Called your bluff. You don't have the hand you're pretending to have. Play anyway.", category: "wise", source: "POKER. \"Called your bluff\" — when someone sees through the performance. Relocated: the cat reads you, names it, then tells you to keep going anyway. Rock binary: there's having the hand... and there's playing like you do." },
+            { id: 10, text: "This review has been flagged as suspicious.", category: "cold", source: "YELP REVIEW. The automated Yelp flag that questions authenticity. Relocated: verdict on whatever the person just told the cat. One sentence. The institutional language doing the work of calling someone out without the cat having to say it directly." },
+            { id: 11, text: "Tornado watch. Not a warning yet. But the sky looks like that.", category: "wise", source: "WEATHER. The distinction between watch (conditions exist) and warning (it's happening). Relocated: naming where someone is in their situation — not in crisis yet, but the conditions are there. The \"sky looks like that\" is physical, visual, installs an image." },
+            { id: 12, text: "Tag in someone who cares.", category: "cold", source: "WRESTLING. The tag-team move where you slap your partner's hand and leave. Relocated: the cat's verdict is to bring in backup, because this one's not worth the cat's energy. Works as: dismissal, honest advice to seek real help, or the cat being done with your nonsense." },
+            { id: 13, text: "Five stars. Changed my life. Would come back. Already came back. Can't stop coming back.", category: "chaotic", source: "YELP REVIEW. The unhinged 5-star review that escalates past normal enthusiasm into obsession. Relocated: the verdict on whatever the person is asking about — the escalation IS the answer. Rock energy: starts reasonable (five stars), builds to the obvious (you're addicted)." },
+            { id: 14, text: "One person. One decision. This summer.", category: "demanding", source: "MOVIE TRAILER. The dramatic three-beat trailer structure applied to the asker's mundane situation. Epic framing of whatever they're dealing with. \"This summer\" implies a deadline, urgency, a release date on their life." },
+            { id: 15, text: "The check engine light has been on for a while, hasn't it.", category: "wise", source: "CAR MECHANIC. The mechanic who sees a dashboard lit up like Christmas and knows you've been ignoring it. Relocated: the question is the diagnosis. Not a question mark — a period. Rock escalation: the calm observation that IS the confrontation." },
+            { id: 16, text: "There's folding... and then there's folding with your whole chest like you MEANT to lose.", category: "judgy", source: "POKER + ROCK BINARY. \"Folding\" — giving up the hand. The Rock binary structure: there's X... and then there's Y. Relocated: naming the difference between quitting and whatever the asker is doing, which is performing quitting. Two kinds of giving up." },
+            { id: 17, text: "Severe weather advisory in effect until you figure this out.", category: "demanding", source: "WEATHER. The NWS advisory format — official, institutional, time-bound. Relocated: the cat issuing a formal warning about the asker's situation. The \"until you figure this out\" makes it their responsibility to lift the warning." },
+            { id: 18, text: "Your alignment's off. I can hear it from here.", category: "cold", source: "CAR MECHANIC. Wheel alignment diagnosis — the car pulls to one side. Relocated: the cat hearing something wrong in the question itself. Physical, diagnostic, specific. Dual read: your priorities are crooked, or you're heading somewhere you didn't choose." },
+            { id: 19, text: "The tell is in your left eye.", category: "mystical", source: "POKER. \"Tell\" — the involuntary physical signal that reveals your hand. Relocated: the cat reading the asker's body, not their words. Specific (left eye), physical, and the person will actually touch their face. The response installs a physical action." },
+            { id: 20, text: "Coming to a theater near you. Whether you bought a ticket or not.", category: "existential", source: "MOVIE TRAILER. The trailer's closing beat — release date, inevitability. Relocated: the thing the person is worried about is already in production. \"Whether you bought a ticket or not\" is Rock's zero-diplomacy — it's coming regardless of your opinion." },
+            { id: 21, text: "That's not a finisher. That's an entrance.", category: "heartfelt", source: "WRESTLING. The distinction between a finishing move (it's over) and an entrance (it's starting). Relocated: reframing what the person thinks is an ending as a beginning. Works for: did I ruin it, is it too late, is this over." },
+            { id: 22, text: "Visibility near zero. Proceed anyway.", category: "demanding", source: "WEATHER. Fog advisory language — you can't see, but the road is still there. Relocated: verdict for when someone can't see where they're going. The \"proceed anyway\" is the answer. Two sentences, clinical, warm underneath." },
+            { id: 23, text: "The food was incredible. The service was unforgivable. Three stars.", category: "wise", source: "YELP REVIEW. The perfectly split review where the good and bad cancel out to mediocre. Relocated: describing the asker's situation — part of it is great, part of it is terrible, and the math lands in the middle. The specificity of restaurant language makes the metaphor visceral." },
+            { id: 24, text: "Folded on the river. The next card would have been yours.", category: "existential", source: "POKER. \"Folding on the river\" — quitting at the last possible card. Relocated: the cat telling you that you quit too early. OR telling you what almost happened. The ambiguity of \"would have been\" — hindsight as haunt." },
+            { id: 25, text: "There's the warranty... and then there's what actually breaks.", category: "wise", source: "CAR MECHANIC + ROCK BINARY. The gap between what's covered and what goes wrong. Rock's binary structure naming the distance between the promise and the reality. Works for: relationships, jobs, plans, bodies. The metaphor is a car but the truth is everything." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

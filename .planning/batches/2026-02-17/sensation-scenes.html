@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sensation Responses — Scene Answers</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #fff; margin-bottom: 8px; font-size: 1.6em; }
+  .subtitle { color: #888; margin-bottom: 20px; font-size: 0.95em; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 14px 18px; border-radius: 10px; margin-bottom: 24px; z-index: 100; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; border: 1px solid #1a1a4e; }
+  .stat { font-weight: 600; font-size: 0.95em; }
+  .stat-total { color: #a0a0c0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .section-label { color: #a78bfa; font-size: 1.1em; font-weight: 700; margin: 28px 0 12px; padding: 8px 12px; background: #1e1e3a; border-radius: 6px; border-left: 4px solid #a78bfa; }
+  .item { background: #16213e; border-radius: 10px; padding: 18px; margin-bottom: 14px; border: 1px solid #1a1a4e; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; }
+  .item.cut { border-color: #e94560; opacity: 0.5; }
+  .item.edited { border-color: #ffd93d; }
+  .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .item-num { color: #666; font-size: 0.8em; }
+  .item-cat { font-size: 0.75em; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  .cat-nurturing { background: #1a3a2e; color: #4ecca3; }
+  .cat-chaotic { background: #3a1a2e; color: #e94560; }
+  .cat-wise { background: #1a2e3a; color: #60a5fa; }
+  .cat-adoption { background: #2e2a1a; color: #fbbf24; }
+  .cat-heartfelt { background: #2a1a3a; color: #c084fc; }
+  .item-text { font-size: 1.1em; line-height: 1.5; margin-bottom: 14px; color: #f0f0f0; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85em; transition: all 0.2s; }
+  .btn-keep { background: #1a3a2e; color: #4ecca3; border: 1px solid #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #3a1a1e; color: #e94560; border: 1px solid #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { background: #3a351a; color: #ffd93d; border: 1px solid #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f0f23; color: #f0f0f0; border: 1px solid #ffd93d; border-radius: 6px; padding: 10px; font-size: 1em; min-height: 60px; resize: vertical; font-family: inherit; }
+  .edit-area select { background: #0f0f23; color: #f0f0f0; border: 1px solid #ffd93d; border-radius: 6px; padding: 6px 10px; margin-top: 6px; font-size: 0.9em; }
+  .export-section { margin-top: 40px; padding: 20px; background: #0f0f23; border-radius: 10px; border: 1px solid #1a1a4e; }
+  .export-section h2 { color: #fff; margin-bottom: 12px; }
+  .export-btn { padding: 10px 24px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 1em; margin-bottom: 12px; }
+  .export-btn:hover { background: #3dbb92; }
+  pre { background: #0a0a1a; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; max-height: 400px; overflow-y: auto; color: #c0c0c0; white-space: pre-wrap; }
+  .note { color: #888; font-size: 0.85em; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<h1>Sensation Responses — Scene Answers</h1>
+<p class="subtitle">Shared cat-human moments of pure sensory satisfaction. The response IS the warm cookie.</p>
+
+<div class="stats" id="stats">
+  <span class="stat stat-total">Total: <span id="total">25</span></span>
+  <span class="stat stat-keep">Keep: <span id="kept">0</span></span>
+  <span class="stat stat-cut">Cut: <span id="cuts">0</span></span>
+  <span class="stat stat-edit">Edit: <span id="edits">0</span></span>
+  <span class="stat stat-pending">Pending: <span id="pending">25</span></span>
+</div>
+
+<div class="section-label">Polished Seeds (5)</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (changes only)</h2>
+  <button class="export-btn" onclick="generateExport()">Generate Export JSON</button>
+  <p class="note">Exports kept + edited items. Cuts excluded. Unchanged kept items included since these are new responses.</p>
+  <pre id="export-output">Click "Generate Export JSON" to see output</pre>
+</div>
+
+<script>
+const allItems = [
+  // === SEEDS (original) ===
+  { text: "Cat in your lap, fresh chocolate chip cookies and a good book.", category: "nurturing", seed: true },
+  { text: "Cat is fed. You are fed. Happy full tummies. Time to lick the paws.", category: "nurturing", seed: true },
+  { text: "Cat comes running for that smell of the pizza box first opening too even though cats don't really like pizza.", category: "chaotic", seed: true },
+  { text: "The cat finds lost bread tie under the fridge - just like forgotten cash in an old jeans pocket.", category: "wise", seed: true },
+  { text: "The cat knows when you're matched with the perfect mate.", category: "wise", seed: true },
+
+  // === GENERATED: COZY / NURTURING ===
+  { text: "Cat in your lap, rain on the roof, and the soup is almost done.", category: "nurturing" },
+  { text: "Yes, like the dryer just stopped and the towels are still hot.", category: "nurturing" },
+  { text: "Yes, like the first barefoot step onto warm pavement after a long winter.", category: "nurturing" },
+  { text: "Both of you watching the bird feeder through the window. Same investment. Different stakes.", category: "nurturing" },
+  { text: "Yes, like cold water on a hot day hitting the back of your throat.", category: "nurturing" },
+  { text: "Yes, like thunder outside and every pillow in the house on the couch.", category: "nurturing" },
+  { text: "The whole apartment smells like garlic bread and neither of you has moved in forty minutes.", category: "nurturing" },
+  { text: "Yes, like the exact moment the car heater finally kicks in.", category: "nurturing" },
+  { text: "Both chins resting on the arm of the couch. Both watching nothing. Both fine with it.", category: "nurturing" },
+  { text: "Yes, like getting into a bed someone else already warmed up.", category: "nurturing" },
+  { text: "Your feet are cold. The cat is on your feet. Problem solved in a way no technology can touch.", category: "nurturing" },
+
+  // === GENERATED: THRILL / FORBIDDEN / CHAOTIC ===
+  { text: "Both of you heard the can opener from two rooms away. Same speed. Same focus.", category: "chaotic" },
+  { text: "The cat is on the counter licking butter off the dish you left out. You pretend not to see it. The cat pretends not to see you.", category: "chaotic" },
+  { text: "Cat bolts sideways down the hallway for no reason. You feel it too but your body won\u2019t let you.", category: "chaotic" },
+  { text: "The cat stole the warm spot you left when you got up for water. You both know you\u2019re not getting it back.", category: "chaotic" },
+  { text: "Cat on the bathroom counter drinking from the faucet like it\u2019s a private resort. Same energy as your third glass of wine.", category: "chaotic" },
+  { text: "Cat caught a moth mid-air. Ate it. No hesitation. That\u2019s your answer.", category: "chaotic" },
+  { text: "Cat knocked your phone off the nightstand and now you\u2019re both just lying in the dark. Honestly better.", category: "chaotic" },
+  { text: "Cat dragged the grocery bag into the other room and is inside it now. Sounds like a party in there.", category: "chaotic" },
+  { text: "The cat is eating your cereal. You\u2019re watching. It\u2019s 2 AM. Neither of you will speak of this.", category: "chaotic" }
+];
+
+const container = document.getElementById('items');
+const decisions = {};
+
+let seedSection = true;
+allItems.forEach((item, i) => {
+  if (i === 5 && seedSection) {
+    seedSection = false;
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.textContent = 'Generated: Cozy / Nurturing (11)';
+    container.appendChild(label);
+  }
+  if (i === 16) {
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.textContent = 'Generated: Thrill / Forbidden / Chaotic (9)';
+    container.appendChild(label);
+  }
+
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.id = `item-${i}`;
+  div.innerHTML = `
+    <div class="item-header">
+      <span class="item-num">#${i + 1}${item.seed ? ' (seed)' : ''}</span>
+      <span class="item-cat cat-${item.category}">${item.category}</span>
+    </div>
+    <div class="item-text">${item.text}</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+      <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+      <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+    </div>
+    <div class="edit-area" id="edit-${i}">
+      <textarea id="text-${i}">${item.text}</textarea>
+      <select id="cat-${i}">
+        <option value="nurturing" ${item.category==='nurturing'?'selected':''}>nurturing</option>
+        <option value="chaotic" ${item.category==='chaotic'?'selected':''}>chaotic</option>
+        <option value="wise" ${item.category==='wise'?'selected':''}>wise</option>
+        <option value="adoption" ${item.category==='adoption'?'selected':''}>adoption</option>
+        <option value="heartfelt" ${item.category==='heartfelt'?'selected':''}>heartfelt</option>
+      </select>
+      <br><button class="btn btn-edit" style="margin-top:8px" onclick="saveEdit(${i})">SAVE EDIT</button>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+function decide(i, action) {
+  decisions[i] = { action };
+  const el = document.getElementById(`item-${i}`);
+  el.className = 'item ' + (action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector(`.btn-${action}`).classList.add('active');
+  if (action !== 'edit') document.getElementById(`edit-${i}`).classList.remove('visible');
+  updateStats();
+}
+
+function toggleEdit(i) {
+  const ea = document.getElementById(`edit-${i}`);
+  ea.classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`text-${i}`).value;
+  const cat = document.getElementById(`cat-${i}`).value;
+  decisions[i] = { action: 'edit', text, category: cat };
+  const el = document.getElementById(`item-${i}`);
+  el.className = 'item edited';
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+  updateStats();
+}
+
+function updateStats() {
+  let k=0, c=0, e=0;
+  Object.values(decisions).forEach(d => { if(d.action==='keep') k++; else if(d.action==='cut') c++; else if(d.action==='edit') e++; });
+  document.getElementById('kept').textContent = k;
+  document.getElementById('cuts').textContent = c;
+  document.getElementById('edits').textContent = e;
+  document.getElementById('pending').textContent = allItems.length - k - c - e;
+}
+
+function generateExport() {
+  const result = [];
+  allItems.forEach((item, i) => {
+    const d = decisions[i];
+    if (!d || d.action === 'cut') return;
+    if (d.action === 'edit') {
+      result.push({ text: d.text, category: d.category });
+    } else {
+      result.push({ text: item.text, category: item.category });
+    }
+  });
+  document.getElementById('export-output').textContent = JSON.stringify(result, null, 2);
+}
+</script>
+</body>
+</html>

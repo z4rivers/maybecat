@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daniel Kitson Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daniel Kitson Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Daniel Kitson as creative lens. Five refrigerators: (1) ordinary moments made luminous — the walk home, the last sip, the house sound; (2) what you almost said — the draft unsent, the word swallowed; (3) crude + philosophical chimera — base/physical combined with genuinely profound; (4) fierce tenderness — protecting fragile things, not soft but fierce about gentleness; (5) rejection of cleverness — the plain true thing, no twist. Mostly rhythm and quiet energy with 2-3 crescendos. No default cat behavior anchors. Answer-first method. Spread across 10 categories. Cats: Elder, Realist, Old Soul, Loving, Reluctant Therapist, Pensive, Street, Badass, Doubt, Feral.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "The walk home after is when you'll know.", category: "wise", source: "Fridge: ordinary moments made luminous. The walk home — Kitson's territory of small moments that hold more weight than the event itself. Layered: works for dates, interviews, confrontations, decisions. The 'after' is where truth lives." },
+            { id: 2, text: "The draft is still open. That's its own kind of answer.", category: "existential", source: "Fridge: what you almost said. The unsent message as artifact. Layered: the fact that you haven't sent it IS the information. Works for: should I tell them, should I send it, am I overthinking." },
+            { id: 3, text: "The kettle knows before you do. It starts making noise when something's about to change.", category: "mystical", source: "Fridge: ordinary moments made luminous. Kitchen object as oracle. The kettle's pre-boil rumble as premonition. Physical, specific, domestic. Layered: your body knows, the house knows, the mundane signals the seismic." },
+            { id: 4, text: "You already know. You came here to hear it out loud.", category: "wise", source: "Fridge: rejection of cleverness. The plainest true thing. No twist, no wordplay. Kitson's sincerity-as-surprise. Works across every void category. The surprise IS that it's not clever." },
+            { id: 5, text: "You're sweating through your good shirt for someone who sleeps in theirs.", category: "judgy", source: "Fridge: crude + philosophical chimera. Physical/bodily (sweat) + class observation (good shirt vs. sleep shirt). The effort mismatch named through clothing. Dual-read: dates, job interviews, trying too hard." },
+            { id: 6, text: "Hold on to it. Not everything needs to become a lesson.", category: "heartfelt", source: "Fridge: fierce tenderness. Protecting an experience from being processed into content or growth narrative. Anti-therapy-culture. Kitson's fierce gentleness with fragile things. The thing itself is enough." },
+            { id: 7, text: "Three years from now you'll understand what they meant. That's fine. That's how it works.", category: "wise", source: "Fridge: what you almost said / ordinary moments. Delayed comprehension as a feature, not a bug. Kitson's patience with understanding arriving late. The repetition of 'that's' is rhythm, not filler." },
+            { id: 8, text: "The fridge hum at 2 AM. That's the sound of a life that's yours.", category: "existential", source: "Fridge: ordinary moments made luminous. The specific appliance sound as existential anchor. Alone at 2 AM reframed from lonely to sovereign. Dual-read: comfort or confrontation depending on where the asker is." },
+            { id: 9, text: "It mattered. That's enough.", category: "heartfelt", source: "Fridge: rejection of cleverness. Four words. The plainest possible validation. No twist, no expansion, no clever reframe. Kitson's principle: sincerity is the surprise. Works for: was it worth it, did I waste my time, does anyone care." },
+            { id: 10, text: "You brushed your teeth this morning like nothing happened. That's either brave or unhinged.", category: "chaotic", source: "Fridge: crude + philosophical chimera. Mundane hygiene routine + existential weight. The ordinary act after the extraordinary event. Dual-read: humor (unhinged) and genuine respect (brave). The 'either/or' refuses to resolve." },
+            { id: 11, text: "Whoever made you feel small about this was wrong. Specifically and entirely wrong.", category: "heartfelt", source: "Fridge: fierce tenderness. CRESCENDO. The adverbs do the work — 'specifically' means it's not vague comfort, it's a verdict. 'Entirely' closes the door. Fierce about protecting something fragile. No hedging." },
+            { id: 12, text: "The pause between songs. That's where all the important things live.", category: "poetic", source: "Fridge: ordinary moments made luminous. The gap, the silence, the in-between. Kitson's territory: the space between events is where meaning actually happens. Works for: waiting, transitions, uncertainty." },
+            { id: 13, text: "You swallowed it. It's still in there.", category: "cold", source: "Fridge: what you almost said. Physical (swallowing) + emotional (suppressed truth). Six words. The body as storage for unsaid things. Cold because it names what you didn't want named. Dual-read: literal/physical." },
+            { id: 14, text: "Go. Just go.", category: "demanding", source: "Fridge: rejection of cleverness. Two sentences, three words. Permission stripped of everything except the verb. No justification, no framing. The shortest possible push. Works for: should I leave, should I try, should I show up." },
+            { id: 15, text: "Eat something first. Existential dread hits different on an empty stomach.", category: "wise", source: "Fridge: crude + philosophical chimera. Bodily need (hunger) + philosophical crisis. The practical grounding the abstract. Street Cat meets Reluctant Therapist. 'Hits different' is the only modern inflection — otherwise plain." },
+            { id: 16, text: "The last warm sip of something before it goes cold. That's how long you have.", category: "cold", source: "Fridge: ordinary moments made luminous. Temperature as time metaphor. The specific physical sensation of drinking something that's cooling. Urgency without drama. Works for: should I wait, is it too late, how much time." },
+            { id: 17, text: "You don't have to be good at this. You just have to stay.", category: "heartfelt", source: "Fridge: fierce tenderness. The permission to be bad at something important. Presence over performance. Kitson's core: showing up matters more than showing up well. Works for: new relationships, grief, hard conversations, parenting." },
+            { id: 18, text: "The voicemail you didn't leave is the bravest thing you did today.", category: "wise", source: "Fridge: what you almost said. The unsent/unspoken as an act of courage, not cowardice. Reframe: restraint IS bravery. Layered: could be about an ex, a boss, a parent. The restraint is the action." },
+            { id: 19, text: "Your body figured it out before your brain did. It usually does. Trust the sweat.", category: "wise", source: "Fridge: crude + philosophical chimera. Physical response (sweat) as wisdom. The body as oracle ahead of the mind. 'Trust the sweat' is the landing — crude, physical, grounding." },
+            { id: 20, text: "Quietly. Do it quietly.", category: "demanding", source: "Fridge: rejection of cleverness. An instruction about volume as philosophy. Kitson's quiet register as directive. Dual-read: literally do the thing without announcement, OR do it with gentleness. Four words." },
+            { id: 21, text: "The click of the lock behind you. Home. Everything else can wait.", category: "nurturing", source: "Fridge: ordinary moments made luminous. The specific sound of arriving home. Three sentences that slow down. Physical (click), naming (home), permission (wait). Domestic safety as sanctuary." },
+            { id: 22, text: "I would bite someone for you. Not metaphorically.", category: "heartfelt", source: "Fridge: fierce tenderness. CRESCENDO. The cat speaking. Physical violence as declaration of love. 'Not metaphorically' is the turn — it escalates from sweet to feral. The cat's version of 'I'd take a bullet.'" },
+            { id: 23, text: "Say less than you want to. Then stop one sentence before that.", category: "cold", source: "Fridge: what you almost said. Restraint as strategy, delivered as math. The instruction to subtract twice. Works for: should I tell them how I feel, should I explain, how do I handle this." },
+            { id: 24, text: "Somewhere a door is closing softly so it doesn't wake you. That's love.", category: "poetic", source: "Fridge: ordinary moments made luminous + fierce tenderness. The quiet act of care that's never witnessed. Kitson's core territory: the small thing that turns out to be the big thing. The image installs — you can hear the door." },
+            { id: 25, text: "You're a mess and the mess is load-bearing. Don't clean it up yet.", category: "wise", source: "Fridge: crude + philosophical chimera. CRESCENDO. Engineering language (load-bearing) applied to emotional chaos. The mess as structural necessity. Reframe: your dysfunction is currently functional. Don't optimize what's holding the building up." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

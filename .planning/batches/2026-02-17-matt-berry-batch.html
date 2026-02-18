@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matt Berry Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Matt Berry Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Matt Berry as cat character. Five refrigerators: (1) Grand declarations about small things — scale/content mismatch, (2) Old-world authority on modern problems — anachronistic confidence, (3) Theatrical entrances and exits — arrival/departure energy, (4) Pompous tenderness — bombast drops, something real slips out, (5) Completely wrong but totally confident — terrible advice delivered with authority. Source voice: "self-regarding, pompous, earnest, devoid of self-awareness" + "vulnerability behind all the blustering bravado." ALL CAPS for emphasis = Berry's booming vocal delivery in text. Spread across 9 categories. Cats: Elder, Diva, Karen, Badass, Loving, Doubt, Attention, Reluctant Therapist, Competitive.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "THAT is the question you bring to me? On THIS day? In THIS economy? ...Proceed.", category: "chaotic", source: "Fridge: Grand declarations about small things. Berry's theatrical outrage at being asked, followed by begrudging engagement. The ellipsis before 'Proceed' is the dramatic pause. Works for: any question, the mundane treated as monumental." },
+            { id: 2, text: "I have considered your situation from every conceivable angle and the answer is devastatingly simple. I've forgotten it.", category: "chaotic", source: "Fridge: Completely wrong but totally confident. Berry's pattern of building to a grand reveal that collapses. The buildup does all the work — 'devastatingly simple' promises mastery, 'I've forgotten it' is the trapdoor. Works for: overthinking, decision paralysis." },
+            { id: 3, text: "In my professional opinion — and I am nothing if not professional — you should burn that bridge with CEREMONY.", category: "demanding", source: "Fridge: Old-world authority on modern problems. Berry's self-credentialing mid-sentence + the word CEREMONY elevating destruction to ritual. Dual-read: actual relationship advice AND absurd formality about a bad situation." },
+            { id: 4, text: "I have never once in my LIFE needed anyone. Sit closer.", category: "heartfelt", source: "Fridge: Pompous tenderness. Berry's secret weapon — the mask cracking. The declaration of independence immediately contradicted by the request. Two sentences. The gap between them IS the whole character." },
+            { id: 5, text: "I have arrived. I have assessed. I am leaving. The answer is behind me.", category: "cold", source: "Fridge: Theatrical entrances and exits. Berry sweeping through a room. Four short declarations — arrival, judgment, departure, aftermath. The answer existing in the wake, not the presence. Works for: anything. The non-answer IS the answer." },
+            { id: 6, text: "This is not a DECISION. This is a RECKONING. Make the call.", category: "demanding", source: "Fridge: Grand declarations about small things. Escalating a mundane choice to biblical proportions, then dropping to a three-word directive. The ALL CAPS carry Berry's booming emphasis. Works for: should I text them, should I quit, any decision question." },
+            { id: 7, text: "The timing is perfect. The execution will be flawless. I base this on absolutely nothing.", category: "chaotic", source: "Fridge: Completely wrong but totally confident. Two sentences of total authority, one sentence of total honesty. The reveal in the third sentence reframes everything. Berry's characters who believe their own nonsense." },
+            { id: 8, text: "Send the text with the gravity of a man declaring war. Then put the phone in another room.", category: "wise", source: "Fridge: Old-world authority on modern problems. Anachronistic weight applied to texting. Actually good advice hidden inside the absurd framing — commit fully, then detach. Berry's grand register applied to phone anxiety." },
+            { id: 9, text: "I am a creature of IMMENSE dignity and I would like to be held.", category: "heartfelt", source: "Fridge: Pompous tenderness. The most Berry + most cat line in the batch. IMMENSE dignity is the mask, 'would like to be held' is what's underneath. Works as: the asker's own situation named (projecting strength while needing comfort)." },
+            { id: 10, text: "Announce yourself. Walk in like the building has been WAITING for you. It has.", category: "demanding", source: "Fridge: Theatrical entrances and exits. Berry's entrance energy as life advice. The 'It has' at the end — two words that flip from absurd confidence to genuine reassurance. Dual-read: delusional OR true." },
+            { id: 11, text: "There are those who deliberate. There are those who ACT. And then there is whatever you're doing.", category: "judgy", source: "Fridge: Grand declarations about small things. Classic Berry rule-of-three: two grand categories, then the dismissal. 'Whatever you're doing' is devastating because it refuses to even name it. Works for: procrastination, indecision, overthinking." },
+            { id: 12, text: "I have expertise in PRECISELY this matter. The expertise is unverified but THUNDEROUS.", category: "chaotic", source: "Fridge: Completely wrong but totally confident. Berry's self-credentialing taken to its logical absurd end. 'Unverified but THUNDEROUS' — the volume compensating for the substance. Cat energy: confidence without credentials." },
+            { id: 13, text: "Handle it the way a 1940s jazz club owner would handle an unruly patron. With volume and impeccable posture.", category: "demanding", source: "Fridge: Old-world authority on modern problems. Direct Berry voice reference ('London jazz club owner from the 1940s'). Relocated: the description of Berry becomes the cat's prescription. Physical — volume + posture. Works for: confrontation, standing up for yourself." },
+            { id: 14, text: "Beneath all this MAGNIFICENT bluster I am, frankly, worried about you.", category: "heartfelt", source: "Fridge: Pompous tenderness. 'Vulnerability behind all the blustering bravado' relocated. MAGNIFICENT is doing Berry's vocal work — even the confession of caring is delivered grandly. 'Frankly' is the mask-crack word. Not a roast — a read that's warm." },
+            { id: 15, text: "Exit. Stage left. Leave them wondering if you were ever real.", category: "cold", source: "Fridge: Theatrical entrances and exits. Stage directions as life advice. Three fragments. The third sentence elevates from practical to mythic — 'if you were ever real' turns leaving into performance art. Works for: breakups, quitting, walking away." },
+            { id: 16, text: "You have presented me with a CRISIS. The crisis is that I am slightly uncomfortable with how much I care.", category: "heartfelt", source: "Fridge: Grand declarations + Pompous tenderness (chimera). Karen Cat's maximum drama structure ('This is a CRISIS. The crisis is I'm slightly uncomfortable') relocated into Berry's register but with the twist being genuine feeling instead of selfishness. The pivot is real." },
+            { id: 17, text: "Terrible idea. HISTORIC execution. They'll talk about this for WEEKS.", category: "chaotic", source: "Fridge: Completely wrong but totally confident. Three fragments escalating. Acknowledges it's terrible, then celebrates the style of the terrible. Berry's characters who evaluate aesthetics over ethics. Works for: should I do the thing, is this crazy." },
+            { id: 18, text: "Reply in three days. By candlelight. On stationery. They won't know what to do.", category: "wise", source: "Fridge: Old-world authority on modern problems. Berry's anachronistic lifestyle as actual relationship strategy. Each instruction escalates the absurdity — three days (fine), candlelight (odd), stationery (full time travel). Actually kind of good advice." },
+            { id: 19, text: "I don't DO feelings. What I DO is sit here while you have yours. Take your time. I said TAKE YOUR TIME.", category: "nurturing", source: "Fridge: Pompous tenderness. Berry's bluster masking genuine patience. The repetition of 'TAKE YOUR TIME' — the second time louder, as if annoyed at having to be caring. The cat who won't admit it's comforting you. Four sentences at the max." },
+            { id: 20, text: "Sweep in. Deliver the line. Leave before they can respond. This is basic stagecraft.", category: "cold", source: "Fridge: Theatrical entrances and exits. Stage directions as life instructions. 'Basic stagecraft' is Berry's dismissive expertise — as if everyone should know this. Works for: confrontation, saying the hard thing, confessing feelings." },
+            { id: 21, text: "The AUDACITY of the question. The NERVE of the circumstance. The absolute GALL of Tuesday.", category: "angry", source: "Fridge: Grand declarations about small things. Berry's escalating outrage applied to a day of the week. Rule of three: audacity, nerve, gall — each grander, landing on 'Tuesday' which deflates it all. The mundane as enemy." },
+            { id: 22, text: "Follow your gut. Your gut is wrong but it speaks with CONVICTION and that's what matters.", category: "chaotic", source: "Fridge: Completely wrong but totally confident. Standard advice ('follow your gut') immediately undermined but then re-endorsed for the wrong reason. Berry's values: conviction over correctness. Cat energy: wrong but committed." },
+            { id: 23, text: "This calls for a voice somewhere between Brigadier General and disappointed lounge singer. You have that voice. Use it.", category: "demanding", source: "Fridge: Old-world authority + Found language chimera. Direct Berry description ('voice somewhere between Brigadier General, operatic tenor, and London jazz club owner') relocated as prescription to the asker. The compliment is in 'You have that voice.' The command is 'Use it.'" },
+            { id: 24, text: "I am ABOVE this. I am BEYOND this. I will nonetheless stay up all night thinking about it with you.", category: "heartfelt", source: "Fridge: Pompous tenderness. The best of Berry: two grand declarations of superiority, then the complete collapse into caring. 'Nonetheless' is the hinge word — formal, dignified, contradicting everything before it. Works for: am I overthinking, does this matter, should I let it go." },
+            { id: 25, text: "The performance was EXTRAORDINARY. Unfortunately, the audience was you, alone, rehearsing in the bathroom.", category: "judgy", source: "Fridge: Theatrical entrances and exits + Grand declarations chimera. Berry reviewing your life as theatre criticism. 'EXTRAORDINARY' is genuine praise, then the reveal of the setting deflates it. Mental image that installs. Not mean — affectionate." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Found Language Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Found Language Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Relocated found language from critic/journalist descriptions of comedians. Source file: <code>.planning/finds/comedian-descriptions-found-language.md</code>. Each response traces to a specific phrase — the phrase is the raw material, the cat answer is the relocation. No cat behaviors required; the product context IS the cat. Spread across 8 categories. Cats: Elder, Doubt, Badass, Diva, Street, Reluctant Therapist, Detective, Stoner, Realist, Flirt.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "Silence is the scalpel here. Hold still.", category: "cold", source: "\"silence as her scalpel\" — Tig Notaro description. Relocated: silence as surgical instrument applied to the asker's situation." },
+            { id: 2, text: "You're a lobster whose shell has been removed. Good. Now you can feel things.", category: "wise", source: "\"like a lobster whose shell has been removed\" — Conan on Bamford. Relocated: raw exposure reframed as a feature, not a bug." },
+            { id: 3, text: "Soft lightning. That's what this deserves.", category: "heartfelt", source: "\"soft lightning\" — describing Tig Notaro's punchlines. Relocated: naming the quality of intensity something deserves. Layered: a relationship, an effort, a confrontation." },
+            { id: 4, text: "Be a lighthouse. Just stand there. Emit light.", category: "wise", source: "\"a lighthouse of restraint\" — Tig Notaro stage presence. Relocated: stripped to directive. Works for: should I say something, should I do more, am I enough." },
+            { id: 5, text: "There's a certain feeling when something isn't quite funny and isn't quite sad. That's where you live now.", category: "existential", source: "\"a certain emotion when something isn't quite funny and isn't quite sad\" — Limmy interview. Relocated: naming the liminal emotional space most askers are actually in." },
+            { id: 6, text: "Impeccable posture. Dripping disdain. That's the energy you need.", category: "demanding", source: "\"sitting with impeccable posture, dripping diamonds, dripping disdain\" — Natasha Leggero. Relocated: stripped to the attitude directive. Diamonds removed to make it about bearing, not accessories." },
+            { id: 7, text: "Sharp enough to slice. Soft enough to scar.", category: "cold", source: "\"sticks sharp enough to slice and soft enough to scar\" — Bo Burnham description. Relocated: describing the asker's situation, or what they should be. Dual-read: about them, or about what they're about to say." },
+            { id: 8, text: "Cry in the shower. Punch up. Kiss a priest. In that order.", category: "chaotic", source: "\"satire can cry in the shower, punch up, and still kiss a priest\" — Phoebe Waller-Bridge description. Relocated: life instructions delivered as stage directions. Absurd specificity." },
+            { id: 9, text: "This is a nighttime sneak attack. You won't see it coming.", category: "mystical", source: "\"a camisado — a nighttime sneak attack\" — AV Club on Hannibal Buress. Relocated: the cat's answer describing itself as stealth. Works across: delayed realizations, slow-burn advice." },
+            { id: 10, text: "You're turning panic into poetics. Keep going.", category: "heartfelt", source: "\"turning panic into poetics\" — James Acaster description. Relocated: the cat naming and validating what the asker is doing. Works for: am I overthinking, is this too much, should I stop." },
+            { id: 11, text: "Self-regarding. Pompous. Earnest. Devoid of self-awareness. You'll be fine.", category: "judgy", source: "\"self-regarding, pompous, earnest, devoid of irony or self-awareness\" — Matt Berry character description. Relocated: clinical assessment followed by absurd reassurance. The gap IS the joke." },
+            { id: 12, text: "Murmur it. Mutter it. Leave them giggling through gritted teeth.", category: "demanding", source: "\"murmur, mutter, and leave the world giggling through gritted teeth\" — Sam Morril description. Relocated: delivery instructions for whatever the asker needs to say. Physical, specific." },
+            { id: 13, text: "You're an untied balloon. Fly.", category: "chaotic", source: "\"an untied balloon that had been inflated and immediately released\" — Christopher Reeve on Robin Williams. Relocated: stripped to two sentences. The image does the work. Works for: permission, chaos, letting go." },
+            { id: 14, text: "Vulnerability behind all that blustering bravado. I see it from here.", category: "heartfelt", source: "\"vulnerability behind all the blustering bravado\" — Collider on Matt Berry. Relocated: the cat reading the asker's performance. Warm, not a roast." },
+            { id: 15, text: "What you're feeling is micro-calibrated discomfort. It's by design.", category: "cold", source: "\"micro-calibrated discomfort\" — Ayoade description. Relocated: naming the engineered quality of someone's unease. Works for: is this normal, why does this feel off, are they doing this on purpose." },
+            { id: 16, text: "You're on that thin line between laughing and crying. Good. Stay there.", category: "wise", source: "\"that really thin line between laughing and crying\" — W Magazine on Waller-Bridge. Relocated: the liminal space named and endorsed. Not comfort — presence." },
+            { id: 17, text: "So laid back you've entered another plane of existence. Join me there.", category: "chaotic", source: "\"so laid back that he's entered another plane of existence entirely\" — Hannibal Buress description. Relocated: invitation to radical calm. Stoner Cat meets Elder Cat." },
+            { id: 18, text: "I'm more into strange things and madness and things not really making sense. So yes.", category: "chaotic", source: "\"more into strange things and madness and things escalating and things not really making sense\" — Limmy. Relocated: the cat's aesthetic preference as answer. The 'so yes' does the work." },
+            { id: 19, text: "Forensic wit. That's what's required here.", category: "cold", source: "\"forensic wit\" — W Magazine on Waller-Bridge. Relocated: naming the tool the situation demands. Clinical. Two sentences." },
+            { id: 20, text: "Profound. Crude. Philosophical. Uplifting. That's the only order that matters.", category: "wise", source: "\"profound, crude, philosophical, uplifting\" — Chortle on Daniel Kitson. Relocated: reframed as a sequence, an instruction manual for living. The order creates narrative." },
+            { id: 21, text: "A cold blast of brilliance. That's what you are. Stop asking.", category: "demanding", source: "\"a cold blast of brilliance\" — New Yorker on Bamford. Relocated: the compliment as dismissal. Stop fishing." },
+            { id: 22, text: "Reject ironic detachment. Try sincerity. See what happens.", category: "wise", source: "\"introspective sincerity and rejection of ironic detachment\" — Kitson description. Relocated: challenge to the asker. Works for: should I tell them, is it too much, am I being corny." },
+            { id: 23, text: "Toothless platitudes and bootstrapping pep talks. That's all they're offering you. Walk.", category: "angry", source: "\"toothless platitudes and bootstrapping pep talks\" — Bamford character work description. Relocated: naming what bad advice sounds like. The 'walk' is the actual advice." },
+            { id: 24, text: "Long after it pulls you in with irreverence, it reveals itself as a tragedy. Good luck.", category: "existential", source: "\"long after it's pulled you in with its irreverence, it reveals that it's actually a tragedy\" — Variety on Fleabag. Relocated: describing the asker's situation as narrative structure. The 'good luck' is devastating." },
+            { id: 25, text: "Equal parts chill and chilling. That's the vibe you need.", category: "cold", source: "\"delivery that's equal parts chill and chilling\" — Sam Morril description. Relocated: prescription for how to handle whatever they're facing. Temperature as emotional instruction." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

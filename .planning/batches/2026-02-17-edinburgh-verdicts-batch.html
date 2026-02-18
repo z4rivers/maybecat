@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edinburgh Verdicts Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-type {
+            background: #0f0f1e;
+            color: #ffd93d;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Edinburgh Verdicts Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Edinburgh Fringe found language relocated into VERDICTS. Source file: <code>.planning/finds/edinburgh-fringe-found-language.md</code>. Every response is a clear ANSWER — yes, no, or maybe — delivered with character and evocative Fringe critic language. The person asked a question. The cat answered it. Boom. Done. Spread across 8 categories. Answer types labeled per item.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "Yes. Violently, thrillingly, unrulily yes.", category: "wise", source: "\"thrillingly unruly\" — Philosophy Of The World (The Crush Bar, 2025). Relocated: the critic's admiration becomes the cat's emphatic verdict. Three adverbs stacking velocity.", answerType: "hard yes" },
+            { id: 2, text: "No. But the no sprawls and it stirs.", category: "heartfelt", source: "\"It sprawls but it stirs\" — Nowhere (The Crush Bar, 2025). Relocated: the no itself has emotional texture. Tender refusal that acknowledges the question mattered.", answerType: "soft no" },
+            { id: 3, text: "Absolutely. Ping off every surface at incredible speed. See what sticks.", category: "chaotic", source: "\"pinging off every surface at incredible speed\" — Rob Copland: Gimme (Chortle, 2024). Relocated: physical stage energy becomes life instruction. Chaos as strategy.", answerType: "hard yes" },
+            { id: 4, text: "Maybe. People's reaction to the absence of what they anticipated becomes the fabric. Sit with that.", category: "existential", source: "\"People's reaction to the absence of what they anticipated becomes part of the fabric\" — Nate Kitch (Chortle, 2024). Relocated: anti-comedy principle applied to the asker's situation. The gap IS the answer.", answerType: "genuine maybe" },
+            { id: 5, text: "Yes. Perform as though your life depended on it. It might.", category: "demanding", source: "\"performing as though his life depended on it\" — Rob Copland (Chortle, 2024). Relocated: stripped to directive. The 'it might' turns instruction into stakes.", answerType: "chaotic yes" },
+            { id: 6, text: "No. The standing ovation was immediate. For the other thing.", category: "cold", source: "\"the standing ovation was immediate\" — Rob Copland (Chortle, 2024). Relocated: the applause exists but it's not for you. Devastating redirect.", answerType: "hard no" },
+            { id: 7, text: "Yes, but deceptively casual. Shot through with craft.", category: "wise", source: "\"deceptively casual but shot through with comic craft\" — Rachel Kaly (The Skinny, 2024). Relocated: the yes comes with delivery instructions. How to execute, not just whether to.", answerType: "soft yes" },
+            { id: 8, text: "The answer is dull, but never boring. Think about that.", category: "existential", source: "\"his material's often dull, but never boring\" — Nate Kitch (Chortle, 2024). Relocated: the paradox IS the verdict. Dull and interesting coexisting. Works for: is my life enough, am I settling.", answerType: "maybe that's actually a no" },
+            { id: 9, text: "I hate this. Yes. Don't make me say it twice.", category: "angry", source: "\"I've never seen an audience like this\" — John Robertson (Entertainment Now, 2025). Relocated: the reluctant admission. The cat hates being right. Compressed fury.", answerType: "reluctant yes" },
+            { id: 10, text: "No. Your narrow window only admits nihilistic and upsetting thoughts. Open a different window.", category: "cold", source: "\"his narrow window only admits nihilistic and upsetting thoughts\" — Rob Copland (Chortle, 2024). Relocated: the critic's observation becomes the cat's diagnosis. Window as metaphor for perspective.", answerType: "hard no" },
+            { id: 11, text: "I spent much of it clenched. That's your review.", category: "judgy", source: "\"I spent much of it clenched\" — Chat Sh*t, Get Hit (Exeunt, 2025). Relocated: physical reaction AS verdict. No explanation needed. The body answered.", answerType: "non-answer that IS an answer" },
+            { id: 12, text: "Yes. Drop an Animaniac into an accountancy firm. Be the Animaniac.", category: "chaotic", source: "\"dropping an Animaniac into an accountancy firm\" — Rob Copland (Chortle, 2024). Relocated: the absurd image becomes a life directive. Chaos as professional strategy.", answerType: "chaotic yes" },
+            { id: 13, text: "No. Not a single word wasted. Including this one. Walk.", category: "cold", source: "\"not a single word is wasted, nor a punchline missed\" — Jin Hao Li (The Skinny, 2024). Relocated: economy of language becomes economy of action. The response performs its own advice.", answerType: "hard no" },
+            { id: 14, text: "The comic turns on a dime. So should you. Go.", category: "demanding", source: "\"the comic turns on a dime, or a sixpence\" — Jordan Brookes (The Skinny, 2024). Relocated: stage craft becomes life instruction. Pivot energy. Three sentences, three commands.", answerType: "hard yes" },
+            { id: 15, text: "Maybe. I'm searching frantically for something without a name. You are too.", category: "existential", source: "\"a brilliant routine where he searches frantically for something without a name\" — Rob Copland (Chortle, 2024). Relocated: the nameless search IS the maybe. Shared condition between cat and asker.", answerType: "genuine maybe" },
+            { id: 16, text: "What looks like hesitation is carefully concocted. Trust the awkward.", category: "wise", source: "\"carefully concocted awkwardness\" — Jonah Non Grata (Exeunt, 2025). Relocated: reframing the asker's uncertainty as intentional craft. Your stalling is actually strategy.", answerType: "maybe that's actually a yes" },
+            { id: 17, text: "No. Debris of orphaned material. That's what they're offering you.", category: "angry", source: "\"debris of orphaned material\" — Nate Kitch (Chortle, 2024). Relocated: naming the low quality of what's being presented to the asker. Scraps. Walk away.", answerType: "hard no" },
+            { id: 18, text: "Yes. Bawdy and delivered with a blush. That's how.", category: "heartfelt", source: "\"bawdy comedy delivered with a blush\" — Amy Gledhill (The Arts Desk, 2024). Relocated: delivery instructions that combine boldness with vulnerability. The blush is the point.", answerType: "soft yes" },
+            { id: 19, text: "Yes. Head-spinningly, whiplash-inducingly yes.", category: "chaotic", source: "\"head-spinningly smart\" + \"whiplash-inducing segues\" — Aether (The Crush Bar) + Josh Glanc (Rolling Stone UK). Relocated: two Fringe descriptors fused into a single emphatic verdict.", answerType: "hard yes" },
+            { id: 20, text: "Trying to make sense of what I just witnessed. Give me a minute.", category: "meta", source: "\"Trying to make sense of what I just witnessed\" — John Robertson (Entertainment Now, 2025). Relocated: the critic's stunned reaction becomes the cat's processing time. The delay IS the answer.", answerType: "non-answer that IS an answer" },
+            { id: 21, text: "No. It was like a cult and now you're in the cult. Get out.", category: "cold", source: "\"it was like a cult and now I'm in the cult\" — John Robertson (Entertainment Now, 2025). Relocated: the willing surrender reframed as warning. The cat sees the pattern you don't.", answerType: "hard no" },
+            { id: 22, text: "Yes. But make the funny look utterly effortless.", category: "wise", source: "\"being very funny look utterly effortless\" — Fiona Ridgewell (Rolling Stone UK, 2024). Relocated: the yes plus execution standard. Do it, but make it look easy.", answerType: "soft yes" },
+            { id: 23, text: "Maybe. Constantly in danger of being overwhelmed. But still standing.", category: "existential", source: "\"constantly in danger of being overwhelmed by existentialism\" — Rob Copland (Chortle, 2024). Relocated: the maybe is honest about the threat level. Survival as answer.", answerType: "genuine maybe" },
+            { id: 24, text: "Yes. Messy flair, bracing honesty, zero apologies. Only way this works.", category: "demanding", source: "\"messy flair, meta wit, and bracing honesty\" — Madonna On The Rocks (The Crush Bar, 2025). Relocated: the critic's praise becomes the cat's conditions for approval. Do it this way or don't.", answerType: "hard yes" },
+            { id: 25, text: "The laughs become more sparse. But it loses none of its heart. You know what that means.", category: "heartfelt", source: "\"the laughs become more sparse, but Ends loses none of its heart\" — Ahir Shah (Playbill, 2024). Relocated: describing something losing its fun but not its meaning. The 'you know what that means' makes the asker complete the verdict.", answerType: "maybe that's actually a no" }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id} <span class="item-type">${response.answerType}</span></div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>

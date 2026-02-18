@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Reactions Batch — Feb 17, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #4ecca3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit .stat-value {
+            color: #ffd93d;
+        }
+
+        .item {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item.kept {
+            border-left: 4px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .item.cut {
+            border-left: 4px solid #e94560;
+            background: #2e1a23;
+        }
+
+        .item.edited {
+            border-left: 4px solid #ffd93d;
+            background: #2e2717;
+        }
+
+        .item:hover {
+            border-color: #4ecca3;
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.1);
+        }
+
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .item-source {
+            font-size: 11px;
+            color: #a77bca;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .item-text {
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #f0f0f0;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .item-category {
+            background: #0f0f1e;
+            color: #4ecca3;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .item-status {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .item-status.kept {
+            color: #4ecca3;
+        }
+
+        .item-status.cut {
+            color: #e94560;
+        }
+
+        .item-status.edited {
+            color: #ffd93d;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63450;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #ffd400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-undo {
+            background: #666;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .btn-undo:hover {
+            background: #777;
+        }
+
+        .edit-area {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .edit-area.show {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.2);
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4ecca3;
+            color: #0f0f1e;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #3db892;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #4ecca3;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .export-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .export-section h2 {
+            font-size: 16px;
+            color: #4ecca3;
+        }
+
+        .export-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .export-count span {
+            color: #4ecca3;
+            font-weight: 700;
+        }
+
+        .export-description {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .export-json {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            color: #4ecca3;
+            overflow-x: auto;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .export-json code {
+            color: #4ecca3;
+        }
+
+        .copy-button {
+            background: #4ecca3;
+            color: #0f0f1e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .copy-button:disabled {
+            background: #2d3561;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .instructions {
+            background: #16213e;
+            border-left: 3px solid #ffd93d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d0d0d0;
+        }
+
+        .instructions strong {
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Character Reactions Batch — Feb 17, 2026</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value" id="totalCount">25</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="keptCount">0</div>
+                </div>
+                <div class="stat cut">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="cutCount">0</div>
+                </div>
+                <div class="stat edit">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="editedCount">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="remainingCount">25</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Review each response. Click KEEP to accept, CUT to reject, or EDIT to modify. The export at the bottom shows only kept and edited items — ready to hand to an agent for insertion. <br><br>
+            <strong>Method:</strong> Character energy collisions — 5 wild personality types walk up to the cat, and the cat REACTS as a character in a scene. The dynamic between the questioner's chaotic energy and the cat's personality creates the response. Not advice with flavoring — a living interaction. Each response should work as a layered answer to any question while carrying the charge of the encounter. 5 energy types: Cheech & Chong (stoner/profound), Ali G (confidently wrong), Brittney Broski (screaming chaos bestie), Spacey Yoga Instructor (breathy woo-woo), Sci-Fi Villain (grandiose power monologues). Spread across 8 categories. Cats: Stoner, Doubt, Elder, Badass, Street, Hissy, Diva, Feral, Unimpressed, Reluctant Therapist.
+        </div>
+
+        <div id="items-container"></div>
+
+        <div class="export-section">
+            <div class="export-header">
+                <h2>Responses to Add</h2>
+                <div class="export-count">(<span id="addCount">0</span> items)</div>
+            </div>
+            <p class="export-description">
+                Kept and edited responses only — cuts are not included. Copy and hand to an agent for insertion into oracleResponses.ts.
+            </p>
+            <div class="export-json">
+                <code id="exportJson">[]</code>
+            </div>
+            <button class="copy-button" id="copyBtn" onclick="copyExport()" disabled>Copy to Add</button>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            { id: 1, text: "...wait, say that again but slower. I almost understood the universe for a second.", category: "existential", source: "Cheech & Chong energy — someone slow and giggly brings profundity. Cat syncs up accidentally, gets pulled into the philosophical drift. The pause and the 'almost' do the work. Stoner Cat meets Philosopher Cat." },
+            { id: 2, text: "You're onto something. I forgot what. We both forgot. It was beautiful.", category: "chaotic", source: "Cheech & Chong energy — the contact high. Cat catches the vibe, loses the thought with them, and finds the loss itself meaningful. Four fragments, each shorter. Doubt Cat drifting." },
+            { id: 3, text: "That's either the deepest thing I've ever heard or just noise. Either way I'm moved.", category: "heartfelt", source: "Cheech & Chong energy — cat can't tell if the stoner wisdom is real or gibberish, and is genuinely affected regardless. The 'either way' is the twist — sincerity despite confusion. Reluctant Therapist Cat accidentally charmed." },
+            { id: 4, text: "We've been staring at the same spot on the wall for twenty minutes and honestly this is the most productive I've felt in years.", category: "wise", source: "Cheech & Chong energy — cat gets dragged into the slow pace and discovers it likes it. The productivity reframe is the joke and the truth. Works for: am I wasting time, should I be doing more. Elder Cat gone dreamy." },
+            { id: 5, text: "The answer is... *long pause* ...yeah. Wait, what was the question?", category: "chaotic", source: "Cheech & Chong energy — cat tries to give a straight answer, gets lost in the vibes, delivers anyway. The pause is the contact high taking effect. Stoner Cat fully synced." },
+            { id: 6, text: "You sound very sure for someone who is very wrong. Respect.", category: "judgy", source: "Ali G energy — confidently wrong, performing expertise. Cat sees through the bluff instantly but is impressed by the commitment. The single-word 'Respect' landing after the read. Unimpressed Cat grudgingly admiring." },
+            { id: 7, text: "I've never seen someone commit this hard to a bad idea. You've inspired me.", category: "chaotic", source: "Ali G energy — the bluff is so committed it becomes its own achievement. Cat is genuinely moved by the dedication, not the content. Works for: should I do this, am I being stupid. Street Cat witnessing greatness." },
+            { id: 8, text: "That's not how any of this works but your confidence is doing a lot of heavy lifting. Keep going.", category: "wise", source: "Ali G energy — cat plays along because the confidence itself has become the point. The 'keep going' is permission to fake it till you make it. Badass Cat recognizing hustle." },
+            { id: 9, text: "You just said three things that contradict each other like they were a plan. They might be a plan.", category: "chaotic", source: "Ali G energy — the contradictions aren't a bug, they're a feature the cat starts to believe in. The second sentence turns from roast to genuine possibility. Doubt Cat getting confused by confidence into agreement." },
+            { id: 10, text: "The audacity is immaculate. The logic is missing. Do it anyway.", category: "demanding", source: "Ali G energy — cat gives three verdicts: one compliment, one diagnosis, one command. The structure mirrors the confident wrongness. Works for: is this a bad idea. Diva Cat matching the performance energy." },
+            { id: 11, text: "OKAY I'M CALM. I'M CALM. I'M NOT CALM. Neither are you. We're doing this.", category: "chaotic", source: "Brittney Broski energy — SCREAMING bestie chaos. Cat tries to be the deadpan counterweight, fails immediately, gets swept up. The caps ARE the performance. Hissy Cat losing composure in real time." },
+            { id: 12, text: "Match my energy right now or get out. There is no middle.", category: "demanding", source: "Brittney Broski energy — cat catches the hysteria and escalates PAST the person. Out-dramatics the dramatic. Works for: should I go for it, am I too much. Diva Cat going bigger." },
+            { id: 13, text: "I was going to give you a measured, thoughtful response but you came in too hot and now we're both screaming.", category: "chaotic", source: "Brittney Broski energy — the cat had a plan and the chaotic energy destroyed it. The shift from intention to reality mirrors how the asker probably feels. Reluctant Therapist Cat overwhelmed." },
+            { id: 14, text: "You're a four-alarm fire in a room full of curtains and somehow I'm holding a match. Yes.", category: "chaotic", source: "Brittney Broski energy — cat gets swept up against its will, becomes an accomplice. The image installs — fire, curtains, match. The 'yes' at the end is the cat choosing chaos. Feral Cat joining the blaze." },
+            { id: 15, text: "I just caught your panic like a contact sport. We're both in this now.", category: "heartfelt", source: "Brittney Broski energy — panic as contagion. The cat didn't choose to care but the energy was too strong. 'Contact sport' makes emotion physical and competitive. Works for: am I overreacting. Street Cat accidentally bonding." },
+            { id: 16, text: "Your chakras are... I don't know what chakras are but yours are wrong.", category: "judgy", source: "Spacey yoga instructor energy — breathy, centered, everything is alignment. Cat is deeply suspicious, tries the language, immediately weaponizes it without understanding it. The confidence of ignorance. Unimpressed Cat attempting woo-woo." },
+            { id: 17, text: "You told me to breathe. I've been breathing. This is not the revelation you think it is.", category: "cold", source: "Spacey yoga instructor energy — cat is irritated by being told to do something it already does involuntarily. The deadpan deflation of wellness advice. Works for: should I meditate, should I relax. Badass Cat unimpressed by the obvious." },
+            { id: 18, text: "Align with what? You've been talking for ten minutes and I still don't know what we're aligning.", category: "angry", source: "Spacey yoga instructor energy — cat's patience breaks. The vagueness that yoga culture thrives on meets a cat who needs specificity. The repetition of 'aligning' as accusation. Feral Cat losing it with the woo-woo." },
+            { id: 19, text: "Your calm voice is making me violent. The answer is no.", category: "cold", source: "Spacey yoga instructor energy — the serenity itself becomes the provocation. Cat's reaction reveals that forced calm is its own kind of aggression. Two sentences, temperature contrast. Hissy Cat pushed past the edge by peacefulness." },
+            { id: 20, text: "Something about your energy makes me want to knock a candle off a shelf. Namaste.", category: "chaotic", source: "Spacey yoga instructor energy — cat absorbs just enough of the language to use it wrong. The physical impulse (candle off shelf) is the honest reaction; the 'Namaste' is the stolen costume. The collision of destruction and zen. Street Cat in a yoga studio." },
+            { id: 21, text: "You lost me at 'world domination' but I respect the ambition. I once tried to dominate a paper bag.", category: "wise", source: "Sci-fi villain energy — grandiose power monologue meets a cat whose scale is radically different. The paper bag confession is the cat matching the villain's energy with its own world. The mismatch IS the engine. Elder Cat being honest about scope." },
+            { id: 22, text: "The speech was good. The eye contact was aggressive. I'm going to need you to blink.", category: "judgy", source: "Sci-fi villain energy — cat is critiquing the PERFORMANCE, not the content. Reviewing the villain like a talent show judge. The 'blink' request deflates the grandiosity. Unimpressed Cat as Simon Cowell." },
+            { id: 23, text: "You've been monologuing for a while so I'll just say: yes, you should. Now stop rehearsing and go.", category: "demanding", source: "Sci-fi villain energy — cat cuts through the theatrical buildup to the actual question underneath. The villain was stalling. Works for: should I make a big move, am I ready. Badass Cat seeing through the performance to the fear." },
+            { id: 24, text: "I've already conquered what you're still planning. The difference is I didn't announce it.", category: "cold", source: "Sci-fi villain energy — cat casually one-ups the villain. Reveals that real power doesn't monologue. Works for: should I tell people, should I make it public. Street Cat who already did the thing." },
+            { id: 25, text: "All that dramatic buildup and you're asking ME? That's the most vulnerable thing you've ever done.", category: "heartfelt", source: "Sci-fi villain energy — the cat sees through the grandiosity to the real act of asking. The villain dropped the act by asking a question. The cat names it. Works for: is it weak to ask for help. Reluctant Therapist Cat delivering an accidental gut punch." }
+        ];
+
+        const state = {};
+
+        function initState() {
+            responses.forEach(r => {
+                state[r.id] = { status: 'pending', text: r.text, originalText: r.text };
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = responses.map(response => `
+                <div class="item" id="item-${response.id}" data-status="pending">
+                    <div class="item-number">Item #${response.id}</div>
+                    <div class="item-source">fridge: ${response.source}</div>
+                    <div class="item-text">"${response.text}"</div>
+                    <div class="item-meta">
+                        <span class="item-category">${response.category}</span>
+                        <span class="item-status" id="status-${response.id}">Pending decision</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn-keep" onclick="markKeep(${response.id})">Keep</button>
+                        <button class="btn-cut" onclick="markCut(${response.id})">Cut</button>
+                        <button class="btn-edit" onclick="toggleEdit(${response.id})">Edit</button>
+                    </div>
+                    <div class="edit-area" id="edit-${response.id}">
+                        <textarea id="textarea-${response.id}" placeholder="Edit response text...">"${response.text}"</textarea>
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEdit(${response.id})">Save Edit</button>
+                            <button class="btn-cancel" onclick="cancelEdit(${response.id})">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markKeep(id) {
+            state[id].status = 'kept';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function markCut(id) {
+            state[id].status = 'cut';
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function toggleEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            editArea.classList.toggle('show');
+            if (editArea.classList.contains('show')) {
+                textarea.focus();
+            }
+        }
+
+        function cancelEdit(id) {
+            const editArea = document.getElementById(`edit-${id}`);
+            const textarea = document.getElementById(`textarea-${id}`);
+            textarea.value = `"${state[id].text}"`;
+            editArea.classList.remove('show');
+        }
+
+        function saveEdit(id) {
+            const textarea = document.getElementById(`textarea-${id}`);
+            let newText = textarea.value.trim();
+            if (newText.startsWith('"') && newText.endsWith('"')) {
+                newText = newText.slice(1, -1);
+            }
+            state[id].text = newText;
+            state[id].status = 'edited';
+            const editArea = document.getElementById(`edit-${id}`);
+            editArea.classList.remove('show');
+            updateItemDisplay(id);
+            updateStats();
+            updateExport();
+        }
+
+        function updateItemDisplay(id) {
+            const item = document.getElementById(`item-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const textDisplay = item.querySelector('.item-text');
+
+            item.classList.remove('kept', 'cut', 'edited');
+            item.dataset.status = state[id].status;
+
+            if (state[id].status === 'kept') {
+                item.classList.add('kept');
+                status.className = 'item-status kept';
+                status.textContent = '\u2713 Kept';
+            } else if (state[id].status === 'cut') {
+                item.classList.add('cut');
+                status.className = 'item-status cut';
+                status.textContent = '\u2715 Cut';
+            } else if (state[id].status === 'edited') {
+                item.classList.add('edited');
+                status.className = 'item-status edited';
+                status.textContent = '\u270E Edited';
+                textDisplay.textContent = `"${state[id].text}"`;
+            } else {
+                status.className = 'item-status';
+                status.textContent = 'Pending decision';
+            }
+        }
+
+        function updateStats() {
+            const keptCount = Object.values(state).filter(s => s.status === 'kept').length;
+            const cutCount = Object.values(state).filter(s => s.status === 'cut').length;
+            const editedCount = Object.values(state).filter(s => s.status === 'edited').length;
+            const remainingCount = responses.length - keptCount - cutCount - editedCount;
+
+            document.getElementById('keptCount').textContent = keptCount;
+            document.getElementById('cutCount').textContent = cutCount;
+            document.getElementById('editedCount').textContent = editedCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+        }
+
+        function updateExport() {
+            const toAdd = [];
+
+            Object.keys(state).forEach(id => {
+                const s = state[id];
+                const response = responses.find(r => r.id === parseInt(id));
+
+                if (s.status === 'kept') {
+                    toAdd.push({
+                        text: s.originalText,
+                        category: response.category
+                    });
+                } else if (s.status === 'edited') {
+                    toAdd.push({
+                        text: s.text,
+                        category: response.category
+                    });
+                }
+            });
+
+            const jsonStr = JSON.stringify(toAdd, null, 2);
+            document.getElementById('exportJson').textContent = jsonStr;
+            document.getElementById('addCount').textContent = toAdd.length;
+
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.disabled = toAdd.length === 0;
+        }
+
+        function copyExport() {
+            const jsonText = document.getElementById('exportJson').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('copied');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'Copy to Add';
+                }, 2000);
+            });
+        }
+
+        initState();
+        renderItems();
+        updateStats();
+        updateExport();
+    </script>
+</body>
+</html>
