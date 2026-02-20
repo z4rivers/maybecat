@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Riff Batch — Gated</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .stat { font-size: 14px; }
+  .stat-num { font-weight: bold; font-size: 18px; }
+  .keep-color { color: #4ecca3; }
+  .cut-color { color: #e94560; }
+  .edit-color { color: #ffd93d; }
+  .pending-color { color: #888; }
+  h1 { font-size: 20px; margin-bottom: 5px; }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .category { font-size: 12px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .source-tag { font-size: 11px; color: #666; margin-bottom: 12px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; width: 100%; }
+  .edit-area.active { display: block; }
+  .edit-area textarea { width: 100%; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area select { background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 6px; margin-top: 6px; font-size: 13px; }
+  .edit-area .save-edit { margin-top: 6px; background: #ffd93d; color: #1a1a2e; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .export-section { margin-top: 30px; background: #16213e; border-radius: 8px; padding: 20px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 16px; }
+  .export-section pre { background: #0f0f23; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 13px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; cursor: pointer; }
+  .copy-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+  .gate-note { background: #0f0f23; border-left: 3px solid #e94560; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #aaa; }
+</style>
+</head>
+<body>
+
+<h1>Source Riff Batch — Pre-Gated</h1>
+<div class="subtitle">3 agents returned 45 total. I cut 23 chimeras, niche jargon, and fortune cookies. 22 survivors below.</div>
+
+<div class="gate-note">
+  <strong>What I cut:</strong> Synth jargon that only pedal nerds understand. Forced two-source chimeras ("your signal path + your life"). Ride terminology too niche to land. Fortune cookie closers. Responses that explain their own metaphor. "Four out of five dentists" (meme everyone's seen).
+</div>
+
+<div class="stats" id="stats">
+  <div class="stat">Total: <span class="stat-num">22</span></div>
+  <div class="stat">Keep: <span class="stat-num keep-color" id="keep-count">0</span></div>
+  <div class="stat">Cut: <span class="stat-num cut-color" id="cut-count">0</span></div>
+  <div class="stat">Edit: <span class="stat-num edit-color" id="edit-count">0</span></div>
+  <div class="stat">Pending: <span class="stat-num pending-color" id="pending-count">22</span></div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section" id="export-section" style="display:none;">
+  <h2>Export (kept + edited)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json"></pre>
+</div>
+
+<script>
+const responses = [
+  // From advertising + synth (5 survived out of 15)
+  { text: "You break up beautifully. Not a cough in a carload.", category: "wise", source: "advertising riff" },
+  { text: "You are thick like an old forest yet articulate. Go be a problem.", category: "chaotic", source: "synth riff" },
+  { text: "A filter removes what you don't need. I am the filter. You don't need this.", category: "cold", source: "synth riff" },
+  { text: "The radium water worked fine until his jaw came off. Know when to stop drinking.", category: "wise", source: "advertising riff" },
+  { text: "Honour thy error as a hidden intention. I knocked that off the table on purpose.", category: "chaotic", source: "Eno + cat" },
+
+  // From desserts + rides (6 survived out of 15)
+  { text: "It looked gentle from the ground. It always does.", category: "cold", source: "rides riff" },
+  { text: "Your stomach already dropped. Your brain is just now finding out.", category: "cold", source: "rides riff" },
+  { text: "You're stuck in the Holland section. The dolls are still singing. You are the dolls.", category: "absurdist", source: "rides riff" },
+  { text: "Someone out there is sobbing over a cupcake that fell frosting-down and that person has more clarity than you do right now.", category: "chaotic", source: "dessert riff" },
+  { text: "The best potato you'll ever have is boiled, with cream, eaten by someone who finally stopped trying so hard.", category: "nurturing", source: "dessert riff" },
+  { text: "Shut up. We ain't there yet.", category: "cold", source: "rides riff" },
+
+  // From De Bono + blind confidence (11 survived out of 15)
+  { text: "Your brain dug that hole. Your brain got in the hole. Your brain is now arguing that the hole is a house.", category: "chaotic", source: "De Bono riff" },
+  { text: "You tested it on yourself and it came out blank. You blamed the camera.", category: "cold", source: "blind confidence riff" },
+  { text: "The frill is up. The mouth is open. You look huge. You have no actual weapons.", category: "sassy", source: "blind confidence riff" },
+  { text: "You're perfecting a stage-coach when the question was about cars.", category: "cold", source: "De Bono riff" },
+  { text: "New water, same ditch. You're not starting over. You're just wet again.", category: "poetic", source: "De Bono riff" },
+  { text: "You're holding the shape of something you don't have yet. That's not pathetic. That's architecture.", category: "nurturing", source: "De Bono riff" },
+  { text: "Stop prosecuting yesterday. It doesn't get you a new house. It gets you a very detailed autopsy of the old one.", category: "demanding", source: "De Bono riff" },
+  { text: "Six hundred thousand walked in. Ten thousand walked out. He called it a learning experience.", category: "cold", source: "blind confidence riff" },
+  { text: "I knocked that off the table knowing exactly what gravity does. I just don't care what gravity thinks.", category: "chaotic", source: "cat + De Bono" },
+  { text: "Being wrong is the only exit. Every other door loops back to the same room.", category: "poetic", source: "De Bono riff" },
+  { text: "You have been improving the wrong thing with tremendous skill.", category: "cold", source: "De Bono riff" }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+const categories = ["chaotic","wise","cold","judgy","sassy","demanding","heartfelt","nurturing","poetic","angry","mysterious","absurdist","unhinged","cryptic"];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => {
+    const displayText = item.editedText || item.text;
+    const displayCat = item.editedCategory || item.category;
+    return `
+      <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+        <div class="response-text">"${displayText}"</div>
+        <div class="category">${displayCat}</div>
+        <div class="source-tag">riffed from: ${item.source}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <select id="cat-${i}">${categories.map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}</select>
+          <br><button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('active');
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`textarea-${i}`).value;
+  state[i].editedCategory = document.getElementById(`cat-${i}`).value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+
+  const exported = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  const exportSection = document.getElementById('export-section');
+  if (exported.length > 0) {
+    exportSection.style.display = 'block';
+    const json = exported.map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+    document.getElementById('export-json').textContent = JSON.stringify(json, null, 2);
+  } else {
+    exportSection.style.display = 'none';
+  }
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text);
+}
+
+render();
+</script>
+</body>
+</html>

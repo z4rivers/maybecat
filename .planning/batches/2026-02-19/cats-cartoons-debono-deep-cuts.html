@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cats &times; Cartoons &times; De Bono Deep Cuts &mdash; 2026-02-19</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .item-text { font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .item-meta { font-size: 0.75rem; color: #666; margin-bottom: 1rem; }
+  .actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .btn { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: #fff; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; }
+  .edit-area { display: none; margin-top: 0.5rem; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; font-size: 1.1rem; min-height: 60px; }
+  .item.decided-keep { border-left: 4px solid #4ecca3; }
+  .item.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+  .item.decided-edit { border-left: 4px solid #ffd93d; }
+  #export { background: #0f3460; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; }
+  #export pre { white-space: pre-wrap; font-size: 0.85rem; color: #4ecca3; }
+  #copy-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Cats &times; Cartoons &times; De Bono Deep Cuts</h1>
+  <p style="color:#666;margin:0.5rem 0">Untouched de Bono: Six Action Shoes, Six Value Medals, CoRT tools, concept prison, sur/petition, flowscape, Code Book, challenge technique, eccentric proposals, humor=creativity</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span style="color:#666">Undecided: <span id="undecided-count">0</span></span>
+  </div>
+</div>
+<div id="items">
+
+<div class="item" id="item-1" data-text="Put on the orange boots. This is not a drill." data-category="demanding" data-decision="">
+  <div class="item-text">Put on the orange boots. This is not a drill.</div>
+  <div class="item-meta">Archetype: Feral Cat &middot; Mode: Far Side &middot; De Bono: Six Action Shoes (orange gumboots = emergency) &middot; Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(1,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-2" data-text="You&apos;re not stuck. You built this room yourself and forgot the door." data-category="cold" data-decision="">
+  <div class="item-text">You're not stuck. You built this room yourself and forgot the door.</div>
+  <div class="item-meta">Archetype: Detective Cat &middot; Mode: Daria &middot; De Bono: Concept prison &middot; Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(2,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-3" data-text="Stop competing. Invent a game where you already won." data-category="demanding" data-decision="">
+  <div class="item-text">Stop competing. Invent a game where you already won.</div>
+  <div class="item-meta">Archetype: Competitive Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Sur/petition (create value, don&apos;t fight over existing) &middot; Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(3,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-4" data-text="There&apos;s a number for what you&apos;re feeling but no word. Good." data-category="mystical" data-decision="">
+  <div class="item-text">There's a number for what you're feeling but no word. Good.</div>
+  <div class="item-meta">Archetype: Prophet Cat &middot; Mode: Steven Wright &middot; De Bono: Code Book (numbers for what language can&apos;t describe) &middot; Category: mystical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(4,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-5" data-text="Why are you racing someone who isn&apos;t running." data-category="wise" data-decision="">
+  <div class="item-text">Why are you racing someone who isn't running.</div>
+  <div class="item-meta">Archetype: Unbothered Cat &middot; Mode: Peanuts &middot; De Bono: Sur/petition (running your own race) &middot; Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(5,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-6" data-text="Everything you just said is a plus, a minus, and interesting. Mostly interesting." data-category="chaotic" data-decision="">
+  <div class="item-text">Everything you just said is a plus, a minus, and interesting. Mostly interesting.</div>
+  <div class="item-meta">Archetype: Brainy Cat &middot; Mode: Daria &middot; De Bono: PMI (Plus, Minus, Interesting) &middot; Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(6,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-7" data-text="Your words just described a cage. Congratulations on the architecture." data-category="judgy" data-decision="">
+  <div class="item-text">Your words just described a cage. Congratulations on the architecture.</div>
+  <div class="item-meta">Archetype: Backhanded Support Cat &middot; Mode: Daria &middot; De Bono: Language is an encyclopedia of ignorance &middot; Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(7,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-8" data-text="Wear the pink slippers. This one needs soft feet." data-category="nurturing" data-decision="">
+  <div class="item-text">Wear the pink slippers. This one needs soft feet.</div>
+  <div class="item-meta">Archetype: Loving Cat &middot; Mode: Peanuts &middot; De Bono: Six Action Shoes (pink slippers = empathy) &middot; Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(8,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-9" data-text="The punchline and the breakthrough use the same door." data-category="wise" data-decision="">
+  <div class="item-text">The punchline and the breakthrough use the same door.</div>
+  <div class="item-meta">Archetype: Dark Comedian Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Humor and creativity are structurally identical &middot; Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(9,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-10" data-text="Consider all factors. Now throw half of them away. Those were the wrong ones." data-category="chaotic" data-decision="">
+  <div class="item-text">Consider all factors. Now throw half of them away. Those were the wrong ones.</div>
+  <div class="item-meta">Archetype: Chaos Cat &middot; Mode: Far Side &middot; De Bono: CAF (Consider All Factors) &middot; Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(10,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-11" data-text="Not wrong. Not right. Just not done being wrong yet." data-category="existential" data-decision="">
+  <div class="item-text">Not wrong. Not right. Just not done being wrong yet.</div>
+  <div class="item-meta">Archetype: Resigned Cat &middot; Mode: Peanuts &middot; De Bono: Challenge technique (questioning because there might be a different way) &middot; Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(11,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-12" data-text="You keep describing your prison like it&apos;s real estate." data-category="judgy" data-decision="">
+  <div class="item-text">You keep describing your prison like it's real estate.</div>
+  <div class="item-meta">Archetype: Realist Cat &middot; Mode: Daria &middot; De Bono: Concept prison &middot; Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(12,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-13" data-text="Feed the problem Marmite and see if it calms down." data-category="chaotic" data-decision="">
+  <div class="item-text">Feed the problem Marmite and see if it calms down.</div>
+  <div class="item-meta">Archetype: Kaufman Cat &middot; Mode: Far Side &middot; De Bono: Eccentric proposals (Marmite for Middle East peace) &middot; Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(13,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-14" data-text="Where does this flow. Not where you want it to. Where does it actually flow." data-category="wise" data-decision="">
+  <div class="item-text">Where does this flow. Not where you want it to. Where does it actually flow.</div>
+  <div class="item-meta">Archetype: Philosopher Cat &middot; Mode: Steven Wright &middot; De Bono: Flowscape (mapping where ideas actually go) &middot; Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(14,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-15" data-text="You&apos;re wearing formal shoes to a gumboot situation." data-category="judgy" data-decision="">
+  <div class="item-text">You're wearing formal shoes to a gumboot situation.</div>
+  <div class="item-meta">Archetype: Condescending Parent Cat &middot; Mode: Peanuts &middot; De Bono: Six Action Shoes (wrong shoes for the terrain) &middot; Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(15,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-16" data-text="What if it&apos;s funny. What if the whole thing is actually hilarious." data-category="heartfelt" data-decision="">
+  <div class="item-text">What if it's funny. What if the whole thing is actually hilarious.</div>
+  <div class="item-meta">Archetype: Optimist Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Humor and creativity are structurally identical &middot; Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(16,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-17" data-text="There are six people in this decision. You only asked one." data-category="wise" data-decision="">
+  <div class="item-text">There are six people in this decision. You only asked one.</div>
+  <div class="item-meta">Archetype: Reluctant Therapist Cat &middot; Mode: Peanuts &middot; De Bono: OPV (Other People&apos;s Views) &middot; Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(17,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-18" data-text="You framed this as a problem. Reframe it as a heist." data-category="chaotic" data-decision="">
+  <div class="item-text">You framed this as a problem. Reframe it as a heist.</div>
+  <div class="item-meta">Archetype: Street Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Concept prison (trapped by your own framing) &middot; Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(18,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-19" data-text="10/9. But honestly, kind of a 10/24 too." data-category="meta" data-decision="">
+  <div class="item-text">10/9. But honestly, kind of a 10/24 too.</div>
+  <div class="item-meta">Archetype: Ponder Cat &middot; Mode: Steven Wright &middot; De Bono: Code Book (10/9 = depressed crisis, 10/24 = creative mood) &middot; Category: meta</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(19,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-20" data-text="The only quality check that matters is: does it still scare you." data-category="demanding" data-decision="">
+  <div class="item-text">The only quality check that matters is: does it still scare you.</div>
+  <div class="item-meta">Archetype: Badass Cat &middot; Mode: Daria &middot; De Bono: Six Value Medals (steel = quality values) &middot; Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(20,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-21" data-text="The joke is the same shape as the answer. You just don&apos;t know which one you got." data-category="mystical" data-decision="">
+  <div class="item-text">The joke is the same shape as the answer. You just don't know which one you got.</div>
+  <div class="item-meta">Archetype: Magic Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Humor and creativity are structurally identical &middot; Category: mystical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(21,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-22" data-text="Why not because it&apos;s wrong. Why because maybe there&apos;s a door behind it." data-category="poetic" data-decision="">
+  <div class="item-text">Why not because it's wrong. Why because maybe there's a door behind it.</div>
+  <div class="item-meta">Archetype: Curious Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Challenge technique &middot; Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(22,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-23" data-text="Investigate. Grey sneakers. No verdicts until you&apos;ve walked there." data-category="wise" data-decision="">
+  <div class="item-text">Investigate. Grey sneakers. No verdicts until you've walked there.</div>
+  <div class="item-meta">Archetype: Barncat &middot; Mode: Peanuts &middot; De Bono: Six Action Shoes (grey sneakers = investigate) &middot; Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(23,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-24" data-text="Pay the gang a bonus when the problem leaves your neighborhood." data-category="chaotic" data-decision="">
+  <div class="item-text">Pay the gang a bonus when the problem leaves your neighborhood.</div>
+  <div class="item-meta">Archetype: Street Cat &middot; Mode: Far Side &middot; De Bono: Eccentric proposals (gang bonuses for crime reduction) &middot; Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(24,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-25" data-text="That&apos;s gold values wearing a copper medal. Know the difference." data-category="cold" data-decision="">
+  <div class="item-text">That's gold values wearing a copper medal. Know the difference.</div>
+  <div class="item-meta">Archetype: Judge Cat &middot; Mode: Daria &middot; De Bono: Six Value Medals (gold = human values, copper = perceptual) &middot; Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(25,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-26" data-text="You don&apos;t have a word for this yet. That&apos;s why it&apos;s still alive." data-category="poetic" data-decision="">
+  <div class="item-text">You don't have a word for this yet. That's why it's still alive.</div>
+  <div class="item-meta">Archetype: Deep Artist Cat &middot; Mode: Calvin &amp; Hobbes &middot; De Bono: Language is an encyclopedia of ignorance &middot; Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(26,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-27" data-text="And then what. And then what. And then what. Now decide." data-category="demanding" data-decision="">
+  <div class="item-text">And then what. And then what. And then what. Now decide.</div>
+  <div class="item-meta">Archetype: Danger Cat &middot; Mode: Peanuts &middot; De Bono: C&amp;S (Consequence &amp; Sequel) &middot; Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(27,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-28" data-text="Leave the headlights on. Either you&apos;ll hurry up or you&apos;ll learn to walk." data-category="cold" data-decision="">
+  <div class="item-text">Leave the headlights on. Either you'll hurry up or you'll learn to walk.</div>
+  <div class="item-meta">Archetype: Realist Cat &middot; Mode: Far Side &middot; De Bono: Eccentric proposals (headlights drain = shorter parking) &middot; Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(28,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-29" data-text="The innovation medal is made of glass. Handle it or don&apos;t." data-category="demanding" data-decision="">
+  <div class="item-text">The innovation medal is made of glass. Handle it or don't.</div>
+  <div class="item-meta">Archetype: Boundaries Cat &middot; Mode: Daria &middot; De Bono: Six Value Medals (glass = innovation/creativity values) &middot; Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(29,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-30" data-text="Everything flows somewhere. Even this. Especially this." data-category="heartfelt" data-decision="">
+  <div class="item-text">Everything flows somewhere. Even this. Especially this.</div>
+  <div class="item-meta">Archetype: Loving Cat &middot; Mode: Peanuts &middot; De Bono: Flowscape (everything has a direction it flows to) &middot; Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(30,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+</div>
+<div id="export">
+  <h3>Export (Kept + Edited)</h3>
+  <pre id="export-json">[]</pre>
+  <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').textContent)">Copy JSON</button>
+</div>
+<script>
+function decide(id, decision) {
+  const item = document.getElementById('item-'+id);
+  item.className = 'item decided-'+decision;
+  item.dataset.decision = decision;
+  if(decision==='edit') item.querySelector('.edit-area').style.display='block';
+  else item.querySelector('.edit-area').style.display='none';
+  item.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  item.querySelector('.btn-'+decision).classList.add('active');
+  updateStats(); updateExport();
+}
+function updateStats() {
+  const items = document.querySelectorAll('.item');
+  let k=0,c=0,e=0,u=0;
+  items.forEach(i=>{const d=i.dataset.decision;if(d==='keep')k++;else if(d==='cut')c++;else if(d==='edit')e++;else u++;});
+  document.getElementById('keep-count').textContent=k;
+  document.getElementById('cut-count').textContent=c;
+  document.getElementById('edit-count').textContent=e;
+  document.getElementById('undecided-count').textContent=u;
+}
+function updateExport() {
+  const items = document.querySelectorAll('.item');
+  const kept = [];
+  items.forEach(i=>{
+    const d=i.dataset.decision;
+    if(d==='keep') kept.push({text:i.dataset.text,category:i.dataset.category});
+    else if(d==='edit'){const ta=i.querySelector('textarea');if(ta.value)kept.push({text:ta.value,category:i.dataset.category});}
+  });
+  document.getElementById('export-json').textContent=JSON.stringify(kept,null,2);
+}
+document.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('input',updateExport));
+updateStats();
+</script>
+</body>
+</html>

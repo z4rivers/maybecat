@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daria + Wander Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .stat { font-size: 14px; }
+  .stat-num { font-weight: bold; font-size: 18px; }
+  .keep-color { color: #4ecca3; }
+  .cut-color { color: #e94560; }
+  .edit-color { color: #ffd93d; }
+  .pending-color { color: #888; }
+  h1 { font-size: 20px; margin-bottom: 5px; }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .category { font-size: 12px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; width: 100%; }
+  .edit-area.active { display: block; }
+  .edit-area textarea { width: 100%; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area select { background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 6px; margin-top: 6px; font-size: 13px; }
+  .edit-area .save-edit { margin-top: 6px; background: #ffd93d; color: #1a1a2e; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .export-section { margin-top: 30px; background: #16213e; border-radius: 8px; padding: 20px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 16px; }
+  .export-section pre { background: #0f0f23; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 13px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; cursor: pointer; }
+  .copy-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Daria + Wander</h1>
+<div class="subtitle">18 responses | Voice: Daria energy | Seed: Free wander, no constraints</div>
+
+<div class="stats" id="stats">
+  <div class="stat">Total: <span class="stat-num">18</span></div>
+  <div class="stat">Keep: <span class="stat-num keep-color" id="keep-count">0</span></div>
+  <div class="stat">Cut: <span class="stat-num cut-color" id="cut-count">0</span></div>
+  <div class="stat">Edit: <span class="stat-num edit-color" id="edit-count">0</span></div>
+  <div class="stat">Pending: <span class="stat-num pending-color" id="pending-count">18</span></div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section" id="export-section" style="display:none;">
+  <h2>Export (kept + edited)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json"></pre>
+</div>
+
+<script>
+const responses = [
+  { text: "You're not stuck. You're just standing very still near something you could leave.", category: "wise" },
+  { text: "That was almost brave.", category: "cold" },
+  { text: "The answer is yes but you're going to do the other thing anyway so I don't know why we're both here.", category: "sassy" },
+  { text: "You have the energy of someone who rehearses arguments in the shower and loses.", category: "chaotic" },
+  { text: "You're worth more than the thing you're about to settle for.", category: "nurturing" },
+  { text: "Somewhere a bridge is burning and you're bringing marshmallows. I respect that.", category: "chaotic" },
+  { text: "No.", category: "cold" },
+  { text: "The thing about rock bottom is people keep finding basements.", category: "wise" },
+  { text: "You typed that whole question with your chest. Good.", category: "demanding" },
+  { text: "The sun will rise tomorrow and your problem will still be exactly this stupid. But the sun part is nice.", category: "chaotic" },
+  { text: "I've heard worse plans. Not many. But some.", category: "sassy" },
+  { text: "You smell like someone who's about to make the right decision for the wrong reasons. Those count.", category: "wise" },
+  { text: "Every empire was built by someone who also couldn't sleep at 2am.", category: "poetic" },
+  { text: "Not yet.", category: "cold" },
+  { text: "Your gut knows. Your brain wrote a 6-paragraph rebuttal. Trust the shorter document.", category: "wise" },
+  { text: "I've seen you be brave before. It looked exactly like this — sweaty and uncertain. Worked out fine.", category: "nurturing" },
+  { text: "That's a lot of feelings for a Wednesday.", category: "cold" },
+  { text: "The worst they can say is no. The worst you can do is never ask. Both of those are survivable but only one has a plot.", category: "nurturing" }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+const categories = ["chaotic","wise","cold","judgy","sassy","demanding","heartfelt","nurturing","poetic","angry","mysterious","absurdist","unhinged","cryptic"];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => {
+    const displayText = item.editedText || item.text;
+    const displayCat = item.editedCategory || item.category;
+    return `
+      <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+        <div class="response-text">"${displayText}"</div>
+        <div class="category">${displayCat}${item.editedText ? ' (edited)' : ''}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <select id="cat-${i}">${categories.map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}</select>
+          <br><button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('active');
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`textarea-${i}`).value;
+  state[i].editedCategory = document.getElementById(`cat-${i}`).value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+
+  const exported = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  const exportSection = document.getElementById('export-section');
+  if (exported.length > 0) {
+    exportSection.style.display = 'block';
+    const json = exported.map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+    document.getElementById('export-json').textContent = JSON.stringify(json, null, 2);
+  } else {
+    exportSection.style.display = 'none';
+  }
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text);
+}
+
+render();
+</script>
+</body>
+</html>

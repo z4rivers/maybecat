@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Found Language: Creative Nos & Refusal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    line-height: 1.5;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    background: #1a1a2e;
+    border-bottom: 2px solid #4ecca3;
+    padding: 16px 0;
+    z-index: 100;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    color: #ffd93d;
+    margin-bottom: 4px;
+  }
+  .header p {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: #16213e;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+  .stat-count { color: #ffd93d; font-weight: bold; }
+
+  .section-header {
+    background: #16213e;
+    padding: 14px 20px;
+    margin: 30px 0 16px;
+    border-left: 4px solid #4ecca3;
+    border-radius: 0 8px 8px 0;
+  }
+  .section-header h2 {
+    color: #4ecca3;
+    font-size: 1.3rem;
+  }
+  .section-header .desc {
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-left: 3px solid #333;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .card.starred { border-left-color: #ffd93d; }
+  .card .quote {
+    font-size: 1.15rem;
+    color: #fff;
+    font-weight: 500;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .card .source {
+    color: #888;
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+  }
+  .card .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.flat-refusal { background: #e94560; color: #fff; }
+  .badge.creative-bs { background: #9b59b6; color: #fff; }
+  .badge.righteous-denial { background: #e67e22; color: #fff; }
+  .badge.bureaucratic-shutdown { background: #3498db; color: #fff; }
+  .badge.confident-dodge { background: #1abc9c; color: #fff; }
+  .badge.deadpan-dismissal { background: #95a5a6; color: #fff; }
+  .badge.sass-shutdown { background: #e91e63; color: #fff; }
+  .badge.authority-flex { background: #ff5722; color: #fff; }
+  .badge.cultural-refusal { background: #8bc34a; color: #1a1a2e; }
+  .badge.witness-sass { background: #ff9800; color: #1a1a2e; }
+
+  .star-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: 2px solid #555;
+    color: #555;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .star-btn:hover { border-color: #ffd93d; color: #ffd93d; }
+  .star-btn.active {
+    border-color: #ffd93d;
+    color: #ffd93d;
+    background: rgba(255, 217, 61, 0.15);
+  }
+
+  .export-section {
+    background: #0f0f23;
+    border: 2px solid #4ecca3;
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 40px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+  }
+  .export-list {
+    background: #1a1a2e;
+    padding: 16px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    min-height: 60px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .copy-btn:hover { background: #3db892; }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filter-btn {
+    background: #16213e;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: #4ecca3;
+    color: #4ecca3;
+  }
+  .filter-btn.starred-filter.active {
+    border-color: #ffd93d;
+    color: #ffd93d;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Found Language: Creative Nos & Refusal</h1>
+  <p>Real language mined from traffic stops, courtrooms, corporate emails, politicians, comedians, and pop culture. Raw material for MaybeCat adaptation.</p>
+  <div class="stats">
+    <div class="stat">Total: <span class="stat-count" id="total-count">0</span></div>
+    <div class="stat">Starred: <span class="stat-count" id="starred-count" style="color:#ffd93d">0</span></div>
+  </div>
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn starred-filter" data-filter="starred">Starred Only</button>
+    <button class="filter-btn" data-filter="flat-refusal">Flat Refusal</button>
+    <button class="filter-btn" data-filter="creative-bs">Creative BS</button>
+    <button class="filter-btn" data-filter="righteous-denial">Righteous Denial</button>
+    <button class="filter-btn" data-filter="bureaucratic-shutdown">Bureaucratic Shutdown</button>
+    <button class="filter-btn" data-filter="confident-dodge">Confident Dodge</button>
+    <button class="filter-btn" data-filter="deadpan-dismissal">Deadpan Dismissal</button>
+    <button class="filter-btn" data-filter="sass-shutdown">Sass Shutdown</button>
+    <button class="filter-btn" data-filter="authority-flex">Authority Flex</button>
+    <button class="filter-btn" data-filter="cultural-refusal">Cultural Refusal</button>
+    <button class="filter-btn" data-filter="witness-sass">Witness Sass</button>
+  </div>
+</div>
+
+<div id="cards-container">
+
+<!-- ============================================ -->
+<!-- SECTION 1: TRAFFIC STOP EXCUSES (REAL)       -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Traffic Stop Excuses (Real)</h2>
+  <div class="desc">Actual things people said to cops during traffic stops. Sources: Police1, Cracked, Thought Catalog, Reddit/Quora threads.</div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I wasn't speeding, I just got a haircut and it makes me look fast."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I wasn't speeding, I was qualifying."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I thought the sign I-95 meant the speed limit... glad you didn't catch me over on SR 210 earlier."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Because I'm just all kinds of stupid."</div>
+  <div class="source">17-year-old caught speeding, looked the officer in the eye -- Police1</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My speedometer only goes to 85 and I had my gas pedal pushed all the way to the floor."</div>
+  <div class="source">17-year-old caught doing 101 mph -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I have a cold and when I cough, my foot mashes the pedal."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"He put too much oil in the engine, and he had to drive really fast to burn the extra out."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My car has a recall on it for unexplained acceleration and I'm on my way to get it fixed!"</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My accelerator was broken and it always went that fast, no matter what."</div>
+  <div class="source">Real excuse given to police officer -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My dyslexia was acting up again."</div>
+  <div class="source">Real excuse for misreading speed limit sign -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Duh, I know I was going fast. I was trying to get the snow off my windshield so I could see where I'm going!"</div>
+  <div class="source">Woman caught doing 54 in a 30, snowy conditions -- Police1 survey</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I was just keeping the 2-second buffer time between me and the car behind me."<br>"There was no one behind you."<br>"Good job, huh?"</div>
+  <div class="source">Real traffic stop exchange -- Police1 survey</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">Officer: "Unless you have a pilot's license, you are going to jail."<br>Driver: *hands over pilot license*</div>
+  <div class="source">Driver doing 100 in a 55, got let go -- Police1 survey</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Don't give us tickets, we have donuts."<br>*actually had 24 dozen donuts in the trunk*</div>
+  <div class="source">Real traffic stop -- Thought Catalog / cop stories</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I wasn't on the phone, I was holding a hamburger to my ear."</div>
+  <div class="source">Canadian driver pulled over for phone use -- BuzzFeed / police reports</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm a Wicca. You know, a witch. I'll put a spell on you."</div>
+  <div class="source">Woman pulled over for speeding -- Police1 survey</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">*Hands cop a "Get Out of Jail Free" Monopoly card instead of license and registration*</div>
+  <div class="source">Driver pulled over for drag racing -- got let go with a warning, cop kept the card</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I didn't know I was speeding."</div>
+  <div class="source">Most statistically successful excuse -- carinsurance.com survey (only 12% of people lied)</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"It's not a gun, it's a dildo."</div>
+  <div class="source">Man walking around with holstered object -- turned out to be true -- Thought Catalog</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"It's bird poop."</div>
+  <div class="source">Football player with white powder on his nose -- lab confirmed it WAS bird poop -- Thought Catalog</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"This is catnip."</div>
+  <div class="source">Baggie in glovebox -- tested positive for actual catnip -- Thought Catalog</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: COURTROOM LANGUAGE               -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Courtroom Language</h2>
+  <div class="desc">Real legal objections, judicial verdicts, and procedural commands. Sources: Nevada Courts, Koehler Law, Bored Panda court transcripts.</div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Overruled."</div>
+  <div class="source">Standard judicial ruling -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Sustained."</div>
+  <div class="source">Standard judicial ruling -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Motion denied."</div>
+  <div class="source">Standard judicial ruling -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Sustained; rephrase the question."</div>
+  <div class="source">Standard judicial ruling -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Objection, your Honor. Leading."</div>
+  <div class="source">Standard legal objection -- Nevada Courts</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I object on the grounds that the answer was not responsive."</div>
+  <div class="source">Standard legal objection -- Nevada Courts</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Objection. Relevance."</div>
+  <div class="source">Standard legal objection -- common courtroom procedure</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Objection. Speculation."</div>
+  <div class="source">Standard legal objection -- common courtroom procedure</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Objection. Hearsay."</div>
+  <div class="source">Standard legal objection -- most common criminal court objection</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Move to strike."</div>
+  <div class="source">Attorney requesting testimony be removed from the record -- standard procedure</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You may step down."</div>
+  <div class="source">Judge dismissing a witness -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Will the defendant please rise."</div>
+  <div class="source">Standard courtroom command before sentencing -- Nevada Courts</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I object to that; no predicate has been laid."</div>
+  <div class="source">Legal objection -- Nevada Courts common courtroom phrases</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: COURTROOM SASS (REAL TRANSCRIPTS) -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Courtroom Sass (Real Transcripts)</h2>
+  <div class="desc">Actual exchanges from court transcripts where witnesses destroyed attorneys. Sources: Koehler Law, Best Life, Bored Panda court reports.</div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"How was your first marriage terminated?"<br>"By death."<br>"And by whose death was it terminated?"<br>"Take a guess."</div>
+  <div class="source">Real court transcript -- Koehler Law / Bored Panda</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Doctor, before you performed the autopsy, did you check for a pulse?"<br>"No."<br>"So the patient was alive when you began the autopsy?"<br>"No."<br>"How can you be so sure?"<br>"Because his brain was sitting on my desk in a jar."</div>
+  <div class="source">Real court transcript -- widely cited in legal humor collections</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Could the patient have still been alive nevertheless?"<br>"It is possible that he could have been alive and practicing law somewhere."</div>
+  <div class="source">Real court transcript -- continuation of autopsy exchange -- Koehler Law</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Now sir, I'm sure you are an intelligent and honest man."<br>"Thank you. If I weren't under oath, I'd return the compliment."</div>
+  <div class="source">Real court transcript -- Best Life / legal humor</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Were you present when your picture was taken?"<br>"Are you shitting me?"</div>
+  <div class="source">Real court transcript -- Bored Panda court reports</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"The youngest son, the twenty-year-old, how old is he?"<br>"He's 20, much like your IQ."</div>
+  <div class="source">Real court transcript -- Bored Panda court reports</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"All your responses must be oral, OK? What school did you go to?"<br>"Oral."</div>
+  <div class="source">Real court transcript -- Koehler Law</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"What gear were you in at the moment of impact?"<br>"Gucci sweats and Reeboks."</div>
+  <div class="source">Real court transcript -- Koehler Law</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Did you blow your horn or anything?"<br>"After the accident? Sure, I played for ten years."</div>
+  <div class="source">Real court transcript -- Koehler Law</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"What was the first thing your husband said when he woke that morning?"<br>"He said, 'Where am I, Cathy?'"<br>"And why did that upset you?"<br>"My name is Susan."</div>
+  <div class="source">Real court transcript -- widely cited in legal humor</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"How many of your autopsies have you performed on dead people?"<br>"All of them. The live ones put up too much of a fight."</div>
+  <div class="source">Real court transcript -- Best Life</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Did you actually pass the bar exam?"</div>
+  <div class="source">Witness to attorney after absurd question about dying in one's sleep -- real court transcript</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<div class="card" data-energy="witness-sass">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"She had three children, right? How many were boys?"<br>"None."<br>"Were there any girls?"<br>"I think I need a different attorney."</div>
+  <div class="source">Real court transcript -- Bored Panda</div>
+  <div class="meta"><span class="badge witness-sass">Witness Sass</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: COURTROOM CINEMA                 -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Courtroom Cinema</h2>
+  <div class="desc">Iconic movie/TV courtroom moments. Peak authority energy.</div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You can't handle the truth!"</div>
+  <div class="source">Col. Nathan Jessup (Jack Nicholson) -- A Few Good Men (1992)</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You're out of order! You're out of order! The whole trial is out of order!"</div>
+  <div class="source">Arthur Kirkland (Al Pacino) -- ...And Justice for All (1979)</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Don't pee on my leg and tell me it's raining."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy (TV, 1996-2021)</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Beauty fades. Dumb is forever."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm speaking. When my mouth moves, yours stops."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"If it doesn't make sense, it's not true."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Do you come from a long line of idiots?"</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Don't try to teach a pig to sing. It doesn't work and it annoys the pig."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 5: THE NARCISSIST'S PRAYER / DARVO  -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>The Language of Righteous Denial</h2>
+  <div class="desc">The Narcissist's Prayer, DARVO patterns, and the language of people who KNOW they're wrong but refuse to admit it. Sources: thelifedoctor.org, Medium, psychology sites.</div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"That didn't happen.<br>And if it did, it wasn't that bad.<br>And if it was, that's not a big deal.<br>And if it is, that's not my fault.<br>And if it was, I didn't mean it.<br>And if I did, you deserved it."</div>
+  <div class="source">The Narcissist's Prayer -- Dayna Craig (widely cited in psychology)</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You must have misunderstood."</div>
+  <div class="source">Classic gaslighting phrase -- workplace psychology literature</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You're too sensitive."</div>
+  <div class="source">Classic minimization / gaslighting -- widely documented</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You know I don't mean it that way!"</div>
+  <div class="source">Classic DARVO deflection -- gaslighting literature</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"The deadline was always today."</div>
+  <div class="source">Workplace gaslighting -- BetterUp / workplace psychology</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Moral indignation is jealousy with a halo."</div>
+  <div class="source">H.G. Wells -- on righteous indignation</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"If you can prove you're a victim, all rules are off. You can lash out at people. You don't have to be accountable for anything."</div>
+  <div class="source">Brandon Stanton (Humans of New York) -- on why people love righteous indignation</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Watch the too indignantly righteous. Before long you will find them committing or condoning the very offence which they have so fiercely censured."</div>
+  <div class="source">Sri Aurobindo -- on righteous indignation</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 6: BUREAUCRATIC REFUSAL             -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Bureaucratic Refusal</h2>
+  <div class="desc">How institutions say no. Corporate email, customer service, HR speak. Sources: Coburg Banks, Inc., CNBC, Fast Company, Showpo.</div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Per my last email."</div>
+  <div class="source">Most passive-aggressive email phrase -- real meaning: "Did you even read what I wrote?" -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Reattached for your convenience."</div>
+  <div class="source">Real meaning: "I won't redo your work. Be more diligent." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"As no doubt you are aware..."</div>
+  <div class="source">Real meaning: "Denying knowledge now will look foolish." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Please advise."</div>
+  <div class="source">Real meaning: "Will you actually respond to me?" -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Going forward, I would prefer that you..."</div>
+  <div class="source">Real meaning: "You made a mistake. Don't repeat it." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Thanks in advance."</div>
+  <div class="source">Real meaning: "You must comply." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Friendly reminder."</div>
+  <div class="source">Real meaning: "It's not friendly. You're overdue." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Just checking in."</div>
+  <div class="source">Real meaning: "Where's my update? Speed things up." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Correct me if I'm wrong..."</div>
+  <div class="source">Real meaning: "Stop changing your story." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Let me clarify."</div>
+  <div class="source">Real meaning: "This should be obvious to anyone." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Not sure this was meant for me."</div>
+  <div class="source">Real meaning: "This isn't my responsibility." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Apologies for my delayed response."</div>
+  <div class="source">Real meaning: "This isn't my priority." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Do let me know if I misunderstood."</div>
+  <div class="source">Real meaning: "I'm confident in my understanding." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">":)"</div>
+  <div class="source">Real meaning: "You've genuinely upset me." -- Coburg Banks</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Let's circle back."</div>
+  <div class="source">Corporate version of "We'll see" -- real meaning: "I'll avoid this topic until there's no escape." -- Allwork</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm a little confused."</div>
+  <div class="source">"Absolute rage masked as a professional pleasantry." -- workplace psychology</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Your call is important to us. Please continue to hold."</div>
+  <div class="source">Universal customer service hold message -- real meaning: corporate gaslighting</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"We appreciate your patience."</div>
+  <div class="source">Customer service -- what they say when they know you've been waiting an hour</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"After careful consideration, we regret to inform you..."</div>
+  <div class="source">Standard corporate/academic rejection letter opening -- universal form</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"We'll keep your resume on file."</div>
+  <div class="source">Universal hiring rejection -- real meaning: "We will not."</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 7: LUMBERGH / OFFICE SPACE          -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Passive-Aggressive Boss Energy</h2>
+  <div class="desc">Bill Lumbergh from Office Space and the language of bosses who frame demands as requests. Source: Office Space (1999), IMDb.</div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Yeahhh, I'm gonna need you to go ahead and come in tomorrow. So if you could be here around 9, that would be great. Mmmkay?"</div>
+  <div class="source">Bill Lumbergh (Gary Cole) -- Office Space (1999)</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"If you could go ahead and pack up your stuff and move it down there, that would be terrific. OK?"</div>
+  <div class="source">Bill Lumbergh -- Office Space (1999)</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I would prefer that she ask me for my permission so I could say no. I like saying no. It lowers their enthusiasm."</div>
+  <div class="source">Ron Swanson (Nick Offerman) -- Parks and Recreation</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 8: COMEDIAN BITS                    -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Comedian Bits About Authority</h2>
+  <div class="desc">Standup lines about dealing with cops, authority, and the absurd. Sources: Chris Rock, Dave Chappelle, John Mulaney, Mitch Hedberg, Steven Wright.</div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"If the police have to come get you, they're bringing an ass-kicking with them."</div>
+  <div class="source">Chris Rock -- "How Not to Get Your Ass Kicked by the Police" (2007)</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"There are so many amendments in the constitution of the United States of America! I can only choose one! I plead the fif! FIVE! One, two, three, four, FIF!"</div>
+  <div class="source">Tron (Dave Chappelle) -- Chappelle's Show, "The Plead the Fifth" sketch</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"One black coffee."</div>
+  <div class="source">John Mulaney -- "The Comeback Kid," describing his father pulling into McDonald's with a van full of cheering children and ordering a single black coffee for himself</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I used to do drugs. I still do, but I used to, too."</div>
+  <div class="source">Mitch Hedberg -- Strategic Grill Locations (1999)</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"An escalator can never break, it can only become stairs. Sorry for the convenience."</div>
+  <div class="source">Mitch Hedberg -- Mitch All Together (2003)</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My fake plants died because I did not pretend to water them."</div>
+  <div class="source">Mitch Hedberg</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I intend to live forever. So far, so good."</div>
+  <div class="source">Steven Wright</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Everywhere is walking distance if you have the time."</div>
+  <div class="source">Steven Wright</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"If at first you don't succeed, destroy all evidence that you tried."</div>
+  <div class="source">Steven Wright</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Depression is merely anger without enthusiasm."</div>
+  <div class="source">Steven Wright</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Here's your sign."</div>
+  <div class="source">Bill Engvall -- "Here's Your Sign" routine, said after someone asks an obviously stupid question</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 9: POLITICAL DODGES                 -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Political Dodges & Non-Answers</h2>
+  <div class="desc">How politicians never answer the question. Sources: NPR, FINN Agency (Peter Bull research), Live Science, Wharton.</div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I don't recall."</div>
+  <div class="source">The single most common phrase in congressional testimony when people want to avoid perjury</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I plead the Fifth."</div>
+  <div class="source">Fifth Amendment right against self-incrimination -- Martin Shkreli famously used before Congress</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"No comment."</div>
+  <div class="source">The universal refusal to engage -- used by politicians, celebrities, and suspects alike</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm glad you asked that. What I think the American people really want to know is..."</div>
+  <div class="source">The classic political pivot -- debate coaches call this "the pivot" -- 70% of debate questions are dodged this way (NPR)</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"That's a hypothetical, and I don't deal in hypotheticals."</div>
+  <div class="source">Most popular politician evasion technique: "attacking the question" -- Peter Bull research (FINN Agency)</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I think what's really important here is..."</div>
+  <div class="source">Standard political redirect -- acknowledges nothing, pivots to talking points</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Well, what about..."</div>
+  <div class="source">The whataboutism pivot -- points out perceived hypocrisy to avoid answering</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I haven't read any news coverage about that."</div>
+  <div class="source">Tennessee Gov. Bill Lee, when asked about Trump admitting he lied about COVID -- Cowboy State Daily</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I can't speak for someone else."</div>
+  <div class="source">Standard political refusal technique -- Peter Bull research category: "Refusing to answer"</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You'll have to wait and see."</div>
+  <div class="source">Standard political refusal technique -- Peter Bull research category: "Refusing to answer"</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 10: POP CULTURE DISMISSALS          -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Pop Culture Dismissals</h2>
+  <div class="desc">Iconic movie/TV lines of refusal, denial, and not giving a damn. Sources: IMDb, Wikipedia, cultural dictionaries.</div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Frankly, my dear, I don't give a damn."</div>
+  <div class="source">Rhett Butler (Clark Gable) -- Gone with the Wind (1939). AFI's #1 movie quote of all time.</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"No soup for you!"</div>
+  <div class="source">The Soup Nazi -- Seinfeld, "The Soup Nazi" (S7E6, 1995). Based on real NYC soup stand owner Al Yeganeh.</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Bye, Felicia."</div>
+  <div class="source">Craig (Ice Cube) -- Friday (1995). Dismissing neighborhood moocher. Now the universal casual goodbye.</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Talk to the hand, 'cause the face ain't listening."</div>
+  <div class="source">Popularized by Martin (TV show, early 1990s). Later used by Terminator T-800 in T3 (2003).</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="cultural-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Ugh, as if!"</div>
+  <div class="source">Cher Horowitz (Alicia Silverstone) -- Clueless (1995). Defined an entire generation's dismissal vocabulary.</div>
+  <div class="meta"><span class="badge cultural-refusal">Cultural Refusal</span></div>
+</div>
+
+<div class="card" data-energy="cultural-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Whatever." *makes W with fingers*</div>
+  <div class="source">Amber (Elisa Donovan) -- Clueless (1995). Normalized "whatever" as a complete sentence.</div>
+  <div class="meta"><span class="badge cultural-refusal">Cultural Refusal</span></div>
+</div>
+
+<div class="card" data-energy="righteous-denial">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I reject your reality and substitute my own."</div>
+  <div class="source">Adam Savage -- MythBusters. Originally from The Dungeonmaster (1984). The ultimate delusional confidence line.</div>
+  <div class="meta"><span class="badge righteous-denial">Righteous Denial</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"It's not denial. I'm just selective about the reality I accept."</div>
+  <div class="source">Bill Watterson -- Calvin & Hobbes</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Denial ain't just a river in Egypt."</div>
+  <div class="source">Attributed to Mark Twain (likely apocryphal)</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"The lie detector determined that was a lie."</div>
+  <div class="source">Maury Povich -- Maury (TV, 1991-2022)</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"You are NOT the father."</div>
+  <div class="source">Maury Povich -- Maury (TV). The definitive televised verdict.</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"The lion does not concern himself with the opinions of the sheep."</div>
+  <div class="source">Tywin Lannister -- Game of Thrones / George R.R. Martin, A Song of Ice and Fire</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I said what I said."</div>
+  <div class="source">NeNe Leakes -- Real Housewives of Atlanta. Now the universal "I stand by it" phrase.</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Not my circus, not my monkeys."</div>
+  <div class="source">Polish proverb ("Nie moj cyrk, nie moje malpy"). Went viral 2010s through self-help communities and memes.</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="cultural-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Life moves pretty fast. If you don't stop and look around once in a while, you could miss it."</div>
+  <div class="source">Ferris Bueller (Matthew Broderick) -- Ferris Bueller's Day Off (1986)</div>
+  <div class="meta"><span class="badge cultural-refusal">Cultural Refusal</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I can't come to the door right now. I'm afraid that in my weakened condition, I could take a nasty spill down the stairs and subject myself to further school absences."</div>
+  <div class="source">Ferris Bueller -- Ferris Bueller's Day Off (1986). The art of the elaborate excuse.</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="cultural-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm not going to sit on my ass as the events that affect me unfold to determine the course of my life. I'm going to take a stand. I'm going to defend it. Right or wrong, I'm going to defend it."</div>
+  <div class="source">Cameron Frye -- Ferris Bueller's Day Off (1986)</div>
+  <div class="meta"><span class="badge cultural-refusal">Cultural Refusal</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 11: ULTRA-SHORT DEFINITIVE NOS      -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Ultra-Short Definitive Nos</h2>
+  <div class="desc">Single words and micro-phrases that shut everything down. Maximum authority, minimum syllables.</div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Denied."</div>
+  <div class="source">Standard legal/military/bureaucratic -- the one-word shutdown</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Declined."</div>
+  <div class="source">Credit card terminal language / formal refusal</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Next."</div>
+  <div class="source">The DMV, casting directors, deli counters -- moving on without acknowledgment</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Pass."</div>
+  <div class="source">Card games / casual refusal -- implies the offer wasn't worth considering</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Hard pass."</div>
+  <div class="source">Modern intensified version of "pass" -- implies visceral rejection</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Nah."</div>
+  <div class="source">Casual, devastating. More dismissive than "no" because it doesn't even warrant full articulation.</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Absolutely not."</div>
+  <div class="source">The formal emphatic no -- "no" with a running start</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Not today, Satan."</div>
+  <div class="source">Bianca Del Rio -- RuPaul's Drag Race. The refusal that implies cosmic stakes.</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"That's gonna be a no from me, dawg."</div>
+  <div class="source">Randy Jackson -- American Idol (2002-2013). The casual televised no.</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Negative."</div>
+  <div class="source">Military/radio communication -- clinical, no room for appeal</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Dismissed."</div>
+  <div class="source">Courtroom / military -- you don't just get a no, you get sent away</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Request denied."</div>
+  <div class="source">Military/bureaucratic -- formal, final, no negotiation</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Insufficient funds."</div>
+  <div class="source">ATM / banking -- the machine doesn't care about your feelings</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Access denied."</div>
+  <div class="source">Computer systems -- the digital bouncer</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 12: SOUTHERN & CULTURAL POLITENESS   -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Polite Savagery</h2>
+  <div class="desc">Southern phrases, "bless your heart" energy, and other ways to destroy someone while smiling. Sources: StyleBlueprint, cultural dictionaries.</div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Bless your heart."</div>
+  <div class="source">Southern US phrase -- usually means "you're not the smartest" disguised as sympathy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Well, isn't that precious."</div>
+  <div class="source">Southern phrase -- rarely means what it sounds like</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"His elevator doesn't go all the way to the top floor, if you know what I mean. But we just love him to death."</div>
+  <div class="source">Southern US -- calling someone stupid while technically being complimentary</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"With all due respect..."</div>
+  <div class="source">Universal preface meaning "I'm about to be very disrespectful"</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 13: REJECTION LETTER ENERGY         -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Rejection Letter Energy</h2>
+  <div class="desc">Famous and creative rejections. When institutions and individuals make "no" an art form. Sources: Mental Floss, LinkedIn, JobMob.</div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"After careful consideration, I regret to inform you that I am unable to accept your refusal to offer me a position in your department."</div>
+  <div class="source">Famous response to academic rejection letter -- reversing rejection letter language back at sender</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">Sub Pop Records addressed every rejected artist as "Loser" in identical form rejection letters.</div>
+  <div class="source">Sub Pop Records (label that discovered Nirvana, Soundgarden) -- 1980s-90s mass rejection strategy</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"We at NBC's Saturday Night do accept and read nude photographs."</div>
+  <div class="source">Lorne Michaels -- early SNL rejection letter to unsolicited writers</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">MAD Magazine's rejection letter encouraged writers to send even more material... so that it could be rejected again.</div>
+  <div class="source">Al Feldstein, MAD Magazine editor -- famous creative rejection</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 14: GOVERNMENT / AUTHORITY QUOTES    -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Government & Authority</h2>
+  <div class="desc">Ron Swanson energy. The language of people who control things and don't care. Sources: Parks and Rec, political commentary.</div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"My idea of a perfect government is one guy who sits in a small room at a desk, and the only thing he's allowed to decide is who to nuke."</div>
+  <div class="source">Ron Swanson -- Parks and Recreation</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I like Tom. He doesn't do a lot of work around here. He shows zero initiative. He's not a team player. He's never wanted to go that extra mile. Tom is exactly what I'm looking for in a government employee."</div>
+  <div class="source">Ron Swanson -- Parks and Recreation</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="bureaucratic-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"This is your lunch. You should be able to do whatever you want with this, right? But here I come, the government, and I get to take 40% of your lunch."</div>
+  <div class="source">Ron Swanson explaining taxes to a child -- Parks and Recreation</div>
+  <div class="meta"><span class="badge bureaucratic-shutdown">Bureaucratic Shutdown</span></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 15: MISCELLANEOUS GEMS              -->
+<!-- ============================================ -->
+
+<div class="section-header">
+  <h2>Miscellaneous Gems</h2>
+  <div class="desc">Found language that doesn't fit neatly but hits hard.</div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I'm going to make him an offer he can't refuse."</div>
+  <div class="source">Don Corleone -- The Godfather (1972). Refusal framed as inevitability.</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Not that I condone fascism, or any -ism for that matter. -Ism's in my opinion are not good. A person should not believe in an -ism, he should believe in himself."</div>
+  <div class="source">Ferris Bueller -- Ferris Bueller's Day Off (1986)</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Why? It's not like he'll remember you."</div>
+  <div class="source">John Mulaney's father, when told they should go meet Bill Clinton -- "The Comeback Kid"</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="authority-flex">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Only 47% of all questions posed within the context of a political interview are given a concrete answer."</div>
+  <div class="source">Peter Bull research -- FINN Agency. Politicians dodge more than half of all questions.</div>
+  <div class="meta"><span class="badge authority-flex">Authority Flex</span></div>
+</div>
+
+<div class="card" data-energy="sass-shutdown">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"What a nauseating prospect."</div>
+  <div class="source">Witness for the Prosecution (1957) -- the elegant reject</div>
+  <div class="meta"><span class="badge sass-shutdown">Sass Shutdown</span></div>
+</div>
+
+<div class="card" data-energy="creative-bs">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"On the Greek calends."</div>
+  <div class="source">Ancient Roman phrase meaning "never" -- because the Greek calendar had no calends. Old-school way to say no.</div>
+  <div class="meta"><span class="badge creative-bs">Creative BS</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I replaced the headlights on my car with strobe lights, so it looks like I'm the only one moving."</div>
+  <div class="source">Steven Wright -- the refusal to accept physics</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="deadpan-dismissal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"A lot of people are afraid of heights. Not me, I'm afraid of widths."</div>
+  <div class="source">Steven Wright -- refusing the obvious interpretation of reality</div>
+  <div class="meta"><span class="badge deadpan-dismissal">Deadpan Dismissal</span></div>
+</div>
+
+<div class="card" data-energy="confident-dodge">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"I only do one thing at a time; otherwise, I get confused and then I can't trick you."</div>
+  <div class="source">Judge Judy Sheindlin -- Judge Judy</div>
+  <div class="meta"><span class="badge confident-dodge">Confident Dodge</span></div>
+</div>
+
+<div class="card" data-energy="flat-refusal">
+  <button class="star-btn" onclick="toggleStar(this)">&#9733;</button>
+  <div class="quote">"Hold time is greater than one hour."</div>
+  <div class="source">Real automated message -- Massachusetts DMV customer service hold line (worst in nation)</div>
+  <div class="meta"><span class="badge flat-refusal">Flat Refusal</span></div>
+</div>
+
+</div><!-- end cards-container -->
+
+<!-- ============================================ -->
+<!-- EXPORT SECTION                              -->
+<!-- ============================================ -->
+
+<div class="export-section">
+  <h2>Starred Quotes (Export)</h2>
+  <p style="color:#888; margin-bottom:12px;">Star your favorites above. They'll appear here as a simple list for copy/paste.</p>
+  <div class="export-list" id="export-list">No items starred yet.</div>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+  // Load starred state from localStorage
+  const STORAGE_KEY = 'found-language-creative-nos-stars';
+
+  function loadStars() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return {};
+    try { return JSON.parse(saved); } catch(e) { return {}; }
+  }
+
+  function saveStars(stars) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stars));
+  }
+
+  function getCardId(card) {
+    const quote = card.querySelector('.quote').textContent.trim();
+    return quote.substring(0, 80);
+  }
+
+  function toggleStar(btn) {
+    const card = btn.closest('.card');
+    const id = getCardId(card);
+    const stars = loadStars();
+
+    if (stars[id]) {
+      delete stars[id];
+      btn.classList.remove('active');
+      card.classList.remove('starred');
+    } else {
+      const quote = card.querySelector('.quote').textContent.trim();
+      const source = card.querySelector('.source').textContent.trim();
+      const energy = card.dataset.energy;
+      stars[id] = { quote, source, energy };
+      btn.classList.add('active');
+      card.classList.add('starred');
+    }
+
+    saveStars(stars);
+    updateExport();
+    updateStats();
+  }
+
+  function updateExport() {
+    const stars = loadStars();
+    const el = document.getElementById('export-list');
+    const entries = Object.values(stars);
+
+    if (entries.length === 0) {
+      el.textContent = 'No items starred yet.';
+      return;
+    }
+
+    let text = '';
+    entries.forEach((item, i) => {
+      text += `${i + 1}. "${item.quote}"\n   Source: ${item.source}\n   Energy: ${item.energy}\n\n`;
+    });
+
+    el.textContent = text;
+  }
+
+  function updateStats() {
+    const cards = document.querySelectorAll('.card');
+    const stars = loadStars();
+    document.getElementById('total-count').textContent = cards.length;
+    document.getElementById('starred-count').textContent = Object.keys(stars).length;
+  }
+
+  function copyExport() {
+    const el = document.getElementById('export-list');
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
+    });
+  }
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const stars = loadStars();
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+      const id = getCardId(card);
+      if (stars[id]) {
+        card.classList.add('starred');
+        card.querySelector('.star-btn').classList.add('active');
+      }
+    });
+
+    updateStats();
+    updateExport();
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        const stars = loadStars();
+
+        cards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = '';
+          } else if (filter === 'starred') {
+            const id = getCardId(card);
+            card.style.display = stars[id] ? '' : 'none';
+          } else {
+            card.style.display = card.dataset.energy === filter ? '' : 'none';
+          }
+        });
+
+        // Show/hide section headers based on visible cards
+        document.querySelectorAll('.section-header').forEach(header => {
+          if (filter === 'all') {
+            header.style.display = '';
+            return;
+          }
+          let next = header.nextElementSibling;
+          let hasVisible = false;
+          while (next && !next.classList.contains('section-header')) {
+            if (next.classList.contains('card') && next.style.display !== 'none') {
+              hasVisible = true;
+              break;
+            }
+            next = next.nextElementSibling;
+          }
+          header.style.display = hasVisible ? '' : 'none';
+        });
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

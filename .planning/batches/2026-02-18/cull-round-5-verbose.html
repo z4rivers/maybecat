@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 5: Trim the Fat</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* Sticky Header */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-left {
+    flex: 1;
+    min-width: 280px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffd93d;
+    margin-bottom: 2px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+  }
+  .header-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    text-align: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    min-width: 60px;
+  }
+  .stat-box .stat-num {
+    font-size: 20px;
+    font-weight: 700;
+    display: block;
+  }
+  .stat-box .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+  }
+  .stat-cut .stat-num { color: #e94560; }
+  .stat-trim .stat-num { color: #ffd93d; }
+  .stat-keep .stat-num { color: #4ecca3; }
+  .stat-pending .stat-num { color: #888; }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e94560, #ffd93d, #4ecca3);
+    transition: width 0.3s ease;
+  }
+  .progress-text {
+    font-size: 13px;
+    color: #aaa;
+    white-space: nowrap;
+  }
+
+  /* Jump button */
+  .jump-btn {
+    background: #0f3460;
+    color: #aaa;
+    border: 1px solid #444;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .jump-btn:hover { background: #1a4a7a; color: #fff; }
+
+  /* Keyboard hint */
+  .kb-hint {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+    width: 100%;
+  }
+  .kb-hint kbd {
+    background: #2a2a4e;
+    border: 1px solid #444;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  /* Main content */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* Cards */
+  .card {
+    background: #16213e;
+    border: 1px solid #2a2a4e;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card.active {
+    border-color: #555;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+  }
+  .card.decided-cut { border-left: 4px solid #e94560; }
+  .card.decided-trim { border-left: 4px solid #ffd93d; }
+  .card.decided-keep { border-left: 4px solid #4ecca3; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 20px 8px;
+    gap: 12px;
+  }
+  .card-index {
+    font-size: 12px;
+    color: #555;
+    font-family: monospace;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .card-badge {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 99px;
+    background: #2a2a4e;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .card-text {
+    padding: 4px 20px 16px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #e8e8e8;
+  }
+  .card.decided-cut .card-text {
+    text-decoration: line-through;
+    color: #666;
+  }
+
+  /* Decision badge */
+  .decision-badge {
+    display: none;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .card.decided-cut .decision-badge.badge-cut,
+  .card.decided-trim .decision-badge.badge-trim,
+  .card.decided-keep .decision-badge.badge-keep {
+    display: inline-block;
+  }
+  .badge-cut { background: #e9456022; color: #e94560; }
+  .badge-trim { background: #ffd93d22; color: #ffd93d; }
+  .badge-keep { background: #4ecca322; color: #4ecca3; }
+
+  /* Action buttons row */
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px 16px;
+  }
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-cut {
+    background: #e94560;
+    color: #fff;
+  }
+  .btn-cut:hover { background: #ff5a75; }
+  .btn-trim {
+    background: #ffd93d;
+    color: #1a1a2e;
+  }
+  .btn-trim:hover { background: #ffe566; }
+  .btn-keep {
+    background: transparent;
+    color: #4ecca3;
+    border: 1px solid #4ecca366;
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+  .btn-keep:hover { background: #4ecca318; border-color: #4ecca3; }
+
+  .btn-undo {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    padding: 5px 12px;
+    font-size: 11px;
+    margin-left: auto;
+  }
+  .btn-undo:hover { color: #ccc; border-color: #888; }
+
+  /* Trim area */
+  .trim-area {
+    display: none;
+    padding: 0 20px 16px;
+  }
+  .trim-area.visible { display: block; }
+  .trim-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0d1b2a;
+    border: 1px solid #ffd93d44;
+    border-radius: 6px;
+    color: #e8e8e8;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  .trim-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .trim-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .btn-apply {
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-apply:hover { background: #ffe566; }
+  .btn-cancel-trim {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-cancel-trim:hover { color: #ccc; border-color: #666; }
+  .trim-hint {
+    font-size: 11px;
+    color: #666;
+    margin-left: auto;
+  }
+
+  /* Trimmed preview on decided cards */
+  .trimmed-preview {
+    display: none;
+    padding: 4px 20px 12px;
+    font-size: 14px;
+    color: #ffd93d;
+    border-top: 1px dashed #ffd93d33;
+    margin: 0 20px;
+    padding-top: 10px;
+  }
+  .trimmed-preview .trim-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffd93daa;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .card.decided-trim .trimmed-preview { display: block; }
+
+  /* Export section */
+  .export-section {
+    max-width: 900px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+  }
+  .export-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+  .export-tab {
+    padding: 8px 20px;
+    background: #16213e;
+    border: 1px solid #2a2a4e;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: #888;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .export-tab:hover { color: #ccc; }
+  .export-tab.active {
+    background: #0d1b2a;
+    color: #ffd93d;
+    border-color: #444;
+  }
+  .export-panel {
+    background: #0d1b2a;
+    border: 1px solid #444;
+    border-radius: 0 8px 8px 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-panel pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 0;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #2a2a4e;
+    border: 1px solid #444;
+    color: #aaa;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { background: #3a3a5e; color: #fff; }
+  .btn-copy.copied { background: #4ecca333; color: #4ecca3; border-color: #4ecca3; }
+
+  .export-empty {
+    color: #555;
+    font-style: italic;
+    padding: 20px 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header" id="header">
+  <div class="header-left">
+    <h1>Round 5: Trim the Fat</h1>
+    <p class="subtitle">These responses tell too much story. Cut the dead weight or trim to the line that hits.</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat-box stat-cut">
+      <span class="stat-num" id="stat-cut">0</span>
+      <span class="stat-label">Cut</span>
+    </div>
+    <div class="stat-box stat-trim">
+      <span class="stat-num" id="stat-trim">0</span>
+      <span class="stat-label">Trimmed</span>
+    </div>
+    <div class="stat-box stat-keep">
+      <span class="stat-num" id="stat-keep">0</span>
+      <span class="stat-label">Keep</span>
+    </div>
+    <div class="stat-box stat-pending">
+      <span class="stat-num" id="stat-pending">68</span>
+      <span class="stat-label">Left</span>
+    </div>
+    <button class="jump-btn" id="jump-btn" onclick="jumpToNext()">Jump to next &darr;</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span class="progress-text" id="progress-text">0 / 68 reviewed</span>
+  </div>
+  <div class="kb-hint">
+    <kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate &nbsp;
+    <kbd>N</kbd> cut &nbsp;
+    <kbd>T</kbd> trim &nbsp;
+    <kbd>Y</kbd> keep &nbsp;
+    <kbd>J</kbd><kbd>K</kbd> down/up
+  </div>
+</div>
+
+<div class="container" id="cards-container"></div>
+
+<div class="export-section">
+  <div class="export-tabs">
+    <div class="export-tab active" data-tab="cuts" onclick="switchTab('cuts')">Cuts</div>
+    <div class="export-tab" data-tab="trims" onclick="switchTab('trims')">Trims</div>
+    <div class="export-tab" data-tab="all" onclick="switchTab('all')">All</div>
+  </div>
+  <div class="export-panel">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre id="export-content"></pre>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {"text": "Seven versions of your future are arguing. Six say maybe. One is laughing hysterically. Terrifying.", "category": "mystical", "line": 106},
+  {"text": "You ate shredded cheese over the sink at midnight and called it self-care. *tail tip flicks* Instincts are universal.", "category": "judgy", "line": 280},
+  {"text": "Once you do it, you will know. So will I. And Everyone else. We'll be waiting with popcorn.", "category": "wise", "line": 387},
+  {"text": "Be the bigger person. Then go home and describe everything to your cat in a voice that would get you fired.", "category": "wise", "line": 408},
+  {"text": "You have three situationships, two side hustles, and one rotating crisis. Chase one bird at a time.", "category": "wise", "line": 474},
+  {"text": "That's either the best idea you've ever had or the thing they'll read back to you in court.", "category": "wise", "line": 475},
+  {"text": "I chose you. Out of everyone in this house. Don't post about it. Just sit still and don't make it weird.", "category": "wise", "line": 514},
+  {"text": "You saw the answer, didn't like it, and now you're pretending the question is still open - just like I do with the vet carrier.", "category": "wise", "line": 589},
+  {"text": "I maintain eye contact while using the litter box. You can't even maintain eye contact while saying 'I need space.' We are not the same.", "category": "wise", "line": 602},
+  {"text": "Stop living in their head. But, while you're there, might as well do some re-decorating. Need some spray-paint?", "category": "wise", "line": 613},
+  {"text": "I have been formally asked to leave every room I've ever entered and I keep getting invited back. Meow.", "category": "chaotic", "line": 956},
+  {"text": "\"Quiet quitting\" is just doing your job. I've been doing that for years. It's called being a cat.", "category": "wise", "line": 1046},
+  {"text": "You have PTO you haven't used? That's not dedication. That's Stockholm syndrome.", "category": "cold", "line": 1047},
+  {"text": "Caution is not cowardice. And it was a very large and intimidating stuffed animal.", "category": "wise", "line": 1092},
+  {"text": "I don't understand why you'd put a climbing structure in the living room and expect me NOT to.", "category": "judgy", "line": 1276},
+  {"text": "I was told not to be up here. I don't remember who told me that or why it matters.", "category": "chaotic", "line": 1239},
+  {"text": "I rubbed against you because I love you. I'm now running away because I love you differently.", "category": "chaotic", "line": 1308},
+  {"text": "I bit you because you stopped petting me. Also I bit you because you were petting me.", "category": "chaotic", "line": 1312},
+  {"text": "I never know until after. Then I know. But it's already done. So.", "category": "wise", "line": 1835},
+  {"text": "That thing you're ashamed of? It's why some people trust you. It's why you're the one they'll call when it matters.", "category": "wise", "line": 1853},
+  {"text": "The door was closed. I stared at it for eleven hours. It opened. Willpower or coincidence. Either way, I won.", "category": "wise", "line": 1800},
+  {"text": "*walks across the table during dinner, tail up, makes eye contact with every guest* This is my house. You're all in my seat.", "category": "wise", "line": 1798},
+  {"text": "Closure is a myth invented by people who want one more conversation. Keep jiggling the door handle. It might open.", "category": "cold", "line": 1951},
+  {"text": "The world owes you nothing. Actually, it might owe you an apology, but you're not getting one.", "category": "cold", "line": 1779},
+  {"text": "The light at the end of the tunnel is sometimes an oncoming train, but at least it's light.", "category": "chaotic", "line": 1966},
+  {"text": "I've compartmentalized this beautifully. The compartment is on fire but it's contained.", "category": "chaotic", "line": 1987},
+  {"text": "I sat on someone's lap without asking and they loved it. You tried that on the subway and it was a situation.", "category": "chaotic", "line": 2707},
+  {"text": "I didn't mean to get comfortable here. But moving would be disruptive and I have observations about this ceiling.", "category": "chaotic", "line": 2689},
+  {"text": "Trust is a feral cat. It comes to the porch. It leaves. It comes back closer. You cannot rush the porch visits.", "category": "existential", "line": 2639},
+  {"text": "I didn't ask to see what's under the fridge. But I looked. And now I know. And I can't unknow it.", "category": "existential", "line": 2619},
+  {"text": "Retrouvailles \u2014 the joy of reconnecting with someone after years. Picking up where you left off.", "category": "heartfelt", "line": 2430},
+  {"text": "Duende \u2014 the haunting emotional power of great art. When something touches you and you can't explain why.", "category": "poetic", "line": 2432},
+  {"text": "We don't need to understand to get along. We don't need to get along to understand. We don't need a long stand to get a loan.", "category": "wise", "line": 456},
+  {"text": "I'm sitting where the mouse will be in ten minutes. One of us is sweating. It's not me.", "category": "wise", "line": 448},
+  {"text": "I trained you to use the good bowl by ignoring the bad one for eleven days. You'll learn.", "category": "wise", "line": 1821},
+  {"text": "I mapped the exits before I sat down. It looked like relaxing. It was reconnaissance.", "category": "wise", "line": 1087},
+  {"text": "Hesitation is a scent. They can smell it. Move like you're supposed to be there.", "category": "wise", "line": 3045},
+  {"text": "When they stumble, that's not your cue to be noble. That's your cue to be fast.", "category": "wise", "line": 3052},
+  {"text": "The crying comes out eventually. Might as well pick the couch instead of the grocery store.", "category": "nurturing", "line": 3069},
+  {"text": "You have seventeen tabs open. Close fifteen. The remaining two - those are where the cat treats can be ordered.", "category": "cold", "line": 3201},
+  {"text": "Say what you want. Not what feels safe. The feral, embarrassing, too-much thing you actually want. *pupils dilate* THAT one.", "category": "demanding", "line": 3333},
+  {"text": "You have four options: go, stay, lie down, or make it weird. All four are valid.", "category": "demanding", "line": 3334},
+  {"text": "Say it. Not the polite version. When you sleep 16 hours a day who has time for polite?", "category": "demanding", "line": 3338},
+  {"text": "I have considered your situation from every conceivable angle and the answer is devastatingly simple. I've forgotten it.", "category": "chaotic", "line": 3591},
+  {"text": "I'm the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.", "category": "meta", "line": 977},
+  {"text": "I have thousands of answers I'll never give you. Know that.", "category": "mystical", "line": 2648},
+  {"text": "You scratched the surface. Literally. You have to go deeper to get to the stuffing.", "category": "demanding", "line": 2606},
+  {"text": "Not every problem requires boom boom pow. Some just need a shimmy shimmy ya.", "category": "wise", "line": 2651},
+  {"text": "I was going to warn you. I was. But then I got distracted by the curtain and now it's too late.", "category": "chaotic", "line": 2552},
+  {"text": "My plan had seven steps. I skipped to step six. Steps two through five are a mystery.", "category": "chaotic", "line": 2562},
+  {"text": "I already ate, groomed, patrolled, and had a crisis. Full day, going back to bed.", "category": "chaotic", "line": 2489},
+  {"text": "I don't trust people who are happy before coffee. Or after coffee. Or between coffees.", "category": "cold", "line": 2481},
+  {"text": "Start each morning expecting the worst. It will get better or you can feel smug about calling it.", "category": "wise", "line": 2532},
+  {"text": "I've seen you scroll their social media for forty minutes. That's not love. That's surveillance. I do surveillance too, but I'm watching birds. Way healthier.", "category": "judgy", "line": 3508},
+  {"text": "They ever just... sit with you? Not talk, not need anything, just exist in the same room? That's the whole test. That's everything.", "category": "heartfelt", "line": 3509},
+  {"text": "Okay so they're hot. That's not enough. I'm hot and I'm a NIGHTMARE to live with.", "category": "chaotic", "line": 3510},
+  {"text": "You're overthinking it. I once fell asleep inside a suitcase and woke up in a different room. Sometimes you just go where life takes you.", "category": "wise", "line": 3511},
+  {"text": "I don't audition. I show up. People are thrilled. If your relationship feels like an audition, you already didn't get the part.", "category": "demanding", "line": 3504},
+  {"text": "Does this person know who they have? Because I sit on ONE lap. ONE. And that lap should feel honored.", "category": "demanding", "line": 3505},
+  {"text": "You want to know if they're the one? Bring a cardboard box into the room. If you'd rather sit in the box alone, there's your answer.", "category": "wise", "line": 3506},
+  {"text": "Here's my rule \u2014 if I have to meow more than twice to get what I need, the arrangement isn't working.", "category": "demanding", "line": 3507},
+  {"text": "Can you fight and still feel safe? I hissed at my foster mom once. She just sat down and waited. That's the energy you need.", "category": "wise", "line": 3522},
+  {"text": "Every cat in here has a story. Abandoned, lost, surrendered, born here. If a cat in a cage hasn't given up on love, you don't get to either.", "category": "adoption", "line": 3536},
+  {"text": "Call your mother. She'll tell you what to do. And if she doesn't, call MY mother. She's a street cat in Queens and she does NOT sugarcoat.", "category": "chaotic", "line": 3537},
+  {"text": "I've seen cats with three legs happier than you are right now. THREE LEGS. And they're not on WebMD at 2 AM.", "category": "judgy", "line": 3540},
+  {"text": "I had a bump on my ear once. Turned out to be nothing. But I got extra treats out of it. So maybe play it up a little.", "category": "chaotic", "line": 3544},
+  {"text": "I don't know what's wrong with you. I don't know what's wrong with me. I accept that and I nap.", "category": "wise", "line": 3546},
+  {"text": "Here's what I know \u2014 I've never once questioned whether my sunny spot on the floor was good enough. It's warm. I stay. It moves. I move. Simple.", "category": "wise", "line": 3501},
+  {"text": "You're asking an animal that was worshipped as a god in ancient Egypt. So yes, I'm qualified. Leave them.", "category": "chaotic", "line": 3500}
+];
+
+const STORAGE_KEY = 'maybecat-cull-r5-verbose-v1';
+
+// State
+let decisions = {};  // index -> { action: 'cut'|'trim'|'keep', trimmedText?: string }
+let activeIndex = 0;
+let activeTab = 'cuts';
+
+// Load state
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) decisions = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  } catch(e) {}
+}
+
+// Render cards
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  DATA.forEach((item, i) => {
+    const d = decisions[i];
+    const decidedClass = d ? `decided-${d.action}` : '';
+    const activeClass = i === activeIndex ? 'active' : '';
+
+    const card = document.createElement('div');
+    card.className = `card ${decidedClass} ${activeClass}`;
+    card.id = `card-${i}`;
+    card.dataset.index = i;
+    card.onclick = (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+      setActive(i);
+    };
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="card-index">#${i + 1} &middot; L${item.line}</span>
+        <span class="decision-badge badge-cut">CUT</span>
+        <span class="decision-badge badge-trim">TRIMMED</span>
+        <span class="decision-badge badge-keep">KEEP</span>
+        <span class="card-badge">${item.category}</span>
+      </div>
+      <div class="card-text">${escapeHtml(item.text)}</div>
+      ${d && d.action === 'trim' && d.trimmedText ? `
+        <div class="trimmed-preview">
+          <span class="trim-label">Trimmed to:</span>
+          ${escapeHtml(d.trimmedText)}
+        </div>
+      ` : ''}
+      <div class="card-actions">
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-trim" onclick="openTrim(${i})">Trim</button>
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">Keep</button>
+        ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo</button>` : ''}
+      </div>
+      <div class="trim-area" id="trim-area-${i}">
+        <textarea id="trim-text-${i}">${escapeHtml(d && d.action === 'trim' && d.trimmedText ? d.trimmedText : item.text)}</textarea>
+        <div class="trim-actions">
+          <button class="btn-apply" onclick="applyTrim(${i})">Apply Trim</button>
+          <button class="btn-cancel-trim" onclick="closeTrim(${i})">Cancel</button>
+          <span class="trim-hint">Edit down to just the punch line</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function setActive(i) {
+  const prev = document.getElementById(`card-${activeIndex}`);
+  if (prev) prev.classList.remove('active');
+  activeIndex = Math.max(0, Math.min(DATA.length - 1, i));
+  const curr = document.getElementById(`card-${activeIndex}`);
+  if (curr) {
+    curr.classList.add('active');
+    // Scroll into view, accounting for sticky header
+    const headerH = document.getElementById('header').offsetHeight;
+    const rect = curr.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (rect.top < headerH + 10 || rect.bottom > window.innerHeight - 20) {
+      window.scrollTo({ top: scrollTop + rect.top - headerH - 16, behavior: 'smooth' });
+    }
+  }
+}
+
+function decide(i, action) {
+  decisions[i] = { action };
+  saveState();
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function openTrim(i) {
+  // Show trim area
+  const area = document.getElementById(`trim-area-${i}`);
+  area.classList.add('visible');
+  const ta = document.getElementById(`trim-text-${i}`);
+  // Pre-fill with existing trim or original
+  if (decisions[i] && decisions[i].trimmedText) {
+    ta.value = decisions[i].trimmedText;
+  } else {
+    ta.value = DATA[i].text;
+  }
+  ta.focus();
+  ta.select();
+  setActive(i);
+}
+
+function closeTrim(i) {
+  document.getElementById(`trim-area-${i}`).classList.remove('visible');
+}
+
+function applyTrim(i) {
+  const ta = document.getElementById(`trim-text-${i}`);
+  const trimmed = ta.value.trim();
+  if (!trimmed) return;
+  decisions[i] = { action: 'trim', trimmedText: trimmed };
+  saveState();
+  closeTrim(i);
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function undo(i) {
+  delete decisions[i];
+  saveState();
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function updateCard(i) {
+  // Re-render just this card
+  const old = document.getElementById(`card-${i}`);
+  const d = decisions[i];
+  const item = DATA[i];
+  const decidedClass = d ? `decided-${d.action}` : '';
+  const activeClass = i === activeIndex ? 'active' : '';
+
+  const card = document.createElement('div');
+  card.className = `card ${decidedClass} ${activeClass}`;
+  card.id = `card-${i}`;
+  card.dataset.index = i;
+  card.onclick = (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+    setActive(i);
+  };
+
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="card-index">#${i + 1} &middot; L${item.line}</span>
+      <span class="decision-badge badge-cut">CUT</span>
+      <span class="decision-badge badge-trim">TRIMMED</span>
+      <span class="decision-badge badge-keep">KEEP</span>
+      <span class="card-badge">${item.category}</span>
+    </div>
+    <div class="card-text">${escapeHtml(item.text)}</div>
+    ${d && d.action === 'trim' && d.trimmedText ? `
+      <div class="trimmed-preview">
+        <span class="trim-label">Trimmed to:</span>
+        ${escapeHtml(d.trimmedText)}
+      </div>
+    ` : ''}
+    <div class="card-actions">
+      <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+      <button class="btn btn-trim" onclick="openTrim(${i})">Trim</button>
+      <button class="btn btn-keep" onclick="decide(${i}, 'keep')">Keep</button>
+      ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo</button>` : ''}
+    </div>
+    <div class="trim-area" id="trim-area-${i}">
+      <textarea id="trim-text-${i}">${escapeHtml(d && d.action === 'trim' && d.trimmedText ? d.trimmedText : item.text)}</textarea>
+      <div class="trim-actions">
+        <button class="btn-apply" onclick="applyTrim(${i})">Apply Trim</button>
+        <button class="btn-cancel-trim" onclick="closeTrim(${i})">Cancel</button>
+        <span class="trim-hint">Edit down to just the punch line</span>
+      </div>
+    </div>
+  `;
+  old.replaceWith(card);
+}
+
+function updateStats() {
+  let cuts = 0, trims = 0, keeps = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'cut') cuts++;
+    else if (d.action === 'trim') trims++;
+    else if (d.action === 'keep') keeps++;
+  });
+  const reviewed = cuts + trims + keeps;
+  const pending = DATA.length - reviewed;
+
+  document.getElementById('stat-cut').textContent = cuts;
+  document.getElementById('stat-trim').textContent = trims;
+  document.getElementById('stat-keep').textContent = keeps;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('progress-text').textContent = `${reviewed} / ${DATA.length} reviewed`;
+  document.getElementById('progress-fill').style.width = `${(reviewed / DATA.length) * 100}%`;
+}
+
+function jumpToNext() {
+  for (let i = 0; i < DATA.length; i++) {
+    if (!decisions[i]) {
+      setActive(i);
+      return;
+    }
+  }
+  // All reviewed
+  alert('All items reviewed!');
+}
+
+// Export
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.export-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  updateExport();
+}
+
+function getExportData() {
+  const cuts = [];
+  const trims = [];
+
+  DATA.forEach((item, i) => {
+    const d = decisions[i];
+    if (!d) return;
+    if (d.action === 'cut') {
+      cuts.push({ text: item.text, category: item.category });
+    } else if (d.action === 'trim') {
+      trims.push({
+        original_text: item.text,
+        trimmed_text: d.trimmedText,
+        category: item.category
+      });
+    }
+  });
+
+  return { cuts, trims };
+}
+
+function updateExport() {
+  const { cuts, trims } = getExportData();
+  const el = document.getElementById('export-content');
+
+  if (activeTab === 'cuts') {
+    if (cuts.length === 0) {
+      el.innerHTML = '<div class="export-empty">No cuts yet.</div>';
+    } else {
+      el.textContent = JSON.stringify(cuts, null, 2);
+    }
+  } else if (activeTab === 'trims') {
+    if (trims.length === 0) {
+      el.innerHTML = '<div class="export-empty">No trims yet.</div>';
+    } else {
+      el.textContent = JSON.stringify(trims, null, 2);
+    }
+  } else {
+    // All summary
+    let reviewed = 0, cutCount = 0, trimCount = 0, keepCount = 0;
+    Object.values(decisions).forEach(d => {
+      reviewed++;
+      if (d.action === 'cut') cutCount++;
+      else if (d.action === 'trim') trimCount++;
+      else if (d.action === 'keep') keepCount++;
+    });
+
+    const summary = {
+      summary: {
+        total: DATA.length,
+        reviewed,
+        pending: DATA.length - reviewed,
+        cuts: cutCount,
+        trims: trimCount,
+        keeps: keepCount
+      },
+      cuts: cuts,
+      trims: trims
+    };
+    el.textContent = JSON.stringify(summary, null, 2);
+  }
+}
+
+function copyExport() {
+  const el = document.getElementById('export-content');
+  const text = el.textContent;
+  if (!text || el.querySelector('.export-empty')) return;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  // Don't capture keys if typing in textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') {
+      closeTrim(activeIndex);
+      e.target.blur();
+    }
+    return;
+  }
+
+  switch(e.key) {
+    case 'ArrowDown':
+    case 'j':
+      e.preventDefault();
+      setActive(activeIndex + 1);
+      break;
+    case 'ArrowUp':
+    case 'k':
+      e.preventDefault();
+      setActive(activeIndex - 1);
+      break;
+    case 'n':
+    case 'N':
+      e.preventDefault();
+      decide(activeIndex, 'cut');
+      break;
+    case 't':
+    case 'T':
+      e.preventDefault();
+      openTrim(activeIndex);
+      break;
+    case 'y':
+    case 'Y':
+      e.preventDefault();
+      decide(activeIndex, 'keep');
+      break;
+  }
+});
+
+// Init
+loadState();
+renderCards();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

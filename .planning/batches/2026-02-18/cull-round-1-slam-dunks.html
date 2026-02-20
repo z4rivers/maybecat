@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 1: Slam Dunk Cuts</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --bg-card: #16213e;
+    --bg-card-hover: #1a2744;
+    --bg-input: #0f1729;
+    --green: #4ecca3;
+    --red: #e94560;
+    --yellow: #ffd93d;
+    --blue: #4ecdc4;
+    --text: #e8e8e8;
+    --text-dim: #8892a4;
+    --text-muted: #5a6580;
+    --border: #2a3a5c;
+    --border-keeper: #4ecdc4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-bottom: 200px;
+  }
+
+  /* ─── STICKY HEADER ─── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f1729;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .header .subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-val { font-weight: 700; font-size: 16px; }
+  .stat-val.cuts { color: var(--red); }
+  .stat-val.keeps { color: var(--green); }
+  .stat-val.undecided { color: var(--yellow); }
+  .stat-label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn-jump {
+    background: var(--yellow);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-jump:hover { transform: scale(1.03); filter: brightness(1.1); }
+  .btn-jump:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  .btn-cut-all {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-cut-all:hover { transform: scale(1.03); filter: brightness(1.1); }
+
+  .keyboard-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    text-align: right;
+  }
+  .keyboard-hint kbd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 10px;
+    font-family: inherit;
+  }
+
+  /* ─── GROUPS ─── */
+  .groups { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+
+  .group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .group.focused { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .group.decided { opacity: 0.65; }
+  .group.decided:hover { opacity: 0.85; }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+  .group-header:hover { background: var(--bg-card-hover); }
+
+  .group-concept {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    flex: 1;
+  }
+
+  .group-id {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+
+  .group-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .group-status.pending { background: rgba(255,217,61,0.15); color: var(--yellow); }
+  .group-status.complete { background: rgba(78,204,163,0.15); color: var(--green); }
+
+  .collapse-icon {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    margin-left: 8px;
+  }
+  .group.collapsed .collapse-icon { transform: rotate(-90deg); }
+
+  .group-body { padding: 0 18px 18px; }
+  .group.collapsed .group-body { display: none; }
+
+  /* ─── KEEPER (now interactive) ─── */
+  .keeper-card {
+    border: 2px solid var(--border-keeper);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: rgba(78,205,196,0.05);
+    position: relative;
+    transition: all 0.2s;
+  }
+  .keeper-card.active-focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow);
+  }
+  .keeper-card.decided-cut {
+    border-color: var(--red);
+    background: rgba(233,69,96,0.08);
+  }
+  .keeper-card.decided-keep {
+    border-color: var(--green);
+    background: rgba(78,204,163,0.08);
+  }
+  /* Keep the teal border when undecided (neither cut nor keep) */
+  .keeper-card:not(.decided-cut):not(.decided-keep) {
+    border-color: var(--border-keeper);
+  }
+
+  .keeper-label {
+    position: absolute;
+    top: -9px;
+    left: 14px;
+    background: var(--border-keeper);
+    color: #0f1729;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .response-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 6px;
+    margin-top: 4px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── CUT CANDIDATES ─── */
+  .cut-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: rgba(233,69,96,0.03);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .cut-card.active-focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow);
+  }
+  .cut-card.decided-cut {
+    border-color: var(--red);
+    background: rgba(233,69,96,0.08);
+  }
+  .cut-card.decided-keep {
+    border-color: var(--green);
+    background: rgba(78,204,163,0.08);
+  }
+
+  .cut-reason {
+    font-size: 12px;
+    color: var(--red);
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(233,69,96,0.08);
+    border-radius: 4px;
+    border-left: 3px solid var(--red);
+  }
+
+  .cut-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: scale(1.04); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-cut { background: var(--red); color: white; }
+  .btn-cut:hover { filter: brightness(1.15); }
+  .btn-cut.selected { box-shadow: 0 0 0 2px white; }
+
+  .btn-keep { background: var(--green); color: #0f1729; }
+  .btn-keep:hover { filter: brightness(1.1); }
+  .btn-keep.selected { box-shadow: 0 0 0 2px white; }
+
+  .decision-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .decision-badge.cut { background: rgba(233,69,96,0.2); color: var(--red); }
+  .decision-badge.keep { background: rgba(78,204,163,0.2); color: var(--green); }
+
+  .why-stays {
+    margin-top: 10px;
+    display: none;
+  }
+  .why-stays.visible { display: block; }
+
+  .why-stays textarea {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 12px;
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 50px;
+  }
+  .why-stays textarea:focus { outline: none; border-color: var(--green); }
+  .why-stays label {
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── EXPORT SECTION ─── */
+  .export-section {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .export-section h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--blue);
+  }
+
+  .export-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+
+  .export-tab {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 8px 16px;
+    border-radius: 6px 6px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+  .export-tab.active {
+    background: var(--bg-input);
+    color: var(--text);
+    border-color: var(--blue);
+  }
+
+  .export-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    padding: 16px;
+    position: relative;
+  }
+
+  .export-box pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--blue);
+    color: #0f1729;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { filter: brightness(1.1); }
+  .btn-copy.copied { background: var(--green); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes flash-green {
+    0% { background: rgba(78,204,163,0.3); }
+    100% { background: rgba(78,204,163,0.08); }
+  }
+  @keyframes flash-red {
+    0% { background: rgba(233,69,96,0.3); }
+    100% { background: rgba(233,69,96,0.08); }
+  }
+  .flash-cut { animation: flash-red 0.4s ease; }
+  .flash-keep { animation: flash-green 0.4s ease; }
+</style>
+</head>
+<body>
+
+<div class="header" id="header">
+  <div class="header-top">
+    <div>
+      <h1>Round 1: Slam Dunk Cuts &mdash; Near-Identical Duplicates</h1>
+      <div class="subtitle">Every response needs a decision &mdash; keepers are suggestions, not locked in. You might prefer the "cut" version.</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-val cuts" id="stat-cuts">0</span>
+        <span class="stat-label">Cuts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val keeps" id="stat-keeps">0</span>
+        <span class="stat-label">Keeps</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val undecided" id="stat-undecided">0</span>
+        <span class="stat-label">Undecided</span>
+      </div>
+      <div class="stat" style="color: var(--text-dim); font-size: 12px;">
+        <span id="stat-groups-done">0</span>/<span id="stat-groups-total">0</span> groups
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-jump" id="btn-jump" onclick="jumpToNext()">Jump to next undecided</button>
+      <button class="btn-cut-all" id="btn-cut-all" onclick="cutAllUndecided()">Cut all remaining</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="keyboard-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> navigate groups &nbsp; <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> navigate items &nbsp; <kbd>Y</kbd> keep &nbsp; <kbd>N</kbd> cut &nbsp; <kbd>Enter</kbd> toggle collapse
+  </div>
+</div>
+
+<div class="groups" id="groups-container"></div>
+
+<div class="export-section" id="export-section">
+  <h2>Export</h2>
+  <div class="export-tabs">
+    <button class="export-tab active" onclick="switchTab('cuts')">Cuts (<span id="tab-cuts-count">0</span>)</button>
+    <button class="export-tab" onclick="switchTab('keeps')">Keeps (<span id="tab-keeps-count">0</span>)</button>
+    <button class="export-tab" onclick="switchTab('undecided')">Undecided (<span id="tab-undecided-count">0</span>)</button>
+    <button class="export-tab" onclick="switchTab('full')">Full Report</button>
+  </div>
+  <div class="export-box">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">COPY</button>
+    <pre id="export-content"></pre>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    "group_id": 8,
+    "concept": "I will remember this / grudge",
+    "keeper": { "text": "I\u2019ll remember this.", "category": "cold" },
+    "cuts": [
+      { "text": "I will remember this.", "category": "angry", "reason": "Nearly identical \u2014 I\u2019ll vs I will" },
+      { "text": "I will remember this interruption.", "category": "angry", "reason": "Same + unnecessary specificity" }
+    ]
+  },
+  {
+    "group_id": 24,
+    "concept": "I wanted this, now I don't",
+    "keeper": { "text": "I wanted that. Now I don\u2019t.", "category": "wise" },
+    "cuts": [
+      { "text": "I wanted this. Now I don\u2019t. That\u2019s valid.", "category": "chaotic", "reason": "Same text with \u2018that\u2019s valid\u2019 tacked on" }
+    ]
+  },
+  {
+    "group_id": 25,
+    "concept": "Not my circus/monkeys/problem",
+    "keeper": { "text": "Not my circus. Not my monkeys. Not my problem.", "category": "cold" },
+    "cuts": [
+      { "text": "Not your circus. Not your monkeys. Walk away. I do it constantly.", "category": "cold", "reason": "Same phrase + explanation that kills the punch" }
+    ]
+  },
+  {
+    "group_id": 26,
+    "concept": "Interesting. Wrong, but interesting.",
+    "keeper": { "text": "Interesting theory. Wrong, but interesting.", "category": "judgy" },
+    "cuts": [
+      { "text": "Interesting. Wrong, but interesting. Keep going.", "category": "judgy", "reason": "Nearly identical with \u2018keep going\u2019 added" }
+    ]
+  },
+  {
+    "group_id": 28,
+    "concept": "Sounds fake but okay",
+    "keeper": { "text": "Sounds fake but okay.", "category": "judgy" },
+    "cuts": [
+      { "text": "Seems fake but okay.", "category": "judgy", "reason": "\u2018Seems\u2019 vs \u2018sounds\u2019 \u2014 literal duplicate concept" }
+    ]
+  },
+  {
+    "group_id": 49,
+    "concept": "Maximum commitment, minimum results",
+    "keeper": { "text": "Maximum commitment, minimum results.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Maximum commitment to minimum logic.", "category": "chaotic", "reason": "Same structure, just swapping \u2018results\u2019 for \u2018logic\u2019" }
+    ]
+  },
+  {
+    "group_id": 50,
+    "concept": "I support this terrible decision",
+    "keeper": { "text": "I support this terrible decision completely!", "category": "chaotic" },
+    "cuts": [
+      { "text": "I support this delusion completely!", "category": "chaotic", "reason": "Same joke, same structure \u2014 \u2018terrible decision\u2019 is funnier" }
+    ]
+  },
+  {
+    "group_id": 51,
+    "concept": "Propaganda purrs too",
+    "keeper": { "text": "Propaganda purrs too.", "category": "wise" },
+    "cuts": [
+      { "text": "Propaganda purrs too. Check who\u2019s petting you.", "category": "wise", "reason": "The explanation kills the punchiness" }
+    ]
+  },
+  {
+    "group_id": 53,
+    "concept": "Silence as response",
+    "keeper": { "text": "*silence*", "category": "cold" },
+    "cuts": [
+      { "text": "...", "category": "cold", "reason": "Same empty response \u2014 keep one" }
+    ]
+  },
+  {
+    "group_id": 56,
+    "concept": "If they wanted to, they would",
+    "keeper": { "text": "If they wanted to, they would. Like I do.", "category": "wise" },
+    "cuts": [
+      { "text": "If they wanted to, they would. And moi? Moi always wants to.", "category": "demanding", "reason": "Same phrase, keeper is cleaner" }
+    ]
+  },
+  {
+    "group_id": 57,
+    "concept": "I expected nothing and still disappointed",
+    "keeper": { "text": "I expected nothing and I\u2019m still disappointed.", "category": "judgy" },
+    "cuts": [
+      { "text": "I expected more from you. Which was my mistake.", "category": "judgy", "reason": "Same disappointed-expectations energy" }
+    ]
+  },
+  {
+    "group_id": 58,
+    "concept": "Your feelings are valid but...",
+    "keeper": { "text": "Your feelings are valid but irrelevant.", "category": "cold" },
+    "cuts": [
+      { "text": "Your feelings matter. But my feelings about the closed door matter more.", "category": "demanding", "reason": "Same concept with more words and less punch" }
+    ]
+  },
+  {
+    "group_id": 66,
+    "concept": "Main character energy, background character results",
+    "keeper": { "text": "Main character syndrome with background character outcomes.", "category": "judgy" },
+    "cuts": [
+      { "text": "Main character energy. Background character budget.", "category": "judgy", "reason": "Same exact joke, different word choice" }
+    ]
+  },
+  {
+    "group_id": 68,
+    "concept": "Meticulous finishes on a disaster",
+    "keeper": { "text": "Meticulous finishes throughout this disaster.", "category": "judgy" },
+    "cuts": [
+      { "text": "Refined finishes on a fundamentally flawed plan.", "category": "cold", "reason": "Nearly identical structure" }
+    ]
+  },
+  {
+    "group_id": 70,
+    "concept": "Personal foul",
+    "keeper": { "text": "Personal foul. Unnecessary roughness.", "category": "angry" },
+    "cuts": [
+      { "text": "Personal foul. Unnecessary roughness.", "category": "angry", "reason": "EXACT DUPLICATE in the file" }
+    ]
+  },
+  {
+    "group_id": 71,
+    "concept": "That's certainly... a choice",
+    "keeper": { "text": "Well. That\u2019s a choice you could make.", "category": "cold" },
+    "cuts": [
+      { "text": "That\u2019s certainly... a choice. A series of choices, actually.", "category": "judgy", "reason": "Same observation with extension" }
+    ]
+  },
+  {
+    "group_id": 90,
+    "concept": "You overthought it, they didn't",
+    "keeper": { "text": "You\u2019ve rehearsed this conversation 47 times. They\u2019ve thought about it zero.", "category": "judgy" },
+    "cuts": [
+      { "text": "You analyzed the text for forty minutes. They wrote it in four seconds.", "category": "judgy", "reason": "Same exact joke structure" }
+    ]
+  },
+  {
+    "group_id": 96,
+    "concept": "I notice / watching you",
+    "keeper": { "text": "I notice. Don\u2019t think I don\u2019t.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "*watching* Yeah. I noticed.", "category": "heartfelt", "reason": "Same observation, keeper is more assertive" }
+    ]
+  },
+  {
+    "group_id": 101,
+    "concept": "I don't need much",
+    "keeper": { "text": "Don\u2019t need much. Warm spot. Full belly. Occasional chaos.", "category": "wise" },
+    "cuts": [
+      { "text": "Fed. Warm. Not being chased. Everything else is extra credit.", "category": "nurturing", "reason": "Same minimal-needs philosophy" }
+    ]
+  },
+  {
+    "group_id": 103,
+    "concept": "You can miss it and not want it back",
+    "keeper": { "text": "You can miss something and still not want it back.", "category": "wise" },
+    "cuts": [
+      { "text": "Over. Done with. Erased. Still on your mind.", "category": "poetic", "reason": "Same lingering feeling" }
+    ]
+  },
+  {
+    "group_id": 105,
+    "concept": "I'm more comfortable than you",
+    "keeper": { "text": "I\u2019m more comfortable than you right now. Just so you know.", "category": "judgy" },
+    "cuts": [
+      { "text": "I could move. I won\u2019t, but I could.", "category": "cold", "reason": "Same comfort-superiority" }
+    ]
+  },
+  {
+    "group_id": 107,
+    "concept": "Touch grass",
+    "keeper": { "text": "Touch grass. Or don\u2019t. I never do.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Touch grass. Eat grass. Not that kind of grass.", "category": "wise", "reason": "Same suggestion, keeper has better twist" }
+    ]
+  },
+  {
+    "group_id": 4,
+    "concept": "I'm disappointed in you",
+    "keeper": { "text": "I\u2019m not mad. I\u2019m disappointed.", "category": "judgy" },
+    "cuts": [
+      { "text": "I\u2019m not angry. I\u2019m just... disappointed doesn\u2019t cover it.", "category": "judgy", "reason": "Extended, diluted version" }
+    ]
+  },
+  {
+    "group_id": 9,
+    "concept": "Was sleeping when disturbed",
+    "keeper": { "text": "I was NAPPING.", "category": "angry" },
+    "cuts": [
+      { "text": "I am TRYING to nap here.", "category": "angry", "reason": "Same nap-interruption, keeper is punchier" }
+    ]
+  },
+  {
+    "group_id": 16,
+    "concept": "Bug interrupts the answer",
+    "keeper": { "text": "THE ANSWER IS\u2014 oh, a bug. Hang on.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Wait wait wait\u2014 *attacks own tail* \u2014you were saying?", "category": "chaotic", "reason": "Same interruption structure, keeper has better timing" }
+    ]
+  },
+  {
+    "group_id": 30,
+    "concept": "Put the phone down",
+    "keeper": { "text": "Put the phone down. Your face is doing something weird.", "category": "nurturing" },
+    "cuts": [
+      { "text": "Put the phone down. Look at me.", "category": "demanding", "reason": "Same command, keeper has funnier payoff" }
+    ]
+  },
+  {
+    "group_id": 32,
+    "concept": "I'm not clingy, I'm [reframe]",
+    "keeper": { "text": "I\u2019m not clingy. I just love you aggressively.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "I\u2019m not cuddling. I\u2019m applying therapeutic pressure. With my entire body.", "category": "nurturing", "reason": "Same structure \u2014 denying behavior + reframing" }
+    ]
+  },
+  {
+    "group_id": 39,
+    "concept": "You said no, I heard something else",
+    "keeper": { "text": "You said no. I heard \u2018not while you\u2019re watching.\u2019", "category": "chaotic" },
+    "cuts": [
+      { "text": "You say \u2018down.\u2019 I hear \u2018wait until you leave.\u2019", "category": "chaotic", "reason": "Same joke structure: reinterpreting no as not yet" }
+    ]
+  },
+  {
+    "group_id": 45,
+    "concept": "I've seen worse",
+    "keeper": { "text": "I\u2019ve seen worse. Recently, even.", "category": "judgy" },
+    "cuts": [
+      { "text": "I\u2019ve seen better. I\u2019ve also seen worse. Proceed.", "category": "judgy", "reason": "Same evaluation, keeper is tighter" }
+    ]
+  },
+  {
+    "group_id": 67,
+    "concept": "Doom-scrolling observation",
+    "keeper": { "text": "You\u2019ve been scrolling for an hour. You found nothing.", "category": "judgy" },
+    "cuts": [
+      { "text": "You scrolled past the answer 10 minutes ago.", "category": "wise", "reason": "Same scrolling observation" }
+    ]
+  },
+  {
+    "group_id": 93,
+    "concept": "Purring as therapy",
+    "keeper": { "text": "*purrs aggressively at your problems* They will be vibrated into submission.", "category": "nurturing" },
+    "cuts": [
+      { "text": "Free vibration therapy. Limited time offer. *purrs*", "category": "nurturing", "reason": "Same concept, keeper is more vivid" }
+    ]
+  }
+];
+
+// ─── STATE ───
+let decisions = {}; // key: "groupId-keeper" or "groupId-cutIdx" => "cut" | "keep"
+let whyNotes = {};  // key: same format => string
+let focusedGroupIdx = 0;
+let focusedItemIdx = 0; // 0 = keeper, 1+ = cut candidates (1-indexed into cuts array)
+let currentTab = 'cuts';
+
+// Total items across all groups (keepers + cuts)
+let totalItems = 0;
+DATA.forEach(g => { totalItems += 1 + g.cuts.length; }); // 1 keeper + N cuts per group
+
+// ─── HELPERS ───
+// Build a flat list of item indices for a group: [{type:'keeper'}, {type:'cut',ci:0}, {type:'cut',ci:1}, ...]
+function groupItems(gi) {
+  const group = DATA[gi];
+  const items = [{ type: 'keeper' }];
+  group.cuts.forEach((_, ci) => items.push({ type: 'cut', ci }));
+  return items;
+}
+
+function itemKey(group, item) {
+  if (item.type === 'keeper') return `${group.group_id}-keeper`;
+  return `${group.group_id}-${item.ci}`;
+}
+
+// ─── RENDER ───
+function render() {
+  const container = document.getElementById('groups-container');
+  container.innerHTML = '';
+
+  DATA.forEach((group, gi) => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'group' + (gi === focusedGroupIdx ? ' focused' : '');
+    groupEl.id = `group-${gi}`;
+    groupEl.dataset.gi = gi;
+
+    const items = groupItems(gi);
+
+    // Check if ALL items in this group are decided (keeper + cuts)
+    const allDecided = items.every(item => decisions[itemKey(group, item)]);
+    if (allDecided) groupEl.classList.add('decided');
+
+    // Count undecided in this group
+    const undecidedCount = items.filter(item => !decisions[itemKey(group, item)]).length;
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.onclick = () => toggleCollapse(gi);
+    header.innerHTML = `
+      <span class="group-id">#${group.group_id}</span>
+      <span class="group-concept">${esc(group.concept)}</span>
+      <span class="group-status ${allDecided ? 'complete' : 'pending'}">${allDecided ? 'DONE' : `${undecidedCount} to review`}</span>
+      <span class="collapse-icon">\u25BC</span>
+    `;
+    groupEl.appendChild(header);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'group-body';
+
+    // Keeper card (now interactive with KEEP/CUT buttons)
+    const keeperKey = `${group.group_id}-keeper`;
+    const keeperDec = decisions[keeperKey];
+    const keeperNote = whyNotes[keeperKey] || '';
+    const keeperFocused = gi === focusedGroupIdx && focusedItemIdx === 0;
+
+    const keeperCard = document.createElement('div');
+    keeperCard.className = 'keeper-card'
+      + (keeperFocused ? ' active-focus' : '')
+      + (keeperDec === 'cut' ? ' decided-cut' : '')
+      + (keeperDec === 'keep' ? ' decided-keep' : '');
+    keeperCard.id = `keeper-${gi}`;
+
+    keeperCard.innerHTML = `
+      <span class="keeper-label">SUGGESTED KEEPER</span>
+      <div class="response-text">${esc(group.keeper.text)}</div>
+      <span class="category-tag">${esc(group.keeper.category)}</span>
+      <div class="cut-actions">
+        <button class="btn btn-keep ${keeperDec === 'keep' ? 'selected' : ''}" onclick="decideKeeper(${gi}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${keeperDec === 'cut' ? 'selected' : ''}" onclick="decideKeeper(${gi}, 'cut')">CUT</button>
+        ${keeperDec ? `<span class="decision-badge ${keeperDec}">${keeperDec.toUpperCase()}</span>` : ''}
+      </div>
+      <div class="why-stays ${keeperDec === 'keep' ? 'visible' : ''}" id="why-keeper-${gi}">
+        <label>Why it stays:</label>
+        <textarea placeholder="Why does this one earn its place?" oninput="saveWhyKeeper(${gi}, this.value)">${esc(keeperNote)}</textarea>
+      </div>
+    `;
+    body.appendChild(keeperCard);
+
+    // Cut candidates
+    group.cuts.forEach((cut, ci) => {
+      const key = `${group.group_id}-${ci}`;
+      const dec = decisions[key];
+      const note = whyNotes[key] || '';
+      const isFocused = gi === focusedGroupIdx && focusedItemIdx === ci + 1;
+
+      const card = document.createElement('div');
+      card.className = 'cut-card'
+        + (isFocused ? ' active-focus' : '')
+        + (dec === 'cut' ? ' decided-cut' : '')
+        + (dec === 'keep' ? ' decided-keep' : '');
+      card.id = `cut-${gi}-${ci}`;
+
+      card.innerHTML = `
+        <div class="response-text">${esc(cut.text)}</div>
+        <span class="category-tag">${esc(cut.category)}</span>
+        <div class="cut-reason">${esc(cut.reason)}</div>
+        <div class="cut-actions">
+          <button class="btn btn-cut ${dec === 'cut' ? 'selected' : ''}" onclick="decide(${gi}, ${ci}, 'cut')">CUT</button>
+          <button class="btn btn-keep ${dec === 'keep' ? 'selected' : ''}" onclick="decide(${gi}, ${ci}, 'keep')">KEEP</button>
+          ${dec ? `<span class="decision-badge ${dec}">${dec.toUpperCase()}</span>` : ''}
+        </div>
+        <div class="why-stays ${dec === 'keep' ? 'visible' : ''}" id="why-${gi}-${ci}">
+          <label>Why it stays:</label>
+          <textarea placeholder="Why does this one earn its place?" oninput="saveWhy(${gi}, ${ci}, this.value)">${esc(note)}</textarea>
+        </div>
+      `;
+      body.appendChild(card);
+    });
+
+    groupEl.appendChild(body);
+    container.appendChild(groupEl);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ─── DECISIONS ───
+function decideKeeper(gi, action) {
+  const group = DATA[gi];
+  const key = `${group.group_id}-keeper`;
+  const prev = decisions[key];
+
+  // Toggle if clicking same action
+  if (prev === action) {
+    delete decisions[key];
+  } else {
+    decisions[key] = action;
+  }
+
+  // Flash animation
+  const card = document.getElementById(`keeper-${gi}`);
+  if (card) {
+    card.classList.remove('flash-cut', 'flash-keep');
+    void card.offsetWidth;
+    card.classList.add(action === 'cut' ? 'flash-cut' : 'flash-keep');
+  }
+
+  render();
+  save();
+}
+
+function decide(gi, ci, action) {
+  const group = DATA[gi];
+  const key = `${group.group_id}-${ci}`;
+  const prev = decisions[key];
+
+  // Toggle if clicking same action
+  if (prev === action) {
+    delete decisions[key];
+  } else {
+    decisions[key] = action;
+  }
+
+  // Flash animation
+  const card = document.getElementById(`cut-${gi}-${ci}`);
+  if (card) {
+    card.classList.remove('flash-cut', 'flash-keep');
+    void card.offsetWidth; // force reflow
+    card.classList.add(action === 'cut' ? 'flash-cut' : 'flash-keep');
+  }
+
+  render();
+  save();
+}
+
+function saveWhyKeeper(gi, val) {
+  const group = DATA[gi];
+  const key = `${group.group_id}-keeper`;
+  whyNotes[key] = val;
+  save();
+}
+
+function saveWhy(gi, ci, val) {
+  const group = DATA[gi];
+  const key = `${group.group_id}-${ci}`;
+  whyNotes[key] = val;
+  save();
+}
+
+function toggleCollapse(gi) {
+  const el = document.getElementById(`group-${gi}`);
+  if (el) el.classList.toggle('collapsed');
+}
+
+// ─── NAVIGATION ───
+function jumpToNext() {
+  for (let gi = 0; gi < DATA.length; gi++) {
+    const items = groupItems(gi);
+    for (let ii = 0; ii < items.length; ii++) {
+      const key = itemKey(DATA[gi], items[ii]);
+      if (!decisions[key]) {
+        focusedGroupIdx = gi;
+        focusedItemIdx = ii;
+        render();
+        scrollToGroup(gi);
+        return;
+      }
+    }
+  }
+}
+
+function scrollToGroup(gi) {
+  const el = document.getElementById(`group-${gi}`);
+  if (el) {
+    // Uncollapse if collapsed
+    el.classList.remove('collapsed');
+    const headerH = document.getElementById('header').offsetHeight;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerH - 12;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+function cutAllUndecided() {
+  if (!confirm(`Cut all remaining undecided items? This marks every undecided response (including suggested keepers) as CUT.`)) return;
+  DATA.forEach((group, gi) => {
+    // Keeper
+    const keeperKey = `${group.group_id}-keeper`;
+    if (!decisions[keeperKey]) {
+      decisions[keeperKey] = 'cut';
+    }
+    // Cuts
+    group.cuts.forEach((_, ci) => {
+      const key = `${group.group_id}-${ci}`;
+      if (!decisions[key]) {
+        decisions[key] = 'cut';
+      }
+    });
+  });
+  render();
+  save();
+}
+
+// ─── KEYBOARD ───
+document.addEventListener('keydown', (e) => {
+  // Don't intercept if typing in textarea
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  const key = e.key.toLowerCase();
+
+  if (key === 'j') {
+    // Next group
+    e.preventDefault();
+    focusedItemIdx = 0;
+    focusedGroupIdx = Math.min(focusedGroupIdx + 1, DATA.length - 1);
+    render();
+    scrollToGroup(focusedGroupIdx);
+  } else if (key === 'k') {
+    // Prev group
+    e.preventDefault();
+    focusedItemIdx = 0;
+    focusedGroupIdx = Math.max(focusedGroupIdx - 1, 0);
+    render();
+    scrollToGroup(focusedGroupIdx);
+  } else if (key === 'arrowdown') {
+    // Next item within group
+    e.preventDefault();
+    const maxIdx = DATA[focusedGroupIdx].cuts.length; // 0=keeper, 1..N=cuts
+    focusedItemIdx = Math.min(focusedItemIdx + 1, maxIdx);
+    render();
+  } else if (key === 'arrowup') {
+    // Prev item within group
+    e.preventDefault();
+    focusedItemIdx = Math.max(focusedItemIdx - 1, 0);
+    render();
+  } else if (key === 'n') {
+    // Cut focused
+    e.preventDefault();
+    if (focusedItemIdx === 0) {
+      decideKeeper(focusedGroupIdx, 'cut');
+    } else {
+      decide(focusedGroupIdx, focusedItemIdx - 1, 'cut');
+    }
+    advanceFocus();
+  } else if (key === 'y') {
+    // Keep focused
+    e.preventDefault();
+    if (focusedItemIdx === 0) {
+      decideKeeper(focusedGroupIdx, 'keep');
+    } else {
+      decide(focusedGroupIdx, focusedItemIdx - 1, 'keep');
+    }
+    advanceFocus();
+  } else if (key === 'enter') {
+    e.preventDefault();
+    toggleCollapse(focusedGroupIdx);
+  }
+});
+
+function advanceFocus() {
+  const group = DATA[focusedGroupIdx];
+  const items = groupItems(focusedGroupIdx);
+
+  // Try next item in same group
+  for (let ii = focusedItemIdx + 1; ii < items.length; ii++) {
+    const key = itemKey(group, items[ii]);
+    if (!decisions[key]) {
+      focusedItemIdx = ii;
+      render();
+      return;
+    }
+  }
+  // Try next group
+  for (let gi = focusedGroupIdx + 1; gi < DATA.length; gi++) {
+    const gitems = groupItems(gi);
+    for (let ii = 0; ii < gitems.length; ii++) {
+      const key = itemKey(DATA[gi], gitems[ii]);
+      if (!decisions[key]) {
+        focusedGroupIdx = gi;
+        focusedItemIdx = ii;
+        render();
+        scrollToGroup(gi);
+        return;
+      }
+    }
+  }
+  // All done
+  render();
+}
+
+// ─── STATS ───
+function updateStats() {
+  let cuts = 0, keeps = 0, undecided = 0;
+  let groupsDone = 0;
+
+  DATA.forEach(group => {
+    let groupComplete = true;
+    const items = groupItems(DATA.indexOf(group));
+
+    items.forEach(item => {
+      const key = itemKey(group, item);
+      if (decisions[key] === 'cut') cuts++;
+      else if (decisions[key] === 'keep') keeps++;
+      else { undecided++; groupComplete = false; }
+    });
+
+    if (groupComplete) groupsDone++;
+  });
+
+  document.getElementById('stat-cuts').textContent = cuts;
+  document.getElementById('stat-keeps').textContent = keeps;
+  document.getElementById('stat-undecided').textContent = undecided;
+  document.getElementById('stat-groups-done').textContent = groupsDone;
+  document.getElementById('stat-groups-total').textContent = DATA.length;
+
+  const total = cuts + keeps + undecided;
+  const pct = total > 0 ? ((cuts + keeps) / total * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  document.getElementById('btn-jump').disabled = undecided === 0;
+}
+
+// ─── EXPORT ───
+function updateExport() {
+  const cutsList = [];
+  const keepsList = [];
+  const undecidedList = [];
+
+  DATA.forEach(group => {
+    // Keeper
+    const keeperKey = `${group.group_id}-keeper`;
+    const keeperDec = decisions[keeperKey];
+    const keeperItem = {
+      text: group.keeper.text,
+      category: group.keeper.category,
+      group_id: group.group_id,
+      concept: group.concept,
+      suggested_keeper: true
+    };
+    if (keeperDec === 'keep') {
+      const note = whyNotes[keeperKey];
+      if (note) keeperItem.why_stays = note;
+      keepsList.push(keeperItem);
+    } else if (keeperDec === 'cut') {
+      cutsList.push(keeperItem);
+    } else {
+      undecidedList.push(keeperItem);
+    }
+
+    // Cut candidates
+    group.cuts.forEach((cut, ci) => {
+      const key = `${group.group_id}-${ci}`;
+      const dec = decisions[key];
+      const item = {
+        text: cut.text,
+        category: cut.category,
+        group_id: group.group_id,
+        concept: group.concept,
+        reason: cut.reason
+      };
+      if (dec === 'keep') {
+        const note = whyNotes[key];
+        if (note) item.why_stays = note;
+        keepsList.push(item);
+      } else if (dec === 'cut') {
+        cutsList.push(item);
+      } else {
+        undecidedList.push(item);
+      }
+    });
+  });
+
+  document.getElementById('tab-cuts-count').textContent = cutsList.length;
+  document.getElementById('tab-keeps-count').textContent = keepsList.length;
+  document.getElementById('tab-undecided-count').textContent = undecidedList.length;
+
+  let content;
+  if (currentTab === 'cuts') {
+    content = JSON.stringify(cutsList, null, 2);
+  } else if (currentTab === 'keeps') {
+    content = JSON.stringify(keepsList, null, 2);
+  } else if (currentTab === 'undecided') {
+    content = JSON.stringify(undecidedList, null, 2);
+  } else {
+    content = JSON.stringify({
+      summary: {
+        total_items: totalItems,
+        cuts: cutsList.length,
+        keeps: keepsList.length,
+        undecided: undecidedList.length,
+        date: new Date().toISOString().split('T')[0]
+      },
+      cuts: cutsList,
+      keeps: keepsList,
+      undecided: undecidedList
+    }, null, 2);
+  }
+
+  document.getElementById('export-content').textContent = content;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.export-tab').forEach((el, i) => {
+    el.classList.toggle('active', ['cuts','keeps','undecided','full'][i] === tab);
+  });
+  updateExport();
+}
+
+function copyExport() {
+  const text = document.getElementById('export-content').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPY';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// ─── PERSISTENCE (localStorage) ───
+const STORAGE_KEY = 'maybecat-cull-r1-slam-dunks-v2';
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ decisions, whyNotes }));
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      decisions = data.decisions || {};
+      whyNotes = data.whyNotes || {};
+    }
+  } catch(e) {}
+}
+
+// ─── INIT ───
+load();
+render();
+</script>
+
+</body>
+</html>

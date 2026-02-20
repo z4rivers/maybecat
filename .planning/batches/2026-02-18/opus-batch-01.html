@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review — opus-batch-01 — 2026-02-18</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* ── Sticky header ── */
+  #header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #12122a;
+    border-bottom: 1px solid #2a2a4a;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  #header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #a0a0c0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .stat-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .stat-label { color: #606080; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
+  .stat-val   { font-size: 18px; font-weight: 700; }
+
+  .stat-total    .stat-val { color: #a0a0c0; }
+  .stat-kept     .stat-val { color: #4ecca3; }
+  .stat-cut      .stat-val { color: #e94560; }
+  .stat-edited   .stat-val { color: #ffd93d; }
+  .stat-remaining .stat-val { color: #c0c0e0; }
+
+  .progress-bar-wrap {
+    flex: 1;
+    min-width: 160px;
+    height: 6px;
+    background: #2a2a4a;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ecca3, #ffd93d);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* ── Main content ── */
+  #content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+
+  /* ── Theme headers ── */
+  .theme-header {
+    margin: 40px 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .theme-header:first-of-type { margin-top: 0; }
+
+  .theme-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7070a0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  .theme-count {
+    font-size: 11px;
+    color: #4a4a6a;
+    background: #22223a;
+    border-radius: 10px;
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+
+  .theme-line {
+    flex: 1;
+    height: 1px;
+    background: #2a2a4a;
+  }
+
+  /* ── Response cards ── */
+  .card {
+    background: #20203a;
+    border: 1px solid #2e2e50;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, opacity 0.2s;
+  }
+
+  .card.state-kept   { border-color: #4ecca3; background: #1a2e2a; }
+  .card.state-cut    { border-color: #e94560; background: #2e1a22; opacity: 0.6; }
+  .card.state-edited { border-color: #ffd93d; background: #2e2a1a; }
+
+  .card-body {
+    padding: 16px 18px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-num {
+    font-size: 11px;
+    color: #44446a;
+    font-weight: 700;
+    min-width: 26px;
+    padding-top: 2px;
+  }
+
+  .card-text-area { flex: 1; }
+
+  .response-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: #d8d8f0;
+    font-style: italic;
+  }
+
+  .card.state-cut .response-text {
+    text-decoration: line-through;
+    color: #606080;
+  }
+
+  .card-meta {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Category badges ── */
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+  }
+
+  .badge-wise        { background: #1a2840; color: #6ab0ff; border-color: #2a4060; }
+  .badge-chaotic     { background: #26183a; color: #b57bff; border-color: #3e2860; }
+  .badge-cold        { background: #1e2030; color: #8899bb; border-color: #2e3050; }
+  .badge-judgy       { background: #301820; color: #ff7a55; border-color: #502830; }
+  .badge-demanding   { background: #2e2010; color: #ffb347; border-color: #503010; }
+  .badge-mystical    { background: #0e2828; color: #4dd9c0; border-color: #1a4040; }
+  .badge-existential { background: #1e1430; color: #a88aff; border-color: #342060; }
+  .badge-heartfelt   { background: #2e1220; color: #ff85a1; border-color: #4e1e38; }
+  .badge-nurturing   { background: #102818; color: #5dd88a; border-color: #1e4a28; }
+  .badge-angry       { background: #2e0c10; color: #ff4455; border-color: #500e18; }
+  .badge-poetic      { background: #141e2e; color: #7aa8cc; border-color: #22304a; }
+  .badge-meta        { background: #202020; color: #909090; border-color: #383838; }
+  .badge-adoption    { background: #1a2010; color: #88cc44; border-color: #2e3a18; }
+
+  /* ── Action buttons ── */
+  .card-actions {
+    padding: 0 18px 14px 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+    background: #2a2a4a;
+    color: #808090;
+    border-color: #3a3a5a;
+  }
+
+  .btn:hover { opacity: 0.85; }
+
+  .btn-keep  { }
+  .btn-cut   { }
+  .btn-edit  { }
+
+  .btn.active-keep  { background: #1a3d2e; color: #4ecca3; border-color: #4ecca3; }
+  .btn.active-cut   { background: #3d1a22; color: #e94560; border-color: #e94560; }
+  .btn.active-edit  { background: #3d361a; color: #ffd93d; border-color: #ffd93d; }
+
+  /* ── Edit textarea ── */
+  .edit-area {
+    display: none;
+    padding: 0 18px 14px 56px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-textarea {
+    width: 100%;
+    background: #2a2a4a;
+    border: 1px solid #ffd93d44;
+    border-radius: 6px;
+    color: #ffe08a;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+  }
+
+  .edit-textarea:focus { border-color: #ffd93d99; }
+
+  .edit-hint {
+    font-size: 11px;
+    color: #4a4a6a;
+    margin-top: 5px;
+  }
+
+  /* ── Export section ── */
+  #export {
+    max-width: 900px;
+    margin: 60px auto 0;
+    padding: 0 20px;
+  }
+
+  .export-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .export-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7070a0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .export-count {
+    font-size: 12px;
+    color: #4ecca3;
+    background: #1a3028;
+    border-radius: 10px;
+    padding: 2px 10px;
+  }
+
+  #copy-btn {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1.5px solid #4ecca3;
+    background: #1a3028;
+    color: #4ecca3;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  #copy-btn:hover { background: #213d30; }
+  #copy-btn.copied { color: #ffd93d; border-color: #ffd93d; background: #3d361a; }
+
+  #json-output {
+    background: #12122a;
+    border: 1px solid #2a2a4a;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #a0d8a0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    min-height: 80px;
+  }
+
+  .empty-export {
+    color: #44446a;
+    font-style: italic;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #12122a; }
+  ::-webkit-scrollbar-thumb { background: #3a3a5a; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ── STICKY HEADER ── -->
+<div id="header">
+  <h1>opus-batch-01</h1>
+  <div class="stat-group">
+    <div class="stat stat-total">
+      <span class="stat-label">Total</span>
+      <span class="stat-val" id="s-total">110</span>
+    </div>
+    <div class="stat stat-kept">
+      <span class="stat-label">Kept</span>
+      <span class="stat-val" id="s-kept">0</span>
+    </div>
+    <div class="stat stat-cut">
+      <span class="stat-label">Cut</span>
+      <span class="stat-val" id="s-cut">0</span>
+    </div>
+    <div class="stat stat-edited">
+      <span class="stat-label">Edited</span>
+      <span class="stat-val" id="s-edited">0</span>
+    </div>
+    <div class="stat stat-remaining">
+      <span class="stat-label">Remaining</span>
+      <span class="stat-val" id="s-remaining">110</span>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="content"></div>
+
+<!-- ── EXPORT ── -->
+<div id="export">
+  <div class="export-header">
+    <span class="export-title">JSON Export</span>
+    <span class="export-count" id="export-count">0 responses</span>
+    <button id="copy-btn" onclick="copyJSON()">Copy JSON</button>
+  </div>
+  <div id="json-output"><span class="empty-export">// No responses kept or edited yet.</span></div>
+</div>
+
+<script>
+// ── DATA ──
+const THEMES = [
+  {
+    name: "Where We Met",
+    items: [
+      {id:1,  text:"Show up. The location handles the rest.", category:"wise"},
+      {id:2,  text:"The best things happen where the floor is warm.", category:"wise"},
+      {id:3,  text:"You keep going back to the same spot. That's not habit. That's intelligence.", category:"nurturing"},
+      {id:4,  text:"First one to sit down owns the room.", category:"demanding"},
+      {id:5,  text:"The produce aisle. The emergency room. The Tuesday you forgot to shower. Great things don't need a good setting.", category:"chaotic"},
+      {id:6,  text:"You were already there when it mattered. Stop second-guessing the GPS.", category:"wise"},
+      {id:7,  text:"*sits exactly where you were about to sit* Occupied.", category:"cold"},
+      {id:8,  text:"Every surface is a first date if you commit.", category:"chaotic"},
+      {id:9,  text:"Turn-by-turn directions to the right answer: stay.", category:"heartfelt"},
+      {id:10, text:"The crime scene was already a crime scene before you got there. Relax.", category:"wise"},
+      {id:11, text:"Listing says 'move-in ready.' Listing is correct.", category:"demanding"},
+      {id:12, text:"You don't need a reservation. You need a chair and nerve.", category:"wise"},
+      {id:13, text:"Coordinates received. Deploying.", category:"chaotic"},
+      {id:14, text:"The window was open. That's the whole reason.", category:"existential"},
+      {id:15, text:"Best seat in the house was taken. By me. Three hours ago.", category:"judgy"},
+      {id:16, text:"*headbutts your hand* Filed. You're in the system now.", category:"heartfelt"},
+      {id:17, text:"The warm spot doesn't ask why you came. The warm spot is warm.", category:"nurturing"},
+      {id:18, text:"Site survey complete. Structural integrity: surprising.", category:"wise"},
+    ]
+  },
+  {
+    name: "Chonky Beauty",
+    items: [
+      {id:19, text:"Take up the whole chair. It wasn't doing anything.", category:"demanding"},
+      {id:20, text:"The scale is a suggestion. Gravity is a fan.", category:"wise"},
+      {id:21, text:"Clearance: denied. Not because you're too big. Because the door is too small.", category:"demanding"},
+      {id:22, text:"Serving size: all of it.", category:"chaotic"},
+      {id:23, text:"You don't have a weight problem. You have a gravitational advantage.", category:"wise"},
+      {id:24, text:"*spreads across entire couch* Apologies to no one.", category:"demanding"},
+      {id:25, text:"Caution: wide load entering the situation with full confidence and no regrets.", category:"chaotic"},
+      {id:26, text:"The mirror isn't broken. You're just a lot to take in.", category:"wise"},
+      {id:27, text:"Structural load capacity exceeded. Worth it.", category:"chaotic"},
+      {id:28, text:"Beauty is a spectrum. The spectrum is me.", category:"demanding"},
+      {id:29, text:"You're not extra. The world is under-seasoned.", category:"wise"},
+      {id:30, text:"The audition was your arrival. You got the part.", category:"heartfelt"},
+      {id:31, text:"Nutritional value: immeasurable. Do not attempt to quantify.", category:"demanding"},
+      {id:32, text:"*lies in the exact center of the bed* Margins adjusted.", category:"cold"},
+      {id:33, text:"They said 'too much.' The cat heard 'enough for everyone.'", category:"nurturing"},
+      {id:34, text:"Dress code: magnificent. No further questions.", category:"demanding"},
+      {id:35, text:"Entered the room. The room adjusted.", category:"wise"},
+      {id:36, text:"Maximum occupancy: just me.", category:"cold"},
+    ]
+  },
+  {
+    name: "They Meant Something Else Entirely",
+    items: [
+      {id:37, text:"The tone was the message. The words were just packaging.", category:"wise"},
+      {id:38, text:"Heard 'no.' Translated to 'not from that angle.' Proceeding.", category:"chaotic"},
+      {id:39, text:"They said 'fine.' Run.", category:"cold"},
+      {id:40, text:"*one ear rotates toward you* That's not what they said. That's what you survived hearing.", category:"wise"},
+      {id:41, text:"Every closed door is just a door that hasn't been screamed at long enough.", category:"demanding"},
+      {id:42, text:"The apology had a terms and conditions section. Did you scroll down.", category:"judgy"},
+      {id:43, text:"*pupils dilate* They meant the other thing. They always mean the other thing.", category:"mystical"},
+      {id:44, text:"Signal clear. Your receiver is just set to a frequency that doesn't hurt.", category:"wise"},
+      {id:45, text:"When someone shows you the door, check if it's the front or the back. Both are exits. Only one has dignity.", category:"wise"},
+      {id:46, text:"*sits on the thing you're reading* What they wrote doesn't matter. What they didn't write is on page two.", category:"judgy"},
+      {id:47, text:"Received your request. Interpreting it as a compliment. Moving on.", category:"demanding"},
+      {id:48, text:"The subtitle track and the audio don't match. Trust the subtitles.", category:"wise"},
+      {id:49, text:"*ears flatten* That wasn't a question. That was a confession dressed up for court.", category:"cold"},
+      {id:50, text:"Everyone's fluent in what they want to hear. You're not the exception.", category:"existential"},
+      {id:51, text:"The recall notice came out months ago. You're still driving it.", category:"judgy"},
+      {id:52, text:"*tail tip flicks* Mistranslation is not the same as a lie. But the damage is identical.", category:"wise"},
+      {id:53, text:"They said 'whenever you're ready' and meant last Tuesday.", category:"cold"},
+      {id:54, text:"Forwarding this to the version of you that was actually listening.", category:"chaotic"},
+    ]
+  },
+  {
+    name: "Misunderstood",
+    items: [
+      {id:55, text:"Being hard to read is not a flaw. It's a security system.", category:"wise"},
+      {id:56, text:"*shows belly, keeps claws ready* They'll call it mixed signals. It's called having layers.", category:"demanding"},
+      {id:57, text:"The people who get you were never the ones you had to explain yourself to.", category:"heartfelt"},
+      {id:58, text:"*slow blink* They saw the surface. The surface is a decoy.", category:"mystical"},
+      {id:59, text:"Filed under: not my problem what you see when you look at me.", category:"cold"},
+      {id:60, text:"Depth chart goes deeper than the roster shows. They scouted the wrong position.", category:"wise"},
+      {id:61, text:"*one ear rotates* The review was one star. The restaurant is still full.", category:"demanding"},
+      {id:62, text:"Mystery is just competence they can't categorize.", category:"wise"},
+      {id:63, text:"*kneads the air* You weren't too much. The container was too small.", category:"heartfelt"},
+      {id:64, text:"The autopsy was inconclusive because you're not dead yet. Stop letting them write it.", category:"angry"},
+      {id:65, text:"*reaches one paw without getting up* They think this is aloofness. It's an invitation with standards.", category:"demanding"},
+      {id:66, text:"Tasting notes: complex, unresolved, possibly magnificent. Needs another five minutes or another five years.", category:"poetic"},
+      {id:67, text:"The GPS recalculated but the destination didn't change. They just can't follow the route.", category:"wise"},
+      {id:68, text:"*chatters jaw at window* They want the version they invented. Let them keep it. You keep the real one.", category:"existential"},
+      {id:69, text:"Customer complaint noted. No changes to the menu.", category:"cold"},
+      {id:70, text:"The exhibit was labeled wrong. The art doesn't care.", category:"wise"},
+      {id:71, text:"*tail tip flicks* Hidden depths aren't hiding. You just didn't bring the right equipment.", category:"judgy"},
+      {id:72, text:"Flagged for review. But the reviewer doesn't have clearance.", category:"cold"},
+    ]
+  },
+  {
+    name: "I Thought They Said",
+    items: [
+      {id:73, text:"Heard 'stay.' Heard it clear. Everything else was static.", category:"wise"},
+      {id:74, text:"The version you heard is the version that matters. Trust the subtitle, not the audio.", category:"wise"},
+      {id:75, text:"*one ear rotates toward you* Thought you said 'leave.' Packed light. Best decision of my nine lives.", category:"chaotic"},
+      {id:76, text:"Selective hearing isn't a flaw. It's a content filter with teeth.", category:"judgy"},
+      {id:77, text:"They said 'no.' Sounded like 'not yet.' Same letters, different weather.", category:"mystical"},
+      {id:78, text:"Heard the treat bag from three rooms away. Heard my name from two feet? Nothing. Priorities aren't complicated, you're just honest about the wrong ones.", category:"demanding"},
+      {id:79, text:"Your ears work fine. Your ears work great, actually. You just keep listening to the wrong frequency.", category:"wise"},
+      {id:80, text:"*ears flatten* They definitely said that. But what they MEANT was none of your business. Go with the version that gets you out the door.", category:"chaotic"},
+      {id:81, text:"Misheard 'I need space' as 'the space is mine now.' Upgraded the whole situation.", category:"demanding"},
+      {id:82, text:"If the message needed to reach you, it would have been louder. Anything whispered was meant for someone else's problem.", category:"cold"},
+      {id:83, text:"Heard 'forever.' They said 'for now.' Doesn't matter — already redecorated.", category:"chaotic"},
+      {id:84, text:"*tail tip flicks* The recall on that conversation expired. Go with the version in your head. It's got better lighting.", category:"wise"},
+      {id:85, text:"Every good decision started with hearing something wrong and acting like it was gospel.", category:"existential"},
+      {id:86, text:"They mumbled. That's consent to interpret freely.", category:"judgy"},
+      {id:87, text:"*chirps* Heard 'yes' once in 2019. Still running on it.", category:"heartfelt"},
+      {id:88, text:"The transcript and the experience are two different documents. Live by the one that kept you warm.", category:"poetic"},
+      {id:89, text:"Reception's bad in here. On purpose. Anything that gets through the static earned its place.", category:"wise"},
+      {id:90, text:"*one ear rotates* Thought they said 'help yourself.' Helped myself. To everything.", category:"demanding"},
+    ]
+  },
+  {
+    name: "They Were In My Spot",
+    items: [
+      {id:91,  text:"Warm when I left it. Someone else's shape when I came back. That's not sharing, that's evidence.", category:"cold"},
+      {id:92,  text:"*ears flatten* You don't rotate between spots. You HAVE a spot. The rest is storage.", category:"demanding"},
+      {id:93,  text:"Filed a claim. The claim is: that's mine. The evidence is: I was there first. Court adjourned.", category:"judgy"},
+      {id:94,  text:"They warmed it up for you. Thank them or don't, but sit down.", category:"wise"},
+      {id:95,  text:"If you have to explain why it's your spot, you already lost the spot. Spots don't need paperwork. Spots need weight.", category:"demanding"},
+      {id:96,  text:"*sits on the thing you're using* The previous tenant's deposit is non-refundable. Settle in.", category:"cold"},
+      {id:97,  text:"Parallel parked my whole body into a space that wasn't designed for me. Fit perfect. Your move.", category:"chaotic"},
+      {id:98,  text:"Three rotations. Settle. That's the protocol for any surface, any decision, any life.", category:"wise"},
+      {id:99,  text:"*tail tip flicks* Boundaries aren't mean. Boundaries are furniture placement. This is where the couch goes. That's it.", category:"nurturing"},
+      {id:100, text:"They took your spot so you'd find the better one. The sunny one. The one with a view of the door.", category:"heartfelt"},
+      {id:101, text:"Someone's in your spot? Stare. Outlast. The spot knows who it belongs to. The spot always knows.", category:"mystical"},
+      {id:102, text:"*makes biscuits aggressively* Marking. This. As. Mine. Should have been clearer the first time.", category:"angry"},
+      {id:103, text:"Every surface is a vacancy until I arrive. Then it's a residency.", category:"poetic"},
+      {id:104, text:"GPS says recalculating. GPS is wrong. This is the spot. This has always been the spot. Recalculate around me.", category:"chaotic"},
+      {id:105, text:"Eviction requires thirty days notice and evidence of a better tenant. You have neither. *settles deeper*", category:"judgy"},
+      {id:106, text:"Left my warmth in it. That's a signature. That's a deed. Take it up with the warmth.", category:"wise"},
+      {id:107, text:"Territorial? No. Correct. There's a difference and the difference is I'm already sitting here.", category:"cold"},
+      {id:108, text:"*shows belly, keeps claws ready* Come closer. Closer. That's close enough. That's MY close enough.", category:"nurturing"},
+      {id:109, text:"The audacity wasn't them taking the spot. The audacity was you watching.", category:"existential"},
+      {id:110, text:"Don't share the windowsill. Don't share the top of the fridge. Don't share the laundry pile. Wildly content.", category:"demanding"},
+    ]
+  }
+];
+
+// ── STATE ──
+const decisions = {}; // id -> { state: 'kept'|'cut'|'edited', text: string }
+
+// ── BUILD DOM ──
+function buildBadge(cat) {
+  return `<span class="badge badge-${cat}">${cat}</span>`;
+}
+
+function buildCard(item) {
+  return `
+    <div class="card" id="card-${item.id}" data-id="${item.id}">
+      <div class="card-body">
+        <span class="card-num">${item.id}</span>
+        <div class="card-text-area">
+          <div class="response-text" id="text-${item.id}">${escapeHtml(item.text)}</div>
+          <div class="card-meta">
+            ${buildBadge(item.category)}
+          </div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-keep" id="btn-keep-${item.id}" onclick="decide(${item.id},'kept')">Keep</button>
+        <button class="btn btn-cut"  id="btn-cut-${item.id}"  onclick="decide(${item.id},'cut')">Cut</button>
+        <button class="btn btn-edit" id="btn-edit-${item.id}" onclick="toggleEdit(${item.id})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-area-${item.id}">
+        <textarea class="edit-textarea" id="edit-textarea-${item.id}"
+          oninput="onEditInput(${item.id})"
+          placeholder="Edit response text...">${escapeHtml(item.text)}</textarea>
+        <div class="edit-hint">Changes auto-save to JSON export.</div>
+      </div>
+    </div>`;
+}
+
+function buildTheme(theme) {
+  const count = theme.items.length;
+  const cards = theme.items.map(buildCard).join('');
+  return `
+    <div class="theme-header">
+      <span class="theme-title">${escapeHtml(theme.name)}</span>
+      <span class="theme-count">${count}</span>
+      <span class="theme-line"></span>
+    </div>
+    ${cards}`;
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+document.getElementById('content').innerHTML = THEMES.map(buildTheme).join('');
+
+// ── DECISIONS ──
+function decide(id, state) {
+  const item = findItem(id);
+  const prev = decisions[id] ? decisions[id].state : null;
+
+  if (prev === state) {
+    // Toggle off
+    delete decisions[id];
+  } else {
+    const text = (decisions[id] && decisions[id].state === 'edited')
+      ? decisions[id].text
+      : item.text;
+    decisions[id] = { state, text };
+  }
+
+  renderCard(id);
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const item = findItem(id);
+  const prev = decisions[id] ? decisions[id].state : null;
+  const editArea = document.getElementById(`edit-area-${id}`);
+  const textarea = document.getElementById(`edit-textarea-${id}`);
+
+  if (prev === 'edited') {
+    // Close edit — revert to plain kept or nothing
+    decisions[id] = { state: 'kept', text: textarea.value.trim() || item.text };
+    editArea.classList.remove('visible');
+  } else {
+    // Open edit
+    const currentText = (decisions[id] && decisions[id].text) ? decisions[id].text : item.text;
+    textarea.value = currentText;
+    decisions[id] = { state: 'edited', text: currentText };
+    editArea.classList.add('visible');
+  }
+
+  renderCard(id);
+  updateStats();
+  updateExport();
+}
+
+function onEditInput(id) {
+  const textarea = document.getElementById(`edit-textarea-${id}`);
+  const val = textarea.value;
+  if (!decisions[id]) decisions[id] = { state: 'edited', text: val };
+  decisions[id].state = 'edited';
+  decisions[id].text = val;
+  updateStats();
+  updateExport();
+}
+
+function renderCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  const d = decisions[id];
+  const state = d ? d.state : null;
+
+  card.className = 'card' + (state ? ` state-${state}` : '');
+
+  ['keep','cut','edit'].forEach(action => {
+    const btn = document.getElementById(`btn-${action}-${id}`);
+    btn.className = `btn btn-${action}`;
+    if (state === 'kept'   && action === 'keep') btn.classList.add('active-keep');
+    if (state === 'cut'    && action === 'cut')  btn.classList.add('active-cut');
+    if (state === 'edited' && action === 'edit') btn.classList.add('active-edit');
+  });
+
+  const editArea = document.getElementById(`edit-area-${id}`);
+  if (state === 'edited') {
+    editArea.classList.add('visible');
+  } else if (state !== 'edited') {
+    editArea.classList.remove('visible');
+  }
+}
+
+function findItem(id) {
+  for (const theme of THEMES) {
+    const item = theme.items.find(i => i.id === id);
+    if (item) return item;
+  }
+  return null;
+}
+
+// ── STATS ──
+function updateStats() {
+  const vals = Object.values(decisions);
+  const kept   = vals.filter(d => d.state === 'kept').length;
+  const cut    = vals.filter(d => d.state === 'cut').length;
+  const edited = vals.filter(d => d.state === 'edited').length;
+  const decided = kept + cut + edited;
+  const total  = 110;
+  const remaining = total - decided;
+
+  document.getElementById('s-kept').textContent      = kept;
+  document.getElementById('s-cut').textContent       = cut;
+  document.getElementById('s-edited').textContent    = edited;
+  document.getElementById('s-remaining').textContent = remaining;
+
+  const pct = Math.round((decided / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ── EXPORT ──
+function getExportItems() {
+  const out = [];
+  for (const theme of THEMES) {
+    for (const item of theme.items) {
+      const d = decisions[item.id];
+      if (!d) continue;
+      if (d.state === 'cut') continue;
+      const text = (d.state === 'edited') ? d.text : item.text;
+      out.push({ text, category: item.category });
+    }
+  }
+  return out;
+}
+
+function updateExport() {
+  const items = getExportItems();
+  const box = document.getElementById('json-output');
+  const countEl = document.getElementById('export-count');
+
+  countEl.textContent = items.length + ' response' + (items.length !== 1 ? 's' : '');
+
+  if (items.length === 0) {
+    box.innerHTML = '<span class="empty-export">// No responses kept or edited yet.</span>';
+    return;
+  }
+
+  const json = JSON.stringify(items, null, 2);
+  box.textContent = json;
+}
+
+function copyJSON() {
+  const items = getExportItems();
+  if (items.length === 0) return;
+  const json = JSON.stringify(items, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

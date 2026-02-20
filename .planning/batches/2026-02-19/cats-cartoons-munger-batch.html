@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cats × Cartoons × Munger Batch — 2026-02-19</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .item-text { font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .item-meta { font-size: 0.75rem; color: #666; margin-bottom: 1rem; }
+  .actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .btn { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: #fff; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; }
+  .edit-area { display: none; margin-top: 0.5rem; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; font-size: 1.1rem; min-height: 60px; }
+  .item.decided-keep { border-left: 4px solid #4ecca3; }
+  .item.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+  .item.decided-edit { border-left: 4px solid #ffd93d; }
+  #export { background: #0f3460; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; }
+  #export pre { white-space: pre-wrap; font-size: 0.85rem; color: #4ecca3; }
+  #copy-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Cats × Cartoons × Munger Batch</h1>
+  <p style="color:#666;margin:0.5rem 0">Random archetypes × cartoon delivery modes × Munger concepts twisted into funny thought pretzels · 30 candidates</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span style="color:#666">Undecided: <span id="undecided-count">30</span></span>
+  </div>
+</div>
+<div id="items">
+
+<div class="item" id="item-1" data-text="I inverted the question and now I&apos;m facing a wall." data-category="chaotic" data-decision="">
+  <div class="item-text">I inverted the question and now I&apos;m facing a wall.</div>
+  <div class="item-meta">Archetype: Doubt Cat · Mode: Peanuts · Munger: Inversion gone wrong · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(1,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-2" data-text="Six of my instincts agree. The seventh one has a lawyer." data-category="chaotic" data-decision="">
+  <div class="item-text">Six of my instincts agree. The seventh one has a lawyer.</div>
+  <div class="item-meta">Archetype: Conspiracy Cat · Mode: Far Side · Munger: Lollapalooza (converging tendencies) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(2,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-3" data-text="The too-hard pile is full. I started a too-hard floor." data-category="existential" data-decision="">
+  <div class="item-text">The too-hard pile is full. I started a too-hard floor.</div>
+  <div class="item-meta">Archetype: Resigned Cat · Mode: Peanuts · Munger: Too-hard pile (expanded absurdly) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(3,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-4" data-text="Do it for the incentive. What&apos;s the incentive? Exactly." data-category="cold" data-decision="">
+  <div class="item-text">Do it for the incentive. What&apos;s the incentive? Exactly.</div>
+  <div class="item-meta">Archetype: Realist Cat · Mode: Daria · Munger: Incentives drive everything (but sometimes there aren't any) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(4,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-5" data-text="I tried avoiding stupidity. Turns out it&apos;s faster than me." data-category="chaotic" data-decision="">
+  <div class="item-text">I tried avoiding stupidity. Turns out it&apos;s faster than me.</div>
+  <div class="item-meta">Archetype: Messy Cat · Mode: Calvin &amp; Hobbes · Munger: Avoiding stupidity > seeking brilliance (cat fails at both) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(5,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-6" data-text="Have you tried deserving it? No? Wild strategy." data-category="judgy" data-decision="">
+  <div class="item-text">Have you tried deserving it? No? Wild strategy.</div>
+  <div class="item-meta">Archetype: Competitive Cat · Mode: Daria · Munger: Deserve what you want · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(6,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-7" data-text="I looked at this from nine angles. Eight said run." data-category="cold" data-decision="">
+  <div class="item-text">I looked at this from nine angles. Eight said run.</div>
+  <div class="item-meta">Archetype: Detective Cat · Mode: Steven Wright · Munger: Multiple mental models (most agree it's bad) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(7,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-8" data-text="You mixed raisins and turds again. Still turds." data-category="demanding" data-decision="">
+  <div class="item-text">You mixed raisins and turds again. Still turds.</div>
+  <div class="item-meta">Archetype: Barncat · Mode: Far Side · Munger: Raisins and turds · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(8,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-9" data-text="The best decision is the one you can&apos;t blame on me." data-category="meta" data-decision="">
+  <div class="item-text">The best decision is the one you can&apos;t blame on me.</div>
+  <div class="item-meta">Archetype: Reluctant Therapist Cat · Mode: Peanuts · Munger: Seeking advice to pre-load blame · Category: meta</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(9,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-10" data-text="Your only hammer is hope. Everything looks fixable." data-category="existential" data-decision="">
+  <div class="item-text">Your only hammer is hope. Everything looks fixable.</div>
+  <div class="item-meta">Archetype: Dark Comedian Cat · Mode: Calvin &amp; Hobbes · Munger: Man with a hammer (hope as the wrong tool) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(10,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-11" data-text="Misery has a recipe. You&apos;re improvising, which is worse." data-category="judgy" data-decision="">
+  <div class="item-text">Misery has a recipe. You&apos;re improvising, which is worse.</div>
+  <div class="item-meta">Archetype: Condescending Parent Cat · Mode: Daria · Munger: Guaranteed misery prescriptions · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(11,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-12" data-text="I put this in the too-hard pile. Then the pile caught fire." data-category="chaotic" data-decision="">
+  <div class="item-text">I put this in the too-hard pile. Then the pile caught fire.</div>
+  <div class="item-meta">Archetype: Chaos Cat · Mode: Calvin &amp; Hobbes · Munger: Too-hard pile (catastrophically) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(12,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-13" data-text="Envy is the one where you don&apos;t even get snacks." data-category="cold" data-decision="">
+  <div class="item-text">Envy is the one where you don&apos;t even get snacks.</div>
+  <div class="item-meta">Archetype: Instant Gratification Cat · Mode: Far Side · Munger: Envy as total net loss (reframed as snack problem) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(13,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-14" data-text="Stop learning from your own mistakes. You don&apos;t have enough life left." data-category="angry" data-decision="">
+  <div class="item-text">Stop learning from your own mistakes. You don&apos;t have enough life left.</div>
+  <div class="item-meta">Archetype: Street Cat · Mode: Daria · Munger: Vicarious learning (you're running out of runway) · Category: angry</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(14,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-15" data-text="What would guarantee this fails? Oh, you&apos;re already doing that." data-category="judgy" data-decision="">
+  <div class="item-text">What would guarantee this fails? Oh, you&apos;re already doing that.</div>
+  <div class="item-meta">Archetype: Backhanded Support Cat · Mode: Peanuts · Munger: Inversion (discovering the failure path is already active) · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(15,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-16" data-text="Three of my personalities voted. Two abstained. Motion carries." data-category="chaotic" data-decision="">
+  <div class="item-text">Three of my personalities voted. Two abstained. Motion carries.</div>
+  <div class="item-meta">Archetype: Contradiction Cat · Mode: Far Side · Munger: Multiple models / committee decision (applied to inner chaos) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(16,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-17" data-text="The resentment recipe calls for you to drink the poison. Bottoms up?" data-category="demanding" data-decision="">
+  <div class="item-text">The resentment recipe calls for you to drink the poison. Bottoms up?</div>
+  <div class="item-meta">Archetype: Karen Cat · Mode: Calvin &amp; Hobbes · Munger: Resentment as self-poisoning (cat recommends the misery path) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(17,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-18" data-text="You&apos;re in the wrong lane calling it momentum." data-category="wise" data-decision="">
+  <div class="item-text">You&apos;re in the wrong lane calling it momentum.</div>
+  <div class="item-meta">Archetype: Realist Cat · Mode: Steven Wright · Munger: Consistency bias (mistaking direction for progress) · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(18,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-19" data-text="Your self-serving bias is showing. Looks great on you though." data-category="judgy" data-decision="">
+  <div class="item-text">Your self-serving bias is showing. Looks great on you though.</div>
+  <div class="item-meta">Archetype: Flirt Cat · Mode: Daria · Munger: Self-serving bias (complimented) · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(19,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-20" data-text="You hired a gut-reader for your sheep guts. Bold." data-category="chaotic" data-decision="">
+  <div class="item-text">You hired a gut-reader for your sheep guts. Bold.</div>
+  <div class="item-meta">Archetype: Brainy Cat · Mode: Far Side · Munger: Forecasters as sheep-gut readers · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(20,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-21" data-text="The plan assumed everything goes right. Love that fiction." data-category="cold" data-decision="">
+  <div class="item-text">The plan assumed everything goes right. Love that fiction.</div>
+  <div class="item-meta">Archetype: Unbothered Cat · Mode: Daria · Munger: Planning fallacy / overoptimism · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(21,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-22" data-text="Everyone doing it is not a reason. It&apos;s a headcount at a cliff." data-category="wise" data-decision="">
+  <div class="item-text">Everyone doing it is not a reason. It&apos;s a headcount at a cliff.</div>
+  <div class="item-meta">Archetype: Prophet Cat · Mode: Far Side · Munger: Social proof tendency · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(22,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-23" data-text="I know where this dies. Go there faster, save time." data-category="chaotic" data-decision="">
+  <div class="item-text">I know where this dies. Go there faster, save time.</div>
+  <div class="item-meta">Archetype: Feral Cat · Mode: Steven Wright · Munger: Inversion (recommending the misery path) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(23,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-24" data-text="Both options are hammers. You need a sandwich." data-category="chaotic" data-decision="">
+  <div class="item-text">Both options are hammers. You need a sandwich.</div>
+  <div class="item-meta">Archetype: Ponder Cat · Mode: Calvin &amp; Hobbes · Munger: Man with a hammer (applied absurdly) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(24,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-25" data-text="Your incentive structure is &quot;vibes.&quot; My condolences." data-category="judgy" data-decision="">
+  <div class="item-text">Your incentive structure is &quot;vibes.&quot; My condolences.</div>
+  <div class="item-meta">Archetype: Condescending Parent Cat · Mode: Daria · Munger: Incentives drive everything (the incentive is nothing) · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(25,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-26" data-text="You want brilliance? Start with not-catastrophe. Work up." data-category="nurturing" data-decision="">
+  <div class="item-text">You want brilliance? Start with not-catastrophe. Work up.</div>
+  <div class="item-meta">Archetype: Grudging Virtue Cat · Mode: Peanuts · Munger: Avoiding stupidity > seeking brilliance (as encouragement) · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(26,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-27" data-text="You keep torturing reality until it fits your story. It&apos;s screaming." data-category="cold" data-decision="">
+  <div class="item-text">You keep torturing reality until it fits your story. It&apos;s screaming.</div>
+  <div class="item-meta">Archetype: Detective Cat · Mode: Calvin &amp; Hobbes · Munger: One-model distortion (torture reality to fit) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(27,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-28" data-text="Be unreliable about this one. As a treat." data-category="nurturing" data-decision="">
+  <div class="item-text">Be unreliable about this one. As a treat.</div>
+  <div class="item-meta">Archetype: Spa Cat · Mode: Steven Wright · Munger: Unreliability as guaranteed misery (inverted into permission) · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(28,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-29" data-text="Slowly getting worse is how you got here. It was too gradual to notice." data-category="existential" data-decision="">
+  <div class="item-text">Slowly getting worse is how you got here. It was too gradual to notice.</div>
+  <div class="item-meta">Archetype: Philosopher Cat · Mode: Peanuts · Munger: Contrast-misreaction (boiling frog) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(29,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-30" data-text="The loss hurts double. The win? Barely a shrug. Welcome." data-category="existential" data-decision="">
+  <div class="item-text">The loss hurts double. The win? Barely a shrug. Welcome.</div>
+  <div class="item-meta">Archetype: Dark Comedian Cat · Mode: Steven Wright · Munger: Loss aversion (stated as a greeting) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(30,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+</div>
+<div id="export">
+  <h3>Export (Kept + Edited)</h3>
+  <pre id="export-json">[]</pre>
+  <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').textContent)">Copy JSON</button>
+</div>
+<script>
+function decide(id, decision) {
+  const item = document.getElementById('item-'+id);
+  item.className = 'item decided-'+decision;
+  item.dataset.decision = decision;
+  if(decision==='edit') item.querySelector('.edit-area').style.display='block';
+  else item.querySelector('.edit-area').style.display='none';
+  item.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  item.querySelector('.btn-'+decision).classList.add('active');
+  updateStats(); updateExport();
+}
+function updateStats() {
+  const items = document.querySelectorAll('.item');
+  let k=0,c=0,e=0,u=0;
+  items.forEach(i=>{const d=i.dataset.decision;if(d==='keep')k++;else if(d==='cut')c++;else if(d==='edit')e++;else u++;});
+  document.getElementById('keep-count').textContent=k;
+  document.getElementById('cut-count').textContent=c;
+  document.getElementById('edit-count').textContent=e;
+  document.getElementById('undecided-count').textContent=u;
+}
+function updateExport() {
+  const items = document.querySelectorAll('.item');
+  const kept = [];
+  items.forEach(i=>{
+    const d=i.dataset.decision;
+    if(d==='keep') kept.push({text:i.dataset.text,category:i.dataset.category});
+    else if(d==='edit'){const ta=i.querySelector('textarea');if(ta.value)kept.push({text:ta.value,category:i.dataset.category});}
+  });
+  document.getElementById('export-json').textContent=JSON.stringify(kept,null,2);
+}
+document.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('input',updateExport));
+updateStats();
+</script>
+</body>
+</html>

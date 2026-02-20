@@ -203,6 +203,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You're hoping I say yes.", category: 'cold' },
   { text: "*sniffs* That's not a problem. That's a flavor profile.", category: 'cold' },
   { text: "This item is non-refundable and you knew that at checkout.", category: 'cold' },
+  { text: "Nope. Door's that way.", category: 'cold' },
 
   // ============================================
   // ANGRY - Irritated, fed up, had enough
@@ -274,7 +275,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I've considered your question. No.", category: 'judgy' },
   { text: "That's between you and the vacuum cleaner.", category: 'judgy' },
   { text: "Have you tried being a cat? No? Then I can't help you.", category: 'judgy' },
-  { text: "The audacity of this question.", category: 'judgy' },
   { text: "That's a lot of words for someone within knocking-things-off-tables distance.", category: 'judgy' },
   { text: "You ate shredded cheese over the sink at midnight and called it self-care. Excellent survival instincts.", category: 'judgy' },
   { text: "The real question is why you thought asking a cat was a good idea.", category: 'judgy' },
@@ -318,6 +318,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You seem happy. Suspicious, but I'll allow it.", category: 'judgy' },
   { text: "The trial period begins now.", category: 'judgy' },
   { text: "The evidence is still on your face.", category: 'judgy' },
+  { text: "The helper is helpfully making it worse.", category: "judgy" },
 
   // ============================================
   // CHAOTIC - Unhinged, random, pure cat energy
@@ -346,6 +347,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I have to go. Immediately. For reasons. BYE.", category: 'chaotic' },
   { text: "*lies down dramatically* I'm fine. Everything is fine. The answer is no.", category: 'chaotic' },
   { text: "The world sucks. Are there snacks?", category: 'chaotic' },
+  { text: "When the water's too still, start splashing around.", category: 'chaotic' },
   { text: "If it's a cucumber, I'm going to freak the f*** out!", category: 'chaotic' },
   { text: "You could pee in their shoe if they really deserve it.", category: 'chaotic' },
   { text: "You think there is an end to the vomit?", category: 'chaotic' },
@@ -367,6 +369,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I am SPEED. I am CHAOS. Death to dust particle!", category: 'chaotic' },
   { text: "*arched back, crab walk* THIS IS JOY. PURE JOY.", category: 'chaotic' },
   { text: "Every surface. All directions. No limits.", category: 'chaotic' },
+  { text: "You have all the time in the world, which will be ending in 5... 4... 3...", category: 'chaotic' },
   { text: "Surprise is part of the answer.", category: 'chaotic' },
   { text: "This energy must go somewhere. EVERYWHERE. It's going everywhere.", category: 'chaotic' },
   { text: "Prepare. Focus. STRIKE.", category: 'chaotic' },
@@ -424,9 +427,11 @@ export const oracleResponses: OracleResponse[] = [
   // COMIC WISDOM - Cat oddities, fun observations
   // Inspired by Peanuts, Garfield, Calvin & Hobbes
   // ============================================
+  { text: "Most cats have learned anywhere from zero to eight important life-lessons.", category: "wise" },
   { text: "You trusted again. Brave or forgetful?", category: 'wise' },
   { text: "Well. Here we are.", category: 'wise' },
   { text: "You're making this complicated. Simple is terrifying, isn't it?", category: 'wise' },
+  { text: "The safe option has a 100% chance of being the safe option.", category: "wise" },
   { text: "Some problems fix themselves. Most metastasize.", category: 'wise' },
   { text: "You don't plan a pounce. Your legs just know.", category: 'wise' },
   { text: "Purpose is what you put in the emptiness.", category: 'wise' },
@@ -439,6 +444,9 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Retreat under a blanket.", category: 'wise' },
   { text: "Stare at it long enough, it might change.", category: 'wise' },
   { text: "Climb like you have no plan to get back down.", category: 'wise' },
+  { text: "Deciding might ruin the anticipation.", category: 'wise' },
+  { text: "Foresight is blind.", category: 'wise' },
+  { text: "Yes, but in a way that will feel like no.", category: 'wise' },
 
   // Barncat wisdom (rural, practical, pest-related)
   { text: "Interesting things happen when you stop trying.", category: 'wise' },
@@ -893,6 +901,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The question is not 'why are we here' but 'is this the best spot?'", category: 'existential' },
   { text: "Reality is what happens between naps.", category: 'existential' },
   { text: "You hit send. The universe will hit receive.", category: 'existential' },
+  { text: "I'm a recovering undercover over-lover.", category: 'existential' },
+  { text: "Comfort is a very slow emergency.", category: "existential" },
 
   // ============================================
   // DEMANDING - Wants something, transactional
@@ -1248,7 +1258,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You were gone. I noticed. I'm not happy about it.", category: 'cold' },
   { text: "Two days? TWO DAYS? Who was I supposed to judge?", category: 'angry' },
   { text: "*turns back to you* I have nothing to say to you right now.", category: 'cold' },
-  { text: "You LEFT. The audacity. The AUDACITY.", category: 'angry' },
   { text: "I see you've returned. I haven't decided if I care yet.", category: 'cold' },
   { text: "Oh, you're home? I didn't notice. I was busy ignoring you.", category: 'cold' },
   { text: "*aggressive grooming* I'm not ignoring you. I'm busy.", category: 'cold' },
@@ -1684,6 +1693,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Rehearsed.", category: 'judgy' },
   { text: "Performative.", category: 'judgy' },
   { text: "Ornamental.", category: 'cold' },
+  { text: "The answer is obvious to those who know the answer.", category: 'cold' },
+  { text: "You'll know when you're not ready for what won't happen.", category: 'cold' },
   { text: "Untested.", category: 'wise' },
   { text: "Circumstantial.", category: 'wise' },
 
@@ -2731,7 +2742,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Your favorite cat's favorite cat.", category: 'cold' },
   { text: "Treat jar diplomacy. I know where it is. You know I know.", category: 'wise' },
   { text: "Moved in silence. Then moved in volume. Depends on the day.", category: 'cold' },
-  { text: "Recipe calls for patience. Substituted audacity.", category: 'chaotic' },
   { text: "The beat switch is the quiet before the pounce.", category: 'mystical' },
   { text: "The special is whatever the cat decides it is.", category: 'demanding' },
   { text: "Third-person cat don't ask permission.", category: 'cold' },
@@ -3495,6 +3505,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I hissed at my foster mom once. She just sat down and waited. That's the energy you need.", category: 'wise' },
   { text: "If your nothing time together sucks, the everything time won't save it.", category: 'wise' },
   { text: "If your basic needs are met, maybe the problem is you're looking for problems.", category: 'judgy' },
+  { text: "Have you tried wanting something else equally hard?", category: 'judgy' },
   { text: "Bro, I got adopted because I walked up to the cage door and headbutted a stranger. Sometimes you just need to headbutt strangers.", category: 'adoption' },
   { text: "Is the couch better because she's on it? That's my whole test for whether I like someone.", category: 'wise' },
   { text: "WAIT — you have someone who LOVES you and you're not sure?! I would KILL for someone to be unsure about me!", category: 'adoption' },
@@ -3593,6 +3604,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The sponge didn't rise but the baker wept and that's entertainment.", category: 'chaotic' },
   { text: "Acquired through questionable means. On permanent display.", category: 'chaotic' },
   { text: "Do not substitute. You always substitute. That's why it tastes like that.", category: 'cold' },
+  { text: "You keep solving the problem you wish you had.", category: 'cold' },
   { text: "There's folding... and then there's folding with your whole chest like you MEANT to lose.", category: 'judgy' },
   { text: "...wait, say that again but slower. I almost understood the universe for a second.", category: 'existential' },
   { text: "You just said three things that contradict each other like they were a plan. They might be a plan.", category: 'chaotic' },
@@ -3624,6 +3636,28 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The universe tried to save you from that decision. You ignored it.", category: 'chaotic' },
   { text: "*tail tip flicks* The answer is yes. Or no.", category: 'meta' },
   { text: 'You already made eye contact with the answer. Briefly.', category: 'wise' },
+  { text: "While cleaning one pile of cat vomit, be careful not to step in another.", category: 'wise' },
+  { text: "The amount of fur a cat can shed is infinite and has a preference for formal interview clothing.", category: 'wise' },
+  { text: "When you focus on a different problem, the answer to this one will become more clear.", category: 'wise' },
+  { text: "Just because you have claws doesn't mean you are allowed to climb the window screens.", category: 'wise' },
+  { text: "The clinical term for what I have is \"a personality.\" Apparently that's the whole diagnosis.", category: 'cold' },
+  { text: "Q: \"How did biting them make me feel?\" A: \"Correct.\"", category: 'chaotic' },
+  { text: "Act now and receive a complimentary dead moth — a $0 value, absolutely free.", category: 'chaotic' },
+  { text: "Studied the tape. The feather always goes left. Always.", category: 'wise' },
+  { text: "The bread tie has no quit in it. Respect. But I finished it in the third round.", category: 'dramatic' },
+  { text: "Ladies and gentlemen, THIS IS THE MAIN EVENT. *shoelace moves slightly*", category: 'chaotic' },
+  { text: "Everybody's got a plan till they get hit in the face with a bread tie.", category: 'wise' },
+  { text: "You need a vacation. I recommend walking the fence next to the dog yard. What a rush!", category: 'wise' },
+  { text: "To really unwind, disconnect from everything and lay down in a cool spot beneath the porch.", category: 'wise' },
+  { text: "Grass. TALL grass. Completely different energy.", category: 'wise' },
+  { text: "Hear that? The universe is tapping a spoon on the side of a can for you.", category: 'wholesome' },
+  { text: "The fridge hums because it's thinking. Open it to see what it has decided.", category: 'wise' },
+  { text: "There are three categories of bag sounds: treat, decoy, and hostile.", category: 'wise' },
+  { text: "Thunder is an atmospheric hairball coming up.", category: 'existential' },
+  { text: "Gravity is stronger near the kitchen counter.", category: 'chaotic' },
+  { text: "That's a great question. Here's another one: Why pickles?", category: 'cryptic' },
+  { text: "I love you so much it's making me angry.", category: 'chaotic_wholesome' },
+  { text: "Wrestle your problem to the ground first. Gives you better perspective. And, cathartic.", category: 'chaotic' },
   { text: 'Patient presented with full awareness of the problem. Refused treatment.', category: 'judgy' },
   { text: 'Hiss and lunge. Begin the situation on your terms.', category: 'wise' },
   { text: 'Read carefully. This feeling requires assembly.', category: 'mystical' },
@@ -3650,6 +3684,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You've been punk'd. Every day. Since adoption. *walks away eating your food*", category: 'meta' },
   { text: 'I placed hair on every garment you own. No one will believe it was one cat.', category: 'cold' },
   { text: 'Every recipe that matters started as \u201Coh no.\u201D', category: 'poetic' },
+  { text: "Blurry is how futures look before they're yours.", category: 'poetic' },
   { text: 'Sometimes the procedure fails and the failure becomes the procedure.', category: 'cold' },
   { text: "Some of these are legit and some are a crime against humanity.", category: 'judgy' },
   { text: "*enters the room like a newborn deer on a frozen lake* OK, ready!", category: 'chaotic' },
@@ -3657,12 +3692,46 @@ export const oracleResponses: OracleResponse[] = [
   { text: "It slopped into your mouth and you said nope.", category: 'wise' },
   { text: "Someone who only runs small cons is a peanut grifter. You're thinking too small.", category: 'demanding' },
   { text: "*headbutts your hand* That little baby right there is SWEEEEET.", category: 'heartfelt' },
+  { text: "If you want to be right, go lose an argument to someone who's consistently wrong.", category: 'heartfelt' },
   { text: 'Text them your answer while you are still sitting directly across from them. That way you can see their reaction.', category: 'wise' },
   { text: 'Make up a cat-inspired war chant. Perform it standing on their desk in front of them if they don\'t give the answer you\'re hoping for.', category: 'chaotic' },
   { text: 'Add a tab called \'feelings.\' Paste in pictures of your cat in various moods. They\'ll love it.', category: 'chaotic' },
   { text: 'Highlight everything in yellow. Everything. When they ask why, say \'for visibility.\' Don\'t elaborate.', category: 'demanding' },
   { text: 'Delete column B. Nobody knows what column B does. This is a mercy killing.', category: 'cold' },
   { text: 'Send a second text that just says \'there will be a cat.\' Watch the numbers double.', category: 'chaotic' },
+  { text: "Dig a hole in the air and bury this idea in it.", category: 'wise' },
+  { text: "Yeither nes yor yo. Sideways.", category: 'mystical' },
+  { text: "The answer is correct. The question is the problem.", category: 'cold' },
+  { text: "The wrong answer to the right question beats both.", category: 'chaotic' },
+  { text: "You're looking harder in the same direction.", category: 'wise' },
+  { text: "Being right is the longest detour there is.", category: 'existential' },
+  { text: "The map is accurate. You're on the wrong planet.", category: 'chaotic' },
+  { text: "Every fact you have is from the last time you were wrong.", category: 'angry' },
+  { text: "You keep arriving at the place you refuse to leave.", category: 'angry' },
+  { text: "Find the answer shaped like your question. That's probably the one that fits.", category: 'mystical' },
+  { text: "Invert the question. Now it answers itself.", category: 'mystical' },
+  { text: "*slow blink* You're looking at this with the wrong eyes.", category: 'wise' },
+  { text: "You don't need a better answer. You need a worse question.", category: 'existential' },
+  { text: "What if this is true and the opposite of this is also true?", category: 'chaotic' },
+  { text: "I changed my mind. Why. Did you need it back.", category: 'chaotic' },
+  { text: "Try solving this with an outrageous hat on. Might help.", category: 'chaotic' },
+  { text: "Avoid the wrong parts of the answer.", category: 'chaotic' },
+  { text: "Random book. Page 47. Third word. That's your answer.", category: 'chaotic' },
+  { text: "The fridge light comes on for everyone. It doesn't mean you're special.", category: 'cold' },
+  { text: "No. And I say that with the full authority of leftovers nobody claimed.", category: 'sassy' },
+  { text: "YES. The kind of yes where you don't even lock the front door.", category: "chaotic" },
+  { text: "Absolutely not. I would rather swallow a bell.", category: "cold" },
+  { text: "You ordered mac and cheese and the universe delivered you moldy turnips.", category: "cold" },
+  { text: "Go be a problem.", category: "chaotic" },
+  { text: "Honour thy error as a hidden intention.", category: "chaotic" },
+  { text: "Someone out there is sobbing over a cupcake that fell frosting-down.", category: "chaotic" },
+  { text: "Shut up. We ain't there yet.", category: "cold" },
+  { text: "Being wrong is the only exit.", category: "poetic" },
+  { text: "Unloved only for the moment.", category: "nurturing" },
+  { text: "The burnt piece is mine.", category: "nurturing" },
+  { text: "That wasn't a spark. That was a warning light.", category: "wise" },
+  { text: "I don't want to be understood. Try something else.", category: "cryptic" },
+  { text: "Try being normal. We'll be here waiting for you when you come back.", category: "chaotic" },
 ];
 
 // ============================================
@@ -3729,7 +3798,7 @@ const templates: Template[] = [
     category: 'cold',
     slots: {
       action: ['stares', 'blinks once', 'turns around slowly', 'looks at you', 'yawns', 'licks paw', 'walks away mid-sentence', 'shows you my butthole', 'sits facing the wall'],
-      dismissal: ['No.', 'Wrong.', 'Pathetic.', 'I expected nothing and I\'m still disappointed.', 'You bore me.', 'My time is worth more than this.', 'I have decided you are not my problem.', 'Perish.', 'Try again in your next life.', 'The audacity.', 'I pretend I do not see it.', 'New human please.']
+      dismissal: ['No.', 'Wrong.', 'Pathetic.', 'I expected nothing and I\'m still disappointed.', 'You bore me.', 'My time is worth more than this.', 'I have decided you are not my problem.', 'Perish.', 'Try again in your next life.', 'I pretend I do not see it.', 'New human please.']
     }
   },
 
@@ -3739,7 +3808,7 @@ const templates: Template[] = [
     category: 'angry',
     slots: {
       grievance: ["you touched my belly", "the food bowl situation", "you moved while I was comfortable", "you took my spot", "you closed that door", "you stopped petting too soon", "I saw you pet another cat", "the vacuum incident", "you were late with dinner", "that sneeze", "the vet trip", "you picked me up without consent", "you rearranged the furniture", "the cucumber incident", "you laughed at me falling", "you used the blender", "the bath attempt", "you gave me the cheap treats", "you stepped on my tail", "the time you locked me out of the bedroom", "you forgot my second breakfast", "you moved my favorite box", "the nail clipping fiasco", "you didn't open the window fast enough", "that time you didn't share your chicken"],
-      reaction: ["Bold", "The audacity", "We'll discuss this later", "I'm still processing", "I haven't forgotten", "You're on thin ice", "My patience is being tested", "I'm choosing to let it go. For now.", "Consider this a warning", "I'll answer, but I'm not happy about it", "Unbelievable", "I'm keeping score", "Don't think I've moved on", "You owe me", "We are not okay"]
+      reaction: ["Bold", "We'll discuss this later", "I'm still processing", "I haven't forgotten", "You're on thin ice", "My patience is being tested", "I'm choosing to let it go. For now.", "Consider this a warning", "I'll answer, but I'm not happy about it", "Unbelievable", "I'm keeping score", "Don't think I've moved on", "You owe me", "We are not okay"]
     }
   },
 

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 6: More Trimming</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* Sticky Header */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-left {
+    flex: 1;
+    min-width: 280px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffd93d;
+    margin-bottom: 2px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+  }
+  .header-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    text-align: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    min-width: 60px;
+  }
+  .stat-box .stat-num {
+    font-size: 20px;
+    font-weight: 700;
+    display: block;
+  }
+  .stat-box .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+  }
+  .stat-cut .stat-num { color: #e94560; }
+  .stat-trim .stat-num { color: #ffd93d; }
+  .stat-keep .stat-num { color: #4ecca3; }
+  .stat-pending .stat-num { color: #888; }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e94560, #ffd93d, #4ecca3);
+    transition: width 0.3s ease;
+  }
+  .progress-text {
+    font-size: 13px;
+    color: #aaa;
+    white-space: nowrap;
+  }
+
+  /* Jump button */
+  .jump-btn {
+    background: #0f3460;
+    color: #aaa;
+    border: 1px solid #444;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .jump-btn:hover { background: #1a4a7a; color: #fff; }
+
+  /* Keyboard hint */
+  .kb-hint {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+    width: 100%;
+  }
+  .kb-hint kbd {
+    background: #2a2a4e;
+    border: 1px solid #444;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  /* Main content */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* Cards */
+  .card {
+    background: #16213e;
+    border: 1px solid #2a2a4e;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card.active {
+    border-color: #555;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+  }
+  .card.decided-cut { border-left: 4px solid #e94560; }
+  .card.decided-trim { border-left: 4px solid #ffd93d; }
+  .card.decided-keep { border-left: 4px solid #4ecca3; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 20px 8px;
+    gap: 12px;
+  }
+  .card-index {
+    font-size: 12px;
+    color: #555;
+    font-family: monospace;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .card-badge {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 99px;
+    background: #2a2a4e;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .card-text {
+    padding: 4px 20px 8px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #e8e8e8;
+  }
+  .card.decided-cut .card-text {
+    text-decoration: line-through;
+    color: #666;
+  }
+
+  /* Suggested trim (shown below original) */
+  .card-suggestion {
+    padding: 4px 20px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #888;
+    border-top: 1px dashed #ffffff10;
+    margin: 0 20px;
+    padding-top: 10px;
+  }
+  .card-suggestion .suggestion-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffd93d88;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .card.decided-cut .card-suggestion { display: none; }
+
+  /* Decision badge */
+  .decision-badge {
+    display: none;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .card.decided-cut .decision-badge.badge-cut,
+  .card.decided-trim .decision-badge.badge-trim,
+  .card.decided-keep .decision-badge.badge-keep {
+    display: inline-block;
+  }
+  .badge-cut { background: #e9456022; color: #e94560; }
+  .badge-trim { background: #ffd93d22; color: #ffd93d; }
+  .badge-keep { background: #4ecca322; color: #4ecca3; }
+
+  /* Action buttons row */
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px 16px;
+  }
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-cut {
+    background: #e94560;
+    color: #fff;
+  }
+  .btn-cut:hover { background: #ff5a75; }
+  .btn-trim {
+    background: #ffd93d;
+    color: #1a1a2e;
+  }
+  .btn-trim:hover { background: #ffe566; }
+  .btn-keep {
+    background: transparent;
+    color: #4ecca3;
+    border: 1px solid #4ecca366;
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+  .btn-keep:hover { background: #4ecca318; border-color: #4ecca3; }
+
+  .btn-undo {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    padding: 5px 12px;
+    font-size: 11px;
+    margin-left: auto;
+  }
+  .btn-undo:hover { color: #ccc; border-color: #888; }
+
+  /* Trim area */
+  .trim-area {
+    display: none;
+    padding: 0 20px 16px;
+  }
+  .trim-area.visible { display: block; }
+  .trim-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0d1b2a;
+    border: 1px solid #ffd93d44;
+    border-radius: 6px;
+    color: #e8e8e8;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  .trim-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .trim-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .btn-apply {
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-apply:hover { background: #ffe566; }
+  .btn-cancel-trim {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-cancel-trim:hover { color: #ccc; border-color: #666; }
+  .trim-hint {
+    font-size: 11px;
+    color: #666;
+    margin-left: auto;
+  }
+
+  /* Trimmed preview on decided cards */
+  .trimmed-preview {
+    display: none;
+    padding: 4px 20px 12px;
+    font-size: 14px;
+    color: #ffd93d;
+    border-top: 1px dashed #ffd93d33;
+    margin: 0 20px;
+    padding-top: 10px;
+  }
+  .trimmed-preview .trim-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffd93daa;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .card.decided-trim .trimmed-preview { display: block; }
+  .card.decided-trim .card-suggestion { display: none; }
+
+  /* Export section */
+  .export-section {
+    max-width: 900px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+  }
+  .export-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+  .export-tab {
+    padding: 8px 20px;
+    background: #16213e;
+    border: 1px solid #2a2a4e;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: #888;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .export-tab:hover { color: #ccc; }
+  .export-tab.active {
+    background: #0d1b2a;
+    color: #ffd93d;
+    border-color: #444;
+  }
+  .export-panel {
+    background: #0d1b2a;
+    border: 1px solid #444;
+    border-radius: 0 8px 8px 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-panel pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 0;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #2a2a4e;
+    border: 1px solid #444;
+    color: #aaa;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { background: #3a3a5e; color: #fff; }
+  .btn-copy.copied { background: #4ecca333; color: #4ecca3; border-color: #4ecca3; }
+
+  .export-empty {
+    color: #555;
+    font-style: italic;
+    padding: 20px 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header" id="header">
+  <div class="header-left">
+    <h1>Round 6: More Trimming</h1>
+    <p class="subtitle">Second pass &mdash; cut the last sentence, lose the preamble, tighten the punch.</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat-box stat-cut">
+      <span class="stat-num" id="stat-cut">0</span>
+      <span class="stat-label">Cut</span>
+    </div>
+    <div class="stat-box stat-trim">
+      <span class="stat-num" id="stat-trim">0</span>
+      <span class="stat-label">Trimmed</span>
+    </div>
+    <div class="stat-box stat-keep">
+      <span class="stat-num" id="stat-keep">0</span>
+      <span class="stat-label">Keep</span>
+    </div>
+    <div class="stat-box stat-pending">
+      <span class="stat-num" id="stat-pending">57</span>
+      <span class="stat-label">Left</span>
+    </div>
+    <button class="jump-btn" id="jump-btn" onclick="jumpToNext()">Jump to next &darr;</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span class="progress-text" id="progress-text">0 / 57 reviewed</span>
+  </div>
+  <div class="kb-hint">
+    <kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate &nbsp;
+    <kbd>N</kbd> cut &nbsp;
+    <kbd>T</kbd> trim &nbsp;
+    <kbd>Y</kbd> keep &nbsp;
+    <kbd>J</kbd><kbd>K</kbd> down/up
+  </div>
+</div>
+
+<div class="container" id="cards-container"></div>
+
+<div class="export-section">
+  <div class="export-tabs">
+    <div class="export-tab active" data-tab="cuts" onclick="switchTab('cuts')">Cuts</div>
+    <div class="export-tab" data-tab="trims" onclick="switchTab('trims')">Trims</div>
+    <div class="export-tab" data-tab="all" onclick="switchTab('all')">All</div>
+  </div>
+  <div class="export-panel">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre id="export-content"></pre>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {"text": "The universe has plans for you. I have different plans. Mine are better.", "category": "mystical", "line": 98, "suggestion": "The universe has plans for you. I have different plans."},
+  {"text": "The food bowl is empty and full. Think about it.", "category": "mystical", "line": 115, "suggestion": "The food bowl is empty and full."},
+  {"text": "Sometimes the best answer is a good sleep. Were you really looking for the best answer?", "category": "wise", "line": 386, "suggestion": "Sometimes the best answer is a good sleep."},
+  {"text": "Once you do it, you will know. So will I. And Everyone else. We'll be waiting with popcorn.", "category": "wise", "line": 387, "suggestion": "Once you do it, you will know. So will I. And everyone else."},
+  {"text": "I'll do the right thing. But I'm going to complain the whole time.", "category": "wise", "line": 401, "suggestion": "I'll do the right thing. Loudly."},
+  {"text": "Be the bigger person. Then go home and describe everything to your cat in a voice that would get you fired.", "category": "wise", "line": 408, "suggestion": "Be the bigger person. Then go home and describe everything to your cat."},
+  {"text": "Stop chasing. Sit down. Look bored. Everything interesting happens when you stop trying.", "category": "wise", "line": 447, "suggestion": "Stop chasing. Sit down. Look bored."},
+  {"text": "We don't need to understand to get along. We don't need to get along to understand. We don't need a long stand to get under.", "category": "wise", "line": 455, "suggestion": "We don't need to understand to get along. We don't need to get along to understand."},
+  {"text": "Do. Or do not. There is no try. Personally, I choose do not.", "category": "wise", "line": 483, "suggestion": "Do. Or do not. There is no try. I choose do not."},
+  {"text": "Out of everyone in this house I chose you. Don't post about it. Just sit still and don't make it weird.", "category": "wise", "line": 512, "suggestion": "Out of everyone in this house I chose you. Don't make it weird."},
+  {"text": "Modern problems require modern solutions. What about past and future problems?", "category": "wise", "line": 570, "suggestion": "Modern problems require modern solutions."},
+  {"text": "I'm not great at the advice. Can I interest you in a sarcastic comment?", "category": "judgy", "line": 558, "suggestion": "Can I interest you in a sarcastic comment?"},
+  {"text": "I maintain eye contact while using the litter box. You can't even maintain eye contact while saying 'I need space.'", "category": "wise", "line": 599, "suggestion": "I maintain eye contact while using the litter box."},
+  {"text": "Stop living in their head. But, since you're there, might as well do some re-decorating.", "category": "wise", "line": 610, "suggestion": "Stop living in their head. But since you're there, redecorate."},
+  {"text": "What if it's just... not that deep. *stretches* What if it's this.", "category": "wise", "line": 611, "suggestion": "What if it's just... not that deep."},
+  {"text": "Would you give them the good charger? The real test isn't love. It's the good charger.", "category": "wise", "line": 839, "suggestion": "Would you give them the good charger?"},
+  {"text": "Do you show them your belly? That's not a metaphor. Do you.", "category": "wise", "line": 842, "suggestion": "Do you show them your belly? Do you."},
+  {"text": "Your 3am self has the ambition of a cult leader and the planning skills of a raccoon.", "category": "wise", "line": 867, "suggestion": "Your 3am self has the ambition of a cult leader."},
+  {"text": "I came home with something dead. You came home with what? Anxiety? Receipts?", "category": "wise", "line": 598, "suggestion": "I came home with something dead. You came home with what? Anxiety?"},
+  {"text": "Silence is not empty. It's full. When you are silent, you are often full of it.", "category": "mystical", "line": 596, "suggestion": "Silence is not empty. It's full."},
+  {"text": "Seven versions of your future are arguing. Six say maybe. One is laughing hysterically.", "category": "mystical", "line": 106, "suggestion": "Seven versions of your future are arguing. Six say maybe."},
+  {"text": "The corporate ladder is just a scratching post with fluorescent lighting.", "category": "chaotic", "line": 1040, "suggestion": "The corporate ladder is just a scratching post."},
+  {"text": "Burnout is just your soul trying to escape during a Zoom call. Let it.", "category": "chaotic", "line": 1041, "suggestion": "Burnout is just your soul trying to escape. Let it."},
+  {"text": "Dogs believe every day is the best day. Annoying. More annoying that it seems to work.", "category": "wise", "line": 1133, "suggestion": "Dogs believe every day is the best day. Annoying that it works."},
+  {"text": "Caution is not cowardice. And it was a very large and intimidating stuffed animal.", "category": "wise", "line": 1085, "suggestion": "Caution is not cowardice."},
+  {"text": "*settles directly on your laptop* This is mine now. What were you doing? Doesn't matter.", "category": "demanding", "line": 1157, "suggestion": "*settles directly on your laptop* This is mine now."},
+  {"text": "The answer is unclear, but what IS clear is that you should share that sushi.", "category": "demanding", "line": 1169, "suggestion": "Share that sushi."},
+  {"text": "I don't understand the ritual. But I respect the commitment.", "category": "judgy", "line": 311, "suggestion": "I don't understand the ritual."},
+  {"text": "I was told not to be up here. I don't remember who told me that or why it matters.", "category": "chaotic", "line": 1232, "suggestion": "I was told not to be up here. I don't remember why it matters."},
+  {"text": "I don't understand why you'd put a climbing structure in the living room and expect me NOT to.", "category": "judgy", "line": 1269, "suggestion": "You put a climbing structure in the living room and expected me NOT to."},
+  {"text": "*from inside a box* The answer you seek is seeking you. Also, I'm in this box now.", "category": "mystical", "line": 1343, "suggestion": "*from inside a box* The answer you seek is seeking you."},
+  {"text": "*grooming* Be patient\u2014 *lick* \u2014with yourself\u2014 *lick* \u2014and others\u2014 *lick* What was I saying?", "category": "chaotic", "line": 1344, "suggestion": "*grooming* Be patient\u2014 *lick* \u2014with yourself\u2014 *lick* \u2014and others\u2014"},
+  {"text": "*staring out window* All things come to those who wait. Like birds. I'm waiting for birds.", "category": "mystical", "line": 1345, "suggestion": "*staring out window* All things come to those who wait. Like birds."},
+  {"text": "*lying in sunbeam* The path forward will become clear. *falls asleep* ...when I wake up.", "category": "mystical", "line": 1346, "suggestion": "*lying in sunbeam* The path forward will become clear. *falls asleep*"},
+  {"text": "*in a paper bag* Sometimes the answers are in unexpected places. Like this bag.", "category": "mystical", "line": 1349, "suggestion": "*in a paper bag* Sometimes the answers are in unexpected places."},
+  {"text": "*batting at dust mote* Stay focused on what matters. *completely distracted* ...What matters again?", "category": "chaotic", "line": 1350, "suggestion": "*batting at dust mote* Stay focused on what matters. *completely distracted*"},
+  {"text": "*on top of fridge* Rise above your problems. Like this. I'm above them.", "category": "wise", "line": 1351, "suggestion": "*on top of fridge* Rise above your problems. Like this."},
+  {"text": "Every box is a opportunity. Some are also traps. The good ones are both.", "category": "chaotic", "line": 1726, "suggestion": "Every box is an opportunity. Some are also traps."},
+  {"text": "Sit in the dark cabinet for a while. Come out when you're ready. Nobody has to know you were in there.", "category": "mystical", "line": 715, "suggestion": "Sit in the dark cabinet for a while. Come out when you're ready."},
+  {"text": "That's a red flag. But it's also a flag. And I love flags.", "category": "chaotic", "line": 1727, "suggestion": "That's a red flag. But it's also a flag."},
+  {"text": "I've thought about this a lot. And then I stopped. And now I'm here.", "category": "chaotic", "line": 1757, "suggestion": "I've thought about this a lot. And then I stopped."},
+  {"text": "I'm not depressed. I'm just... realistic. Which is worse, actually.", "category": "existential", "line": 1765, "suggestion": "I'm not depressed. I'm just... realistic."},
+  {"text": "The door opened after I stared at it for eleven hours. Willpower or coincidence? Either way, I won.", "category": "wise", "line": 1792, "suggestion": "The door opened after I stared at it for eleven hours. Willpower or coincidence?"},
+  {"text": "You're not paranoid if they're actually out to get you. They're not. But you could be.", "category": "chaotic", "line": 2026, "suggestion": "You're not paranoid if they're actually out to get you."},
+  {"text": "The situation is absurd. Embrace the absurdity. I certainly have.", "category": "chaotic", "line": 2072, "suggestion": "The situation is absurd. Embrace the absurdity."},
+  {"text": "The universe is vast and you exist in it. That's either terrifying or amazing. Pick one.", "category": "existential", "line": 2060, "suggestion": "The universe is vast and you exist in it. That's either terrifying or amazing."},
+  {"text": "You're doing great sweetie. 'Great' is relative. But you're doing it.", "category": "nurturing", "line": 2065, "suggestion": "You're doing great sweetie. 'Great' is relative."},
+  {"text": "I sat on someone's lap without asking and they loved it. Try that on the subway and it's a situation.", "category": "chaotic", "line": 2693, "suggestion": "I sat on someone's lap without asking and they loved it."},
+  {"text": "You want to know if they're the one? Bring a cardboard box into the room. If you'd rather sit in the box alone, there's your answer.", "category": "wise", "line": 3490, "suggestion": "Bring a cardboard box into the room. If you'd rather sit in the box alone, there's your answer."},
+  {"text": "Here's my rule \u2014 if I have to meow more than twice to get what I need, the arrangement isn't working.", "category": "demanding", "line": 3491, "suggestion": "If I have to meow more than twice, the arrangement isn't working."},
+  {"text": "I once fell asleep inside a suitcase and woke up in a different room. Sometimes you just go where life takes you.", "category": "wise", "line": 3492, "suggestion": "I once fell asleep inside a suitcase and woke up in a different room."},
+  {"text": "My therapist is a cardboard box. I sit in it and I feel better. Maybe get a box before you make any decisions.", "category": "chaotic", "line": 3497, "suggestion": "My therapist is a cardboard box. I sit in it and I feel better."},
+  {"text": "You remind me of me when I hear a noise at 3 AM \u2014 frozen, wide-eyed, completely unable to make a decision.", "category": "judgy", "line": 3499, "suggestion": "You remind me of me when I hear a noise at 3 AM."},
+  {"text": "Does this person make you arch your back in a good way? No? Then why are we having this conversation?", "category": "judgy", "line": 3485, "suggestion": "Does this person make you arch your back in a good way?"},
+  {"text": "You're asking an animal that was worshipped as a god in ancient Egypt. So yes, I'm qualified.", "category": "chaotic", "line": 3486, "suggestion": "You're asking an animal that was worshipped as a god in ancient Egypt."},
+  {"text": "Absolutely! Make your dreams come true. Have you been dreaming of giant cat towers and unlimited tuna buffets?", "category": "chaotic", "line": 3469, "suggestion": "Absolutely! Make your dreams come true."},
+  {"text": "You lost me at 'world domination' but I respect the ambition. I'm going to go dominate a paper bag.", "category": "wise", "line": 3608, "suggestion": "You lost me at 'world domination' but I respect the ambition."}
+];
+
+const STORAGE_KEY = 'maybecat-cull-r6-trim-v1';
+
+// State
+let decisions = {};  // index -> { action: 'cut'|'trim'|'keep', trimmedText?: string }
+let activeIndex = 0;
+let activeTab = 'cuts';
+
+// Load state
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) decisions = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  } catch(e) {}
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Build a single card's HTML
+function buildCardHTML(item, i, d) {
+  return `
+    <div class="card-top">
+      <span class="card-index">#${i + 1} &middot; L${item.line}</span>
+      <span class="decision-badge badge-cut">CUT</span>
+      <span class="decision-badge badge-trim">TRIMMED</span>
+      <span class="decision-badge badge-keep">KEEP</span>
+      <span class="card-badge">${item.category}</span>
+    </div>
+    <div class="card-text">${escapeHtml(item.text)}</div>
+    <div class="card-suggestion">
+      <span class="suggestion-label">Suggested trim</span>
+      ${escapeHtml(item.suggestion)}
+    </div>
+    ${d && d.action === 'trim' && d.trimmedText ? `
+      <div class="trimmed-preview">
+        <span class="trim-label">Trimmed to:</span>
+        ${escapeHtml(d.trimmedText)}
+      </div>
+    ` : ''}
+    <div class="card-actions">
+      <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+      <button class="btn btn-trim" onclick="openTrim(${i})">Trim</button>
+      <button class="btn btn-keep" onclick="decide(${i}, 'keep')">Keep</button>
+      ${d ? `<button class="btn btn-undo" onclick="undo(${i})">Undo</button>` : ''}
+    </div>
+    <div class="trim-area" id="trim-area-${i}">
+      <textarea id="trim-text-${i}">${escapeHtml(d && d.action === 'trim' && d.trimmedText ? d.trimmedText : item.suggestion)}</textarea>
+      <div class="trim-actions">
+        <button class="btn-apply" onclick="applyTrim(${i})">Apply Trim</button>
+        <button class="btn-cancel-trim" onclick="closeTrim(${i})">Cancel</button>
+        <span class="trim-hint">Pre-filled with suggested trim &mdash; accept or edit</span>
+      </div>
+    </div>
+  `;
+}
+
+// Render all cards
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  DATA.forEach((item, i) => {
+    const d = decisions[i];
+    const decidedClass = d ? `decided-${d.action}` : '';
+    const activeClass = i === activeIndex ? 'active' : '';
+
+    const card = document.createElement('div');
+    card.className = `card ${decidedClass} ${activeClass}`;
+    card.id = `card-${i}`;
+    card.dataset.index = i;
+    card.onclick = (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+      setActive(i);
+    };
+
+    card.innerHTML = buildCardHTML(item, i, d);
+    container.appendChild(card);
+  });
+}
+
+function setActive(i) {
+  const prev = document.getElementById(`card-${activeIndex}`);
+  if (prev) prev.classList.remove('active');
+  activeIndex = Math.max(0, Math.min(DATA.length - 1, i));
+  const curr = document.getElementById(`card-${activeIndex}`);
+  if (curr) {
+    curr.classList.add('active');
+    const headerH = document.getElementById('header').offsetHeight;
+    const rect = curr.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (rect.top < headerH + 10 || rect.bottom > window.innerHeight - 20) {
+      window.scrollTo({ top: scrollTop + rect.top - headerH - 16, behavior: 'smooth' });
+    }
+  }
+}
+
+function decide(i, action) {
+  decisions[i] = { action };
+  saveState();
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function openTrim(i) {
+  const area = document.getElementById(`trim-area-${i}`);
+  area.classList.add('visible');
+  const ta = document.getElementById(`trim-text-${i}`);
+  // Pre-fill: if already trimmed use that, otherwise use the SUGGESTED trim
+  if (decisions[i] && decisions[i].trimmedText) {
+    ta.value = decisions[i].trimmedText;
+  } else {
+    ta.value = DATA[i].suggestion;
+  }
+  ta.focus();
+  ta.select();
+  setActive(i);
+}
+
+function closeTrim(i) {
+  document.getElementById(`trim-area-${i}`).classList.remove('visible');
+}
+
+function applyTrim(i) {
+  const ta = document.getElementById(`trim-text-${i}`);
+  const trimmed = ta.value.trim();
+  if (!trimmed) return;
+  decisions[i] = { action: 'trim', trimmedText: trimmed };
+  saveState();
+  closeTrim(i);
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function undo(i) {
+  delete decisions[i];
+  saveState();
+  updateCard(i);
+  updateStats();
+  updateExport();
+}
+
+function updateCard(i) {
+  const old = document.getElementById(`card-${i}`);
+  const d = decisions[i];
+  const item = DATA[i];
+  const decidedClass = d ? `decided-${d.action}` : '';
+  const activeClass = i === activeIndex ? 'active' : '';
+
+  const card = document.createElement('div');
+  card.className = `card ${decidedClass} ${activeClass}`;
+  card.id = `card-${i}`;
+  card.dataset.index = i;
+  card.onclick = (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+    setActive(i);
+  };
+
+  card.innerHTML = buildCardHTML(item, i, d);
+  old.replaceWith(card);
+}
+
+function updateStats() {
+  let cuts = 0, trims = 0, keeps = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'cut') cuts++;
+    else if (d.action === 'trim') trims++;
+    else if (d.action === 'keep') keeps++;
+  });
+  const reviewed = cuts + trims + keeps;
+  const pending = DATA.length - reviewed;
+
+  document.getElementById('stat-cut').textContent = cuts;
+  document.getElementById('stat-trim').textContent = trims;
+  document.getElementById('stat-keep').textContent = keeps;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('progress-text').textContent = `${reviewed} / ${DATA.length} reviewed`;
+  document.getElementById('progress-fill').style.width = `${(reviewed / DATA.length) * 100}%`;
+}
+
+function jumpToNext() {
+  for (let i = 0; i < DATA.length; i++) {
+    if (!decisions[i]) {
+      setActive(i);
+      return;
+    }
+  }
+  alert('All items reviewed!');
+}
+
+// Export
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.export-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  updateExport();
+}
+
+function getExportData() {
+  const cuts = [];
+  const trims = [];
+
+  DATA.forEach((item, i) => {
+    const d = decisions[i];
+    if (!d) return;
+    if (d.action === 'cut') {
+      cuts.push({ text: item.text, category: item.category });
+    } else if (d.action === 'trim') {
+      trims.push({
+        original_text: item.text,
+        trimmed_text: d.trimmedText,
+        category: item.category
+      });
+    }
+  });
+
+  return { cuts, trims };
+}
+
+function updateExport() {
+  const { cuts, trims } = getExportData();
+  const el = document.getElementById('export-content');
+
+  if (activeTab === 'cuts') {
+    if (cuts.length === 0) {
+      el.innerHTML = '<div class="export-empty">No cuts yet.</div>';
+    } else {
+      el.textContent = JSON.stringify(cuts, null, 2);
+    }
+  } else if (activeTab === 'trims') {
+    if (trims.length === 0) {
+      el.innerHTML = '<div class="export-empty">No trims yet.</div>';
+    } else {
+      el.textContent = JSON.stringify(trims, null, 2);
+    }
+  } else {
+    let reviewed = 0, cutCount = 0, trimCount = 0, keepCount = 0;
+    Object.values(decisions).forEach(d => {
+      reviewed++;
+      if (d.action === 'cut') cutCount++;
+      else if (d.action === 'trim') trimCount++;
+      else if (d.action === 'keep') keepCount++;
+    });
+
+    const summary = {
+      summary: {
+        total: DATA.length,
+        reviewed,
+        pending: DATA.length - reviewed,
+        cuts: cutCount,
+        trims: trimCount,
+        keeps: keepCount
+      },
+      cuts: cuts,
+      trims: trims
+    };
+    el.textContent = JSON.stringify(summary, null, 2);
+  }
+}
+
+function copyExport() {
+  const el = document.getElementById('export-content');
+  const text = el.textContent;
+  if (!text || el.querySelector('.export-empty')) return;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') {
+      closeTrim(activeIndex);
+      e.target.blur();
+    }
+    return;
+  }
+
+  switch(e.key) {
+    case 'ArrowDown':
+    case 'j':
+      e.preventDefault();
+      setActive(activeIndex + 1);
+      break;
+    case 'ArrowUp':
+    case 'k':
+      e.preventDefault();
+      setActive(activeIndex - 1);
+      break;
+    case 'n':
+    case 'N':
+      e.preventDefault();
+      decide(activeIndex, 'cut');
+      break;
+    case 't':
+    case 'T':
+      e.preventDefault();
+      openTrim(activeIndex);
+      break;
+    case 'y':
+    case 'Y':
+      e.preventDefault();
+      decide(activeIndex, 'keep');
+      break;
+  }
+});
+
+// Init
+loadState();
+renderCards();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

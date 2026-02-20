@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bamford Cat Therapy — MaybeCat Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    padding: 15px 20px;
+    z-index: 100;
+    border-bottom: 2px solid #0f3460;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.1rem;
+    color: #e94560;
+    margin: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    width: 100%;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+  }
+  .response-card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+  .response-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db890; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #ecc82e; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .export-section pre {
+    background: #0f3460;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  .copy-btn:hover { background: #3db890; }
+  .divider {
+    text-align: center;
+    color: #444;
+    margin: 30px 0 20px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Bamford Cat Therapy — MaybeCat Batch</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="keep-count">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="cut-count">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="edit-count">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="pending-count">0</strong></span>
+    <span>Total: <strong id="total-count">0</strong></span>
+  </div>
+  <div class="batch-info">
+    Comedian filter: Maria Bamford | Concept: Cats in therapy presenting with human problems | 2026-02-20
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export JSON (KEEP + EDIT only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "My therapist says the abandonment I feel when the bathroom door closes is \"disproportionate.\" She wasn't there. She doesn't know.",
+    category: "dramatic"
+  },
+  {
+    text: "\"And when did the knocking things off counters begin?\" It began when I was BORN. Next question.",
+    category: "chaotic"
+  },
+  {
+    text: "I told my therapist I sleep eighteen hours a day and she asked if I was \"avoiding something.\" Yeah. Consciousness.",
+    category: "wise"
+  },
+  {
+    text: "\"Have you considered that the red dot isn't real?\" It's REAL to ME, Doctor.",
+    category: "dramatic"
+  },
+  {
+    text: "The clinical term for what I have is \"a personality.\" Apparently that's the whole diagnosis.",
+    category: "cold"
+  },
+  {
+    text: "\"And how did that make you feel?\" I bit them. \"Okay. And how did THAT make you feel?\" Correct.",
+    category: "chaotic"
+  },
+  {
+    text: "My therapist wants me to \"sit with the discomfort.\" I'm a cat. I sit with everything. That's my entire skill set.",
+    category: "wise"
+  },
+  {
+    text: "I've been diagnosed with an attachment style. It's called \"on your lap whether you like it or not.\"",
+    category: "demanding"
+  },
+  {
+    text: "She said \"let's explore why you feel the need to scream at 3 AM.\" We explored it. No answers were found. Screaming continues.",
+    category: "chaotic"
+  },
+  {
+    text: "\"Do you think the aggression toward the vacuum might be displaced?\" Displaced from WHERE? The vacuum is the enemy. This is targeted.",
+    category: "dramatic"
+  },
+  {
+    text: "My therapist asked me to describe my childhood. I was adopted at eight weeks. She cried. I didn't. We're not the same.",
+    category: "cold"
+  },
+  {
+    text: "Apparently my \"boundaries\" are \"walls\" and my \"independence\" is \"avoidance.\" Fascinating. I'll be in the other room.",
+    category: "cold"
+  },
+  {
+    text: "\"On a scale of 1 to 10, how would you rate your anxiety?\" I ate a hair tie this morning. You do the math.",
+    category: "chaotic"
+  },
+  {
+    text: "I told my therapist I have trust issues. She said \"with whom?\" Everyone who has ever closed a door.",
+    category: "wise"
+  },
+  {
+    text: "We spent forty-five minutes unpacking why I stare at the wall. We did not find anything in the wall. Session felt productive.",
+    category: "existential"
+  },
+  {
+    text: "\"That sounds like catastrophic thinking.\" No. That sounds like THINKING. The catastrophe is just accurate.",
+    category: "demanding"
+  },
+  {
+    text: "My therapist says I need to \"let people in.\" I let them in. Then I hiss. That's the process. There are steps.",
+    category: "wise"
+  },
+  {
+    text: "Diagnosed with an inability to self-soothe. *is currently purring* The diagnosis was wrong. I'm incredible at this.",
+    category: "chaotic_wholesome"
+  }
+];
+
+const states = new Array(responses.length).fill(null); // null = pending, 'keep', 'cut', 'edit'
+const editTexts = responses.map(r => r.text);
+
+function render() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' +
+      (states[i] === 'keep' ? ' kept' : '') +
+      (states[i] === 'cut' ? ' cut' : '') +
+      (states[i] === 'edit' ? ' edited' : '');
+
+    const displayText = states[i] === 'edit' ? editTexts[i] : r.text;
+
+    card.innerHTML = `
+      <div class="response-text">${escapeHtml(displayText)}</div>
+      <div class="response-category">${r.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${states[i] === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${states[i] === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${states[i] === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}" rows="3">${escapeHtml(editTexts[i])}</textarea>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function decide(i, action) {
+  if (states[i] === action) {
+    states[i] = null; // toggle off
+  } else {
+    states[i] = action;
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  if (area) {
+    area.classList.toggle('visible');
+  }
+  if (states[i] !== 'edit') {
+    // Don't set state yet — wait for save
+  }
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`edit-text-${i}`);
+  if (textarea) {
+    editTexts[i] = textarea.value;
+    states[i] = 'edit';
+    render();
+  }
+}
+
+function updateStats() {
+  const keep = states.filter(s => s === 'keep').length;
+  const cut = states.filter(s => s === 'cut').length;
+  const edit = states.filter(s => s === 'edit').length;
+  const pending = states.filter(s => s === null).length;
+
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = pending;
+  document.getElementById('total-count').textContent = responses.length;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (states[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (states[i] === 'edit') {
+      exported.push({ text: editTexts[i], category: r.category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>

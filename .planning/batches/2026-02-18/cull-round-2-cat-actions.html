@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 2: Cat Action Clusters</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* ── Sticky Header ── */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16162a;
+    border-bottom: 1px solid #2a2a4a;
+    padding: 14px 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .header-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .stat {
+    font-size: 13px;
+    color: #aaa;
+  }
+  .stat strong {
+    font-size: 16px;
+    margin-right: 3px;
+  }
+  .stat-groups strong { color: #7b8cde; }
+  .stat-cut strong { color: #e94560; }
+  .stat-remaining strong { color: #4ecca3; }
+
+  .progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: #2a2a4a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #4ecca3, #7b8cde);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-jump {
+    background: #2a2a4a;
+    color: #7b8cde;
+    border: 1px solid #3a3a5a;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .btn-jump:hover { background: #3a3a5a; color: #fff; }
+  .keyboard-hint {
+    font-size: 11px;
+    color: #555;
+    margin-left: 8px;
+  }
+  kbd {
+    background: #2a2a4a;
+    border: 1px solid #3a3a5a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: monospace;
+    color: #7b8cde;
+  }
+
+  /* ── Content ── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* ── Group Card ── */
+  .group-card {
+    background: #1e1e38;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .group-card.focused {
+    border-color: #7b8cde;
+    box-shadow: 0 0 0 1px #7b8cde33;
+  }
+  .group-card.group-reviewed {
+    opacity: 0.7;
+  }
+  .group-card.group-reviewed:hover {
+    opacity: 1;
+  }
+
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .group-header:hover { background: #22223a; }
+  .group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .group-number {
+    font-size: 12px;
+    color: #555;
+    font-weight: 600;
+    min-width: 28px;
+  }
+  .group-concept {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .group-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .group-badge-pending { background: #2a2a4a; color: #888; }
+  .group-badge-done { background: #4ecca322; color: #4ecca3; }
+
+  .collapse-arrow {
+    color: #555;
+    font-size: 14px;
+    transition: transform 0.2s;
+    margin-left: 12px;
+  }
+  .group-card.collapsed .collapse-arrow { transform: rotate(-90deg); }
+  .group-card.collapsed .group-body { display: none; }
+
+  .group-body {
+    padding: 0 20px 20px;
+  }
+
+  /* ── Group Done button ── */
+  .group-done-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 14px;
+    margin-top: 6px;
+    border-top: 1px solid #2a2a4a;
+  }
+  .btn-group-done {
+    background: #4ecca322;
+    color: #4ecca3;
+    border: 1px solid #4ecca344;
+    padding: 8px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-group-done:hover { background: #4ecca344; }
+  .btn-group-done.active {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border-color: #4ecca3;
+  }
+
+  /* ── Keeper (display only, no action buttons) ── */
+  .keeper-section {
+    background: #16213e;
+    border: 2px solid #0f9baa;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    transition: all 0.2s;
+  }
+  .keeper-section.decided-cut {
+    border-color: #e94560aa;
+    background: #e945600a;
+  }
+  .keeper-section.focused-item {
+    border-color: #7b8cde;
+    box-shadow: 0 0 0 1px #7b8cde44, inset 0 0 0 1px #0f9baa55;
+  }
+  .keeper-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #0f9baa;
+    margin-bottom: 8px;
+  }
+  .keeper-text {
+    font-size: 17px;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .keeper-category {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #0f9baa33;
+    color: #0f9baa;
+    font-weight: 600;
+  }
+
+  /* ── Cut Candidate ── */
+  .cut-candidate {
+    background: #1a1a30;
+    border: 1px solid #2a2a4a;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .cut-candidate.focused-item {
+    border-color: #7b8cde;
+    box-shadow: 0 0 0 1px #7b8cde44;
+  }
+  .cut-candidate.decided-cut {
+    border-color: #e9456044;
+    background: #e9456008;
+  }
+
+  .cut-text {
+    font-size: 16px;
+    color: #ddd;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .cut-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .category-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #2a2a4a;
+    color: #888;
+    font-weight: 600;
+  }
+  .flag-reason {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .cut-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.12s;
+    outline: none;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-cut {
+    background: #e9456022;
+    color: #e94560;
+    border: 1px solid #e9456044;
+  }
+  .btn-cut:hover { background: #e9456044; }
+  .btn-cut.active {
+    background: #e94560;
+    color: #fff;
+  }
+
+  .decision-stamp {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 8px;
+  }
+  .stamp-cut { color: #e94560; }
+
+  /* ── Export ── */
+  .export-section {
+    background: #1e1e38;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 32px;
+  }
+  .export-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .export-subtitle {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+  .export-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 12px;
+  }
+  .export-tab {
+    padding: 8px 18px;
+    background: #2a2a4a;
+    color: #888;
+    border: 1px solid #3a3a5a;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .export-tab:first-child { border-radius: 6px 0 0 6px; }
+  .export-tab:last-child { border-radius: 0 6px 6px 0; }
+  .export-tab.active {
+    background: #7b8cde33;
+    color: #7b8cde;
+    border-color: #7b8cde55;
+  }
+  .export-json {
+    background: #12122a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    color: #aaa;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.5;
+    position: relative;
+  }
+  .btn-copy {
+    background: #7b8cde22;
+    color: #7b8cde;
+    border: 1px solid #7b8cde44;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { background: #7b8cde44; }
+  .btn-copy.copied { background: #4ecca3; color: #1a1a2e; border-color: #4ecca3; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #3a3a5a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4a4a6a; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="header-title">Round 2: Cat Action Clusters &mdash; Too Many Versions of the Same Bit</div>
+  <div class="header-subtitle">CUT what doesn't belong. Everything else stays. Click Reviewed to mark a group done without cutting anything.</div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+  <div class="header-stats">
+    <span class="stat stat-groups"><strong id="statGroups">0</strong>/<span id="statGroupsTotal">0</span> groups reviewed</span>
+    <span class="stat stat-cut"><strong id="statCut">0</strong> cut</span>
+    <span class="stat stat-remaining"><strong id="statRemaining">0</strong> remaining</span>
+    <span style="flex:1"></span>
+    <div class="header-actions">
+      <button class="btn-jump" onclick="jumpToNextUnreviewed()">Jump to next unreviewed</button>
+      <span class="keyboard-hint"><kbd>J</kbd>/<kbd>K</kbd> groups &nbsp; <kbd>N</kbd> cut &nbsp; <kbd>D</kbd>/<kbd>Enter</kbd> reviewed &nbsp; <kbd>Tab</kbd> items</span>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="groupsContainer"></div>
+
+<div class="container">
+  <div class="export-section">
+    <div class="export-title">Export Decisions</div>
+    <div class="export-subtitle">Copy JSON for processing. Updates live as you decide.</div>
+    <div class="export-tabs">
+      <div class="export-tab active" onclick="setExportTab('cuts')">Cuts</div>
+      <div class="export-tab" onclick="setExportTab('keeps')">Keeps</div>
+    </div>
+    <div class="export-json" id="exportJson"></div>
+    <button class="btn-copy" id="btnCopy" onclick="copyExport()">Copy JSON</button>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    "group_id": 2,
+    "concept": "Cat walking away / leaving as the answer",
+    "keeper": { "text": "*walks away mid-question*", "category": "cold" },
+    "cuts": [
+      { "text": "*turns away*", "category": "cold", "reason": "Weaker version of same dismissal" },
+      { "text": "*stares* *leaves*", "category": "meta", "reason": "Same leaving energy with less specificity" },
+      { "text": "*leaves room*", "category": "meta", "reason": "Bare-bones version" },
+      { "text": "*stretches, walks away*", "category": "meta", "reason": "Same exit with stretch prepended" }
+    ]
+  },
+  {
+    "group_id": 31,
+    "concept": "Sitting on keyboard/laptop",
+    "keeper": { "text": "*sits on your keyboard* hjkfdhsjkfds. That's my answer.", "category": "chaotic" },
+    "cuts": [
+      { "text": "*settles directly on your laptop* This is mine now. What were you doing? Doesn't matter.", "category": "demanding", "reason": "Same action, keeper has funnier keyboard-smash" },
+      { "text": "I am going to sit EXACTLY on your laptop keyboard. For your mental health.", "category": "nurturing", "reason": "Same action, different frame" },
+      { "text": "*sits on keyboard* Conversation over. Go outside.", "category": "chaotic", "reason": "Same action" },
+      { "text": "*types with butt* That's my input.", "category": "chaotic", "reason": "Same keyboard-sitting variant" }
+    ]
+  },
+  {
+    "group_id": 40,
+    "concept": "Sitting on your important stuff / papers",
+    "keeper": { "text": "*sits on the one thing you need* Interesting. You seem stressed.", "category": "judgy" },
+    "cuts": [
+      { "text": "*lies across your papers* I don't see the problem. Everything important is right here.", "category": "demanding", "reason": "Same concept, keeper has funnier observation" },
+      { "text": "*positions self in exact center of your work* Continue. I'm listening.", "category": "demanding", "reason": "Same action, different wrapper" },
+      { "text": "Whatever you were reading, you're done now.", "category": "demanding", "reason": "Same concept without the physical action" },
+      { "text": "*lies on your book* This page looked boring anyway.", "category": "judgy", "reason": "Same sitting-on-reading" },
+      { "text": "*curls up on your important documents* The world IS waiting. I'm on top of it.", "category": "poetic", "reason": "Same concept with poetic overlay" },
+      { "text": "*sits in exact center of your important papers* I am art. Your papers are my canvas.", "category": "poetic", "reason": "Same physical action" }
+    ]
+  },
+  {
+    "group_id": 47,
+    "concept": "Staring at nothing / invisible things",
+    "keeper": { "text": "*stares directly at nothing for 45 seconds* ...Yes.", "category": "chaotic" },
+    "cuts": [
+      { "text": "*staring at nothing* I'm busy.", "category": "cold", "reason": "Same staring, less payoff" },
+      { "text": "*stares at corner* One moment. There's something important over there.", "category": "chaotic", "reason": "Same empty staring" },
+      { "text": "*stares at wall intensely* You'll understand later.", "category": "chaotic", "reason": "Same energy" },
+      { "text": "I'm not staring at nothing. You just can't see it.", "category": "mystical", "reason": "Same concept from different angle" }
+    ]
+  },
+  {
+    "group_id": 48,
+    "concept": "Knocking things off tables",
+    "keeper": { "text": "I'm going to knock this over and we're both going to learn something.", "category": "chaotic" },
+    "cuts": [
+      { "text": "[knocks your question off the table]", "category": "chaotic", "reason": "Same action, keeper has the lesson payoff" },
+      { "text": "*knocks over water glass* The spirits have spoken.", "category": "chaotic", "reason": "Same action, different wrapper" },
+      { "text": "*knocks pen off desk* That's my answer.", "category": "chaotic", "reason": "Same concept" },
+      { "text": "*knocks something off table*", "category": "meta", "reason": "Bare action, no payoff" }
+    ]
+  },
+  {
+    "group_id": 60,
+    "concept": "Cat bathroom supervision",
+    "keeper": { "text": "You're trying to use the bathroom? Perfect. Let's talk.", "category": "demanding" },
+    "cuts": [
+      { "text": "*appears the moment you sit down* Now you have time for me.", "category": "demanding", "reason": "Same timing concept" },
+      { "text": "The bathroom is where we bond. Don't fight it.", "category": "demanding", "reason": "Same bonding, keeper has better timing joke" },
+      { "text": "I must supervise this. It's in my contract.", "category": "demanding", "reason": "Same supervision, less specific" }
+    ]
+  },
+  {
+    "group_id": 74,
+    "concept": "Bringing dead things / gifts as love",
+    "keeper": { "text": "*presents a dead bug* This is for you. Because you're struggling. Take it.", "category": "nurturing" },
+    "cuts": [
+      { "text": "*presents half-eaten moth* Protein. For strength. You're welcome.", "category": "nurturing", "reason": "Same dead-bug-as-gift" },
+      { "text": "I brought you my favorite toy. It's a bottle cap. This is serious.", "category": "nurturing", "reason": "Same weird-gift-as-love" },
+      { "text": "*brings you a hair tie* I've solved your problem. You're welcome.", "category": "chaotic", "reason": "Same bringing-weird-gift" },
+      { "text": "*brings you the wrong thing with enormous pride*", "category": "chaotic", "reason": "Same wrong-gift concept" }
+    ]
+  },
+  {
+    "group_id": 83,
+    "concept": "Slow blink as communication",
+    "keeper": { "text": "*slow blink* That's a yes. Or a no. Interpret as you wish.", "category": "meta" },
+    "cuts": [
+      { "text": "*slow blink* That's cat for \"I acknowledge your suffering.\" You're welcome.", "category": "nurturing", "reason": "Same slow-blink-as-communication" },
+      { "text": "*slow blink* Yeah. That was good.", "category": "nurturing", "reason": "Same blink, less interesting" },
+      { "text": "*blinks slowly, no further comment*", "category": "meta", "reason": "Same with less payoff" }
+    ]
+  },
+  {
+    "group_id": 86,
+    "concept": "Come closer / too close",
+    "keeper": { "text": "Come closer. Closer. Too close.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Come closer. Closer. TOO CLOSE. *hiss* ...Why did you leave?", "category": "chaotic", "reason": "Extended version of same joke" },
+      { "text": "Come closer. I don't bite. Much.", "category": "chaotic", "reason": "Same approach-distance" }
+    ]
+  },
+  {
+    "group_id": 87,
+    "concept": "Don't touch me / why aren't you touching me",
+    "keeper": { "text": "Don't touch me. Why aren't you touching me?", "category": "chaotic" },
+    "cuts": [
+      { "text": "Pet me. No, stop. Pet me again. That's too much. CONTINUE.", "category": "chaotic", "reason": "Same contradiction, extended" },
+      { "text": "Hold me. Don't touch me. Hold me tighter. Let go. Stay.", "category": "chaotic", "reason": "Same contradictory demands" }
+    ]
+  },
+  {
+    "group_id": 88,
+    "concept": "I love you + I'm biting you",
+    "keeper": { "text": "I love you. Also, I'm biting you now. Both are true.", "category": "chaotic" },
+    "cuts": [
+      { "text": "I bit you because you stopped petting me. Also I bit you because you were petting me.", "category": "chaotic", "reason": "Same love-and-bite, keeper cleaner" },
+      { "text": "*purring and biting simultaneously* This is normal.", "category": "chaotic", "reason": "Same duality" }
+    ]
+  },
+  {
+    "group_id": 91,
+    "concept": "Cat on chest for healing",
+    "keeper": { "text": "*sits on your chest* Your sadness summoned me. I'm heavy on purpose.", "category": "nurturing" },
+    "cuts": [
+      { "text": "I'm going to sit on your chest now. For healing. Don't move.", "category": "nurturing", "reason": "Same concept, keeper has more poetry" },
+      { "text": "*settles into lap* I don't have answers. I have weight.", "category": "heartfelt", "reason": "Same weight-as-comfort" }
+    ]
+  },
+  {
+    "group_id": 95,
+    "concept": "Vet betrayal / carrier trauma",
+    "keeper": { "text": "You put me in a CARRIER. In a CAR. To that PLACE.", "category": "angry" },
+    "cuts": [
+      { "text": "I remember the vet. I remember what you did.", "category": "angry", "reason": "Same grudge, keeper has more drama" },
+      { "text": "I trusted you. Then there were needles.", "category": "angry", "reason": "Same betrayal" },
+      { "text": "You held me down. The doctor poked me. We are not okay.", "category": "angry", "reason": "Same orbit" },
+      { "text": "You said 'just a checkup.' LIES.", "category": "angry", "reason": "Same deception" },
+      { "text": "Every time I see the carrier, I remember your treachery.", "category": "angry", "reason": "Same carrier trauma" }
+    ]
+  }
+];
+
+// ── State ──
+// cuts: Set of "groupIdx:itemIdx" keys for items marked as cut
+// groupDone: Set of groupIdx values where user clicked "Reviewed"
+let cuts = {};       // key => true (only stores cuts)
+let groupDone = {};  // groupIdx => true (clicked "Reviewed")
+let focusedGroupIdx = 0;
+let focusedItemIdx = -1; // -1 = keeper, 0+ = cut index within group
+let currentExportTab = 'cuts';
+
+// Total items across all groups (keepers + cuts)
+function totalItems() { return DATA.reduce((s, g) => s + 1 + g.cuts.length, 0); }
+
+function getKey(groupIdx, itemIdx) { return `${groupIdx}:${itemIdx}`; }
+
+function isCut(groupIdx, itemIdx) { return !!cuts[getKey(groupIdx, itemIdx)]; }
+
+function toggleCut(groupIdx, itemIdx) {
+  const key = getKey(groupIdx, itemIdx);
+  if (cuts[key]) {
+    delete cuts[key];
+  } else {
+    cuts[key] = true;
+  }
+  renderItemByIdx(groupIdx, itemIdx);
+  updateStats();
+  updateGroupBadge(groupIdx);
+  updateExport();
+  saveState();
+}
+
+function toggleGroupDone(groupIdx) {
+  if (groupDone[groupIdx]) {
+    delete groupDone[groupIdx];
+  } else {
+    groupDone[groupIdx] = true;
+  }
+  updateStats();
+  updateGroupBadge(groupIdx);
+  updateGroupDoneButton(groupIdx);
+  updateExport();
+  saveState();
+}
+
+function isGroupReviewed(gi) {
+  // A group is reviewed if: user clicked "Reviewed" OR at least one item was cut
+  if (groupDone[gi]) return true;
+  const g = DATA[gi];
+  if (isCut(gi, -1)) return true;
+  for (let ci = 0; ci < g.cuts.length; ci++) {
+    if (isCut(gi, ci)) return true;
+  }
+  return false;
+}
+
+// ── Persistence (localStorage) ──
+const STORAGE_KEY = 'cull-r2-cat-actions-v2';
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ cuts, groupDone }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.cuts) cuts = parsed.cuts;
+      if (parsed.groupDone) groupDone = parsed.groupDone;
+    }
+  } catch(e) {}
+}
+
+// ── Stats ──
+function updateStats() {
+  let cutCount = Object.keys(cuts).length;
+  let total = totalItems();
+  let remaining = total - cutCount;
+
+  let groupsReviewed = 0;
+  DATA.forEach((g, gi) => {
+    if (isGroupReviewed(gi)) groupsReviewed++;
+  });
+
+  document.getElementById('statGroups').textContent = groupsReviewed;
+  document.getElementById('statGroupsTotal').textContent = DATA.length;
+  document.getElementById('statCut').textContent = cutCount;
+  document.getElementById('statRemaining').textContent = remaining;
+
+  const pct = DATA.length > 0 ? (groupsReviewed / DATA.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateGroupBadge(groupIdx) {
+  const card = document.getElementById(`group-${groupIdx}`);
+  if (!card) return;
+  const reviewed = isGroupReviewed(groupIdx);
+
+  const badge = card.querySelector('.group-badge');
+  if (reviewed) {
+    badge.className = 'group-badge group-badge-done';
+    badge.textContent = 'Reviewed';
+    card.classList.add('group-reviewed');
+  } else {
+    badge.className = 'group-badge group-badge-pending';
+    badge.textContent = 'Pending';
+    card.classList.remove('group-reviewed');
+  }
+}
+
+function updateGroupDoneButton(groupIdx) {
+  const btn = document.getElementById(`btn-done-${groupIdx}`);
+  if (!btn) return;
+  if (groupDone[groupIdx]) {
+    btn.classList.add('active');
+    btn.textContent = 'Reviewed';
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = 'Reviewed';
+  }
+}
+
+// ── Render ──
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderGroups() {
+  const container = document.getElementById('groupsContainer');
+  container.innerHTML = '';
+  DATA.forEach((group, gi) => {
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.id = `group-${gi}`;
+
+    const reviewed = isGroupReviewed(gi);
+
+    card.innerHTML = `
+      <div class="group-header" onclick="toggleGroup(${gi})">
+        <div class="group-header-left">
+          <span class="group-number">#${group.group_id}</span>
+          <span class="group-concept">${escapeHtml(group.concept)}</span>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <span class="group-badge ${reviewed ? 'group-badge-done' : 'group-badge-pending'}">${reviewed ? 'Reviewed' : 'Pending'}</span>
+          <span class="collapse-arrow">&#9660;</span>
+        </div>
+      </div>
+      <div class="group-body">
+        ${renderKeeperHtml(gi, group.keeper)}
+        <div id="cuts-${gi}">
+          ${group.cuts.map((cut, ci) => renderCutHtml(gi, ci, cut)).join('')}
+        </div>
+        <div class="group-done-bar">
+          <button class="btn-group-done ${groupDone[gi] ? 'active' : ''}" id="btn-done-${gi}" onclick="toggleGroupDone(${gi})">Reviewed</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    if (reviewed) card.classList.add('group-reviewed');
+  });
+}
+
+function renderKeeperHtml(gi, keeper) {
+  const cut = isCut(gi, -1);
+  const classes = ['keeper-section'];
+  if (cut) classes.push('decided-cut');
+
+  return `
+    <div class="${classes.join(' ')}" id="item-${gi}--1" data-gi="${gi}" data-ci="-1">
+      <div class="keeper-label">&#x2B50; Suggested Keeper</div>
+      <div class="keeper-text">${escapeHtml(keeper.text)}</div>
+      <span class="keeper-category">${escapeHtml(keeper.category)}</span>
+      <div class="cut-actions" style="margin-top: 12px;">
+        <button class="btn btn-cut ${cut ? 'active' : ''}" onclick="toggleCut(${gi},-1)">Cut</button>
+        ${cut ? '<span class="decision-stamp stamp-cut">CUT</span>' : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderCutHtml(gi, ci, cut) {
+  const isCutItem = isCut(gi, ci);
+  const classes = ['cut-candidate'];
+  if (isCutItem) classes.push('decided-cut');
+
+  return `
+    <div class="${classes.join(' ')}" id="item-${gi}-${ci}" data-gi="${gi}" data-ci="${ci}">
+      <div class="cut-text">${escapeHtml(cut.text)}</div>
+      <div class="cut-meta">
+        <span class="category-tag">${escapeHtml(cut.category)}</span>
+        <span class="flag-reason">${escapeHtml(cut.reason)}</span>
+      </div>
+      <div class="cut-actions">
+        <button class="btn btn-cut ${isCutItem ? 'active' : ''}" onclick="toggleCut(${gi},${ci})">Cut</button>
+        ${isCutItem ? '<span class="decision-stamp stamp-cut">CUT</span>' : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderItemByIdx(gi, itemIdx) {
+  if (itemIdx === -1) {
+    const el = document.getElementById(`item-${gi}--1`);
+    if (!el) return;
+    const keeper = DATA[gi].keeper;
+    el.outerHTML = renderKeeperHtml(gi, keeper);
+  } else {
+    const el = document.getElementById(`item-${gi}-${itemIdx}`);
+    if (!el) return;
+    const cut = DATA[gi].cuts[itemIdx];
+    el.outerHTML = renderCutHtml(gi, itemIdx, cut);
+  }
+}
+
+function toggleGroup(gi) {
+  const card = document.getElementById(`group-${gi}`);
+  card.classList.toggle('collapsed');
+}
+
+// ── Navigation ──
+function maxItemIdx(gi) { return DATA[gi].cuts.length - 1; }
+
+function setFocusedGroup(idx) {
+  document.querySelectorAll('.group-card.focused').forEach(el => el.classList.remove('focused'));
+  document.querySelectorAll('.focused-item').forEach(el => el.classList.remove('focused-item'));
+
+  focusedGroupIdx = Math.max(0, Math.min(idx, DATA.length - 1));
+  focusedItemIdx = -1;
+
+  const card = document.getElementById(`group-${focusedGroupIdx}`);
+  if (card) {
+    card.classList.add('focused');
+    card.classList.remove('collapsed');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    updateItemFocus();
+  }
+}
+
+function updateItemFocus() {
+  document.querySelectorAll('.focused-item').forEach(el => el.classList.remove('focused-item'));
+  const group = DATA[focusedGroupIdx];
+  if (!group) return;
+  focusedItemIdx = Math.max(-1, Math.min(focusedItemIdx, maxItemIdx(focusedGroupIdx)));
+  const itemId = focusedItemIdx === -1 ? `item-${focusedGroupIdx}--1` : `item-${focusedGroupIdx}-${focusedItemIdx}`;
+  const item = document.getElementById(itemId);
+  if (item) {
+    item.classList.add('focused-item');
+    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function jumpToNextUnreviewed() {
+  for (let gi = 0; gi < DATA.length; gi++) {
+    if (!isGroupReviewed(gi)) {
+      focusedGroupIdx = gi;
+      focusedItemIdx = -1;
+      setFocusedGroup(gi);
+      return;
+    }
+  }
+}
+
+// ── Keyboard ──
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  switch (e.key.toLowerCase()) {
+    case 'j':
+      e.preventDefault();
+      setFocusedGroup(focusedGroupIdx + 1);
+      break;
+    case 'k':
+      e.preventDefault();
+      setFocusedGroup(focusedGroupIdx - 1);
+      break;
+    case 'tab':
+      e.preventDefault();
+      if (e.shiftKey) {
+        focusedItemIdx--;
+        if (focusedItemIdx < -1) {
+          setFocusedGroup(focusedGroupIdx - 1);
+          focusedItemIdx = maxItemIdx(focusedGroupIdx);
+        }
+      } else {
+        focusedItemIdx++;
+        if (focusedItemIdx > maxItemIdx(focusedGroupIdx)) {
+          setFocusedGroup(focusedGroupIdx + 1);
+          focusedItemIdx = -1;
+        }
+      }
+      updateItemFocus();
+      break;
+    case 'n':
+      e.preventDefault();
+      toggleCut(focusedGroupIdx, focusedItemIdx);
+      break;
+    case 'd':
+      e.preventDefault();
+      toggleGroupDone(focusedGroupIdx);
+      break;
+    case 'enter':
+      e.preventDefault();
+      toggleGroupDone(focusedGroupIdx);
+      break;
+  }
+});
+
+// ── Export ──
+function setExportTab(tab) {
+  currentExportTab = tab;
+  document.querySelectorAll('.export-tab').forEach((el, i) => {
+    const tabs = ['cuts', 'keeps'];
+    el.classList.toggle('active', tabs[i] === tab);
+  });
+  updateExport();
+}
+
+function buildExportData() {
+  const cutItems = [], keepItems = [];
+  DATA.forEach((group, gi) => {
+    // Process keeper
+    const keeperEntry = {
+      text: group.keeper.text,
+      category: group.keeper.category,
+      group: group.concept,
+      group_id: group.group_id,
+      was_suggested_keeper: true
+    };
+    if (isCut(gi, -1)) {
+      cutItems.push(keeperEntry);
+    } else {
+      keepItems.push(keeperEntry);
+    }
+
+    // Process cuts
+    group.cuts.forEach((cut, ci) => {
+      const entry = {
+        text: cut.text,
+        category: cut.category,
+        group: group.concept,
+        group_id: group.group_id
+      };
+      if (isCut(gi, ci)) {
+        cutItems.push(entry);
+      } else {
+        keepItems.push(entry);
+      }
+    });
+  });
+  return { cuts: cutItems, keeps: keepItems };
+}
+
+function updateExport() {
+  const data = buildExportData();
+  let json;
+  if (currentExportTab === 'cuts') {
+    json = JSON.stringify(data.cuts, null, 2);
+  } else {
+    json = JSON.stringify(data.keeps, null, 2);
+  }
+  document.getElementById('exportJson').textContent = json;
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// ── Init ──
+loadState();
+renderGroups();
+updateStats();
+updateExport();
+setFocusedGroup(0);
+</script>
+</body>
+</html>

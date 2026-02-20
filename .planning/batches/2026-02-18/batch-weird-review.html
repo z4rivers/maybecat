@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review — Weird Batch (2026-02-18)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    padding-bottom: 120px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16162a;
+    border-bottom: 1px solid #2a2a4a;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sticky-header h1 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .stats span { opacity: 0.7; }
+  .stat-total { color: #fff; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #a0a0c0; }
+
+  .keyboard-hint {
+    font-size: 11px;
+    color: #666;
+    padding: 4px 24px 0;
+    background: #16162a;
+    border-bottom: 1px solid #2a2a4a;
+  }
+
+  .keyboard-hint kbd {
+    background: #2a2a4a;
+    border: 1px solid #3a3a5a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: inherit;
+    color: #a0a0c0;
+  }
+
+  .set-divider {
+    padding: 24px 24px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6a6a9a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cards { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+  .card {
+    background: #22223a;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 20px 24px;
+    border-left: 4px solid transparent;
+    transition: border-color 0.2s, opacity 0.2s;
+    position: relative;
+  }
+
+  .card.focused {
+    outline: 2px solid #4a4a8a;
+    outline-offset: 2px;
+  }
+
+  .card.status-keep { border-left-color: #4ecca3; }
+  .card.status-cut { border-left-color: #e94560; opacity: 0.45; }
+  .card.status-cut .response-text { text-decoration: line-through; }
+  .card.status-edit { border-left-color: #ffd93d; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .item-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6a6a9a;
+    min-width: 24px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .badge-wise { background: #2a4a3a; color: #7accaa; }
+  .badge-heartfelt { background: #4a2a3a; color: #cc7a9a; }
+  .badge-poetic { background: #3a2a4a; color: #aa7acc; }
+  .badge-cold { background: #2a3a4a; color: #7aaacc; }
+  .badge-existential { background: #3a3a2a; color: #aaaa7a; }
+  .badge-judgy { background: #4a3a2a; color: #ccaa7a; }
+  .badge-demanding { background: #4a2a2a; color: #cc8a7a; }
+  .badge-meta { background: #2a2a4a; color: #8a8acc; }
+  .badge-mystical { background: #3a2a4a; color: #b07acc; }
+  .badge-nurturing { background: #2a4a2a; color: #8acc8a; }
+  .badge-chaotic { background: #4a2a4a; color: #cc7acc; }
+  .badge-angry { background: #4a2a2a; color: #e07a7a; }
+
+  .status-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+  .status-label.keep-label { color: #4ecca3; }
+  .status-label.cut-label { color: #e94560; }
+  .status-label.edit-label { color: #ffd93d; }
+
+  .response-text {
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    transition: text-decoration 0.2s;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .actions button {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.1s;
+  }
+
+  .actions button:hover { transform: scale(1.03); }
+  .actions button:active { transform: scale(0.97); }
+
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-undo {
+    background: transparent;
+    border: 1px solid #4a4a6a !important;
+    color: #8a8aaa;
+    margin-left: auto;
+  }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .edit-area.open { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #4a4a6a;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    line-height: 1.45;
+    resize: vertical;
+    margin-bottom: 8px;
+  }
+
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+
+  .edit-buttons { display: flex; gap: 8px; }
+  .btn-save { background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-cancel { background: transparent; color: #8a8aaa; border: 1px solid #4a4a6a; border-radius: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .export-section h2 {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .export-section .export-info {
+    font-size: 13px;
+    color: #6a6a9a;
+    margin-bottom: 12px;
+  }
+
+  .export-section textarea {
+    width: 100%;
+    min-height: 200px;
+    background: #16162a;
+    color: #a0e0c0;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .btn-export {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+  .btn-copy {
+    background: #2a2a4a;
+    color: #a0a0c0;
+    border: 1px solid #3a3a5a;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+
+  .btn-copy.copied { background: #4ecca3; color: #1a1a2e; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Weird Batch &mdash; 2026-02-18</h1>
+  <div class="stats">
+    <span class="stat-total">Total: <strong id="stat-total">45</strong></span>
+    <span class="stat-kept">Kept: <strong id="stat-kept">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="stat-cut">0</strong></span>
+    <span class="stat-edited">Edited: <strong id="stat-edited">0</strong></span>
+    <span class="stat-remaining">Remaining: <strong id="stat-remaining">45</strong></span>
+  </div>
+</div>
+<div class="keyboard-hint">
+  <kbd>J</kbd>/<kbd>K</kbd> navigate &nbsp; <kbd>O</kbd> keep &nbsp; <kbd>X</kbd> cut &nbsp; <kbd>E</kbd> edit &nbsp; <kbd>Enter</kbd> save edit &nbsp; <kbd>Esc</kbd> cancel &nbsp; <kbd>U</kbd> undo
+</div>
+
+<div class="cards" id="cards"></div>
+
+<div class="export-section">
+  <h2>Export</h2>
+  <div>
+    <button class="btn-export" onclick="generateExport()">Generate Export</button>
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+  </div>
+  <div class="export-info" id="export-info"></div>
+  <textarea id="export-output" readonly></textarea>
+</div>
+
+<script>
+const STORAGE_KEY = "batch-weird-2026-02-18";
+
+const ITEMS = [
+  { id:1, text:"You already made eye contact with the answer. Briefly.", category:"wise", set:1 },
+  { id:2, text:"You were wearing your brave face and I almost didn\u2019t recognize you.", category:"heartfelt", set:1 },
+  { id:3, text:"Someone out there is describing you to the universe right now. The details are wrong but the feeling is exact.", category:"poetic", set:1 },
+  { id:4, text:"You smiled at the possibility and then left the building.", category:"cold", set:1 },
+  { id:5, text:"*slow blink* I should have said something. I won\u2019t.", category:"existential", set:1 },
+  { id:6, text:"Patient presented with full awareness of the problem. Refused treatment.", category:"judgy", set:1 },
+  { id:7, text:"Alert, bright, responsive. Prognosis: do the thing.", category:"demanding", set:1 },
+  { id:8, text:"You\u2019re displaying mild avoidance behavior. Call if worsening.", category:"cold", set:1 },
+  { id:9, text:"Hissing and lunging before the situation even begins is not a plan.", category:"wise", set:1 },
+  { id:10, text:"*ears plane to the sides* Vocalized but did not exit the situation. Relatable.", category:"meta", set:1 },
+  { id:11, text:"Read carefully. This feeling requires assembly.", category:"mystical", set:1 },
+  { id:12, text:"Different hearts require different types of fixing. Use what\u2019s suitable.", category:"nurturing", set:1 },
+  { id:13, text:"2 persons required. You showed up alone. Respect.", category:"heartfelt", set:1 },
+  { id:14, text:"If placed on uneven ground the risk of everything is greater. *tail flicks*", category:"chaotic", set:1 },
+  { id:15, text:"Step 1 was the hard part. You already did Step 1.", category:"nurturing", set:1 },
+  { id:16, text:"In the unlikely event of a sudden loss of confidence, masks will not descend.", category:"cold", set:2 },
+  { id:17, text:"Please return your expectations to their full upright and locked position.", category:"judgy", set:2 },
+  { id:18, text:"We are now free to move about the wreckage.", category:"chaotic", set:2 },
+  { id:19, text:"*slow blink* Your nearest exit may be behind you.", category:"wise", set:2 },
+  { id:20, text:"This was not as described. Zero stars. Would not feel this again.", category:"angry", set:2 },
+  { id:21, text:"Arrived broken. Still kept it. Still use it every day.", category:"heartfelt", set:2 },
+  { id:22, text:"Does not work as advertised but honestly neither do you.", category:"meta", set:2 },
+  { id:23, text:"Looked nothing like the picture. *knocks it off the table anyway.*", category:"chaotic", set:2 },
+  { id:24, text:"Cheap material. Falls apart under the slightest pressure. One star. Still texted them.", category:"existential", set:2 },
+  { id:25, text:"A journey of a thousand miles begins with lying down.", category:"nurturing", set:2 },
+  { id:26, text:"You will meet someone important. It was yesterday. You were on your phone.", category:"cold", set:2 },
+  { id:27, text:"Good things come to those who stop waiting and go feral.", category:"demanding", set:2 },
+  { id:28, text:"Your lucky numbers are irrelevant. Trust the feeling in your stomach.", category:"mystical", set:2 },
+  { id:29, text:"The best time to plant a tree was twenty years ago. The second best time is to stop talking about the tree.", category:"judgy", set:2 },
+  { id:30, text:"Fortune favors the bold. Misfortune also favors the bold. *ears flatten.* Pick one.", category:"poetic", set:2 },
+  { id:31, text:"And they\u2019re going for it. No hesitation. Full send into the worst possible decision and the crowd is ON THEIR FEET.", category:"chaotic", set:3 },
+  { id:32, text:"*slow blink* The specimen has been circling the refrigerator for eleven minutes. It does not appear to be hungry.", category:"judgy", set:3 },
+  { id:33, text:"Irreconcilable differences between who you are and who you keep pretending to be. File by Monday.", category:"cold", set:3 },
+  { id:34, text:"WHAT A PLAY. They said nothing when they should have said everything and somehow \u2014 SOMEHOW \u2014 it worked.", category:"wise", set:3 },
+  { id:35, text:"The smaller one displays dominance by responding to the text immediately. A fatal error in this ecosystem.", category:"existential", set:3 },
+  { id:36, text:"Both parties shall cease and desist from checking that Instagram. Effective immediately. No appeals.", category:"demanding", set:3 },
+  { id:37, text:"*ears flatten* DOWN THE STRETCH THEY COME and you are TELLING yourself it\u2019s fine while your hands are literally shaking.", category:"heartfelt", set:3 },
+  { id:38, text:"Having observed the pattern across several seasons, the organism will absolutely do this again. Magnificent.", category:"meta", set:3 },
+  { id:39, text:"Petitioner requests the court acknowledge they gave that situation every possible chance. Motion granted. *headbutts your hand*", category:"nurturing", set:3 },
+  { id:40, text:"Remarkable. The creature constructs elaborate shelter from the thing it actually wants. Note the craftsmanship.", category:"poetic", set:3 },
+  { id:41, text:"Personal foul. Unnecessary roughness. On you. Against yourself. Fifteen yards and loss of sleep.", category:"angry", set:3 },
+  { id:42, text:"All shared assets \u2014 including the playlist, the inside joke, and that one restaurant \u2014 are hereby divided. You get the memory. They get the table.", category:"existential", set:3 },
+  { id:43, text:"*one ear rotates* And the rookie steps up to the plate with NOTHING left to lose. This is where legends get quiet.", category:"mystical", set:3 },
+  { id:44, text:"In rare cases, the species will sit perfectly still and call it a decision. This is, in fact, a decision.", category:"wise", set:3 },
+  { id:45, text:"Let the record show the respondent was warned. Let it also show they looked incredible doing it anyway.", category:"chaotic", set:3 }
+];
+
+const SET_LABELS = {
+  1: "Set 1: Missed Connections / Vet Records / IKEA",
+  2: "Set 2: Flight Attendants / Amazon Reviews / Anti-Fortunes",
+  3: "Set 3: Sports Play-by-Play / Divorce Filings / Nature Docs"
+};
+
+// State: { [id]: { status: "keep"|"cut"|"edit", editedText?: string } }
+let state = {};
+let focusedIdx = 0;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch(e) { state = {}; }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const k in state) {
+    if (state[k].status === "keep") kept++;
+    else if (state[k].status === "cut") cut++;
+    else if (state[k].status === "edit") edited++;
+  }
+  document.getElementById("stat-kept").textContent = kept;
+  document.getElementById("stat-cut").textContent = cut;
+  document.getElementById("stat-edited").textContent = edited;
+  document.getElementById("stat-remaining").textContent = ITEMS.length - kept - cut - edited;
+}
+
+function renderCards() {
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
+  let currentSet = 0;
+
+  ITEMS.forEach((item, idx) => {
+    if (item.set !== currentSet) {
+      currentSet = item.set;
+      const div = document.createElement("div");
+      div.className = "set-divider";
+      div.textContent = SET_LABELS[currentSet];
+      container.appendChild(div);
+    }
+
+    const s = state[item.id] || {};
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.idx = idx;
+    card.id = "card-" + idx;
+
+    if (s.status === "keep") card.classList.add("status-keep");
+    else if (s.status === "cut") card.classList.add("status-cut");
+    else if (s.status === "edit") card.classList.add("status-edit");
+    if (idx === focusedIdx) card.classList.add("focused");
+
+    const displayText = (s.status === "edit" && s.editedText) ? s.editedText : item.text;
+
+    let statusHtml = "";
+    if (s.status === "keep") statusHtml = '<span class="status-label keep-label">KEPT</span>';
+    else if (s.status === "cut") statusHtml = '<span class="status-label cut-label">CUT</span>';
+    else if (s.status === "edit") statusHtml = '<span class="status-label edit-label">EDITED</span>';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="item-num">#${item.id}</span>
+        <span class="badge badge-${item.category}">${item.category}</span>
+        ${statusHtml}
+      </div>
+      <div class="response-text">${escHtml(displayText)}</div>
+      <div class="actions">
+        <button class="btn-keep" onclick="decide(${item.id}, 'keep', ${idx})">KEEP</button>
+        <button class="btn-cut" onclick="decide(${item.id}, 'cut', ${idx})">CUT</button>
+        <button class="btn-edit" onclick="openEdit(${idx})">EDIT</button>
+        ${s.status ? '<button class="btn-undo" onclick="undoItem(' + item.id + ')">UNDO</button>' : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${idx}">
+        <textarea id="edit-ta-${idx}">${escHtml(displayText)}</textarea>
+        <div class="edit-buttons">
+          <button class="btn-save" onclick="saveEdit(${item.id}, ${idx})">Save</button>
+          <button class="btn-cancel" onclick="cancelEdit(${idx})">Cancel</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function decide(id, status, idx) {
+  const wasUndecided = !state[id] || !state[id].status;
+  state[id] = { status };
+  saveState();
+  updateStats();
+  renderCards();
+  if (wasUndecided) advanceToNextUndecided(idx);
+  else setFocus(idx);
+}
+
+function undoItem(id) {
+  delete state[id];
+  saveState();
+  updateStats();
+  renderCards();
+}
+
+function openEdit(idx) {
+  setFocus(idx);
+  renderCards();
+  const area = document.getElementById("edit-area-" + idx);
+  if (area) {
+    area.classList.add("open");
+    const ta = document.getElementById("edit-ta-" + idx);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+
+function saveEdit(id, idx) {
+  const ta = document.getElementById("edit-ta-" + idx);
+  if (!ta) return;
+  const newText = ta.value.trim();
+  if (!newText) return;
+  const wasUndecided = !state[id] || !state[id].status;
+  state[id] = { status: "edit", editedText: newText };
+  saveState();
+  updateStats();
+  renderCards();
+  if (wasUndecided) advanceToNextUndecided(idx);
+  else setFocus(idx);
+}
+
+function cancelEdit(idx) {
+  const area = document.getElementById("edit-area-" + idx);
+  if (area) area.classList.remove("open");
+}
+
+function advanceToNextUndecided(fromIdx) {
+  for (let i = fromIdx + 1; i < ITEMS.length; i++) {
+    const s = state[ITEMS[i].id];
+    if (!s || !s.status) { setFocus(i); return; }
+  }
+  for (let i = 0; i < fromIdx; i++) {
+    const s = state[ITEMS[i].id];
+    if (!s || !s.status) { setFocus(i); return; }
+  }
+  setFocus(fromIdx);
+}
+
+function setFocus(idx) {
+  if (idx < 0) idx = 0;
+  if (idx >= ITEMS.length) idx = ITEMS.length - 1;
+  focusedIdx = idx;
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("focused"));
+  const card = document.getElementById("card-" + idx);
+  if (card) {
+    card.classList.add("focused");
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+function isEditing() {
+  return document.activeElement && document.activeElement.tagName === "TEXTAREA";
+}
+
+document.addEventListener("keydown", function(e) {
+  // If in an edit textarea, only handle Enter (save) and Escape (cancel)
+  if (isEditing()) {
+    const ta = document.activeElement;
+    const match = ta.id && ta.id.match(/^edit-ta-(\d+)$/);
+    if (!match) return;
+    const idx = parseInt(match[1]);
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      saveEdit(ITEMS[idx].id, idx);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit(idx);
+      // Blur so keyboard nav works again
+      ta.blur();
+    }
+    return;
+  }
+
+  const key = e.key.toLowerCase();
+  if (key === "j") { e.preventDefault(); setFocus(focusedIdx + 1); }
+  else if (key === "k") { e.preventDefault(); setFocus(focusedIdx - 1); }
+  else if (key === "o") { e.preventDefault(); decide(ITEMS[focusedIdx].id, "keep", focusedIdx); }
+  else if (key === "x") { e.preventDefault(); decide(ITEMS[focusedIdx].id, "cut", focusedIdx); }
+  else if (key === "e") { e.preventDefault(); openEdit(focusedIdx); }
+  else if (key === "u") { e.preventDefault(); undoItem(ITEMS[focusedIdx].id); renderCards(); }
+});
+
+function generateExport() {
+  const out = [];
+  ITEMS.forEach(item => {
+    const s = state[item.id];
+    if (!s) return;
+    if (s.status === "keep") {
+      out.push({ text: item.text, category: item.category });
+    } else if (s.status === "edit") {
+      out.push({ text: s.editedText || item.text, category: item.category });
+    }
+  });
+  const ta = document.getElementById("export-output");
+  ta.value = JSON.stringify(out, null, 2);
+  document.getElementById("export-info").textContent = out.length + " items exported (kept + edited)";
+}
+
+function copyExport() {
+  const ta = document.getElementById("export-output");
+  if (!ta.value) { generateExport(); }
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.getElementById("btn-copy");
+    btn.classList.add("copied");
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.classList.remove("copied"); btn.textContent = "Copy"; }, 1500);
+  });
+}
+
+// Init
+loadState();
+// Find first undecided
+let startIdx = 0;
+for (let i = 0; i < ITEMS.length; i++) {
+  const s = state[ITEMS[i].id];
+  if (!s || !s.status) { startIdx = i; break; }
+}
+focusedIdx = startIdx;
+renderCards();
+updateStats();
+</script>
+</body>
+</html>

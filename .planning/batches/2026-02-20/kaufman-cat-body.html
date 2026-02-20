@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaufman-as-Cat Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 16px 20px; border-bottom: 2px solid #0f3460;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  .sticky-header h1 { font-size: 1.3rem; color: #e94560; }
+  .stats { display: flex; gap: 16px; font-size: 0.95rem; }
+  .stats .kept { color: #4ecca3; }
+  .stats .cut { color: #e94560; }
+  .stats .edited { color: #ffd93d; }
+  .stats .pending { color: #888; }
+
+  .batch-info {
+    background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 24px;
+    border-left: 4px solid #e94560; font-size: 0.9rem; line-height: 1.6;
+  }
+  .batch-info strong { color: #e94560; }
+  .batch-info em { color: #ffd93d; }
+
+  .response-card {
+    background: #16213e; border-radius: 8px; margin-bottom: 16px; padding: 20px;
+    border-left: 4px solid #0f3460; transition: border-color 0.3s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number { color: #666; font-size: 0.8rem; margin-bottom: 4px; }
+  .response-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 4px; color: #fff; }
+  .response-category { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
+  .kaufman-move { font-size: 0.75rem; color: #555; font-style: italic; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer;
+    font-weight: 600; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn:hover { opacity: 0.85; transform: scale(1.02); }
+  .btn.active { outline: 3px solid #fff; }
+
+  .edit-area {
+    display: none; margin-top: 12px;
+  }
+  .edit-area textarea {
+    width: 100%; background: #0f3460; color: #fff; border: 1px solid #4ecca3;
+    border-radius: 4px; padding: 10px; font-size: 1rem; resize: vertical;
+    min-height: 60px; font-family: inherit;
+  }
+  .edit-area .edit-actions { margin-top: 8px; display: flex; gap: 8px; }
+  .edit-area .btn-save { background: #4ecca3; color: #1a1a2e; padding: 4px 12px; font-size: 0.8rem; }
+  .edit-area .btn-cancel { background: #555; color: #fff; padding: 4px 12px; font-size: 0.8rem; }
+
+  .category-select {
+    background: #0f3460; color: #fff; border: 1px solid #4ecca3;
+    border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; margin-top: 8px;
+  }
+
+  .export-section {
+    margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px;
+    border-left: 4px solid #4ecca3;
+  }
+  .export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+  .export-section pre {
+    background: #0f3460; padding: 16px; border-radius: 4px; overflow-x: auto;
+    font-size: 0.85rem; line-height: 1.5; color: #ddd; white-space: pre-wrap;
+    max-height: 600px; overflow-y: auto;
+  }
+  .copy-btn {
+    background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px;
+    border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 12px;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Kaufman-as-Cat &mdash; Batch Review</h1>
+  <div class="stats">
+    <span class="kept">KEPT: <span id="kept-count">0</span></span>
+    <span class="cut">CUT: <span id="cut-count">0</span></span>
+    <span class="edited">EDITED: <span id="edited-count">0</span></span>
+    <span class="pending">PENDING: <span id="pending-count">20</span></span>
+    <span>of <span id="total-count">20</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Divergence seed:</strong> Andy Kaufman is living in a cat's body and answering life questions.<br>
+  <strong>Sensibility:</strong> Anti-comedy, total commitment to the bit, confrontational tenderness, the refusal as art, mundane-as-surreal, identity denial, delayed-hit non-answers.<br>
+  <em>The cat never winks. Never explains. The response just IS what it is.</em>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export (KEPT + EDITED only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "I'm not a cat.",
+    category: "cold",
+    move: "Identity denial — total commitment"
+  },
+  {
+    text: "That's a great question. Here's another one: Why is the floor cold on one side and warm on the other?",
+    category: "cryptic",
+    move: "Refuses to answer, answers different question with total sincerity"
+  },
+  {
+    text: "I'm going to eat now. This has nothing to do with your question.",
+    category: "cold",
+    move: "Mundane-as-surreal — the boring thing said with radical honesty"
+  },
+  {
+    text: "Yes. Wait. I was answering something else. But also yes.",
+    category: "chaotic",
+    move: "Commits to wrong answer so hard it becomes right"
+  },
+  {
+    text: "*sits perfectly still for a very long time* That was my answer. You missed it.",
+    category: "cryptic",
+    move: "The performance IS the art — Mighty Mouse energy"
+  },
+  {
+    text: "I'm going to read you something. *stares at wall* Chapter one.",
+    category: "existential",
+    move: "Great Gatsby reading — radical boringness as art"
+  },
+  {
+    text: "I love you so much it's making me angry.",
+    category: "chaotic_wholesome",
+    move: "Confrontational tenderness — aggressive sweetness"
+  },
+  {
+    text: "I've been sitting here since before you were born. I'm not going to stop now because you have a question.",
+    category: "cold",
+    move: "Total commitment to the bit — the refusal"
+  },
+  {
+    text: "The answer is seven. You asked the wrong question.",
+    category: "cryptic",
+    move: "Answers perfectly but insists they asked a different one"
+  },
+  {
+    text: "I'm just going to sit here.",
+    category: "existential",
+    move: "Radical boringness — the most boring possible thing as a radical act"
+  },
+  {
+    text: "*slow blink* That wasn't for you. I was communicating with the radiator.",
+    category: "chaotic",
+    move: "Identity denial meets mundane surreal — was that for me?"
+  },
+  {
+    text: "Come closer. Closer. I need to tell you something. *walks away*",
+    category: "cold",
+    move: "Confrontational tenderness pulled rug — Foreign Man to Elvis"
+  },
+  {
+    text: "You're asking a cat. And I'm choosing to find that brave.",
+    category: "chaotic_wholesome",
+    move: "Uncomfortably sincere — the tenderness that makes you flinch"
+  },
+  {
+    text: "This is a performance. You're in it. You've always been in it.",
+    category: "existential",
+    move: "The performance IS the art — breaking reality"
+  },
+  {
+    text: "I already answered this. You weren't listening. I wasn't talking. Both are true.",
+    category: "cryptic",
+    move: "Delayed-hit non-answer — makes no sense now, hits at 3 AM"
+  },
+  {
+    text: "Thank you. *extremely long pause* Thank you very much.",
+    category: "wise",
+    move: "Foreign Man's 'T'ank you veddy much' — sincerity so deep it's unreadable"
+  },
+  {
+    text: "I'm not performing. This is just what I do. I sit here. That's the whole thing.",
+    category: "existential",
+    move: "Is the cat performing or is this just... a cat?"
+  },
+  {
+    text: "I would fight you about this. Not because I disagree. Because the fight is the thing.",
+    category: "chaotic",
+    move: "Wrestling — picking fights with things that don't make sense to fight"
+  },
+  {
+    text: "You'll understand this tomorrow. Or you won't. I'm fine either way.",
+    category: "wise",
+    move: "Delayed-hit — doesn't care which outcome, both are the art"
+  },
+  {
+    text: "I'm going to keep purring. It has nothing to do with you. It has everything to do with you.",
+    category: "cryptic",
+    move: "Confrontational tenderness — aggressive sincerity that won't resolve"
+  }
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  decision: null, // null = pending, 'keep', 'cut', 'edit'
+  editedText: r.text,
+  editedCategory: r.category
+}));
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+  const categories = ['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic','meta','heartfelt','judgy','mystical'];
+
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (item.decision === 'keep' ? ' kept' : item.decision === 'cut' ? ' cut' : item.decision === 'edit' ? ' edited' : '');
+    card.innerHTML = `
+      <div class="response-number">#${i + 1}</div>
+      <div class="response-text">${escapeHtml(item.decision === 'edit' ? item.editedText : item.text)}</div>
+      <div class="response-category">Category: ${item.decision === 'edit' ? item.editedCategory : item.category}</div>
+      <div class="kaufman-move">Kaufman move: ${item.move}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.decision === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.decision === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.decision === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(item.editedText)}</textarea>
+        <select class="category-select" id="edit-cat-${i}">
+          ${categories.map(c => `<option value="${c}" ${(item.editedCategory === c) ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="cancelEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(i, decision) {
+  if (state[i].decision === decision) {
+    state[i].decision = null; // toggle off
+  } else {
+    state[i].decision = decision;
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  if (area.style.display === 'block') {
+    area.style.display = 'none';
+  } else {
+    area.style.display = 'block';
+    document.getElementById(`edit-text-${i}`).value = state[i].editedText;
+    document.getElementById(`edit-cat-${i}`).value = state[i].editedCategory;
+  }
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`edit-text-${i}`).value;
+  state[i].editedCategory = document.getElementById(`edit-cat-${i}`).value;
+  state[i].decision = 'edit';
+  render();
+}
+
+function cancelEdit(i) {
+  document.getElementById(`edit-area-${i}`).style.display = 'none';
+}
+
+function updateStats() {
+  const kept = state.filter(s => s.decision === 'keep').length;
+  const cut = state.filter(s => s.decision === 'cut').length;
+  const edited = state.filter(s => s.decision === 'edit').length;
+  const pending = state.filter(s => s.decision === null).length;
+  document.getElementById('kept-count').textContent = kept;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edited-count').textContent = edited;
+  document.getElementById('pending-count').textContent = pending;
+  document.getElementById('total-count').textContent = state.length;
+}
+
+function updateExport() {
+  const exported = state
+    .filter(s => s.decision === 'keep' || s.decision === 'edit')
+    .map(s => ({
+      text: s.decision === 'edit' ? s.editedText : s.text,
+      category: s.decision === 'edit' ? s.editedCategory : s.category
+    }));
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

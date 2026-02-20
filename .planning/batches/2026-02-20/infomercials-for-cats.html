@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: Infomercials for Cats</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.2rem;
+    color: #e94560;
+    margin: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+  }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.decided-keep { border-color: #4ecca3; }
+  .response-card.decided-cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.decided-edit { border-color: #ffd93d; }
+  .response-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    font-style: italic;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #1a1a2e; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    color: #fff;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area select {
+    margin-top: 8px;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .export-section pre {
+    background: #0f3460;
+    border-radius: 6px;
+    padding: 15px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .copy-btn:hover { opacity: 0.8; }
+  .response-number {
+    font-size: 0.75rem;
+    color: #555;
+    float: right;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Infomercials for Cats</h1>
+  <div class="stats">
+    <div class="stat stat-keep">KEEP: <span id="keepCount">0</span></div>
+    <div class="stat stat-cut">CUT: <span id="cutCount">0</span></div>
+    <div class="stat stat-edit">EDIT: <span id="editCount">0</span></div>
+    <div class="stat stat-pending">PENDING: <span id="pendingCount">0</span></div>
+    <div class="stat">(<span id="decidedCount">0</span> / <span id="totalCount">0</span> decided)</div>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Batch:</strong> 2026-02-20 | <strong>Divergence seed:</strong> Infomercial language — cadence, promises, urgency, testimonials, fine print — relocated into cat world. Each response is a fragment of a late-night cat product pitch.
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h2>JSON Export (KEEP + EDIT only)</h2>
+  <pre id="exportJson">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "But WAIT. There's a second box. That's TWO boxes.",
+    category: "chaotic"
+  },
+  {
+    text: "Are YOU tired of doors? Introducing: screaming.",
+    category: "demanding"
+  },
+  {
+    text: "Results may vary. Side effects include zoomies, 3 AM sprints, and staring at walls.",
+    category: "chaotic"
+  },
+  {
+    text: "For just three easy payments of one dead bird, this sunbeam could be yours.",
+    category: "chaotic"
+  },
+  {
+    text: "Operators are standing by. They're not doing anything. Just standing there. Like you at the fridge.",
+    category: "wise"
+  },
+  {
+    text: "*testimonial voice* I used to knock things off the counter one at a time. Now I clear the whole surface in seconds.",
+    category: "chaotic"
+  },
+  {
+    text: "Money-back guarantee. The money was never yours. It was always mine.",
+    category: "demanding"
+  },
+  {
+    text: "Not available in stores. Not available anywhere. I decide when you get it.",
+    category: "cold"
+  },
+  {
+    text: "Before: sad, closed door. After: same door, but open. You're welcome.",
+    category: "wise"
+  },
+  {
+    text: "Act now and receive a complimentary dead moth — a $0 value, absolutely free.",
+    category: "chaotic"
+  },
+  {
+    text: "Supplies are limited because I knocked them off the shelf.",
+    category: "chaotic"
+  },
+  {
+    text: "Call in the next fifteen minutes and I'll consider acknowledging you.",
+    category: "cold"
+  },
+  {
+    text: "Don't take MY word for it. *pushes glass off table* Take GRAVITY'S.",
+    category: "chaotic"
+  },
+  {
+    text: "Individual results may vary. My results are perfect. Yours are the variable.",
+    category: "cold"
+  },
+  {
+    text: "You've tried everything else. You've tried nothing. Same energy.",
+    category: "wise"
+  },
+  {
+    text: "Disclaimer: product may arrive at 3 AM.",
+    category: "chaotic"
+  },
+  {
+    text: "Satisfaction guaranteed. MY satisfaction. Yours is not part of this agreement.",
+    category: "demanding"
+  }
+];
+
+const categories = [
+  'chaotic','wise','cold','sassy','cryptic','dramatic','physical',
+  'wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  decision: null, // 'keep', 'cut', 'edit'
+  editedText: r.text,
+  editedCategory: r.category
+}));
+
+function render() {
+  const container = document.getElementById('responses');
+  container.innerHTML = '';
+
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (item.decision ? ` decided-${item.decision}` : '');
+    card.innerHTML = `
+      <span class="response-number">#${i + 1}</span>
+      <div class="response-text">"${escapeHtml(item.decision === 'edit' ? item.editedText : item.text)}"</div>
+      <div class="response-category">${item.decision === 'edit' ? item.editedCategory : item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.decision === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.decision === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.decision === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area ${item.decision === 'edit' ? 'visible' : ''}" id="edit-${i}">
+        <textarea id="textarea-${i}" oninput="updateEdit(${i})">${escapeHtml(item.editedText)}</textarea>
+        <select id="catselect-${i}" onchange="updateEditCategory(${i})">
+          ${categories.map(c => `<option value="${c}" ${c === item.editedCategory ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function decide(index, decision) {
+  if (state[index].decision === decision) {
+    state[index].decision = null; // toggle off
+  } else {
+    state[index].decision = decision;
+  }
+  render();
+}
+
+function toggleEdit(index) {
+  if (state[index].decision === 'edit') {
+    state[index].decision = null;
+  } else {
+    state[index].decision = 'edit';
+  }
+  render();
+  if (state[index].decision === 'edit') {
+    document.getElementById(`textarea-${index}`).focus();
+  }
+}
+
+function updateEdit(index) {
+  state[index].editedText = document.getElementById(`textarea-${index}`).value;
+  updateExport();
+}
+
+function updateEditCategory(index) {
+  state[index].editedCategory = document.getElementById(`catselect-${index}`).value;
+  updateExport();
+}
+
+function updateStats() {
+  const keep = state.filter(s => s.decision === 'keep').length;
+  const cut = state.filter(s => s.decision === 'cut').length;
+  const edit = state.filter(s => s.decision === 'edit').length;
+  const pending = state.filter(s => !s.decision).length;
+  document.getElementById('keepCount').textContent = keep;
+  document.getElementById('cutCount').textContent = cut;
+  document.getElementById('editCount').textContent = edit;
+  document.getElementById('pendingCount').textContent = pending;
+  document.getElementById('decidedCount').textContent = keep + cut + edit;
+  document.getElementById('totalCount').textContent = state.length;
+}
+
+function updateExport() {
+  const exported = state
+    .filter(s => s.decision === 'keep' || s.decision === 'edit')
+    .map(s => ({
+      text: s.decision === 'edit' ? s.editedText : s.text,
+      category: s.decision === 'edit' ? s.editedCategory : s.category
+    }));
+  document.getElementById('exportJson').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

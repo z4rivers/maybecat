@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch: Breakup Energy</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+.sticky-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.sticky-header h1 { font-size: 1.3rem; color: #e94560; }
+.stats { display: flex; gap: 16px; font-size: 0.9rem; }
+.stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #aaa; }
+
+.card {
+  background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  border-left: 4px solid #0f3460; transition: border-color 0.3s;
+}
+.card.kept { border-left-color: #4ecca3; } .card.cut { border-left-color: #e94560; } .card.edited { border-left-color: #ffd93d; }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.card-number { color: #666; font-size: 0.8rem; }
+.category-badge {
+  background: #0f3460; color: #e94560; padding: 3px 10px; border-radius: 20px;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.response-text { font-size: 1.15rem; line-height: 1.6; color: #fff; margin-bottom: 16px; font-style: italic; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db891; }
+.btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+.btn-reset { background: #333; color: #aaa; font-size: 0.75rem; } .btn-reset:hover { background: #444; }
+
+.edit-area {
+  width: 100%; margin-top: 10px; padding: 12px; background: #0d1b2a; color: #fff;
+  border: 1px solid #ffd93d; border-radius: 6px; font-size: 1rem; resize: vertical;
+  font-family: inherit; display: none; min-height: 60px;
+}
+.card.editing .edit-area { display: block; }
+
+.export-section {
+  margin-top: 40px; padding: 24px; background: #0d1b2a; border-radius: 12px; border: 1px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+.export-json {
+  width: 100%; min-height: 200px; padding: 12px; background: #1a1a2e; color: #4ecca3;
+  border: 1px solid #0f3460; border-radius: 6px; font-family: monospace; font-size: 0.85rem;
+}
+.btn-copy {
+  margin-top: 10px; padding: 10px 24px; background: #4ecca3; color: #1a1a2e;
+  border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+}
+.btn-copy:hover { background: #3db891; }
+.copy-feedback { color: #4ecca3; margin-left: 12px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Batch: Breakup Energy</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="count-keep">0</span></span>
+    <span class="stat-cut">CUT: <span id="count-cut">0</span></span>
+    <span class="stat-edit">EDIT: <span id="count-edit">0</span></span>
+    <span class="stat-pending">PENDING: <span id="count-pending">0</span></span>
+    <span style="color:#666">TOTAL: <span id="count-total">0</span></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <br>
+  <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+  <span class="copy-feedback" id="copy-feedback">Copied!</span>
+</div>
+
+<script>
+const responses = [
+  { text: "You peaked. *licks paw* That's not an insult. Some things are just finished.", category: "cold" },
+  { text: "I liked you better when I didn't know you this well.", category: "cold" },
+  { text: "*stares at you for ten seconds* That's fair.", category: "wise" },
+  { text: "You're not growing apart. One of you stopped growing. The other one noticed.", category: "judgy" },
+  { text: "Some doors close because the room was on fire and you kept calling it cozy.", category: "wise" },
+  { text: "The lease is up. I'm not renewing.", category: "cold" },
+  { text: "*slow blink* You don't miss them. You miss who you were before you had to shrink.", category: "heartfelt" },
+  { text: "Every goodbye you're scared of is a hello you're keeping from yourself.", category: "poetic" },
+  { text: "You can love someone and still change the locks.", category: "wise" },
+  { text: "The read receipts are on. The silence IS the answer.", category: "cold" },
+  { text: "I don't hate you. I just liked the version of you that existed in my head.", category: "existential" },
+  { text: "*ears flatten* Stop watering dead plants and wondering why your garden looks like that.", category: "judgy" },
+  { text: "You're out here setting an alarm to wake up next to someone who makes you tired.", category: "judgy" },
+  { text: "Sometimes the bravest thing is the quiet click of a door behind you.", category: "poetic" },
+  { text: "You keep finishing their sentences. They keep leaving yours unfinished.", category: "wise" },
+  { text: "*tail flicks once* I have feelings for the couch now.", category: "chaotic" },
+  { text: "You don't need closure. You need distance. Closure is something you build, not something they hand you.", category: "wise" },
+  { text: "The muffin was more interesting. I chose the muffin.", category: "cold" },
+  { text: "*makes biscuits on nothing* Some people are practice people. That's not mean. That's math.", category: "cold" },
+  { text: "You're not holding on because it's good. You're holding on because letting go means admitting how long it wasn't.", category: "existential" },
+  { text: "The password changed. The password always tells you first.", category: "wise" },
+  { text: "*one ear rotates* You inspire nothing in me and somehow that took three years to say out loud.", category: "cold" },
+  { text: "Walk away with your muffin. The muffin respects you.", category: "chaotic" },
+  { text: "You deserve someone who doesn't make you rehearse being happy.", category: "heartfelt" },
+  { text: "*pupils dilate* New season. New cast. You're the show, not them.", category: "nurturing" },
+  { text: "They're not your person. Your person doesn't make you google 'am I crazy.'", category: "judgy" },
+  { text: "I stayed for the potential. The potential never showed up. Neither did they, honestly.", category: "existential" },
+  { text: "*stretches one paw forward without getting up* It's not that complicated. You just finally believe them.", category: "wise" },
+  { text: "Your gut left six months ago. Your body's still commuting.", category: "judgy" },
+  { text: "Love is not a hostage situation. Put the phone down.", category: "demanding" },
+  { text: "*headbutts your hand* You didn't lose them. You survived them. Different word. Bigger word.", category: "heartfelt" },
+  { text: "The thing about settling is you have to keep settling. Every morning. Forever.", category: "existential" },
+  { text: "*shows belly, keeps claws ready* I'm sick of the sight of me being like this and that's the only reason I need.", category: "demanding" },
+  { text: "You don't owe anyone a slow death just because the beginning was pretty.", category: "wise" },
+  { text: "They applied for a different life and didn't tell you. You found out when they moved.", category: "cold" },
+  { text: "*chirps* Plot twist: being alone was the upgrade.", category: "chaotic" },
+  { text: "You're not confused. Confused people don't search for answers at 2 a.m. You know. You just don't want to.", category: "judgy" },
+  { text: "The glow up isn't revenge. It's just what happens when you stop dimming.", category: "heartfelt" },
+  { text: "Some people are a whole season of your life. Not the series.", category: "wise" },
+  { text: "*kneads the air* I never wanted it. I just never said that out loud until now.", category: "cold" }
+];
+
+const STORAGE_KEY = 'batch-breakup-energy';
+
+let decisions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const d = decisions[i] || {};
+    const status = d.status || 'pending';
+    const card = document.createElement('div');
+    card.className = `card ${status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited editing' : ''}`;
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-number">#${i + 1}</span>
+        <span class="category-badge">${r.category}</span>
+      </div>
+      <div class="response-text">${r.text}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i},'edit')">EDIT</button>
+        <button class="btn btn-reset" onclick="decide(${i},'pending')">RESET</button>
+      </div>
+      <textarea class="edit-area" id="edit-${i}" oninput="saveEdit(${i})">${d.edited || r.text}</textarea>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].status = status;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  renderCards();
+}
+
+function saveEdit(i) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].edited = document.getElementById(`edit-${i}`).value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  updateExport();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  responses.forEach((_, i) => {
+    const s = (decisions[i] || {}).status || 'pending';
+    if (s === 'keep') keep++;
+    else if (s === 'cut') cut++;
+    else if (s === 'edit') edit++;
+    else pending++;
+  });
+  document.getElementById('count-keep').textContent = keep;
+  document.getElementById('count-cut').textContent = cut;
+  document.getElementById('count-edit').textContent = edit;
+  document.getElementById('count-pending').textContent = pending;
+  document.getElementById('count-total').textContent = responses.length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i] || {};
+    if (d.status === 'keep') kept.push({ text: r.text, category: r.category });
+    else if (d.status === 'edit' && d.edited) kept.push({ text: d.edited, category: r.category });
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const fb = document.getElementById('copy-feedback');
+  fb.style.opacity = '1';
+  setTimeout(() => fb.style.opacity = '0', 2000);
+}
+
+renderCards();
+</script>
+</body>
+</html>

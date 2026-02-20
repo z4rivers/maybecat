@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steven Wright Batch — 2026-02-19</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .item-text { font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .item-meta { font-size: 0.75rem; color: #666; margin-bottom: 1rem; }
+  .actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .btn { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: #fff; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; }
+  .edit-area { display: none; margin-top: 0.5rem; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; font-size: 1.1rem; min-height: 60px; }
+  .item.decided-keep { border-left: 4px solid #4ecca3; }
+  .item.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+  .item.decided-edit { border-left: 4px solid #ffd93d; }
+  #export { background: #0f3460; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; }
+  #export pre { white-space: pre-wrap; font-size: 0.85rem; color: #4ecca3; }
+  #copy-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Steven Wright Style Batch</h1>
+  <p style="color:#666;margin:0.5rem 0">Deadpan impossible logic — flat delivery — grand absurdity stated as fact</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span style="color:#666">Undecided: <span id="undecided-count">28</span></span>
+  </div>
+</div>
+<div id="items">
+
+<div class="item" id="item-1" data-text="The answer is obvious. Just not to anyone currently alive." data-category="cold" data-decision="">
+  <div class="item-text">The answer is obvious. Just not to anyone currently alive.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(1,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-2" data-text="You already decided. You just haven&#39;t ruined it yet." data-category="wise" data-decision="">
+  <div class="item-text">You already decided. You just haven't ruined it yet.</div>
+  <div class="item-meta">Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(2,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-3" data-text="Both options are wrong. One is just wrong sooner." data-category="dark" data-decision="">
+  <div class="item-text">Both options are wrong. One is just wrong sooner.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(3,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-4" data-text="The shortcut is longer. It&#39;s just downhill." data-category="philosophical" data-decision="">
+  <div class="item-text">The shortcut is longer. It's just downhill.</div>
+  <div class="item-meta">Category: philosophical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(4,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-5" data-text="That&#39;s the right door. Wrong building though." data-category="chaotic" data-decision="">
+  <div class="item-text">That's the right door. Wrong building though.</div>
+  <div class="item-meta">Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(5,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-6" data-text="You&#39;re overthinking it. Underthinking would also be a problem." data-category="cold" data-decision="">
+  <div class="item-text">You're overthinking it. Underthinking would also be a problem.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(6,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-7" data-text="Technically yes. But technically is doing a lot of work there." data-category="sassy" data-decision="">
+  <div class="item-text">Technically yes. But technically is doing a lot of work there.</div>
+  <div class="item-meta">Category: sassy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(7,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-8" data-text="The safe choice has a longer fuse. Same explosion." data-category="dark" data-decision="">
+  <div class="item-text">The safe choice has a longer fuse. Same explosion.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(8,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-9" data-text="You&#39;ll know when you&#39;re ready. You won&#39;t be ready." data-category="cold" data-decision="">
+  <div class="item-text">You'll know when you're ready. You won't be ready.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(9,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-10" data-text="It only feels urgent because it doesn&#39;t matter." data-category="philosophical" data-decision="">
+  <div class="item-text">It only feels urgent because it doesn't matter.</div>
+  <div class="item-meta">Category: philosophical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(10,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-11" data-text="The worst that can happen already did. You just weren&#39;t paying attention." data-category="dark" data-decision="">
+  <div class="item-text">The worst that can happen already did. You just weren't paying attention.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(11,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-12" data-text="Sleep on it. If you can." data-category="cold" data-decision="">
+  <div class="item-text">Sleep on it. If you can.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(12,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-13" data-text="The universe doesn&#39;t care. I respect its boundaries." data-category="cold" data-decision="">
+  <div class="item-text">The universe doesn't care. I respect its boundaries.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(13,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-14" data-text="Plan B was always the plan. Plan A was decorative." data-category="wise" data-decision="">
+  <div class="item-text">Plan B was always the plan. Plan A was decorative.</div>
+  <div class="item-meta">Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(14,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-15" data-text="That bridge burned itself." data-category="cold" data-decision="">
+  <div class="item-text">That bridge burned itself.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(15,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-16" data-text="The light at the end of the tunnel is an exit sign." data-category="philosophical" data-decision="">
+  <div class="item-text">The light at the end of the tunnel is an exit sign.</div>
+  <div class="item-meta">Category: philosophical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(16,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-17" data-text="You have all the time in the world. The world is very impatient." data-category="chaotic" data-decision="">
+  <div class="item-text">You have all the time in the world. The world is very impatient.</div>
+  <div class="item-meta">Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(17,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-18" data-text="Nothing is stopping you. Which should be more alarming than it is." data-category="dark" data-decision="">
+  <div class="item-text">Nothing is stopping you. Which should be more alarming than it is.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(18,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-19" data-text="Hindsight is 20/20. Foresight is legally blind." data-category="wise" data-decision="">
+  <div class="item-text">Hindsight is 20/20. Foresight is legally blind.</div>
+  <div class="item-meta">Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(19,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-20" data-text="The right moment was earlier. The second right moment is never." data-category="cold" data-decision="">
+  <div class="item-text">The right moment was earlier. The second right moment is never.</div>
+  <div class="item-meta">Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(20,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-21" data-text="Yes, but in a way that will feel like no for a while." data-category="wise" data-decision="">
+  <div class="item-text">Yes, but in a way that will feel like no for a while.</div>
+  <div class="item-meta">Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(21,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-22" data-text="The odds are 50/50. Either it happens or you find out about yourself." data-category="philosophical" data-decision="">
+  <div class="item-text">The odds are 50/50. Either it happens or you find out about yourself.</div>
+  <div class="item-meta">Category: philosophical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(22,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-23" data-text="That&#39;s a tomorrow problem. Tomorrow disagrees." data-category="chaotic" data-decision="">
+  <div class="item-text">That's a tomorrow problem. Tomorrow disagrees.</div>
+  <div class="item-meta">Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(23,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-24" data-text="The good news is you have options. That is also the bad news." data-category="dark" data-decision="">
+  <div class="item-text">The good news is you have options. That is also the bad news.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(24,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-25" data-text="Leap and the net appears. It won&#39;t hold you, but it appears." data-category="dark" data-decision="">
+  <div class="item-text">Leap and the net appears. It won't hold you, but it appears.</div>
+  <div class="item-meta">Category: dark</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(25,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-26" data-text="Trust the process. The process has no idea what it&#39;s doing." data-category="chaotic" data-decision="">
+  <div class="item-text">Trust the process. The process has no idea what it's doing.</div>
+  <div class="item-meta">Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(26,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-27" data-text="Follow your heart. It doesn&#39;t know directions either." data-category="chaotic" data-decision="">
+  <div class="item-text">Follow your heart. It doesn't know directions either.</div>
+  <div class="item-meta">Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(27,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-28" data-text="Correct. But not in the order you&#39;re hoping." data-category="mysterious" data-decision="">
+  <div class="item-text">Correct. But not in the order you're hoping.</div>
+  <div class="item-meta">Category: mysterious</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(28,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+</div>
+<div id="export">
+  <h3>Export (Kept + Edited)</h3>
+  <pre id="export-json">[]</pre>
+  <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').textContent)">Copy JSON</button>
+</div>
+<script>
+function decide(id, decision) {
+  const item = document.getElementById('item-'+id);
+  item.className = 'item decided-'+decision;
+  item.dataset.decision = decision;
+  if(decision==='edit') item.querySelector('.edit-area').style.display='block';
+  else item.querySelector('.edit-area').style.display='none';
+  item.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  item.querySelector('.btn-'+decision).classList.add('active');
+  updateStats(); updateExport();
+}
+function updateStats() {
+  const items = document.querySelectorAll('.item');
+  let k=0,c=0,e=0,u=0;
+  items.forEach(i=>{const d=i.dataset.decision;if(d==='keep')k++;else if(d==='cut')c++;else if(d==='edit')e++;else u++;});
+  document.getElementById('keep-count').textContent=k;
+  document.getElementById('cut-count').textContent=c;
+  document.getElementById('edit-count').textContent=e;
+  document.getElementById('undecided-count').textContent=u;
+}
+function updateExport() {
+  const items = document.querySelectorAll('.item');
+  const kept = [];
+  items.forEach(i=>{
+    const d=i.dataset.decision;
+    if(d==='keep') kept.push({text:i.dataset.text,category:i.dataset.category});
+    else if(d==='edit'){const ta=i.querySelector('textarea');if(ta.value)kept.push({text:ta.value,category:i.dataset.category});}
+  });
+  document.getElementById('export-json').textContent=JSON.stringify(kept,null,2);
+}
+document.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('input',updateExport));
+updateStats();
+</script>
+</body>
+</html>

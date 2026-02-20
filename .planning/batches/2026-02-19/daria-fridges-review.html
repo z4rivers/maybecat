@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daria + Weird Fridges Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .stat { font-size: 14px; }
+  .stat-num { font-weight: bold; font-size: 18px; }
+  .keep-color { color: #4ecca3; }
+  .cut-color { color: #e94560; }
+  .edit-color { color: #ffd93d; }
+  .pending-color { color: #888; }
+  h1 { font-size: 20px; margin-bottom: 5px; }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .category { font-size: 12px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; width: 100%; }
+  .edit-area.active { display: block; }
+  .edit-area textarea { width: 100%; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area select { background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 6px; margin-top: 6px; font-size: 13px; }
+  .edit-area .save-edit { margin-top: 6px; background: #ffd93d; color: #1a1a2e; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .export-section { margin-top: 30px; background: #16213e; border-radius: 8px; padding: 20px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 16px; }
+  .export-section pre { background: #0f0f23; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 13px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; cursor: pointer; }
+  .copy-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Daria + Weird Fridges</h1>
+<div class="subtitle">18 responses | Voice: Daria energy | Seed: Weird fridges</div>
+
+<div class="stats" id="stats">
+  <div class="stat">Total: <span class="stat-num">18</span></div>
+  <div class="stat">Keep: <span class="stat-num keep-color" id="keep-count">0</span></div>
+  <div class="stat">Cut: <span class="stat-num cut-color" id="cut-count">0</span></div>
+  <div class="stat">Edit: <span class="stat-num edit-color" id="edit-count">0</span></div>
+  <div class="stat">Pending: <span class="stat-num pending-color" id="pending-count">18</span></div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section" id="export-section" style="display:none;">
+  <h2>Export (kept + edited)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json"></pre>
+</div>
+
+<script>
+const responses = [
+  { text: "You're the expired mustard. You know you're expired. You're still in there.", category: "wise" },
+  { text: "The fridge light comes on for everyone. It doesn't mean you're special. But you opened it, so.", category: "cold" },
+  { text: "That question has the same energy as a magnet from a city you drove through but didn't stop in.", category: "cryptic" },
+  { text: "Somewhere there's a fridge humming in an empty apartment and it's doing more than you are right now.", category: "demanding" },
+  { text: "No. And I say that with the full authority of leftovers nobody claimed.", category: "sassy" },
+  { text: "You keep opening the door like something new is going to be in there. It's still cheese. It was always cheese. The cheese is the answer.", category: "chaotic" },
+  { text: "Everything you need is behind the thing you shoved to the back in March.", category: "poetic" },
+  { text: "The hum is not the fridge. The hum is you, running all night to keep one thing from going bad.", category: "nurturing" },
+  { text: "Condiments outlive relationships. Act accordingly.", category: "wise" },
+  { text: "You put a sticky note on it. The sticky note fell off. That's my answer.", category: "cold" },
+  { text: "Some things are better preserved than understood.", category: "mysterious" },
+  { text: "That Tupperware has been sealed since you were happy. Open it or throw it out.", category: "demanding" },
+  { text: "There's a fridge in a field somewhere with nothing in it and the door wide open and honestly? Goals.", category: "chaotic" },
+  { text: "3am. Fridge light. Your face. That's the only honest mirror you've got.", category: "poetic" },
+  { text: "You're rearranging shelves in a fridge that's not plugged in.", category: "judgy" },
+  { text: "The thing about expiration dates is they're a suggestion and you've been living by suggestions your whole life. Stop it.", category: "angry" },
+  { text: "Magnets from places you'll never go back to, holding up a list of things you'll never do. I love it in here.", category: "absurdist" },
+  { text: "Yes. With the quiet confidence of the one working bulb inside a very dark appliance.", category: "heartfelt" }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+const categories = ["chaotic","wise","cold","judgy","sassy","demanding","heartfelt","nurturing","poetic","angry","mysterious","absurdist","unhinged","cryptic"];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => {
+    const displayText = item.editedText || item.text;
+    const displayCat = item.editedCategory || item.category;
+    return `
+      <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+        <div class="response-text">"${displayText}"</div>
+        <div class="category">${displayCat}${item.editedText ? ' (edited)' : ''}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <select id="cat-${i}">${categories.map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}</select>
+          <br><button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('active');
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`textarea-${i}`).value;
+  state[i].editedCategory = document.getElementById(`cat-${i}`).value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+
+  const exported = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  const exportSection = document.getElementById('export-section');
+  if (exported.length > 0) {
+    exportSection.style.display = 'block';
+    const json = exported.map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+    document.getElementById('export-json').textContent = JSON.stringify(json, null, 2);
+  } else {
+    exportSection.style.display = 'none';
+  }
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text);
+}
+
+render();
+</script>
+</body>
+</html>

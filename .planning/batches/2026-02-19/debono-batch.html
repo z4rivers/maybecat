@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Bono Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 2rem; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 1.1rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+  h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .subtitle { color: #888; margin-bottom: 1rem; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 2px solid transparent; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; } .item.cut { border-color: #e94560; opacity: 0.5; } .item.edited { border-color: #ffd93d; }
+  .response-text { font-size: 1.3rem; line-height: 1.5; margin-bottom: 0.5rem; }
+  .category { display: inline-block; background: #0f3460; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; color: #aaa; margin-bottom: 1rem; }
+  .source-note { color: #666; font-size: 0.8rem; margin-bottom: 1rem; font-style: italic; }
+  .actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+  .btn { padding: 0.5rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: white; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 0.75rem; padding: 0.75rem; background: #0f3460; border: 1px solid #ffd93d; border-radius: 8px; color: #eee; font-size: 1.1rem; font-family: inherit; resize: vertical; min-height: 80px; display: none; }
+  .edit-area.visible { display: block; }
+  .export-section { margin-top: 3rem; padding: 1.5rem; background: #16213e; border-radius: 12px; }
+  .export-section h2 { margin-bottom: 1rem; }
+  .export-btn { background: #4ecca3; color: #1a1a2e; padding: 0.75rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+  .export-output { width: 100%; min-height: 200px; background: #0f3460; border: 1px solid #333; border-radius: 8px; color: #eee; font-family: monospace; font-size: 0.85rem; padding: 1rem; }
+  .category-select { background: #0f3460; border: 1px solid #ffd93d; border-radius: 8px; color: #eee; padding: 0.25rem 0.5rem; font-size: 0.8rem; display: none; margin-top: 0.5rem; }
+  .category-select.visible { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>De Bono Lateral Thinking Batch — Round 2</h1>
+  <p class="subtitle">Unharvested ideas: asymmetric patterns, random entry, catchment areas, pre-concepts, collector points, parallel thinking, the underwear principle</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending-count">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export Kept/Edited Responses</h2>
+  <button class="export-btn" onclick="exportJSON()">Generate JSON</button>
+  <textarea class="export-output" id="export-output" readonly></textarea>
+</div>
+
+<script>
+const items = [
+  {
+    text: "You keep taking the same road and expecting a different house at the end. Move your feet.",
+    category: "wise",
+    source: "Asymmetric patterns — you travel the main track without seeing the side tracks. Once on the side track, the way back is obvious."
+  },
+  {
+    text: "The answer was behind you the whole time. You were just walking too fast in the wrong direction to notice.",
+    category: "nurturing",
+    source: "Asymmetric patterns — side tracks become obvious only in hindsight. The path back from insight is always clear."
+  },
+  {
+    text: "Open a random book. Page 47. Third word. That's your answer now. Don't argue with page 47.",
+    category: "chaotic",
+    source: "Random Entry technique — choose a random word with NO connection to your problem, then force the association. The randomness IS the method."
+  },
+  {
+    text: "You don't need a better answer. You need a worse question. The good ones always sound stupid first.",
+    category: "wise",
+    source: "Stepping stone — use an idea NOT as a solution but as a bridge. The stepping stone may be worthless; the place it takes you is what matters."
+  },
+  {
+    text: "Everyone in the room is right. That's the actual problem.",
+    category: "cold",
+    source: "Parallel thinking / multiple flowscapes — same situation, different people = different equally valid perceptions. Both sides right within their own context."
+  },
+  {
+    text: "You already know your priority. It's the thing that keeps showing up uninvited in every other thought.",
+    category: "heartfelt",
+    source: "Collector Points — things that accumulate flow are the real priorities, even if you didn't THINK they were. The flowscape reveals what you actually care about."
+  },
+  {
+    text: "Your brain picked a story about this three seconds in and has been collecting evidence ever since. Jury was never out.",
+    category: "wise",
+    source: "Catchment areas — new information gets pulled into existing patterns even when it doesn't fit. First impressions have massive gravitational pull."
+  },
+  {
+    text: "You're wearing the answer under everything else. You just won't go outside in it.",
+    category: "poetic",
+    source: "De Bono's underwear principle — 'You do not go out into the street in your underwear, although usually you are wearing underwear.' Not everything present needs to be visible."
+  },
+  {
+    text: "Stop trying to hold both. Your brain literally cannot. Pick one and grieve the other like an adult.",
+    category: "demanding",
+    source: "Brain can't hold two equally valid explanations — chooses ONE and completely ignores the other. It cannot hold both."
+  },
+  {
+    text: "Break it wrong. On purpose. The interesting parts are in the pieces that don't make sense.",
+    category: "chaotic",
+    source: "Fractionation — break a problem into parts, but NOT in the obvious logical way. Arbitrary decomposition forces new patterns."
+  },
+  {
+    text: "The comparison broke down. Good. That's where your actual idea was hiding.",
+    category: "wise",
+    source: "Imperfect analogies — where the analogy breaks down is where the new idea lives. The disconnect sparks insight."
+  },
+  {
+    text: "You're solving the small version. Step back. Step back further. *Further.* There. See it now?",
+    category: "nurturing",
+    source: "Concept Fan — when direct solutions fail, step back to a broader concept level. Keep widening until the answer appears at a different level of abstraction."
+  },
+  {
+    text: "Don't find the thing. Find the shape of the hole where the thing should go. The thing will fall in.",
+    category: "mysterious",
+    source: "Pre-concepts — defined by DESIRED FUNCTION before finding what fills them. Know the shape of what you need before you know what it is."
+  },
+  {
+    text: "Your feelings don't need a permission slip. They showed up. That's the whole credential.",
+    category: "heartfelt",
+    source: "Red Hat thinking — feelings are legitimate WITHOUT justification. 'My gut says this is wrong' is a complete statement. No defense needed."
+  },
+  {
+    text: "You're not seeing it wrong. You're seeing YOUR version. Everyone else has a different movie playing from the same footage.",
+    category: "nurturing",
+    source: "Multiple flowscapes — same outer stimuli, completely different inner-world perceptions. Four people see a house: one sees nostalgia, one envy, one horror, one cost."
+  },
+  {
+    text: "What you see is real. Even when it's not what's there.",
+    category: "poetic",
+    source: "'Perception is real even when it is not reality.' — direct De Bono quote, unharvested."
+  },
+  {
+    text: "The provocation was supposed to be useless. That's why it worked.",
+    category: "zen",
+    source: "Movement — provocation without movement is useless, but the provocation itself SHOULD be unusable. 40%+ must be completely unusable or you're playing it too safe."
+  },
+  {
+    text: "Use that idea like a rock in a river. Stand on it. Then leave it there. It was never the destination.",
+    category: "wise",
+    source: "Stepping stone technique — use an idea to get to another before discarding it. The stepping stone itself may be worthless."
+  },
+  {
+    text: "Maximum depth. Minimum pieces. That's the whole game and you already have the board.",
+    category: "demanding",
+    source: "The L-Game — maximum strategic depth from minimum complexity. A 4x4 board with 2 pieces. Depth from simplicity, not from more."
+  }
+];
+
+const container = document.getElementById('items');
+const state = items.map(() => ({ status: 'pending', editedText: '', editedCategory: '' }));
+
+function render() {
+  container.innerHTML = items.map((item, i) => `
+    <div class="item ${state[i].status === 'keep' ? 'kept' : state[i].status === 'cut' ? 'cut' : state[i].status === 'edit' ? 'edited' : ''}" id="item-${i}">
+      <div class="response-text">"${(state[i].editedText || item.text).replace(/"/g, '&quot;')}"</div>
+      <span class="category">${state[i].editedCategory || item.category}</span>
+      <div class="source-note">Inspired by: ${item.source}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <textarea class="edit-area ${state[i].status === 'edit' ? 'visible' : ''}" id="edit-${i}"
+        oninput="state[${i}].editedText=this.value">${state[i].editedText || item.text}</textarea>
+      <select class="category-select ${state[i].status === 'edit' ? 'visible' : ''}" id="cat-${i}"
+        onchange="state[${i}].editedCategory=this.value">
+        ${['chaotic','wise','cold','sassy','zen','mysterious','dramatic','playful','demanding','heartfelt','nurturing','poetic','angry'].map(c =>
+          `<option value="${c}" ${c === (state[i].editedCategory || item.category) ? 'selected' : ''}>${c}</option>`
+        ).join('')}
+      </select>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  if (status === 'edit') {
+    state[i].editedText = state[i].editedText || items[i].text;
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  state[i].status = state[i].status === 'edit' ? 'pending' : 'edit';
+  if (state[i].status === 'edit') state[i].editedText = state[i].editedText || items[i].text;
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+}
+
+function exportJSON() {
+  const kept = items.map((item, i) => {
+    if (state[i].status === 'keep') return { text: item.text, category: item.category };
+    if (state[i].status === 'edit') return { text: state[i].editedText || item.text, category: state[i].editedCategory || item.category };
+    return null;
+  }).filter(Boolean);
+  document.getElementById('export-output').value = JSON.stringify(kept, null, 2);
+}
+
+render();
+</script>
+</body>
+</html>

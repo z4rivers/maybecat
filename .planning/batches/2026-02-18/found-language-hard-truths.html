@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Found Language: Hard Truths Friends Tell Friends</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding: 20px;
+  line-height: 1.6;
+}
+.header {
+  position: sticky;
+  top: 0;
+  background: #1a1a2e;
+  border-bottom: 2px solid #4ecca3;
+  padding: 16px 20px;
+  z-index: 100;
+  margin-bottom: 30px;
+}
+.header h1 {
+  font-size: 1.8em;
+  color: #4ecca3;
+  margin-bottom: 4px;
+}
+.header .subtitle {
+  color: #888;
+  font-size: 0.9em;
+}
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  font-size: 0.85em;
+}
+.stats span { color: #ffd93d; }
+.stats .starred-count { color: #ffd93d; font-weight: bold; }
+.stats .total-count { color: #4ecca3; }
+
+.section-header {
+  background: linear-gradient(90deg, #16213e, #1a1a2e);
+  border-left: 4px solid #e94560;
+  padding: 12px 20px;
+  margin: 40px 0 20px 0;
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #e94560;
+}
+.section-desc {
+  color: #666;
+  font-size: 0.85em;
+  padding: 0 0 10px 24px;
+  font-style: italic;
+}
+
+.card {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border-left: 3px solid #333;
+  transition: border-color 0.2s;
+}
+.card:hover {
+  border-left-color: #4ecca3;
+}
+.card.starred {
+  border-left-color: #ffd93d;
+  background: #1a2340;
+}
+.quote-text {
+  font-size: 1.15em;
+  line-height: 1.5;
+  color: #fff;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.quote-source {
+  color: #888;
+  font-size: 0.85em;
+  margin-bottom: 8px;
+}
+.quote-source strong { color: #aaa; }
+.energy-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.energy-tough-love { background: #e94560; color: #fff; }
+.energy-quiet-devastation { background: #4a2040; color: #e0a0d0; border: 1px solid #e0a0d0; }
+.energy-exasperated-care { background: #ff8c00; color: #1a1a2e; }
+.energy-last-resort { background: #8b0000; color: #ffcccc; }
+.energy-wake-up-call { background: #ffd93d; color: #1a1a2e; }
+.energy-gentle-confrontation { background: #2e5e4e; color: #4ecca3; border: 1px solid #4ecca3; }
+.energy-raw-honesty { background: #1a3a5c; color: #68b5ff; border: 1px solid #68b5ff; }
+.energy-defiant-love { background: #5c1a5c; color: #ff80ff; border: 1px solid #ff80ff; }
+.energy-painful-clarity { background: #3d2e1f; color: #ffcc80; border: 1px solid #ffcc80; }
+.energy-earned-wisdom { background: #1a3325; color: #80cc99; border: 1px solid #80cc99; }
+.energy-therapy-crossed-over { background: #2e2e4a; color: #b0b0ff; border: 1px solid #b0b0ff; }
+
+.star-btn {
+  float: right;
+  background: none;
+  border: 2px solid #555;
+  color: #555;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.2s;
+}
+.star-btn:hover {
+  border-color: #ffd93d;
+  color: #ffd93d;
+}
+.star-btn.active {
+  border-color: #ffd93d;
+  background: #ffd93d;
+  color: #1a1a2e;
+}
+
+.export-section {
+  margin-top: 60px;
+  background: #0f0f23;
+  border: 2px solid #4ecca3;
+  border-radius: 8px;
+  padding: 24px;
+}
+.export-section h2 {
+  color: #4ecca3;
+  margin-bottom: 16px;
+}
+.export-content {
+  background: #1a1a2e;
+  padding: 16px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 0.85em;
+  color: #ccc;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.copy-btn {
+  background: #4ecca3;
+  color: #1a1a2e;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+.copy-btn:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Found Language: Hard Truths Friends Tell Friends</h1>
+  <div class="subtitle">Raw material for MaybeCat adaptation. Real quotes from comedians, movies, Reddit, therapy culture, and life. 2026-02-18</div>
+  <div class="stats">
+    <span>Starred: <span class="starred-count" id="starredCount">0</span></span>
+    <span>Total: <span class="total-count" id="totalCount">0</span></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Starred Items Export</h2>
+  <div class="export-content" id="exportContent">Star items above to see them here.</div>
+  <button class="copy-btn" onclick="copyExport()">COPY TO CLIPBOARD</button>
+</div>
+
+<script>
+const quotes = [
+
+// ==========================================
+// SECTION: TOUGH LOVE
+// ==========================================
+{
+  section: "TOUGH LOVE",
+  sectionDesc: "Direct, no-bullshit honesty from someone who cares. The slap before the hug.",
+  quotes: [
+    {
+      text: "Look, you're my best friend, so don't take this the wrong way. In 20 years, if you're still livin' here, comin' over to my house to watch the Patriots games, still workin' construction, I'll fuckin' kill you.",
+      source: "Chuckie (Ben Affleck) to Will, Good Will Hunting (1997)",
+      energy: "tough-love"
+    },
+    {
+      text: "You don't owe it to yourself. You owe it to me. 'Cause tomorrow I'm gonna wake up and I'll be 50. And I'll still be doing this shit. And that's all right, that's fine. But you... you got somethin' that none of us have.",
+      source: "Chuckie (Ben Affleck) to Will, Good Will Hunting (1997)",
+      energy: "tough-love"
+    },
+    {
+      text: "I do not associate with people that blame the world for their problems. Cause you're your problem, Annie. And you're also your solution.",
+      source: "Megan (Melissa McCarthy), Bridesmaids (2011)",
+      energy: "tough-love"
+    },
+    {
+      text: "You know what I did? I pulled myself up, I studied hard, I read every book in the library, and now I work for the government and have the highest possible security clearance.",
+      source: "Megan (Melissa McCarthy), Bridesmaids (2011) -- after telling story of being bullied",
+      energy: "tough-love"
+    },
+    {
+      text: "But it ain't about how hard you hit. It's about how hard you can get hit and keep moving forward. How much you can take and keep moving forward. That's how winning is done.",
+      source: "Rocky Balboa (Sylvester Stallone) to his son, Rocky Balboa (2006)",
+      energy: "tough-love"
+    },
+    {
+      text: "Now if you know what you're worth, then go out and get what you're worth. But you gotta be willing to take the hits, and not pointing fingers saying you ain't where you wanna be because of him, or her, or anybody. Cowards do that and that ain't you. You're better than that.",
+      source: "Rocky Balboa to his son, Rocky Balboa (2006)",
+      energy: "tough-love"
+    },
+    {
+      text: "Until you start believing in yourself, you ain't gonna have a life.",
+      source: "Rocky Balboa to his son, Rocky Balboa (2006)",
+      energy: "tough-love"
+    },
+    {
+      text: "You can't just sit there and put everybody's life ahead of yours and think that counts as love.",
+      source: "Sam (Emma Watson) to Charlie, The Perks of Being a Wallflower (2012)",
+      energy: "tough-love"
+    },
+    {
+      text: "We accept the love we think we deserve.",
+      source: "Mr. Anderson (Paul Rudd), The Perks of Being a Wallflower (2012) -- became a cultural touchstone",
+      energy: "tough-love"
+    },
+    {
+      text: "The world ain't all sunshine and rainbows. It's a very mean and nasty place, and I don't care how tough you are, it will beat you to your knees and keep you there permanently if you let it.",
+      source: "Rocky Balboa to his son, Rocky Balboa (2006)",
+      energy: "tough-love"
+    },
+    {
+      text: "Snap out of it!",
+      source: "Loretta (Cher), Moonstruck (1987) -- #96 on AFI's top 100 movie quotes",
+      energy: "tough-love"
+    },
+    {
+      text: "I'm not going to say I survived. I'm going to say I thrived.",
+      source: "Megan (Melissa McCarthy), Bridesmaids (2011) -- after falling off a cruise ship",
+      energy: "tough-love"
+    },
+    {
+      text: "If something stinks, I say it stinks. But I try to massage it a little and not be as cutting, come behind it with a joke.",
+      source: "Wanda Sykes, on her comedy philosophy",
+      energy: "tough-love"
+    },
+    {
+      text: "Nobody has more drama than you, Issa. You need to figure out your shit and stop using people.",
+      source: "Molly to Issa, Insecure Season 4 (HBO)",
+      energy: "tough-love"
+    },
+    {
+      text: "You keep making up problems! You keep focusing on shit that I need to fix when you need to fix your fucking self!",
+      source: "Molly to Issa, Insecure Season 4 block party fight (HBO)",
+      energy: "tough-love"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: QUIET DEVASTATION
+// ==========================================
+{
+  section: "QUIET DEVASTATION",
+  sectionDesc: "Not yelling -- the devastating quiet observation that lands like a grenade. The friend who just... says it.",
+  quotes: [
+    {
+      text: "You'll always be fine. You'll always be interesting, with your quirky cafe and your dead best friend. You just make me feel like I've failed.",
+      source: "Claire to Fleabag, Fleabag Season 2 (BBC/Amazon)",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "Don't make me hate you. Loving you's painful enough.",
+      source: "Harry to Fleabag, Fleabag Season 1",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "I don't know what to do with it. With all the love I have for her. I don't know where to put it now.",
+      source: "Fleabag, Fleabag Season 2 -- about her dead best friend",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "I think you know how to love better than any of us. That's why you find it all so painful.",
+      source: "Dad to Fleabag, Fleabag Season 2 Episode 6",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "It'll pass.",
+      source: "The Priest (Andrew Scott) to Fleabag, after she says 'I love you' -- Fleabag Season 2 finale",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "I never had any friends later on like the ones I had when I was twelve. Jesus, does anyone?",
+      source: "Gordie (narration), Stand By Me (1986)",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "You taught me that love doesn't end loud -- sometimes it just gets quiet and leaves.",
+      source: "Anonymous, friendship breakup Reddit thread",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "I hope you never have to explain to someone else what it feels like to lose a friend who's still alive.",
+      source: "Anonymous, Reddit friendship grief thread",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "The opposite of love isn't hate; it's complete and utter indifference.",
+      source: "Anonymous, AskReddit 'deepest thing' thread -- heard in college",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "You can't keep giving someone the benefit of the doubt when they get all the benefits and you get all the doubts.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "Grief is the price we pay for love. And it's a bargain.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "Someday, someone you love is going to die. Then you'll realize that none of this matters.",
+      source: "Someone's boss, shared on AskReddit",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "Your mental illness was like your middle name. I didn't know what it was, but I knew you had one.",
+      source: "Taylor Tomlinson's friend, from her special 'Look at You' (2022)",
+      energy: "quiet-devastation"
+    },
+    {
+      text: "We aren't here to make things perfect. The snowflakes are perfect. The stars are perfect. Not us.",
+      source: "Rose (Olympia Dukakis), Moonstruck (1987)",
+      energy: "quiet-devastation"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: WAKE-UP CALL
+// ==========================================
+{
+  section: "WAKE-UP CALL",
+  sectionDesc: "The alarm clock moment. Someone grabs you by the shoulders and shakes.",
+  quotes: [
+    {
+      text: "I want you to be the very best version of yourself that you can be.",
+      source: "Marion to Lady Bird, Lady Bird (2017) -- Lady Bird's devastating reply: 'What if this is the best version?'",
+      energy: "wake-up-call"
+    },
+    {
+      text: "I think I just want someone to tell me how to live my life, Father, because so far I think I've been getting it wrong.",
+      source: "Fleabag, Fleabag Season 2 Episode 4",
+      energy: "wake-up-call"
+    },
+    {
+      text: "You, me, or nobody is gonna hit as hard as life.",
+      source: "Rocky Balboa to his son, Rocky Balboa (2006)",
+      energy: "wake-up-call"
+    },
+    {
+      text: "Baby, you are so money and you don't even know it.",
+      source: "Trent (Vince Vaughn) to Mike (Jon Favreau), Swingers (1996)",
+      energy: "wake-up-call"
+    },
+    {
+      text: "I don't want you to be the guy in the PG-13 movie everyone's really hoping makes it happen. I want you to be like the guy in the rated R movie. The guy you're not sure whether or not you like yet.",
+      source: "Trent (Vince Vaughn), Swingers (1996)",
+      energy: "wake-up-call"
+    },
+    {
+      text: "You take yourself out of the game, you start talking about puppy dogs and ice cream, of course it's going to end up on the friendship tip.",
+      source: "Trent (Vince Vaughn), Swingers (1996)",
+      energy: "wake-up-call"
+    },
+    {
+      text: "If you want what you've never had, you have to do what you've never done.",
+      source: "Viral Reddit wisdom, multiple threads",
+      energy: "wake-up-call"
+    },
+    {
+      text: "If you want a hard life, do the easy stuff today. If you want an easy life, do the hard stuff today.",
+      source: "Anonymous, Reddit thread on life-changing quotes",
+      energy: "wake-up-call"
+    },
+    {
+      text: "Nothing changes if you change nothing.",
+      source: "Viral self-help phrase, widely shared on Reddit and social media",
+      energy: "wake-up-call"
+    },
+    {
+      text: "Someone has to protect this family from the man who protects this family.",
+      source: "Skyler (Anna Gunn), Breaking Bad",
+      energy: "wake-up-call"
+    },
+    {
+      text: "You are miserable. I've been stopped fucking with you!",
+      source: "Issa to Molly, Insecure Season 4 (HBO)",
+      energy: "wake-up-call"
+    },
+    {
+      text: "Do what you can, with what you have, where you are.",
+      source: "Theodore Roosevelt -- cited by Reddit users as life-changing, first seen by many in Calvin & Hobbes",
+      energy: "wake-up-call"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: EXASPERATED CARE
+// ==========================================
+{
+  section: "EXASPERATED CARE",
+  sectionDesc: "When love sounds like frustration. The 'I CARE about you, you IDIOT' energy.",
+  quotes: [
+    {
+      text: "I have a strict policy that nobody cries alone in my presence.",
+      source: "Truvy (Dolly Parton), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Laughter through tears is my favorite emotion.",
+      source: "Truvy (Dolly Parton), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "I love ya more than my luggage.",
+      source: "Clairee (Olympia Dukakis), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Well, you know what they say: if you don't have anything nice to say about anybody, come sit by me!",
+      source: "Clairee (Olympia Dukakis), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Don't try to get on my good side, Truvy. I no longer have one!",
+      source: "Ouiser (Shirley MacLaine), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "I'm not crazy, I've just been in a very bad mood for the last 40 years!",
+      source: "Ouiser (Shirley MacLaine), Steel Magnolias (1989)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "The only person I'd run through an airport for is you.",
+      source: "Claire to Fleabag, Fleabag Season 2 Episode 6",
+      energy: "exasperated-care"
+    },
+    {
+      text: "We're not friends. We are sisters. Get your own friends.",
+      source: "Claire to Fleabag, Fleabag Season 2",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Don't make me an optimist, you will ruin my life.",
+      source: "Fleabag to the Priest, Fleabag Season 2",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Being a comedian is like being a truth teller. You have to say things that other people are afraid to say.",
+      source: "Chris Rock, on his comedy philosophy",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Comedy is a way of telling the truth without getting hit.",
+      source: "Chris Rock",
+      energy: "exasperated-care"
+    },
+    {
+      text: "Is everybody's kid fantastic? Why is everybody bragging about their kids? Don't we have any dumb kids anymore?",
+      source: "Sebastian Maniscalco, What's Wrong with People (2012)",
+      energy: "exasperated-care"
+    },
+    {
+      text: "My favorite comedy is just saying the thing that's honest.",
+      source: "Nikki Glaser, on her comedy style",
+      energy: "exasperated-care"
+    },
+    {
+      text: "You're about to have the most amazing thing happen to you ever, but never forget -- they're not yours. You're just borrowing them while they need you, but you need to get them ready to not need you anymore.",
+      source: "A coworker to a new parent, AskReddit 'deepest thing' thread",
+      energy: "exasperated-care"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: RAW HONESTY
+// ==========================================
+{
+  section: "RAW HONESTY",
+  sectionDesc: "No filter, no framing, no softening. Just the thing itself.",
+  quotes: [
+    {
+      text: "Look, in my opinion, the best thing you can do is find a person who loves you for exactly what you are. Good mood, bad mood, ugly, pretty, handsome, what have you. The right person is still going to think the sun shines out your ass. That's the kind of person that's worth sticking with.",
+      source: "Mac MacGuff (J.K. Simmons) to Juno, Juno (2007)",
+      energy: "raw-honesty"
+    },
+    {
+      text: "Love is awful. It's awful. It's painful. It's frightening. It makes you doubt yourself, judge yourself, distance yourself from the other people in your life. It makes you selfish.",
+      source: "The Priest (Andrew Scott), Fleabag Season 2 finale -- his wedding speech",
+      energy: "raw-honesty"
+    },
+    {
+      text: "Women are born with pain built in. We carry it within ourselves. Men have to seek it out.",
+      source: "Belinda (Kristin Scott Thomas), Fleabag Season 2 Episode 3",
+      energy: "raw-honesty"
+    },
+    {
+      text: "I hate the way you talk to me, and the way you cut your hair. I hate the way you drive my car, I hate it when you stare... But mostly I hate the way I don't hate you. Not even close, not even a little bit, not even at all.",
+      source: "Kat Stratford (Julia Stiles), 10 Things I Hate About You (1999)",
+      energy: "raw-honesty"
+    },
+    {
+      text: "A person's actions are a reflection of their character, not yours.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "raw-honesty"
+    },
+    {
+      text: "The worst thing to call somebody is crazy. It's dismissive. 'I don't understand this person. So they're crazy.' That's bullshit. These people are not crazy. They strong people. Maybe their environment is a little sick.",
+      source: "Dave Chappelle",
+      energy: "raw-honesty"
+    },
+    {
+      text: "A good friend can tell you what is the matter with you in a minute. He may not seem such a good friend after telling.",
+      source: "Arthur Brisbane",
+      energy: "raw-honesty"
+    },
+    {
+      text: "I love you, and because I love you, I would sooner have you hate me for telling you the truth than adore me for telling you lies.",
+      source: "Pietro Aretino -- widely quoted in tough love contexts",
+      energy: "raw-honesty"
+    },
+    {
+      text: "A relationship is like a vase. You can fix it when it breaks, but the cracks will still be there.",
+      source: "Anonymous friend, shared on Reddit's 'unforgettable things told' thread",
+      energy: "raw-honesty"
+    },
+    {
+      text: "I don't believe in apologizing. I never do anything wrong.",
+      source: "Someone's ex, shared on Reddit -- the line that changed everything",
+      energy: "raw-honesty"
+    },
+    {
+      text: "I like talking to you more than anyone else in the world.",
+      source: "Someone's spouse, shared on Reddit 'unforgettable things' thread",
+      energy: "raw-honesty"
+    },
+    {
+      text: "You have a radiance about you.",
+      source: "A stranger, shared on Reddit -- simple observation that stayed forever",
+      energy: "raw-honesty"
+    },
+    {
+      text: "I'd be proud to turn out like you.",
+      source: "A nephew to his uncle, shared on Reddit",
+      energy: "raw-honesty"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: LAST-RESORT HONESTY
+// ==========================================
+{
+  section: "LAST-RESORT HONESTY",
+  sectionDesc: "The 'I've tried everything else' moment. When someone finally says the thing everyone's been thinking.",
+  quotes: [
+    {
+      text: "It's not your fault.",
+      source: "Sean (Robin Williams) to Will, Good Will Hunting (1997) -- said 8 times until Will breaks down sobbing",
+      energy: "last-resort"
+    },
+    {
+      text: "If I ask you about women, you'd probably give me a syllabus of your personal favorites... But you can't tell me what it feels like to wake up next to a woman and feel truly happy.",
+      source: "Sean (Robin Williams) park bench speech, Good Will Hunting (1997)",
+      energy: "last-resort"
+    },
+    {
+      text: "You've never held your best friend's head in your lap, watch him gasp his last breath looking to you for help.",
+      source: "Sean (Robin Williams), Good Will Hunting (1997)",
+      energy: "last-resort"
+    },
+    {
+      text: "I am not in danger, Skyler. I am the danger. I am the one who knocks.",
+      source: "Walter White (Bryan Cranston), Breaking Bad -- the moment the mask comes off",
+      energy: "last-resort"
+    },
+    {
+      text: "Telling their best friend their partner was cheating. They were deeply in love, completely blinded by it. When I broke the news, it shattered their world.",
+      source: "Anonymous, Reddit 'hardest truth told' thread",
+      energy: "last-resort"
+    },
+    {
+      text: "I tried to ease into it, but there's really no soft way to say, 'Hey man, you're about to lose a lot of money and ruin your friendships.'",
+      source: "Anonymous friend telling someone they're in a pyramid scheme, Reddit",
+      energy: "last-resort"
+    },
+    {
+      text: "The quicker you stop accepting the excuses from the addict, and the faster you stop making excuses for the addict, the greater the likelihood they enter treatment sooner.",
+      source: "Intervention counseling wisdom, widely cited",
+      energy: "last-resort"
+    },
+    {
+      text: "Your codependency becomes your problem; solving your problems is your responsibility. If you want to get rid of codependency, you have to do something to make it go away. It doesn't matter whose fault it is.",
+      source: "Melody Beattie, Codependent No More",
+      energy: "last-resort"
+    },
+    {
+      text: "Better a terrible end than a horror without end.",
+      source: "A friend battling cancer, AskReddit 'deepest thing' thread",
+      energy: "last-resort"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: DEFIANT LOVE
+// ==========================================
+{
+  section: "DEFIANT LOVE",
+  sectionDesc: "Love that sounds like a dare. The 'I'll fight for you even if you won't fight for yourself' energy.",
+  quotes: [
+    {
+      text: "I'm always gonna love you, no matter what. No matter what happens. You're my son and you're my blood.",
+      source: "Rocky Balboa to his son, Rocky Balboa (2006)",
+      energy: "defiant-love"
+    },
+    {
+      text: "Touch my friends again and I'll blind you.",
+      source: "Charlie, The Perks of Being a Wallflower (2012)",
+      energy: "defiant-love"
+    },
+    {
+      text: "I just want to make sure that the first person who kisses you loves you.",
+      source: "Sam (Emma Watson) to Charlie, The Perks of Being a Wallflower (2012)",
+      energy: "defiant-love"
+    },
+    {
+      text: "What do you want? WHAT DO YOU WANT?",
+      source: "Noah (Ryan Gosling) to Allie, The Notebook (2004) -- improvised by Gosling",
+      energy: "defiant-love"
+    },
+    {
+      text: "I've been doing a lot of thinking, and the thing is, I love you.",
+      source: "Harry (Billy Crystal), When Harry Met Sally (1989)",
+      energy: "defiant-love"
+    },
+    {
+      text: "You say things like that, and you make it impossible for me to hate you.",
+      source: "Sally (Meg Ryan) to Harry, When Harry Met Sally (1989)",
+      energy: "defiant-love"
+    },
+    {
+      text: "If you can't love yourself, how in the hell are you going to love somebody else?",
+      source: "RuPaul -- closes every episode of Drag Race with this, inspired by his mother",
+      energy: "defiant-love"
+    },
+    {
+      text: "I've been thinking of you every single day of my life since you were born.",
+      source: "Estranged father meeting his adult child, AskReddit 'deepest thing' thread",
+      energy: "defiant-love"
+    },
+    {
+      text: "Lots of people want to ride with you in the limo, but what you want is someone who will take the bus with you when the limo breaks down.",
+      source: "Oprah Winfrey, on real friendship",
+      energy: "defiant-love"
+    },
+    {
+      text: "I cannot bear the thought of leaving him here to celebrate alone.",
+      source: "Someone's boyfriend explaining why he wanted to spend Thanksgiving with a lonely 70-year-old coworker, Reddit",
+      energy: "defiant-love"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: PAINFUL CLARITY
+// ==========================================
+{
+  section: "PAINFUL CLARITY",
+  sectionDesc: "When the fog lifts and you see the thing you've been avoiding. The moment of total, unwanted understanding.",
+  quotes: [
+    {
+      text: "When someone shows you who they are, believe them the first time.",
+      source: "Maya Angelou, said to Oprah -- became one of the most quoted lines in modern advice",
+      energy: "painful-clarity"
+    },
+    {
+      text: "You become an adult when you realize your parents are just people.",
+      source: "Anonymous, AskReddit 'deepest thing' thread -- described as 'the thing that changed my life the most over time'",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Loneliness is when you have lost yourself.",
+      source: "A 5-year-old child, shared on AskReddit",
+      energy: "painful-clarity"
+    },
+    {
+      text: "If someone you like doesn't like you back... respect them when they say their happiness is without you.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Worry is not preparation.",
+      source: "Anonymous, AskReddit thread -- short, devastating",
+      energy: "painful-clarity"
+    },
+    {
+      text: "The truth does not change according to our ability to stomach it.",
+      source: "Flannery O'Connor -- widely quoted in tough love contexts",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Growth is painful. Change is painful. But nothing is as painful as staying stuck somewhere you don't belong.",
+      source: "Mandy Hale -- crossed from self-help into mainstream usage",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Let go or be dragged.",
+      source: "Zen proverb, viral on Reddit -- voted life-changing by thousands",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Hating someone is like drinking poison and expecting the other person to die.",
+      source: "Widely attributed, viral Reddit/social media -- one of the most-shared perspective shifts",
+      energy: "painful-clarity"
+    },
+    {
+      text: "Every single person experienced today differently.",
+      source: "Anonymous, Reddit thread on life-changing quotes",
+      energy: "painful-clarity"
+    },
+    {
+      text: "I can't imagine the pain you're going through. I know your heart, expectations, assumed roles and future memories have been broken. But to your child they had the perfect life. All they ever knew was your love.",
+      source: "Said to someone who lost a baby, AskReddit 'deepest thing' thread",
+      energy: "painful-clarity"
+    },
+    {
+      text: "She was an incredibly loving champion of her friends, and she was choosing, instead, to do something that we've created enough safety in our friendship to have: truth-telling that helps one another move past delusion.",
+      source: "Kate Swoboda, on a friend who said 'You always complain about this'",
+      energy: "painful-clarity"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: GENTLE CONFRONTATION
+// ==========================================
+{
+  section: "GENTLE CONFRONTATION",
+  sectionDesc: "The soft voice that hits harder than yelling ever could. Not angry -- concerned.",
+  quotes: [
+    {
+      text: "You've seemed really tired lately. You don't seem like your usual self.",
+      source: "Recommended language for concerned friends (mental health resources) -- the quiet approach that opens doors",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "You are exactly where you are supposed to be.",
+      source: "A friend said during traffic, AskReddit -- helped with acceptance and not trying to control things",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Treat yourself like you would your best friend.",
+      source: "Viral self-help wisdom -- 'sounds cheesy, but it helped me stop being my own worst critic'",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Prepare your child for the road, not the road for your child.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Sometimes, the best way to help someone is to let them help you.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "You should always celebrate your birthday. You don't know how many you have left.",
+      source: "An elderly coworker, AskReddit 'deepest thing' thread",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Be curious, not judgmental.",
+      source: "Ted Lasso (Jason Sudeikis) -- attributed to Walt Whitman in the show, became cultural phenomenon",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Sometimes a hypocrite is just a man in the process of changing.",
+      source: "Anonymous, AskReddit 'deepest thing' thread -- extended grace in a single sentence",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "Don't focus on always being happy. Focus on always being content.",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "He was doing this one thing: listening. Really, really listening.",
+      source: "Phoebe Waller-Bridge explaining why the Hot Priest resonates, Fleabag press tour",
+      energy: "gentle-confrontation"
+    },
+    {
+      text: "It's better to appear rude and live than to be nice and get killed.",
+      source: "A self-defense instructor, AskReddit 'deepest thing' thread",
+      energy: "gentle-confrontation"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: THERAPY THAT CROSSED OVER
+// ==========================================
+{
+  section: "THERAPY THAT CROSSED OVER",
+  sectionDesc: "Clinical language that escaped the therapist's office and became things real people say to each other at 2am.",
+  quotes: [
+    {
+      text: "You cannot selectively numb emotion. You can't say, here's the bad stuff -- here's vulnerability, here's grief, here's shame, here's fear, here's disappointment, I don't want to feel these. So when we numb those, we numb joy, we numb gratitude, we numb happiness.",
+      source: "Brene Brown, The Power of Vulnerability (TED Talk / book)",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "Clear is kind. Unclear is unkind.",
+      source: "Brene Brown, Dare to Lead -- became workplace and friendship shorthand",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "Daring to set boundaries is about having the courage to love ourselves, even when we risk disappointing others.",
+      source: "Brene Brown",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "True belonging is the spiritual practice of believing in and belonging to yourself so deeply that you can share your most authentic self with the world.",
+      source: "Brene Brown, Braving the Wilderness",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "Vulnerability is the birthplace of love, belonging, joy, courage, empathy, and creativity.",
+      source: "Brene Brown -- became the permission slip an entire generation needed",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "Not my circus, not my monkeys.",
+      source: "Polish proverb that went viral in 2010s -- therapists recommend it for codependency, now on coffee mugs everywhere",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "You can't pour from an empty cup.",
+      source: "Origin unknown, became universal self-care shorthand -- said by every therapist, every friend group, every HR department",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "The grass is greener where you water it.",
+      source: "Viral reframe of 'the grass is greener on the other side' -- Reddit voted it life-changing",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "We don't have the option to live ideal lives.",
+      source: "A therapist, shared on Reddit -- the quote that made someone finally accept reality",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "If they are willing to hire you, then they're willing to train you.",
+      source: "A friend's advice about job hunting, AskReddit -- helped someone apply for jobs they thought they were unqualified for",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "Codependents have worried themselves sick about other people, tried to help in ways that didn't help, said yes when they meant no, tried to make other people see things their way, and bent over backwards avoiding hurting people's feelings while hurting themselves.",
+      source: "Melody Beattie, Codependent No More -- the paragraph that made thousands of people say 'oh shit, that's me'",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "It's okay if I feel sad and resigned, if my depression beat me for today and I wasn't able to function. I didn't fail, I'm not weak -- I will try again tomorrow.",
+      source: "Mary Anne Radmacher, paraphrased -- shared as life-changing on Reddit",
+      energy: "therapy-crossed-over"
+    },
+    {
+      text: "If you're going through hell, keep going.",
+      source: "Winston Churchill -- now the most-quoted line in recovery rooms, therapy offices, and group chats",
+      energy: "therapy-crossed-over"
+    }
+  ]
+},
+
+// ==========================================
+// SECTION: EARNED WISDOM
+// ==========================================
+{
+  section: "EARNED WISDOM",
+  sectionDesc: "The kind of truth you can only say after you've lived it. Not advice -- testimony.",
+  quotes: [
+    {
+      text: "It's because of what we went through that we are where we are.",
+      source: "Someone's wife about their alcoholism recovery, AskReddit 'deepest thing' thread",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "That which does not kill us, makes us stronger.",
+      source: "Clairee quoting Nietzsche, Steel Magnolias (1989) -- but said with Southern steel",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "Honey, time marches on and eventually you realize it is marchin' across your face.",
+      source: "Truvy (Dolly Parton), Steel Magnolias (1989)",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "Smile! It increases your face value.",
+      source: "Truvy (Dolly Parton), Steel Magnolias (1989)",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "The only thing that separates us from the animals is our ability to accessorize.",
+      source: "Clairee (Olympia Dukakis), Steel Magnolias (1989)",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "Cherish the friend who tells you a harsh truth, wanting ten times more to tell you a loving lie.",
+      source: "Robert Brault, widely shared in friendship wisdom collections",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "Be kind, for everyone you know is fighting a hard battle.",
+      source: "Attributed to Plato -- Reddit users call it 'the quote that changed how I see everyone'",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "Yes, of course, heaven and hell are great and terrifying and all. But what if you did good just for the sake of it? No eternal reward or punishment afterward. Would you still do good if you knew at the end, there is no reward?",
+      source: "Anonymous, AskReddit 'deepest thing' thread",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "It's nice to be wondered where you are.",
+      source: "Someone's partner, shared on Cup of Jo -- reframing worry as love",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "I think your hair is beautiful and I'm very jealous of it.",
+      source: "A teacher to a bullied student -- the compliment that killed years of insecurity",
+      energy: "earned-wisdom"
+    },
+    {
+      text: "The wise person stands up for truth and calls others out when they are hiding from some hard reality.",
+      source: "David Brooks, on the responsibility of honest friendship",
+      energy: "earned-wisdom"
+    }
+  ]
+}
+];
+
+// Flatten all quotes with section info
+let allQuotes = [];
+quotes.forEach(section => {
+  section.quotes.forEach(q => {
+    allQuotes.push({
+      ...q,
+      sectionName: section.section,
+      sectionDesc: section.sectionDesc,
+      starred: false
+    });
+  });
+});
+
+// Load starred state from localStorage
+const storageKey = 'hard-truths-starred';
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  allQuotes.forEach((q, i) => {
+    if (saved[i]) q.starred = true;
+  });
+} catch(e) {}
+
+function saveState() {
+  const state = {};
+  allQuotes.forEach((q, i) => {
+    if (q.starred) state[i] = true;
+  });
+  localStorage.setItem(storageKey, JSON.stringify(state));
+}
+
+function render() {
+  const container = document.getElementById('cards-container');
+  let html = '';
+  let currentSection = '';
+  let totalCount = 0;
+  let starredCount = 0;
+
+  allQuotes.forEach((q, i) => {
+    if (q.sectionName !== currentSection) {
+      currentSection = q.sectionName;
+      html += `<div class="section-header">${currentSection}</div>`;
+      html += `<div class="section-desc">${q.sectionDesc}</div>`;
+    }
+
+    totalCount++;
+    if (q.starred) starredCount++;
+
+    const starClass = q.starred ? 'active' : '';
+    const cardClass = q.starred ? 'starred' : '';
+
+    html += `
+      <div class="card ${cardClass}" id="card-${i}">
+        <button class="star-btn ${starClass}" onclick="toggleStar(${i})">
+          ${q.starred ? '&#9733; STARRED' : '&#9734; STAR'}
+        </button>
+        <div class="quote-text">"${q.text}"</div>
+        <div class="quote-source"><strong>Source:</strong> ${q.source}</div>
+        <span class="energy-tag energy-${q.energy}">${q.energy.replace(/-/g, ' ')}</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  document.getElementById('totalCount').textContent = totalCount;
+  document.getElementById('starredCount').textContent = starredCount;
+
+  updateExport();
+}
+
+function toggleStar(index) {
+  allQuotes[index].starred = !allQuotes[index].starred;
+  saveState();
+  render();
+}
+
+function updateExport() {
+  const starred = allQuotes.filter(q => q.starred);
+  const exportEl = document.getElementById('exportContent');
+
+  if (starred.length === 0) {
+    exportEl.textContent = 'Star items above to see them here.';
+    return;
+  }
+
+  let output = 'STARRED FOUND LANGUAGE: HARD TRUTHS FRIENDS TELL FRIENDS\n';
+  output += '='.repeat(55) + '\n\n';
+
+  starred.forEach((q, i) => {
+    output += `${i + 1}. "${q.text}"\n`;
+    output += `   Source: ${q.source}\n`;
+    output += `   Energy: ${q.energy.replace(/-/g, ' ')}\n\n`;
+  });
+
+  exportEl.textContent = output;
+}
+
+function copyExport() {
+  const text = document.getElementById('exportContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY TO CLIPBOARD', 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMA Cat Combat - Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    padding: 16px 24px;
+    z-index: 100;
+    border-bottom: 2px solid #0f3460;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.2rem;
+    color: #e94560;
+    white-space: nowrap;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+  }
+  .stat { padding: 4px 12px; border-radius: 12px; font-weight: 600; }
+  .stat-decided { background: #0f3460; color: #e0e0e0; }
+  .stat-kept { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .stat-edited { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+  .batch-info {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #16213e;
+    border-radius: 12px;
+    border: 1px solid #0f3460;
+  }
+  .batch-info h2 { color: #e94560; margin-bottom: 8px; font-size: 1.4rem; }
+  .batch-info p { color: #888; font-size: 0.9rem; line-height: 1.5; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s, opacity 0.3s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+
+  .response-number {
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .response-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    color: #fff;
+    font-style: italic;
+  }
+  .response-category {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 16px;
+  }
+  .response-category span {
+    background: #0f3460;
+    padding: 2px 10px;
+    border-radius: 8px;
+    color: #aaa;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 70px;
+    background: #0f1729;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    color: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-save {
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .export-section h3 { color: #4ecca3; margin-bottom: 12px; }
+  .export-section pre {
+    background: #0f1729;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .btn-copy {
+    margin-top: 12px;
+    padding: 10px 24px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .btn-copy:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>MMA Cat Combat</h1>
+  <div class="stats">
+    <span class="stat stat-decided" id="stat-decided">0 / 17 decided</span>
+    <span class="stat stat-kept" id="stat-kept">0 kept</span>
+    <span class="stat stat-cut" id="stat-cut">0 cut</span>
+    <span class="stat stat-edited" id="stat-edited">0 edited</span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <h2>MMA Cat Combat - Feb 20, 2026</h2>
+  <p>
+    <strong>Divergence seed:</strong> Cat narrates hunts of household objects using MMA/combat sports language.<br>
+    First person POV. The opponent is always trivial. The intensity is always elite.<br>
+    Found language source: UFC commentary, post-fight interviews, corner advice, tale of the tape, training camp.
+  </p>
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h3>JSON Export (KEEP + EDIT only)</h3>
+  <pre id="json-export">[]</pre>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "Studied the tape. The feather always goes left. Always.",
+    category: "wise"
+  },
+  {
+    text: "The bread tie has no quit in it. Respect. But I finished it in the third.",
+    category: "dramatic"
+  },
+  {
+    text: "My corner said wait. I said the rubber band is fading. I went for the finish.",
+    category: "chaotic"
+  },
+  {
+    text: "Tale of the tape: me, eleven pounds. Hair tie, zero pounds. Reach advantage: irrelevant. Heart: both fighters.",
+    category: "dramatic"
+  },
+  {
+    text: "AND IT IS ALL OVER. *red dot disappears* ...it is not all over.",
+    category: "chaotic"
+  },
+  {
+    text: "I trained six hours for this moth. It trained its whole life. We'll see who wants it more.",
+    category: "demanding"
+  },
+  {
+    text: "Between rounds my corner wiped my face and said \"the crinkle ball is tired.\" I believed them.",
+    category: "wise"
+  },
+  {
+    text: "They keep asking me when I'll retire. I'll retire when the string retires.",
+    category: "demanding"
+  },
+  {
+    text: "Post-fight, the bread tie under the fridge. Controversial stoppage. I had it.",
+    category: "cold"
+  },
+  {
+    text: "I don't pick fights. The lint picks the fight. I finish it.",
+    category: "dramatic"
+  },
+  {
+    text: "Ladies and gentlemen, THIS IS THE MAIN EVENT. *shoelace moves slightly*",
+    category: "chaotic"
+  },
+  {
+    text: "Rear naked choke on the rubber band. Clean. Textbook. Then I ate it.",
+    category: "chaotic"
+  },
+  {
+    text: "The judges scored it 10-9 the crinkle ball. The judges are blind.",
+    category: "cold"
+  },
+  {
+    text: "I want the laser dot. I want it in the octagon. I want it next Saturday. No more running.",
+    category: "demanding"
+  },
+  {
+    text: "Cut man working on me between rounds. Just kidding. I licked my own paw. We go again.",
+    category: "chaotic"
+  },
+  {
+    text: "Film study. The feather wand has one move. You'd think that'd make it easier. It does not.",
+    category: "wise"
+  },
+  {
+    text: "Everybody's got a plan till they get hit with a bread tie at 3 AM.",
+    category: "wise"
+  }
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  decision: null, // 'keep', 'cut', 'edit'
+  editedText: r.text
+}));
+
+function render() {
+  const container = document.getElementById('responses');
+  container.innerHTML = state.map((item, i) => `
+    <div class="response-card ${item.decision || ''}" id="card-${i}">
+      <div class="response-number">Response ${i + 1} of ${state.length}</div>
+      <div class="response-text" id="text-${i}">"${item.decision === 'edit' ? item.editedText : item.text}"</div>
+      <div class="response-category"><span>${item.category}</span></div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.decision === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.decision === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.decision === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area ${item.decision === 'edit' || (item._editOpen) ? 'visible' : ''}" id="edit-${i}">
+        <textarea id="textarea-${i}" oninput="updateEdit(${i})">${item.editedText}</textarea>
+        <div class="edit-actions">
+          <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function decide(index, decision) {
+  if (state[index].decision === decision) {
+    state[index].decision = null;
+  } else {
+    state[index].decision = decision;
+  }
+  state[index]._editOpen = false;
+  render();
+}
+
+function toggleEdit(index) {
+  if (state[index]._editOpen) {
+    state[index]._editOpen = false;
+  } else {
+    state[index]._editOpen = true;
+  }
+  render();
+  if (state[index]._editOpen) {
+    document.getElementById(`textarea-${index}`).focus();
+  }
+}
+
+function updateEdit(index) {
+  state[index].editedText = document.getElementById(`textarea-${index}`).value;
+}
+
+function saveEdit(index) {
+  state[index].editedText = document.getElementById(`textarea-${index}`).value;
+  state[index].decision = 'edit';
+  state[index]._editOpen = false;
+  render();
+}
+
+function updateStats() {
+  const decided = state.filter(s => s.decision).length;
+  const kept = state.filter(s => s.decision === 'keep').length;
+  const cut = state.filter(s => s.decision === 'cut').length;
+  const edited = state.filter(s => s.decision === 'edit').length;
+  document.getElementById('stat-decided').textContent = `${decided} / ${state.length} decided`;
+  document.getElementById('stat-kept').textContent = `${kept} kept`;
+  document.getElementById('stat-cut').textContent = `${cut} cut`;
+  document.getElementById('stat-edited').textContent = `${edited} edited`;
+}
+
+function updateExport() {
+  const kept = state.filter(s => s.decision === 'keep' || s.decision === 'edit');
+  const exported = kept.map(s => ({
+    text: s.decision === 'edit' ? s.editedText : s.text,
+    category: s.category
+  }));
+  document.getElementById('json-export').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('json-export').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

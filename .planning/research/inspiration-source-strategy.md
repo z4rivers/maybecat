@@ -4,7 +4,7 @@
 
 **Cats are adjectives. Delivery modes are verbs. Neither is a template.**
 
-Archetypes define WHO the cat is (energy, attitude, posture). Delivery modes define HOW it speaks (timing, structure, logic). A response picks one of each and commits. No blending unless the blend IS the joke.
+Archetypes define WHO the cat is (energy, attitude, posture). Delivery modes define HOW it speaks (timing, structure, logic). A response picks one of each as anchor. Blending adds depth and multiple reads — just blend with purpose, not muddle without it.
 
 ## Delivery Modes (Voice Mines)
 

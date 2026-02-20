@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Found Language: The Language of YES - Over The Top Affirmatives</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  background: #1a1a2e;
+  z-index: 100;
+  padding: 20px 0;
+  border-bottom: 2px solid #4ecca3;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2em;
+  color: #ffd93d;
+  margin-bottom: 8px;
+}
+
+.header .subtitle {
+  color: #888;
+  font-size: 0.95em;
+  margin-bottom: 12px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.9em;
+}
+
+.stats span {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: #16213e;
+}
+
+.stats .starred { color: #ffd93d; border: 1px solid #ffd93d; }
+.stats .total { color: #4ecca3; border: 1px solid #4ecca3; }
+
+.section-header {
+  font-size: 1.5em;
+  color: #4ecca3;
+  margin: 40px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.section-header .emoji {
+  margin-right: 10px;
+}
+
+.card {
+  background: #16213e;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border-left: 4px solid #333;
+  transition: border-color 0.3s;
+}
+
+.card.starred {
+  border-left-color: #ffd93d;
+  background: #1d2a4a;
+}
+
+.quote-text {
+  font-size: 1.25em;
+  line-height: 1.5;
+  color: #fff;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.quote-source {
+  color: #888;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.quote-source strong {
+  color: #aaa;
+}
+
+.energy-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.energy-explosive { background: #e94560; color: #fff; }
+.energy-quiet { background: #3a506b; color: #c0d6df; }
+.energy-reckless { background: #ff6b35; color: #fff; }
+.energy-mechanical { background: #6b6b6b; color: #fff; }
+.energy-crowd { background: #7b2ff7; color: #fff; }
+.energy-against-odds { background: #2d6a4f; color: #fff; }
+.energy-defiant { background: #d63384; color: #fff; }
+.energy-awe { background: #0077b6; color: #fff; }
+.energy-launch { background: #ef476f; color: #fff; }
+.energy-triumph { background: #ffd93d; color: #1a1a2e; }
+
+.star-btn {
+  float: right;
+  background: transparent;
+  border: 2px solid #555;
+  color: #555;
+  font-size: 1.3em;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.star-btn:hover {
+  border-color: #ffd93d;
+  color: #ffd93d;
+}
+
+.star-btn.active {
+  border-color: #ffd93d;
+  color: #ffd93d;
+  background: rgba(255, 217, 61, 0.1);
+}
+
+.export-section {
+  margin-top: 60px;
+  padding: 30px;
+  background: #0f3460;
+  border-radius: 12px;
+  border: 2px solid #4ecca3;
+}
+
+.export-section h2 {
+  color: #4ecca3;
+  margin-bottom: 15px;
+}
+
+.export-section p {
+  color: #888;
+  margin-bottom: 15px;
+}
+
+#exportList {
+  background: #1a1a2e;
+  padding: 20px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  color: #e0e0e0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.copy-btn {
+  background: #4ecca3;
+  color: #1a1a2e;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px;
+}
+
+.copy-btn:hover { background: #3dbb94; }
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  background: #16213e;
+  border: 1px solid #333;
+  color: #888;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  border-color: #4ecca3;
+  color: #4ecca3;
+}
+
+.filter-btn.starred-filter.active {
+  border-color: #ffd93d;
+  color: #ffd93d;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Found Language: The Language of YES</h1>
+  <div class="subtitle">Real language about things WORKING. Breakthroughs, launches, reckless yesses, discovering your thing. RESEARCH for adaptation, not MaybeCat responses.</div>
+  <div class="stats">
+    <span class="total">Total: <span id="totalCount">0</span></span>
+    <span class="starred">Starred: <span id="starCount">0</span></span>
+  </div>
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn starred-filter" data-filter="starred">Starred Only</button>
+    <button class="filter-btn" data-filter="explosive-launch">Explosive Launch</button>
+    <button class="filter-btn" data-filter="quiet-knowing">Quiet Knowing</button>
+    <button class="filter-btn" data-filter="reckless-send">Reckless Send</button>
+    <button class="filter-btn" data-filter="mechanical-ignition">Mechanical Ignition</button>
+    <button class="filter-btn" data-filter="crowd-eruption">Crowd Eruption</button>
+    <button class="filter-btn" data-filter="against-all-odds">Against All Odds</button>
+    <button class="filter-btn" data-filter="defiant-confidence">Defiant Confidence</button>
+    <button class="filter-btn" data-filter="awe-wonder">Awe / Wonder</button>
+    <button class="filter-btn" data-filter="triumph">Triumph</button>
+  </div>
+</div>
+
+<div id="cardContainer"></div>
+
+<div class="export-section">
+  <h2>Export Starred Items</h2>
+  <p>Starred quotes shown below as a simple list. Copy for reference.</p>
+  <div id="exportList">(Star some quotes to see them here)</div>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const quotes = [
+  // ========================================
+  // SECTION: EXPLOSIVE LAUNCH
+  // ========================================
+  {
+    text: "Twelve, 11, 10, 9, ignition sequence start. Six, 5, 4, 3, 2, 1, zero, all engines running. Liftoff! We have a liftoff, 32 minutes past the hour. Liftoff on Apollo 11.",
+    source: "Jack King, NASA Voice of Launch Control, Apollo 11, July 16, 1969",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "Houston, Tranquility Base here. The Eagle has landed.",
+    source: "Neil Armstrong, Apollo 11, July 20, 1969",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "Roger, Tranquility. We copy you on the ground. You got a bunch of guys about to turn blue. We're breathing again. Thanks a lot.",
+    source: "Charlie Duke, NASA Mission Control, responding to Apollo 11 landing",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "That's one small step for man, one giant leap for mankind.",
+    source: "Neil Armstrong, first step on the Moon, July 20, 1969",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "Beautiful, beautiful. Magnificent desolation.",
+    source: "Buzz Aldrin, stepping onto the lunar surface, Apollo 11",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "I have never lost an American in space, sure as hell aren't going to lose one now. This crew is coming home. You got to believe it. Your team must believe it. And we must make it happen.",
+    source: "Gene Kranz, NASA Flight Director, Apollo 13 crisis (real quote, not the movie)",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "Success four flights Thursday morning all against twenty one mile wind started from level with engine power alone average speed through air thirty one miles longest 57 seconds inform press home Christmas.",
+    source: "Wright Brothers telegram to their father, December 17, 1903 - the most matter-of-fact announcement of human flight",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "Holy smokes, man.",
+    source: "Elon Musk, watching first Falcon 9 successful landing, December 21, 2015",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "It's standing up!",
+    source: "Elon Musk, running toward control room during first Falcon 9 landing, 2015",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "It's a revolutionary moment. I can't quite believe it.",
+    source: "Elon Musk, after first successful Falcon 9 rocket landing, 2015",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "Welcome back, baby!",
+    source: "Elon Musk tweet after Falcon 9 landing, December 2015",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+  {
+    text: "Crazy things can come true.",
+    source: "Elon Musk, reacting to Falcon Heavy launch success, February 2018",
+    energy: "explosive-launch",
+    energyLabel: "Explosive Launch"
+  },
+
+  // ========================================
+  // SECTION: AVIATION / TAKEOFF LANGUAGE
+  // ========================================
+  {
+    text: "Airspeed alive.",
+    source: "Standard pilot callout during takeoff roll - first indication the plane is accelerating",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "V1.",
+    source: "Pilot callout - the speed past which you're committed. No turning back. You're taking this thing into the sky.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "Rotate.",
+    source: "Pilot callout at VR speed - the moment the nose lifts off the ground. Wheels leaving earth.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "Positive rate. Gear up.",
+    source: "Pilot callout sequence - climb confirmed, landing gear retracted. You're flying now. No ground beneath you.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+
+  // ========================================
+  // SECTION: QUIET KNOWING
+  // ========================================
+  {
+    text: "I just knew if it could be done, it had to be done, and I did it.",
+    source: "Gertrude Ederle, first woman to swim the English Channel, 1926",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "I knew what I wanted to accomplish, and I knew how much work it took to achieve those goals. I then put in the work and trusted in it.",
+    source: "Kobe Bryant",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "Luck has nothing to do with it, because I have spent many, many hours, countless hours, on the court working for my one moment in time, not knowing when it would come.",
+    source: "Serena Williams",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "When we start playing we all know, 'Yep, that's it,' or 'No, that isn't it.' And if it feels phony, then we have to watch ourselves.",
+    source: "Keith Richards, on how the Rolling Stones know when a song is working in the studio",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "Over time it became clear to me that the solo acoustic performance on the couch was the most interesting stuff, even though when it was happening I had no idea it would ever be a record.",
+    source: "Rick Rubin, on recording Johnny Cash's American Recordings in his living room",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "I know you can do it.",
+    source: "Rick Rubin to pianist Benmont Tench, asking him to play even quieter, even less - until one note became everything",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "I would like you to do whatever feels right for you.",
+    source: "Rick Rubin to Johnny Cash, first recording session together",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "He didn't speak much but, if you drew him out, he seemed to know everything. He was shy and quiet but a wise, wise man.",
+    source: "Rick Rubin on Johnny Cash",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "Intuition is calm and clear -- even when it's telling you 'no.' It won't send you into a panic; it speaks with certainty and peace.",
+    source: "Research on intuitive decision-making, compiled from psychology studies",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "I put too much work in physically, mentally, emotionally. But I mean, we're human. You're always gonna think about what if it goes wrong? That was just the little voices in my head.",
+    source: "Simone Biles, before her triumphant return at 2024 Paris Olympics",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "Being in a good mental spot, seeing my therapist every Thursday is kind of religious for me. So that's why I'm kind of here today.",
+    source: "Simone Biles, on why she was able to return to Olympic gymnastics after 2021 withdrawal",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "When I look down at this golden statue, may it remind me and every little child that no matter where you're from, your dreams are valid.",
+    source: "Lupita Nyong'o, Best Supporting Actress Oscar speech for 12 Years a Slave, 2014",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "This award was a 15-year pursuit. My roots have been growing underneath ground, unseen, for so long, and I feel like today I'm sprouting, finally above ground.",
+    source: "Victoria Monet, Best New Artist, 2024 Grammy Awards",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+
+  // ========================================
+  // SECTION: RECKLESS SEND
+  // ========================================
+  {
+    text: "If somebody offers you an amazing opportunity but you are not sure you can do it, say yes -- then learn how to do it later!",
+    source: "Richard Branson",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Screw it. Let's do it.",
+    source: "Richard Branson, personal motto",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Say yes, and you'll figure it out afterwards.",
+    source: "Tina Fey",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "The second rule of improvisation is not only to say yes, but YES, AND. You are supposed to agree and then add something of your own.",
+    source: "Tina Fey, Bossypants - the improv rule that applies to everything",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "LEEEEROY JENKINS!",
+    source: "Ben Schulz / Leeroy Jenkins, World of Warcraft, 2005 - the battle cry of charging in with zero plan",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "At least I have chicken.",
+    source: "Leeroy Jenkins, after causing a total party wipe in WoW, 2005",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Hold my beer and watch this.",
+    source: "American folk saying, popularized by Jeff Foxworthy in the late '80s / early '90s - origin of 'hold my beer' meme",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Let's do it.",
+    source: "Origin of Nike's 'Just Do It' - last words of Gary Gilmore. Dan Wieden adapted it at Wieden+Kennedy in 1988.",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Bought a one way ticket to Alaska and lived in a cabin for a year. Learned to fish, chop wood, and survive without Netflix. Hardest but most rewarding year of my life.",
+    source: "Reddit user on r/AskReddit, 'risky decisions that paid off' thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Quit my LSAT exam 20 minutes in.",
+    source: "Alexis Ohanian, co-founder of Reddit. Dropped out of law school admissions, skipped spring break in Cancun to attend a startup lecture, got funding from Paul Graham, co-founded Reddit.",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Said yes to driving with a friend to pick up her friend at LAX airport. Proposed to that friend 6 months later. Married 10 years, two kids.",
+    source: "Reddit user, life-changing impulsive decisions thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Went to a 1994 concert after being invited by my brother's best friend. The other girl at the concert is now my partner of 26 years.",
+    source: "Reddit user, decisions that changed your life thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Said yes to going to the pub with an Australian guy at a hostel in Belfast. Kept in contact. Visited Australia months later. 30 years later, still living there.",
+    source: "Reddit user, life-changing impulsive decisions thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Missed a bus to a job interview I didn't want. Went to a coffee shop instead. Ran into an old college friend working at a startup. Got hired there. Three years later we were married.",
+    source: "Reddit user, butterfly effect stories thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Resigned from my corporate job, pre-leased an apartment I'd never seen in person, and booked a one-way plane ticket to Seattle, knowing only one person there and without a full-time job lined up.",
+    source: "Personal account, quit-and-moved stories compilation",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Had a great job right out of college but hated it. Made a gut decision to quit one day. Took a month off. Drove across the country. Started a new career. Happier than ever.",
+    source: "Personal account, life-changing decisions compilation",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Faster, faster, until the thrill of speed overcomes the fear of death.",
+    source: "Hunter S. Thompson",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "In order to live, you must be willing to die.",
+    source: "Amir Vahedi, professional poker player, on tournament strategy",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "You can't be afraid to lose if you want to win.",
+    source: "Daniel Negreanu, professional poker player",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+
+  // ========================================
+  // SECTION: DEFIANT CONFIDENCE
+  // ========================================
+  {
+    text: "Never tell me the odds.",
+    source: "Han Solo, The Empire Strikes Back (1980) - after C-3PO says survival odds are 3,720 to 1",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "We're gonna win the game. I guarantee it.",
+    source: "Joe Namath, three days before Super Bowl III, 1969 - Jets were 17-point underdogs. They won 16-7.",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "I told you all I was going to be number one, and I did just that.",
+    source: "Usain Bolt",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "What's there to be happy about? The job's not finished.",
+    source: "Kobe Bryant, when asked why he wasn't celebrating during a game they were winning",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "I would go 0-for-30 before I would go 0-for-9. 0-for-9 means you beat yourself, you psyched yourself out of the game.",
+    source: "Kobe Bryant, on never losing confidence",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "From the beginning, I wanted to be the best. I had a constant craving, a yearning, to improve and be the best. I never needed any external forces to motivate me.",
+    source: "Kobe Bryant, The Mamba Mentality",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "We all have self-doubt. You don't deny it, but you also don't capitulate to it. You embrace it.",
+    source: "Kobe Bryant, The Mamba Mentality",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "You miss 100% of the shots you don't take.",
+    source: "Wayne Gretzky",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "The key to No-Limit is to put a man to a decision for all his chips.",
+    source: "Doyle Brunson, legendary poker player",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "If there's going to be bluffing or stealing going on, I'm going to be the one doing it.",
+    source: "Johnny Chan, World Series of Poker champion",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "You know, sometimes I amaze myself.",
+    source: "Han Solo, Star Wars: A New Hope (1977), after rescuing Princess Leia",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "Look, I can take anything you got. But I'm from the gutter. I know that. I just don't wanna be a bum.",
+    source: "Rocky Balboa, Rocky (1976) - not asking to win, just to go the distance",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "I rather look back at my life saying, 'I can't believe I did that' instead of saying, 'I wish I did that.'",
+    source: "Popular extreme sports saying, widely shared in skydiving and bungee jumping communities",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "Aerodynamically, it is impossible for the bumblebee to fly. But apparently no one told the bumblebee that, so he flies.",
+    source: "Chuck Norris, Against All Odds autobiography, on setting goals",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+
+  // ========================================
+  // SECTION: CROWD ERUPTION
+  // ========================================
+  {
+    text: "Do you believe in miracles? YES!",
+    source: "Al Michaels, 1980 Miracle on Ice - US hockey team defeats the Soviet Union",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "The Giants win the pennant! The Giants win the pennant! The Giants win the pennant!",
+    source: "Russ Hodges, 1951 - Bobby Thomson's 'Shot Heard Round the World' walk-off home run",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "Secretariat is widening now! He is moving like a tremendous machine! Secretariat by 12! Secretariat by 14 lengths on the turn!",
+    source: "Chic Anderson, 1973 Belmont Stakes - Secretariat winning the Triple Crown by 31 lengths",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "Go crazy, folks! Go crazy! It's a home run!",
+    source: "Jack Buck, 1985 NLCS - Ozzie Smith's walk-off home run for the Cardinals",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "Touchdown, Titans! There are no flags on the field! It's a miracle! Tennessee has pulled a miracle!",
+    source: "Mike Keith, Music City Miracle, 2000 NFL Playoffs - lateral-play kickoff return for a touchdown",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "A single play, a big catch, or a last-second goal can flip the energy of a stadium, and it is often the fans who accelerate that shift.",
+    source: "Rick Saleeby, 'Crowd Energy and Momentum,' 2026",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "The stadium had been unusually quiet in the first half. The team was down and frustrated. Then came a big defensive play. The fans erupted, and suddenly the team came alive. That energy carried through the rest of the game.",
+    source: "Anonymous fan account, NFL crowd energy article",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "Everything was insanity. We had lit some flares on the ground and we would mosh around them. There was dust everywhere because we wouldn't stop moshing despite all of it. Biggest pit I've ever been in.",
+    source: "Reddit metalhead describing a festival mosh pit",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "In a live environment, the more bodies you put in a room, the more energy there will be. That's a real big payoff.",
+    source: "Unnamed musician on live performance energy",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+
+  // ========================================
+  // SECTION: AGAINST ALL ODDS
+  // ========================================
+  {
+    text: "No human is limited. I am the happiest man in the world to be the first human to run under two hours, and I can tell people that no human is limited.",
+    source: "Eliud Kipchoge, after running 1:59:40 marathon, Vienna, October 12, 2019",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "Today we went to the Moon and came back to Earth.",
+    source: "Eliud Kipchoge, after breaking the 2-hour marathon barrier",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "That was the best moment of my life.",
+    source: "Eliud Kipchoge, standing exhausted at the finish line, clock at 1:59.40",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "When something is important enough, you do it even if the odds are not in your favor.",
+    source: "Elon Musk",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "I hope young women take away that it's OK to not be OK. You can speak up for what you believe, and you can do things alone.",
+    source: "Simone Biles, after winning three golds and a silver at 2024 Paris Olympics",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "After all these years putting the mental work in, it's paid off.",
+    source: "Simone Biles, Paris 2024 Olympics",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "To every woman who gave birth to every taxpayer and citizen of this nation, we have fought for everybody else's equal rights. It's our time to have wage equality once and for all.",
+    source: "Patricia Arquette, 2015 Oscar acceptance speech - Meryl Streep leapt out of her seat",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "Success is not final; failure is not fatal: it is the courage to continue that counts.",
+    source: "Winston Churchill",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+
+  // ========================================
+  // SECTION: MECHANICAL IGNITION
+  // ========================================
+  {
+    text: "It clicked.",
+    source: "Universal metaphor for sudden understanding - the most common way humans describe the moment of realization",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "Go for launch.",
+    source: "NASA mission control - the final verbal confirmation that all systems are ready. Everything green. Send it.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "All systems nominal.",
+    source: "NASA mission control - everything performing exactly as designed. The machine is doing exactly what it was built to do.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "The V8 engine roared a road symphony.",
+    source: "Common car writing metaphor - engines described as music when everything's working",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "Running like a purring kitten, so quiet you barely know it's on.",
+    source: "Common mechanic/car enthusiast description of a perfectly tuned engine",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "Green light.",
+    source: "Drag racing - when the Christmas tree drops and you launch. Also universal metaphor for permission to go.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "The tree dropped.",
+    source: "Drag racing slang - the Christmas tree start lights activated. The race is happening NOW.",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+
+  // ========================================
+  // SECTION: AWE / WONDER
+  // ========================================
+  {
+    text: "Oh my God, look at that picture over there! There's the Earth coming up. Wow, is that pretty!",
+    source: "William Anders, Apollo 8, December 1968 - first humans to see Earth from lunar orbit",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "We came all this way to explore the Moon, and the most important thing is that we discovered the Earth.",
+    source: "William Anders, Apollo 8",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "It suddenly struck me that that tiny pea, pretty and blue, was the Earth. I put up my thumb and shut one eye, and my thumb blotted out the planet Earth.",
+    source: "Neil Armstrong, on seeing Earth from the Moon",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "When I first looked back at the Earth, standing on the Moon, I cried.",
+    source: "Alan Shepard, Apollo 14",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "You develop an instant global consciousness, a people orientation, an intense dissatisfaction with the state of the world, and a compulsion to do something about it.",
+    source: "Edgar Mitchell, Apollo 14, on the Overview Effect",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "I kept saying 'that's our planet! That's our planet!' It was the same feeling I got when my kids were born.",
+    source: "Emily Calandrelli, after spaceflight in 2024",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "I took off on a wave, went down the side, popped out the other end, and went, s--t, I'm still alive!",
+    source: "Greg Noll, legendary big wave surfer, on riding a massive wave",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "The most amazing sensation I've ever experienced in my life. It's joy, fear, and accomplishment all rolled into one experience.",
+    source: "Shaun Tomson, describing surfing inside Hawaiian tubes",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "It's a culmination of your life of surfing when you turn and paddle in at Mavericks.",
+    source: "Jeff Clark, on big wave surfing at Mavericks",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "The best wave of your life is still out there.",
+    source: "Steve Hawk, surfer/writer",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+  {
+    text: "Something I thought of is making strangers laugh. Total approval. This single moment feels better than an entire day going exactly as planned.",
+    source: "First-time comedian, describing the feeling of getting laughs from a SUCCESS Magazine feature",
+    energy: "awe-wonder",
+    energyLabel: "Awe / Wonder"
+  },
+
+  // ========================================
+  // SECTION: TRIUMPH
+  // ========================================
+  {
+    text: "Life moves pretty fast. If you don't stop and look around once in a while, you could miss it.",
+    source: "Ferris Bueller (Matthew Broderick), Ferris Bueller's Day Off, 1986",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "I'm the king of the world!",
+    source: "Jack Dawson (Leonardo DiCaprio), Titanic, 1997 - arms spread at the bow of the ship",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Carpe diem. Seize the day, boys. Make your lives extraordinary.",
+    source: "John Keating (Robin Williams), Dead Poets Society, 1989",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "No matter what anybody tells you, words and ideas can change the world.",
+    source: "John Keating (Robin Williams), Dead Poets Society, 1989",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "O Captain! My Captain!",
+    source: "Students standing on desks, Dead Poets Society, 1989 - Walt Whitman poem become act of defiance",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "The powerful play goes on and you may contribute a verse. What will your verse be?",
+    source: "John Keating (Robin Williams), Dead Poets Society, 1989 - quoting Walt Whitman",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Medicine, business, law, engineering... these are noble pursuits and necessary to sustain life. But poetry, beauty, romance, love... these are what we stay alive for.",
+    source: "John Keating (Robin Williams), Dead Poets Society, 1989",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Get busy living, or get busy dying.",
+    source: "Andy Dufresne (Tim Robbins), The Shawshank Redemption, 1994",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "One more thing...",
+    source: "Steve Jobs, Apple keynote tradition from 1998-2011 - the phrase that meant the biggest reveal was coming",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Boom.",
+    source: "Steve Jobs, recurring sound effect in keynotes when revealing something he knew would change everything",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Look, if you had one shot, or one opportunity, to seize everything you ever wanted, in one moment -- would you capture it, or just let it slip?",
+    source: "Eminem, 'Lose Yourself,' 8 Mile soundtrack, 2002 - first hip-hop song to win Academy Award for Best Original Song",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Baby, how you feelin'? Feelin' good as hell!",
+    source: "Lizzo, 'Good As Hell,' 2016 - the empowerment anthem",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Who run the world? Girls!",
+    source: "Beyonce, 'Run the World (Girls),' 2011",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "I try to write songs that will bring out the best in all of us and keep us close together. I think about saying the things that women want to say but sometimes are not confident enough to say.",
+    source: "Beyonce, on her songwriting intention",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "Be curious, not judgmental.",
+    source: "Ted Lasso (Jason Sudeikis), Ted Lasso, Season 1 darts scene, 2020 - misattributed to Walt Whitman, belongs to the show",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "People who underestimated me their entire lives weren't curious. They thought they had everything all figured out, so they judged everything, and they judged everyone.",
+    source: "Ted Lasso (Jason Sudeikis), Ted Lasso, Season 1 darts scene",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "I believe in hope. I believe in believe.",
+    source: "Ted Lasso (Jason Sudeikis), Ted Lasso",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+  {
+    text: "The turning point in the process of growing up is when you discover the core of strength within you that survives all hurt.",
+    source: "Max Lerner",
+    energy: "triumph",
+    energyLabel: "Triumph"
+  },
+
+  // ========================================
+  // SECTION: BONUS - MIXED ENERGY
+  // ========================================
+  {
+    text: "Don't worry. It's not even loaded.",
+    source: "Famous last words category - the quintessential phrase of misplaced confidence (also literally someone's last words, tragically)",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Because we've been doing it for so long, we don't really have to discuss it. When we come up with a lick or a riff or a chorus, we already know if it's right or if it's wrong.",
+    source: "Mick Jagger, on recording with Keith Richards",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "I played so little that I could barely hear myself. Boy, was it fun. It was like breaking out a puzzle.",
+    source: "Benmont Tench, pianist, on Rick Rubin asking him to play less and less until one note was everything",
+    energy: "quiet-knowing",
+    energyLabel: "Quiet Knowing"
+  },
+  {
+    text: "He locked us in the kitchen with some food and a couple of guitars. We couldn't come out until we'd written a song.",
+    source: "Keith Richards, on how Andrew Loog Oldham forced the first Jagger/Richards original songs",
+    energy: "mechanical-ignition",
+    energyLabel: "Mechanical Ignition"
+  },
+  {
+    text: "It could not have happened to a nicer and more hard-working guy.",
+    source: "Bernard Lagat, pacemaker, on Kipchoge breaking the 2-hour marathon barrier",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "I expect more people all over the world to run under two hours after today.",
+    source: "Eliud Kipchoge, immediately after doing the thing everyone said was impossible",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "Yehooooo!",
+    source: "Han Solo (Harrison Ford), Star Wars: A New Hope - the Millennium Falcon swooping in to save Luke's trench run",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "The Rohirrim have come.",
+    source: "The energy of an entire army arriving just when hope is lost - Return of the King, 2003. The charge of the Rohirrim.",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "There's no crying in baseball!",
+    source: "Jimmy Dugan (Tom Hanks), A League of Their Own, 1992",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "Babe Ruth pointed to center field before crushing a Charlie Root pitch into the bleachers. 85% of fans polled still believe he called his shot.",
+    source: "Babe Ruth's Called Shot, Game 3 of the 1932 World Series at Wrigley Field - the ultimate bold claim made good",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "I'm walking here! I'm walking here!",
+    source: "Ratso Rizzo (Dustin Hoffman), Midnight Cowboy, 1969 - reportedly ad-libbed when a real taxi almost hit him during filming",
+    energy: "defiant-confidence",
+    energyLabel: "Defiant Confidence"
+  },
+  {
+    text: "The crowd went radio silent. Then the blind basketball player sank the shot. Then they erupted.",
+    source: "Real story, 2022 - crowd goes silent to help blind player, then loses it when the shot goes in",
+    energy: "crowd-eruption",
+    energyLabel: "Crowd Eruption"
+  },
+  {
+    text: "JUST DO IT! Don't let your dreams be dreams. Yesterday you said tomorrow. So JUST. DO IT!",
+    source: "Shia LaBeouf, 2015 green screen motivational speech - written by student Joshua Parker as satire of Nike culture, became the most searched GIF of 2015",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Full send.",
+    source: "Extreme sports / internet culture - going all-in without hesitation, maximum effort, no holding back regardless of consequences. Originally snowboarding/skateboarding, early 2010s.",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Every successful person in life began by pursuing a passion, usually against all odds.",
+    source: "Robert Kiyosaki",
+    energy: "against-all-odds",
+    energyLabel: "Against All Odds"
+  },
+  {
+    text: "I changed my secondary school choice last minute from a school 15 miles away to one a 2 minute walk away. My mum changed it back. That school was much better and I'm now the only person in my family to complete all their education.",
+    source: "Reddit user, 'screw it, deal with consequences later' thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  },
+  {
+    text: "Quit a new job that had me an anxious wreck every morning to the point I couldn't even have breakfast. Glad I did it. Happily employed somewhere else now.",
+    source: "Reddit user, 'screw it' moment thread",
+    energy: "reckless-send",
+    energyLabel: "Reckless Send"
+  }
+];
+
+// ========================================
+// APP LOGIC
+// ========================================
+
+let starred = JSON.parse(localStorage.getItem('foundLangYesStarred') || '{}');
+let currentFilter = 'all';
+
+function getEnergyClass(energy) {
+  const map = {
+    'explosive-launch': 'energy-launch',
+    'quiet-knowing': 'energy-quiet',
+    'reckless-send': 'energy-reckless',
+    'mechanical-ignition': 'energy-mechanical',
+    'crowd-eruption': 'energy-crowd',
+    'against-all-odds': 'energy-against-odds',
+    'defiant-confidence': 'energy-defiant',
+    'awe-wonder': 'energy-awe',
+    'triumph': 'energy-triumph'
+  };
+  return map[energy] || 'energy-launch';
+}
+
+function renderCards() {
+  const container = document.getElementById('cardContainer');
+  let html = '';
+  let sectionMap = {};
+
+  quotes.forEach((q, i) => {
+    if (!sectionMap[q.energy]) sectionMap[q.energy] = [];
+    sectionMap[q.energy].push({ ...q, index: i });
+  });
+
+  const sectionOrder = [
+    'explosive-launch', 'mechanical-ignition', 'quiet-knowing',
+    'reckless-send', 'defiant-confidence', 'crowd-eruption',
+    'against-all-odds', 'awe-wonder', 'triumph'
+  ];
+
+  const sectionNames = {
+    'explosive-launch': 'EXPLOSIVE LAUNCH - Mission control, liftoff, the moment of ignition',
+    'mechanical-ignition': 'MECHANICAL IGNITION - Engines catching, things clicking, systems going green',
+    'quiet-knowing': 'QUIET KNOWING - The still, certain "I just knew"',
+    'reckless-send': 'RECKLESS SEND - Hold my beer, full send, say yes now figure it out later',
+    'defiant-confidence': 'DEFIANT CONFIDENCE - Bold claims, guarantees, unshakeable self-belief',
+    'crowd-eruption': 'CROWD ERUPTION - The moment the room/stadium/world loses its mind',
+    'against-all-odds': 'AGAINST ALL ODDS - Nobody believed, impossible made possible',
+    'awe-wonder': 'AWE / WONDER - Breathtaking firsts, cosmic perspective shifts',
+    'triumph': 'TRIUMPH - Victory laps, carpe diem, the moment you own it'
+  };
+
+  sectionOrder.forEach(energy => {
+    if (!sectionMap[energy]) return;
+
+    let items = sectionMap[energy];
+
+    if (currentFilter === 'starred') {
+      items = items.filter(q => starred[q.index]);
+    } else if (currentFilter !== 'all' && currentFilter !== energy) {
+      return;
+    }
+
+    if (items.length === 0) return;
+
+    html += `<h2 class="section-header">${sectionNames[energy]}</h2>`;
+
+    items.forEach(q => {
+      const isStarred = starred[q.index];
+      html += `
+        <div class="card ${isStarred ? 'starred' : ''}" data-index="${q.index}" data-energy="${q.energy}">
+          <button class="star-btn ${isStarred ? 'active' : ''}" onclick="toggleStar(${q.index})">&#9733;</button>
+          <div class="quote-text">"${q.text}"</div>
+          <div class="quote-source"><strong>Source:</strong> ${q.source}</div>
+          <span class="energy-tag ${getEnergyClass(q.energy)}">${q.energyLabel}</span>
+        </div>
+      `;
+    });
+  });
+
+  container.innerHTML = html;
+  updateStats();
+  updateExport();
+}
+
+function toggleStar(index) {
+  starred[index] = !starred[index];
+  if (!starred[index]) delete starred[index];
+  localStorage.setItem('foundLangYesStarred', JSON.stringify(starred));
+  renderCards();
+}
+
+function updateStats() {
+  document.getElementById('totalCount').textContent = quotes.length;
+  document.getElementById('starCount').textContent = Object.keys(starred).length;
+}
+
+function updateExport() {
+  const el = document.getElementById('exportList');
+  const starredItems = Object.keys(starred)
+    .filter(k => starred[k])
+    .map(k => quotes[parseInt(k)]);
+
+  if (starredItems.length === 0) {
+    el.textContent = '(Star some quotes to see them here)';
+    return;
+  }
+
+  let text = starredItems.map((q, i) =>
+    `${i + 1}. "${q.text}"\n   Source: ${q.source}\n   Energy: ${q.energyLabel}\n`
+  ).join('\n');
+
+  el.textContent = text;
+}
+
+function copyExport() {
+  const text = document.getElementById('exportList').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+// Filter logic
+document.getElementById('filterBar').addEventListener('click', (e) => {
+  if (!e.target.classList.contains('filter-btn')) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentFilter = e.target.dataset.filter;
+  renderCards();
+});
+
+// Initialize
+renderCards();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch: Ticket Energy (Creative Nos)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+.sticky-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.sticky-header h1 { font-size: 1.3rem; color: #e94560; }
+.stats { display: flex; gap: 16px; font-size: 0.9rem; }
+.stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #aaa; }
+
+.card {
+  background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  border-left: 4px solid #0f3460; transition: border-color 0.3s;
+}
+.card.kept { border-left-color: #4ecca3; } .card.cut { border-left-color: #e94560; } .card.edited { border-left-color: #ffd93d; }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.card-number { color: #666; font-size: 0.8rem; }
+.category-badge {
+  background: #0f3460; color: #e94560; padding: 3px 10px; border-radius: 20px;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.response-text { font-size: 1.15rem; line-height: 1.6; color: #fff; margin-bottom: 16px; font-style: italic; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db891; }
+.btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+.btn-reset { background: #333; color: #aaa; font-size: 0.75rem; } .btn-reset:hover { background: #444; }
+
+.edit-area {
+  width: 100%; margin-top: 10px; padding: 12px; background: #0d1b2a; color: #fff;
+  border: 1px solid #ffd93d; border-radius: 6px; font-size: 1rem; resize: vertical;
+  font-family: inherit; display: none; min-height: 60px;
+}
+.card.editing .edit-area { display: block; }
+
+.export-section {
+  margin-top: 40px; padding: 24px; background: #0d1b2a; border-radius: 12px; border: 1px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+.export-json {
+  width: 100%; min-height: 200px; padding: 12px; background: #1a1a2e; color: #4ecca3;
+  border: 1px solid #0f3460; border-radius: 6px; font-family: monospace; font-size: 0.85rem;
+}
+.btn-copy {
+  margin-top: 10px; padding: 10px 24px; background: #4ecca3; color: #1a1a2e;
+  border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+}
+.btn-copy:hover { background: #3db891; }
+.copy-feedback { color: #4ecca3; margin-left: 12px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Batch: Ticket Energy (Creative Nos)</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="count-keep">0</span></span>
+    <span class="stat-cut">CUT: <span id="count-cut">0</span></span>
+    <span class="stat-edit">EDIT: <span id="count-edit">0</span></span>
+    <span class="stat-pending">PENDING: <span id="count-pending">0</span></span>
+    <span style="color:#666">TOTAL: <span id="count-total">0</span></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <br>
+  <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+  <span class="copy-feedback" id="copy-feedback">Copied!</span>
+</div>
+
+<script>
+const responses = [
+  // --- Ultra-short (1-5 words) --- verdict energy, gavel drops ---
+
+  { text: "Overruled.", category: "cold" },
+  { text: "Denied.", category: "cold" },
+  { text: "Not even close.", category: "cold" },
+  { text: "Inadmissible.", category: "cold" },
+  { text: "Sustained. Next.", category: "cold" },
+  { text: "Case closed.", category: "cold" },
+  { text: "Absolutely not.", category: "angry" },
+  { text: "Hard no.", category: "cold" },
+  { text: "Without merit.", category: "judgy" },
+
+  // --- Short punches --- confident refusal with cat conviction ---
+
+  { text: "I've reviewed the evidence. No.", category: "judgy" },
+  { text: "You don't have the receipts for this.", category: "cold" },
+  { text: "I'm going to need you to present that to someone who cares.", category: "demanding" },
+  { text: "*slow blink* That request has been declined on all available grounds.", category: "judgy" },
+  { text: "Your appeal has been reviewed, processed, and shredded.", category: "cold" },
+  { text: "I plead the fifth. The fifth nap.", category: "chaotic" },
+  { text: "Show me the calibration on that feeling. Exactly.", category: "judgy" },
+  { text: "I was going with the flow of absolutely not.", category: "cold" },
+  { text: "The sign was clear. You just didn't want to read it.", category: "judgy" },
+  { text: "*ears flatten* That's a no from every version of me in every timeline.", category: "angry" },
+
+  // --- Righteous indignation energy ---
+
+  { text: "The audacity of even asking. Truly remarkable.", category: "demanding" },
+  { text: "You came to me with this? Voluntarily?", category: "judgy" },
+  { text: "I have jurisdiction over this decision and the answer is leave.", category: "angry" },
+  { text: "*tail lashes* I'm not even going to dignify that with a full sentence.", category: "angry" },
+  { text: "That's not a question. That's a cry for help disguised as a plan.", category: "judgy" },
+
+  // --- Technical objections / loophole energy ---
+
+  { text: "On what grounds. And don't say feelings.", category: "demanding" },
+  { text: "I'm going to need that in writing, notarized, and no.", category: "cold" },
+  { text: "There's a ten percent margin of error in how much I don't care.", category: "cold" },
+  { text: "I'd like to redirect: have you considered not doing that?", category: "judgy" },
+  { text: "Objection. Leading yourself somewhere stupid.", category: "judgy" },
+
+  // --- Confident BS / denial as power move ---
+
+  { text: "I wasn't ignoring you. I was prioritizing silence.", category: "cold" },
+  { text: "That didn't happen. And if it did, it wasn't that bad. And if it was, I was asleep.", category: "chaotic" },
+  { text: "I have no recollection of agreeing to this.", category: "cold" },
+  { text: "My records show I already said no. Check your files.", category: "demanding" },
+  { text: "*one ear rotates* I'm not saying no. I'm saying the conditions for yes don't exist on this planet.", category: "cold" },
+
+  // --- "Do you know who I am" / supreme authority ---
+
+  { text: "You're speaking to the cat who knocked the glass off the counter. On purpose. While making eye contact.", category: "chaotic" },
+  { text: "I don't make the rules. That's a lie. I make the rules.", category: "demanding" },
+  { text: "This falls outside my jurisdiction. Everything falls outside my jurisdiction. I choose my jurisdiction.", category: "demanding" },
+  { text: "*sits on the document* Motion denied.", category: "angry" },
+  { text: "I've been awake for eleven minutes and this is already too much.", category: "angry" },
+
+  // --- Flat delivery devastating truth (Bargatze energy) ---
+
+  { text: "That's a lot of confidence for someone with that track record.", category: "judgy" },
+  { text: "You keep bringing this up like the answer's going to change. It's not going to change.", category: "cold" },
+  { text: "Every time you explain it, it sounds worse.", category: "judgy" },
+  { text: "I didn't say it was a bad idea. But I did leave the room.", category: "cold" },
+
+  // --- Physical cat + refusal ---
+
+  { text: "*pushes your hand off the armrest* No.", category: "angry" },
+  { text: "*turns around so you're looking at my back* That's my answer.", category: "cold" },
+  { text: "*knocks your phone off the table* Ask again. See what happens.", category: "chaotic" },
+];
+
+// LocalStorage key
+const STORAGE_KEY = 'batch-ticket-nos-decisions';
+
+// Load saved decisions
+let decisions = {};
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) decisions = JSON.parse(saved);
+} catch(e) {}
+
+function saveDecisions() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  updateStats();
+  updateExport();
+}
+
+function setDecision(idx, type, editText) {
+  decisions[idx] = { type, editText: editText || null };
+  const card = document.querySelector(`[data-idx="${idx}"]`);
+  card.className = 'card' + (type === 'keep' ? ' kept' : type === 'cut' ? ' cut' : ' edited editing');
+  if (type === 'edit') {
+    const ta = card.querySelector('.edit-area');
+    ta.style.display = 'block';
+    if (editText) ta.value = editText;
+    else ta.value = responses[idx].text;
+  } else {
+    card.querySelector('.edit-area').style.display = 'none';
+  }
+  saveDecisions();
+}
+
+function resetDecision(idx) {
+  delete decisions[idx];
+  const card = document.querySelector(`[data-idx="${idx}"]`);
+  card.className = 'card';
+  card.querySelector('.edit-area').style.display = 'none';
+  saveDecisions();
+}
+
+function onEditChange(idx) {
+  const ta = document.querySelector(`[data-idx="${idx}"] .edit-area`);
+  decisions[idx] = { type: 'edit', editText: ta.value };
+  saveDecisions();
+}
+
+function updateStats() {
+  let keep=0, cut=0, edit=0;
+  for (const k in decisions) {
+    if (decisions[k].type === 'keep') keep++;
+    else if (decisions[k].type === 'cut') cut++;
+    else if (decisions[k].type === 'edit') edit++;
+  }
+  document.getElementById('count-keep').textContent = keep;
+  document.getElementById('count-cut').textContent = cut;
+  document.getElementById('count-edit').textContent = edit;
+  document.getElementById('count-pending').textContent = responses.length - keep - cut - edit;
+  document.getElementById('count-total').textContent = responses.length;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.type === 'keep') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (d && d.type === 'edit' && d.editText) {
+      kept.push({ text: d.editText, category: r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const ta = document.getElementById('export-json');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    fb.style.opacity = '1';
+    setTimeout(() => fb.style.opacity = '0', 2000);
+  });
+}
+
+// Render cards
+const container = document.getElementById('cards-container');
+responses.forEach((r, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.idx = i;
+
+  const d = decisions[i];
+  if (d) {
+    if (d.type === 'keep') card.className = 'card kept';
+    else if (d.type === 'cut') card.className = 'card cut';
+    else if (d.type === 'edit') card.className = 'card edited editing';
+  }
+
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="card-number">#${i + 1}</span>
+      <span class="category-badge">${r.category}</span>
+    </div>
+    <div class="response-text">"${r.text}"</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="setDecision(${i},'keep')">KEEP</button>
+      <button class="btn btn-cut" onclick="setDecision(${i},'cut')">CUT</button>
+      <button class="btn btn-edit" onclick="setDecision(${i},'edit')">EDIT</button>
+      <button class="btn btn-reset" onclick="resetDecision(${i})">RESET</button>
+    </div>
+    <textarea class="edit-area" oninput="onEditChange(${i})"${d && d.type === 'edit' ? ' style="display:block"' : ''}>${d && d.editText ? d.editText : r.text}</textarea>
+  `;
+  container.appendChild(card);
+});
+
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch: Over-the-Top Yesses</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    padding: 15px 20px;
+    z-index: 100;
+    border-bottom: 2px solid #0f3460;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 1.2rem;
+    color: #e94560;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .cards { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  .card {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .card.kept { border-color: #4ecca3; }
+  .card.cut { border-color: #e94560; opacity: 0.5; }
+  .card.edited { border-color: #ffd93d; }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .card-number { color: #666; font-size: 0.8rem; }
+  .category-badge {
+    background: #0f3460;
+    color: #e94560;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .response-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb91; }
+  .btn-keep.active { box-shadow: 0 0 0 3px rgba(78,204,163,0.4); }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-cut.active { box-shadow: 0 0 0 3px rgba(233,69,96,0.4); }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #f0ca2e; }
+  .btn-edit.active { box-shadow: 0 0 0 3px rgba(255,217,61,0.4); }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    line-height: 1.4;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #0f3460;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+  .export-json {
+    background: #0a0a1a;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  .copy-btn {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .copy-btn:hover { background: #3dbb91; }
+  .source-note {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 16px;
+    background: #0f3460;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Batch: Over-the-Top Yesses</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pending-count">35</span></span>
+    <span style="color:#666">TOTAL: 35</span>
+  </div>
+</div>
+
+<div class="source-note">
+  <strong>Mining domain:</strong> The energy of things WORKING. Startup launches, "holy shit it worked," athletes in the zone, musicians when a song clicks, comedians when a joke kills, engines turning over, lights coming on. Reckless yesses. Found language from: aviation (cleared for takeoff, positive rate, rotate, gear up), restaurant kitchens (fire, heard, behind), NASA mission control (go for launch, we are go), racing/extreme sports (green light, full send). Relocated into standalone cat responses — definitive, over-the-top YES answers.
+</div>
+
+<div class="cards" id="cards-container">
+</div>
+
+<div class="export-section">
+  <h2>Export — Kept Items</h2>
+  <div class="export-json" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  { id: 1, text: "Cleared for takeoff. Don't look down.", category: "chaotic" },
+  { id: 2, text: "*pupils dilate to full black* Do it. Do it now.", category: "demanding" },
+  { id: 3, text: "Every cell in my body just said yes and I have millions of them.", category: "chaotic" },
+  { id: 4, text: "The door is open, the engine's running, and nobody's watching.", category: "wise" },
+  { id: 5, text: "*stands up from a dead sleep* This. THIS.", category: "chaotic" },
+  { id: 6, text: "Positive rate. Gear up.", category: "wise" },
+  { id: 7, text: "I've never been more sure of anything and I'm sure of almost nothing.", category: "heartfelt" },
+  { id: 8, text: "Fire. Heard.", category: "demanding" },
+  { id: 9, text: "The universe just gave you a green light and you're checking the mirrors.", category: "wise" },
+  { id: 10, text: "*tail straight up, vibrating* That's not a maybe.", category: "chaotic" },
+  { id: 11, text: "You already did the hard part. You decided.", category: "heartfelt" },
+  { id: 12, text: "Go. Now. Before the reasonable part of your brain catches up.", category: "chaotic" },
+  { id: 13, text: "I would knock everything off every surface for this.", category: "demanding" },
+  { id: 14, text: "*slow blink* You don't need permission. But you have it.", category: "nurturing" },
+  { id: 15, text: "The answer was yes before you finished asking.", category: "wise" },
+  { id: 16, text: "Past the decision speed. Commit to the takeoff.", category: "wise" },
+  { id: 17, text: "Say yes. Mean it. Fix the details while falling.", category: "chaotic" },
+  { id: 18, text: "*kneads the air aggressively* YES. YES. YES. YES.", category: "chaotic" },
+  { id: 19, text: "All systems go and I'm only one cat.", category: "mystical" },
+  { id: 20, text: "The quiet before you said yes was the last quiet you'll need.", category: "heartfelt" },
+  { id: 21, text: "Rotate.", category: "wise" },
+  { id: 22, text: "You're not ready. That's the best time.", category: "wise" },
+  { id: 23, text: "*headbutts your hand off the table* Stop thinking. Go.", category: "demanding" },
+  { id: 24, text: "I just felt something shift. Did you feel that?", category: "mystical" },
+  { id: 25, text: "The room just changed temperature. That's your answer.", category: "mystical" },
+  { id: 26, text: "Behind. Corner. Coming through. Move.", category: "demanding" },
+  { id: 27, text: "Full send. Zero hesitation. I'm not even blinking.", category: "chaotic" },
+  { id: 28, text: "You'll never be this ready again.", category: "wise" },
+  { id: 29, text: "*chirps once, very loud* That's not a question. That's a countdown.", category: "chaotic" },
+  { id: 30, text: "The answer is the one that scares you. It's also the one that fits.", category: "wise" },
+  { id: 31, text: "Your gut already left without you. Catch up.", category: "demanding" },
+  { id: 32, text: "Wheels up. No runway left.", category: "wise" },
+  { id: 33, text: "*entire body tenses, then relaxes* Okay. We're doing this.", category: "heartfelt" },
+  { id: 34, text: "The yes was always there. You just finally stopped arguing with it.", category: "nurturing" },
+  { id: 35, text: "*one ear forward, one ear back* I'm conflicted. Just kidding. GO.", category: "chaotic" }
+];
+
+const STORAGE_KEY = 'batch-over-the-top-yes-decisions';
+
+function loadDecisions() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveDecisions(decisions) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function updateStats() {
+  const decisions = loadDecisions();
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  responses.forEach(r => {
+    const d = decisions[r.id];
+    if (!d) pending++;
+    else if (d.action === 'keep') keep++;
+    else if (d.action === 'cut') cut++;
+    else if (d.action === 'edit') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = pending;
+  updateExport();
+}
+
+function updateExport() {
+  const decisions = loadDecisions();
+  const kept = responses
+    .filter(r => {
+      const d = decisions[r.id];
+      return d && (d.action === 'keep' || d.action === 'edit');
+    })
+    .map(r => {
+      const d = decisions[r.id];
+      return {
+        text: d.editedText || r.text,
+        category: r.category
+      };
+    });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function setDecision(id, action) {
+  const decisions = loadDecisions();
+  if (!decisions[id]) decisions[id] = {};
+  decisions[id].action = action;
+  saveDecisions(decisions);
+  renderCard(id);
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const el = document.getElementById(`edit-area-${id}`);
+  el.classList.toggle('visible');
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById(`edit-text-${id}`);
+  const decisions = loadDecisions();
+  if (!decisions[id]) decisions[id] = {};
+  decisions[id].action = 'edit';
+  decisions[id].editedText = textarea.value;
+  saveDecisions(decisions);
+  renderCard(id);
+  updateStats();
+}
+
+function renderCard(id) {
+  const r = responses.find(x => x.id === id);
+  const decisions = loadDecisions();
+  const d = decisions[id] || {};
+  const card = document.getElementById(`card-${id}`);
+  card.className = 'card' + (d.action === 'keep' ? ' kept' : d.action === 'cut' ? ' cut' : d.action === 'edit' ? ' edited' : '');
+
+  const displayText = d.editedText || r.text;
+  card.querySelector('.response-text').textContent = displayText;
+
+  card.querySelector('.btn-keep').className = 'btn btn-keep' + (d.action === 'keep' ? ' active' : '');
+  card.querySelector('.btn-cut').className = 'btn btn-cut' + (d.action === 'cut' ? ' active' : '');
+  card.querySelector('.btn-edit').className = 'btn btn-edit' + (d.action === 'edit' ? ' active' : '');
+}
+
+function renderAll() {
+  const container = document.getElementById('cards-container');
+  const decisions = loadDecisions();
+  container.innerHTML = responses.map(r => {
+    const d = decisions[r.id] || {};
+    const cls = d.action === 'keep' ? ' kept' : d.action === 'cut' ? ' cut' : d.action === 'edit' ? ' edited' : '';
+    const displayText = d.editedText || r.text;
+    return `
+      <div class="card${cls}" id="card-${r.id}">
+        <div class="card-header">
+          <span class="card-number">#${r.id}</span>
+          <span class="category-badge">${r.category}</span>
+        </div>
+        <div class="response-text">${displayText}</div>
+        <div class="actions">
+          <button class="btn btn-keep${d.action==='keep'?' active':''}" onclick="setDecision(${r.id},'keep')">KEEP</button>
+          <button class="btn btn-cut${d.action==='cut'?' active':''}" onclick="setDecision(${r.id},'cut')">CUT</button>
+          <button class="btn btn-edit${d.action==='edit'?' active':''}" onclick="toggleEdit(${r.id})">EDIT</button>
+        </div>
+        <div class="edit-area${d.action==='edit'?' visible':''}" id="edit-area-${r.id}">
+          <textarea id="edit-text-${r.id}">${displayText}</textarea>
+          <button class="save-edit" onclick="saveEdit(${r.id})">Save Edit</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  updateStats();
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON to Clipboard', 2000);
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>

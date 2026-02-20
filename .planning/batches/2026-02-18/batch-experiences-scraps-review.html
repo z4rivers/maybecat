@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Experiences + Scraps (2026-02-18)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* ── Sticky Header ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16162a;
+    border-bottom: 1px solid #2a2a4a;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .stats {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #888; }
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+  }
+  .btn-export, .btn-reset {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-export { background: #4ecca3; color: #1a1a2e; }
+  .btn-reset { background: #444; color: #ccc; }
+  .btn-export:hover, .btn-reset:hover { opacity: 0.85; }
+
+  .keyboard-hint {
+    width: 100%;
+    font-size: 11px;
+    color: #555;
+    margin-top: 2px;
+  }
+  .keyboard-hint kbd {
+    background: #2a2a4a;
+    color: #888;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+    border: 1px solid #3a3a5a;
+  }
+
+  /* ── Set Divider ── */
+  .set-divider {
+    margin: 40px 24px 28px;
+    padding: 14px 20px;
+    background: #222244;
+    border-left: 4px solid #6c63ff;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #b8b4ff;
+    letter-spacing: 0.3px;
+  }
+  .set-divider span {
+    font-weight: 400;
+    color: #777;
+    font-size: 13px;
+    margin-left: 10px;
+  }
+
+  /* ── Cards ── */
+  .cards { padding: 0 24px; }
+
+  .card {
+    background: #222244;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s, opacity 0.25s;
+    position: relative;
+  }
+  .card.focused {
+    box-shadow: 0 0 0 2px #6c63ff88, 0 0 20px #6c63ff22;
+  }
+  .card.decided-keep { border-color: #4ecca3; }
+  .card.decided-cut {
+    border-color: #e94560;
+    opacity: 0.45;
+  }
+  .card.decided-cut .response-text {
+    text-decoration: line-through;
+    text-decoration-color: #e9456088;
+  }
+  .card.decided-edit { border-color: #ffd93d; }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .card-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: #555;
+    min-width: 26px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #333;
+    color: #aaa;
+  }
+  .badge-wise { background: #1a3a2e; color: #4ecca3; }
+  .badge-chaotic { background: #3a1a3a; color: #e066ff; }
+  .badge-demanding { background: #3a2a1a; color: #ffa040; }
+  .badge-heartfelt { background: #2a1a3a; color: #ff7eb3; }
+  .badge-judgy { background: #3a3a1a; color: #ddd06a; }
+  .badge-cold { background: #1a2a3a; color: #6ac8ff; }
+  .badge-mystical { background: #2a1a40; color: #b388ff; }
+  .badge-nurturing { background: #1a3a30; color: #80cbc4; }
+  .badge-angry { background: #3a1a1a; color: #ff6b6b; }
+  .badge-existential { background: #2a2a1a; color: #bcaa68; }
+  .badge-poetic { background: #2a1a30; color: #ce93d8; }
+  .badge-meta { background: #1a2a2a; color: #80deea; }
+
+  .decision-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .decision-badge.keep { background: #4ecca322; color: #4ecca3; }
+  .decision-badge.cut { background: #e9456022; color: #e94560; }
+  .decision-badge.edit { background: #ffd93d22; color: #ffd93d; }
+
+  .response-text {
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.55;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .btn:hover { filter: brightness(1.15); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-undo {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    margin-left: auto;
+    font-size: 12px;
+  }
+
+  /* ── Edit Area ── */
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.open { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #ffd93d55;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-save {
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-cancel-edit {
+    padding: 6px 16px;
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ── Export ── */
+  .export-section {
+    display: none;
+    margin: 40px 24px;
+    background: #222244;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .export-section.open { display: block; }
+  .export-section h2 {
+    font-size: 16px;
+    color: #4ecca3;
+    margin-bottom: 12px;
+  }
+  .export-section textarea {
+    width: 100%;
+    min-height: 200px;
+    background: #1a1a2e;
+    color: #4ecca3;
+    border: 1px solid #4ecca355;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .export-copy-msg {
+    font-size: 12px;
+    color: #4ecca3;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .export-copy-msg.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header" id="header">
+  <h1>Experiences + Scraps Review</h1>
+  <div class="stats">
+    <span class="stat-kept">Kept: <strong id="count-kept">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="count-cut">0</strong></span>
+    <span class="stat-edited">Edited: <strong id="count-edited">0</strong></span>
+    <span class="stat-remaining">Remaining: <strong id="count-remaining">30</strong>/30</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-export" onclick="toggleExport()">Export JSON</button>
+    <button class="btn-reset" onclick="resetAll()">Reset</button>
+  </div>
+  <div class="keyboard-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> navigate &nbsp;
+    <kbd>O</kbd> keep &nbsp;
+    <kbd>X</kbd> cut &nbsp;
+    <kbd>E</kbd> edit &nbsp;
+    <kbd>Enter</kbd> save edit &nbsp;
+    <kbd>Esc</kbd> cancel &nbsp;
+    <kbd>U</kbd> undo
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section" id="export-section">
+  <h2>Export: Kept + Edited Responses</h2>
+  <textarea id="export-textarea" readonly></textarea>
+  <button class="btn-export" style="margin-top:10px" onclick="copyExport()">Copy to Clipboard</button>
+  <div class="export-copy-msg" id="copy-msg">Copied!</div>
+</div>
+
+<script>
+const STORAGE_KEY = "batch-experiences-scraps-2026-02-18";
+
+const ITEMS = [
+  // SET 1: New Experiences
+  { id: 1, text: "The vinegary snap of the pickle tempers the unctuousness of your entire personality. Do it.", category: "wise", set: 1 },
+  { id: 2, text: "You\u2019re one genre away from becoming someone your friends don\u2019t recognize. *pupils dilate*", category: "chaotic", set: 1 },
+  { id: 3, text: "Your body said no. Your body is not the project manager.", category: "demanding", set: 1 },
+  { id: 4, text: "*slow blink* You fell. You got up. The floor remembers both.", category: "heartfelt", set: 1 },
+  { id: 5, text: "Some of these are legit and some are a crime against humanity. You\u2019re both.", category: "judgy", set: 1 },
+  { id: 6, text: "That thing you said you\u2019d never like? It\u2019s playing in your car right now.", category: "wise", set: 1 },
+  { id: 7, text: "You look like a newborn deer on a frozen lake and I have never respected anything more.", category: "chaotic", set: 1 },
+  { id: 8, text: "*ears rotate independently* It sounds wrong. It tastes right. Stop asking questions.", category: "cold", set: 1 },
+  { id: 9, text: "You were struck by a vision of yourself in a hat, gliding. Follow that.", category: "mystical", set: 1 },
+  { id: 10, text: "The rink is intimidating. Everyone moves fast. You\u2019re about to find out you float. *kneads the air*", category: "nurturing", set: 1 },
+  { id: 11, text: "It slopped into your mouth and you said nope. You\u2019ll be back.", category: "wise", set: 1 },
+  { id: 12, text: "Nobody is interested in your opinion about the movement pattern. *shows belly, keeps claws ready* Just move.", category: "angry", set: 1 },
+  { id: 13, text: "You put ranch on your whole life and now you\u2019re surprised it works.", category: "existential", set: 1 },
+  { id: 14, text: "There is truly no escape from the ego pounding. *purrs*", category: "poetic", set: 1 },
+  { id: 15, text: "Every convert was a hater first. The playlist knows.", category: "meta", set: 1 },
+
+  // SET 2: Cutting Room Floor
+  { id: 16, text: "*pupils dilate* You smell like curry, iodine, and an ex who owed you money. Gorgeous.", category: "chaotic", set: 2 },
+  { id: 17, text: "They told eight million people that spaghetti grows on trees and nobody checked. Your lie is fine.", category: "wise", set: 2 },
+  { id: 18, text: "Kept it hanging over the stove for forty years. Never knew what it was worth. You\u2019re doing the same thing with yourself.", category: "heartfelt", set: 2 },
+  { id: 19, text: "*tail tip flicks* They made glue that barely stuck. Took ten years. Became a Post-it. Your timeline is not broken.", category: "nurturing", set: 2 },
+  { id: 20, text: "He sliced the potatoes paper-thin out of pure spite and invented a billion-dollar snack. Pettiness has a legacy.", category: "cold", set: 2 },
+  { id: 21, text: "*one ear rotates* The flask shattered but held together. That\u2019s not fragile. That\u2019s a new kind of strong.", category: "poetic", set: 2 },
+  { id: 22, text: "Shallow ridges. Something more like wrinkles. That\u2019s not damage \u2014 that\u2019s how you read something real.", category: "existential", set: 2 },
+  { id: 23, text: "The signal jumps around. Negative numbers. Iffy target. Last dig of the day. Gold. Always the last dig.", category: "mystical", set: 2 },
+  { id: 24, text: "*shows belly, keeps claws ready* A peanut grifter. That\u2019s what they call someone who only runs small cons. You\u2019re thinking too small.", category: "demanding", set: 2 },
+  { id: 25, text: "The cook was just trying to flavor the soybeans. Accidentally invented an entire cuisine. Stop planning and start spilling.", category: "wise", set: 2 },
+  { id: 26, text: "*headbutts your hand* That little baby right there is SWEEEEET. That\u2019s all. That\u2019s the answer.", category: "heartfelt", set: 2 },
+  { id: 27, text: "They dropped him in to stop the fizz. He made it fizzier. Patron saint of misreading the assignment beautifully.", category: "chaotic", set: 2 },
+  { id: 28, text: "Pulling it from the ground felt like slipping a key from a lock. Some things were always yours. You just had to bend down.", category: "poetic", set: 2 },
+  { id: 29, text: "Place a sprig of spaghetti in a tin of tomato sauce and hope for the best. That was the BBC\u2019s actual advice. It\u2019s also mine.", category: "meta", set: 2 },
+  { id: 30, text: "Two strangers. Same train. Dartford Station. 1961. Rolling Stones. Your random encounter has a name too. You just don\u2019t know it yet.", category: "mystical", set: 2 }
+];
+
+// ── State ──
+let state = loadState();
+let focusedIdx = 0;
+let editingIdx = -1;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {};
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ── Render ──
+function render() {
+  const container = document.getElementById("cards-container");
+  let html = "";
+  let lastSet = 0;
+
+  ITEMS.forEach((item, idx) => {
+    if (item.set !== lastSet) {
+      const setLabels = {
+        1: ["SET 1: New Experiences", "music, food, physical skills"],
+        2: ["SET 2: Cutting Room Floor", "scraps from earlier research"]
+      };
+      const [label, sub] = setLabels[item.set];
+      html += `<div class="set-divider">${label}<span>${sub}</span></div>`;
+      lastSet = item.set;
+    }
+
+    const s = state[item.id] || {};
+    const decision = s.decision || null;
+    const editedText = s.editedText || null;
+
+    let cardClass = "card";
+    if (idx === focusedIdx) cardClass += " focused";
+    if (decision === "keep") cardClass += " decided-keep";
+    if (decision === "cut") cardClass += " decided-cut";
+    if (decision === "edit") cardClass += " decided-edit";
+
+    const displayText = editedText || item.text;
+    const badgeClass = `badge badge-${item.category}`;
+
+    let decisionBadgeHtml = "";
+    if (decision === "keep") decisionBadgeHtml = `<span class="decision-badge keep">KEPT</span>`;
+    else if (decision === "cut") decisionBadgeHtml = `<span class="decision-badge cut">CUT</span>`;
+    else if (decision === "edit") decisionBadgeHtml = `<span class="decision-badge edit">EDITED</span>`;
+
+    html += `
+      <div class="${cardClass}" data-idx="${idx}" id="card-${idx}">
+        <div class="card-top">
+          <span class="card-number">#${item.id}</span>
+          <span class="${badgeClass}">${item.category}</span>
+          ${decisionBadgeHtml}
+        </div>
+        <div class="response-text">${escapeHtml(displayText)}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${idx},'keep')">Keep</button>
+          <button class="btn btn-cut" onclick="decide(${idx},'cut')">Cut</button>
+          <button class="btn btn-edit" onclick="openEdit(${idx})">Edit</button>
+          ${decision ? `<button class="btn btn-undo" onclick="undoDecision(${idx})">Undo</button>` : ""}
+        </div>
+        <div class="edit-area${editingIdx === idx ? ' open' : ''}" id="edit-area-${idx}">
+          <textarea id="edit-textarea-${idx}">${escapeHtml(editedText || item.text)}</textarea>
+          <div class="edit-actions">
+            <button class="btn-save" onclick="saveEdit(${idx})">Save Edit</button>
+            <button class="btn-cancel-edit" onclick="cancelEdit(${idx})">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+  updateStats();
+  scrollToFocused();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  Object.values(state).forEach(s => {
+    if (s.decision === "keep") kept++;
+    if (s.decision === "cut") cut++;
+    if (s.decision === "edit") edited++;
+  });
+  const decided = kept + cut + edited;
+  document.getElementById("count-kept").textContent = kept;
+  document.getElementById("count-cut").textContent = cut;
+  document.getElementById("count-edited").textContent = edited;
+  document.getElementById("count-remaining").textContent = (ITEMS.length - decided);
+}
+
+function scrollToFocused() {
+  const el = document.getElementById(`card-${focusedIdx}`);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+// ── Decisions ──
+function decide(idx, decision) {
+  const item = ITEMS[idx];
+  if (!state[item.id]) state[item.id] = {};
+  state[item.id].decision = decision;
+  if (decision !== "edit") {
+    // Clear edited text if switching away from edit
+  }
+  saveState();
+  // Auto-advance to next undecided
+  autoAdvance(idx);
+  render();
+}
+
+function autoAdvance(fromIdx) {
+  for (let i = fromIdx + 1; i < ITEMS.length; i++) {
+    const s = state[ITEMS[i].id];
+    if (!s || !s.decision) {
+      focusedIdx = i;
+      return;
+    }
+  }
+  // Wrap around
+  for (let i = 0; i < fromIdx; i++) {
+    const s = state[ITEMS[i].id];
+    if (!s || !s.decision) {
+      focusedIdx = i;
+      return;
+    }
+  }
+  // All decided, stay
+  focusedIdx = fromIdx;
+}
+
+function undoDecision(idx) {
+  const item = ITEMS[idx];
+  if (state[item.id]) {
+    delete state[item.id].decision;
+    delete state[item.id].editedText;
+    if (Object.keys(state[item.id]).length === 0) delete state[item.id];
+  }
+  saveState();
+  focusedIdx = idx;
+  editingIdx = -1;
+  render();
+}
+
+// ── Editing ──
+function openEdit(idx) {
+  editingIdx = idx;
+  focusedIdx = idx;
+  render();
+  const ta = document.getElementById(`edit-textarea-${idx}`);
+  if (ta) {
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+  }
+}
+
+function saveEdit(idx) {
+  const ta = document.getElementById(`edit-textarea-${idx}`);
+  if (!ta) return;
+  const item = ITEMS[idx];
+  const newText = ta.value.trim();
+  if (!state[item.id]) state[item.id] = {};
+  state[item.id].decision = "edit";
+  state[item.id].editedText = newText;
+  editingIdx = -1;
+  saveState();
+  autoAdvance(idx);
+  render();
+}
+
+function cancelEdit(idx) {
+  editingIdx = -1;
+  render();
+}
+
+// ── Export ──
+function toggleExport() {
+  const section = document.getElementById("export-section");
+  const isOpen = section.classList.contains("open");
+  if (isOpen) {
+    section.classList.remove("open");
+    return;
+  }
+  const exported = [];
+  ITEMS.forEach(item => {
+    const s = state[item.id];
+    if (!s) return;
+    if (s.decision === "keep") {
+      exported.push({ text: item.text, category: item.category });
+    } else if (s.decision === "edit" && s.editedText) {
+      exported.push({ text: s.editedText, category: item.category });
+    }
+  });
+  document.getElementById("export-textarea").value = JSON.stringify(exported, null, 2);
+  section.classList.add("open");
+  section.scrollIntoView({ behavior: "smooth" });
+}
+
+function copyExport() {
+  const ta = document.getElementById("export-textarea");
+  ta.select();
+  document.execCommand("copy");
+  const msg = document.getElementById("copy-msg");
+  msg.classList.add("visible");
+  setTimeout(() => msg.classList.remove("visible"), 1500);
+}
+
+function resetAll() {
+  if (!confirm("Reset all decisions? This cannot be undone.")) return;
+  state = {};
+  localStorage.removeItem(STORAGE_KEY);
+  focusedIdx = 0;
+  editingIdx = -1;
+  render();
+}
+
+// ── Keyboard Navigation ──
+document.addEventListener("keydown", (e) => {
+  // Don't intercept when typing in a textarea
+  if (e.target.tagName === "TEXTAREA") {
+    if (e.key === "Enter" && !e.shiftKey && editingIdx >= 0) {
+      e.preventDefault();
+      saveEdit(editingIdx);
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit(editingIdx);
+      return;
+    }
+    return;
+  }
+
+  switch(e.key.toLowerCase()) {
+    case "j":
+      e.preventDefault();
+      focusedIdx = Math.min(focusedIdx + 1, ITEMS.length - 1);
+      render();
+      break;
+    case "k":
+      e.preventDefault();
+      focusedIdx = Math.max(focusedIdx - 1, 0);
+      render();
+      break;
+    case "o":
+      e.preventDefault();
+      decide(focusedIdx, "keep");
+      break;
+    case "x":
+      e.preventDefault();
+      decide(focusedIdx, "cut");
+      break;
+    case "e":
+      e.preventDefault();
+      openEdit(focusedIdx);
+      break;
+    case "u":
+      e.preventDefault();
+      undoDecision(focusedIdx);
+      break;
+    case "escape":
+      if (editingIdx >= 0) {
+        e.preventDefault();
+        cancelEdit(editingIdx);
+      }
+      break;
+  }
+});
+
+// ── Init ──
+render();
+</script>
+</body>
+</html>

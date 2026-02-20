@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 3: Pattern Floods</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --bg-card: #16213e;
+    --bg-card-hover: #1a2744;
+    --bg-input: #0f1626;
+    --keep: #4ecca3;
+    --cut: #e94560;
+    --keeper-border: #3a86c4;
+    --text: #e8e8e8;
+    --text-dim: #8892a4;
+    --text-muted: #5a6578;
+    --yellow: #ffd93d;
+    --border: #2a3050;
+    --radius: 8px;
+    --radius-sm: 5px;
+    --reviewed: #7c8aff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* -- Sticky Header -- */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #12122a 0%, #1a1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px 12px;
+    backdrop-filter: blur(12px);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .header .subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .stats {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .stat-label { color: var(--text-dim); font-weight: 400; margin-right: 4px; }
+  .stat-cut { color: var(--cut); }
+  .stat-remaining { color: var(--keep); }
+  .stat-groups { color: var(--reviewed); }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--reviewed), #3a86c4);
+    border-radius: 3px;
+    transition: width 0.35s ease;
+    width: 0%;
+  }
+  .progress-pct {
+    font-size: 12px;
+    color: var(--text-dim);
+    min-width: 36px;
+    text-align: right;
+  }
+  .btn-jump {
+    background: #2a3050;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .btn-jump:hover { background: #3a4060; }
+  .btn-jump:disabled { opacity: 0.4; cursor: default; }
+
+  /* -- Keyboard hint -- */
+  .kb-hint {
+    text-align: center;
+    padding: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+  .kb-hint kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    margin: 0 1px;
+    color: var(--text-dim);
+  }
+
+  /* -- Groups -- */
+  .container { max-width: 860px; margin: 0 auto; padding: 20px 16px; }
+
+  .group {
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .group.focused { border-color: #5a6aff; box-shadow: 0 0 0 1px #5a6aff40; }
+  .group.group-reviewed { border-color: var(--reviewed); box-shadow: 0 0 0 1px rgba(124, 138, 255, 0.15); }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    cursor: pointer;
+    user-select: none;
+    gap: 10px;
+  }
+  .group-header:hover { background: var(--bg-card-hover); }
+  .group-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    flex: 1;
+  }
+  .group-id {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-right: 8px;
+  }
+  .group-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .group-badge.pending { background: #ffd93d22; color: var(--yellow); }
+  .group-badge.done { background: #7c8aff22; color: var(--reviewed); }
+  .group-badge.has-cuts { background: #e9456022; color: var(--cut); }
+  .collapse-icon {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .group.collapsed .collapse-icon { transform: rotate(-90deg); }
+  .group.collapsed .group-body { display: none; }
+
+  .group-body { padding: 0 16px 16px; background: var(--bg-card); }
+
+  /* -- Group-level REVIEWED button -- */
+  .group-done-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 0 4px;
+  }
+  .btn-reviewed {
+    padding: 7px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--reviewed);
+    background: rgba(124, 138, 255, 0.12);
+    color: var(--reviewed);
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .btn-reviewed:hover { background: rgba(124, 138, 255, 0.25); }
+  .btn-reviewed:active { transform: scale(0.97); }
+  .btn-reviewed.active {
+    background: var(--reviewed);
+    color: #fff;
+    border-color: var(--reviewed);
+  }
+
+  /* -- Keeper block -- */
+  .keeper-block {
+    border: 2px solid var(--keeper-border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    background: #3a86c410;
+    position: relative;
+    transition: border-color 0.2s, opacity 0.25s, background 0.2s;
+  }
+  .keeper-block.item-focused { border-color: #5a6aff; background: #5a6aff08; box-shadow: 0 0 0 1px #5a6aff40; }
+  .keeper-block.decided-cut { border-color: var(--cut); background: #e9456008; opacity: 0.55; }
+  .keeper-block.decided-cut .keeper-text { text-decoration: line-through; text-decoration-color: #e9456060; }
+  .keeper-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--keeper-border);
+    margin-bottom: 6px;
+  }
+  .keeper-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+  }
+  .keeper-cat {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--keeper-border);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* -- Cut candidates -- */
+  .cut-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--bg);
+    transition: border-color 0.2s, opacity 0.25s, background 0.2s;
+    position: relative;
+  }
+  .cut-item.item-focused { border-color: #5a6aff; background: #5a6aff08; }
+  .cut-item.decided-cut { border-color: var(--cut); background: #e9456008; opacity: 0.55; }
+  .cut-item.decided-cut .cut-text { text-decoration: line-through; text-decoration-color: #e9456060; }
+
+  .cut-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .cut-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .cat-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #2a3050;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .cut-reason {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .cut-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.12s;
+    outline: none;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-cut {
+    background: #e9456020;
+    color: var(--cut);
+    border-color: #e9456040;
+  }
+  .btn-cut:hover { background: #e9456035; }
+  .btn-cut.active { background: var(--cut); color: #fff; border-color: var(--cut); }
+
+  .decided-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-left: auto;
+  }
+  .decided-label.was-cut { color: var(--cut); }
+
+  /* -- Export section -- */
+  .export-section {
+    max-width: 860px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .export-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+  .export-tab {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--bg-card);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all 0.15s;
+  }
+  .export-tab.active { background: var(--bg-input); color: #fff; }
+  .export-tab:hover:not(.active) { color: var(--text); }
+  .export-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 16px;
+    position: relative;
+  }
+  .export-pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #2a3050;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    z-index: 2;
+  }
+  .btn-copy:hover { background: #3a4060; color: #fff; }
+  .btn-copy.copied { background: var(--keep); color: #111; border-color: var(--keep); }
+
+  /* -- Responsive -- */
+  @media (max-width: 600px) {
+    .header { padding: 10px 12px 8px; }
+    .header h1 { font-size: 15px; }
+    .stats { gap: 10px; font-size: 12px; }
+    .container { padding: 12px 8px; }
+    .group-body { padding: 0 10px 10px; }
+    .keeper-block, .cut-item { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header" id="header">
+  <div class="header-top">
+    <div>
+      <h1>Round 3: Pattern Floods &mdash; Same Template, Too Many Versions</h1>
+      <div class="subtitle">Cut what doesn't belong. Everything not cut stays automatically. Mark groups as reviewed when done.</div>
+    </div>
+    <button class="btn-jump" id="btn-jump" onclick="jumpToNext()">Jump to next unreviewed</button>
+  </div>
+  <div class="stats">
+    <span><span class="stat-label">Groups reviewed:</span> <span class="stat-groups" id="stat-groups">0/14</span></span>
+    <span><span class="stat-label">Cut:</span> <span class="stat-cut" id="stat-cut">0</span></span>
+    <span><span class="stat-label">Remaining:</span> <span class="stat-remaining" id="stat-remaining">0</span></span>
+  </div>
+  <div class="progress-row">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <span class="progress-pct" id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="kb-hint">
+  <kbd>J</kbd> / <kbd>K</kbd> navigate groups &nbsp;&middot;&nbsp;
+  <kbd>&darr;</kbd> / <kbd>&uarr;</kbd> navigate items &nbsp;&middot;&nbsp;
+  <kbd>N</kbd> cut item &nbsp;&middot;&nbsp;
+  <kbd>D</kbd> / <kbd>Enter</kbd> mark group reviewed &nbsp;&middot;&nbsp;
+  <kbd>C</kbd> collapse/expand group
+</div>
+
+<div class="container" id="container"></div>
+
+<div class="export-section" id="export-section">
+  <h2>Export</h2>
+  <div class="export-tabs">
+    <div class="export-tab active" data-tab="cuts" onclick="switchTab('cuts')">Cuts</div>
+    <div class="export-tab" data-tab="keeps" onclick="switchTab('keeps')">Keeps</div>
+    <div class="export-tab" data-tab="all" onclick="switchTab('all')">All Decisions</div>
+  </div>
+  <div class="export-box">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre class="export-pre" id="export-pre"></pre>
+  </div>
+</div>
+
+<script>
+// -- DATA --
+const DATA = [
+  {
+    "group_id": 97,
+    "concept": "Yes, like [specific joyful experience] \u2014 format cluster",
+    "keeper": { "text": "Yes, like clean sheets.", "category": "wise" },
+    "cuts": [
+      { "text": "Yes, like the first stretch after a long nap.", "category": "wise", "reason": "Same 'Yes, like...' format \u2014 too many blur together" },
+      { "text": "Yes, like the sound of the can opener.", "category": "wise", "reason": "Same format" },
+      { "text": "Yes, like being outside in the perfect gear in lousy weather.", "category": "wise", "reason": "Same format" },
+      { "text": "Yes, like a mouse not seeing you and running right in your direction.", "category": "wise", "reason": "Same format" },
+      { "text": "Yes, like peeling the wrapper of the new item you've been waiting for.", "category": "wise", "reason": "Same format" },
+      { "text": "Yes, with all the chemistry of a great first kiss.", "category": "wise", "reason": "Same format" },
+      { "text": "Yes, like a flying acrobatic leap to catch a cat dancer high in the air.", "category": "chaotic", "reason": "Same format, overlong" },
+      { "text": "Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.", "category": "heartfelt", "reason": "Same format, overexplains" },
+      { "text": "Yes, the way two cats who\u2019ve never met touch noses.", "category": "heartfelt", "reason": "Same format" }
+    ]
+  },
+  {
+    "group_id": 98,
+    "concept": "Yes, like [adoption-specific] \u2014 format cluster",
+    "keeper": { "text": "Yes, like thinking you are being transferred to another shelter and arriving at a forever home.", "category": "adoption" },
+    "cuts": [
+      { "text": "Yes, like you aren\u2019t sure if it\u2019s time to get another cat and a cat finds you.", "category": "adoption", "reason": "Same format" },
+      { "text": "Yes, like wanting this kitten, but that one being so cute too.", "category": "adoption", "reason": "Same format, less emotional weight" },
+      { "text": "Yes, like the appreciation of an older rescue cat finally being selected for adoption.", "category": "adoption", "reason": "Same format" }
+    ]
+  },
+  {
+    "group_id": 99,
+    "concept": "McConaughey-style mystical \u2014 voice cluster",
+    "keeper": { "text": "*tail tip flicks* The answer\u2019s already moving through you. I can see it from here. You just haven\u2019t caught up to yourself yet.", "category": "mystical" },
+    "cuts": [
+      { "text": "*one ear rotates toward you* Now hold on. Don\u2019t go answerin\u2019 that yet. Let the question breathe a minute.", "category": "mystical", "reason": "Same slow-Southern mystical energy, too many" },
+      { "text": "Man, I been sitting in this patch of warm for about nine thousand years. You think I\u2019m worried about your timeline?", "category": "mystical", "reason": "Same drawling energy" },
+      { "text": "I could fix this for you. *kneads blanket once, stops* But where\u2019s the poetry in that?", "category": "mystical", "reason": "Same contemplative energy" },
+      { "text": "I\u2019m not gonna tell you what to do. *yawns enormously* I\u2019m gonna sit here and you\u2019re gonna figure it out. And we\u2019re both gonna enjoy that.", "category": "mystical", "reason": "Same refusal-to-answer-as-wisdom" },
+      { "text": "Man, I had a whole speech planned. *turns around twice, lies down* Nah. You\u2019ll get there.", "category": "mystical", "reason": "Same abandoned-wisdom energy" },
+      { "text": "*vibrating slightly* I\u2019m on a frequency right now that says yes. But it\u2019s a slow yes. A warm yes. Don\u2019t microwave it.", "category": "mystical", "reason": "Same slow-mystical-yes" },
+      { "text": "*watching dust float in a beam of light* Everything moving. Everything arriving. Even when it looks like nothing\u2019s happening, man, it\u2019s happening.", "category": "mystical", "reason": "Same contemplative energy" },
+      { "text": "The last cat who sat here before me? Knew something. *sniffs the spot* I can still smell the knowing. And baby, it smells like yes.", "category": "mystical", "reason": "Same concept" },
+      { "text": "*sitting in a doorway, blocking it* Some doors, you gotta earn.", "category": "mystical", "reason": "Same doorway-wisdom" },
+      { "text": "See, you asked the question like you wanted an answer. But what you wanted was company.", "category": "mystical", "reason": "Same insight-disguised-as-non-answer" }
+    ]
+  },
+  {
+    "group_id": 89,
+    "concept": "Redirect to my needs \u2014 pattern cluster",
+    "keeper": { "text": "Let\u2019s focus on what\u2019s really important here: me.", "category": "demanding" },
+    "cuts": [
+      { "text": "Your question is interesting, but have you considered my needs?", "category": "demanding", "reason": "Same redirect" },
+      { "text": "I hear you. But what about ME?", "category": "demanding", "reason": "Same self-centered redirect" },
+      { "text": "I understand you\u2019re going through something. Anyway, dinner?", "category": "demanding", "reason": "Same concept" },
+      { "text": "That\u2019s a great question. Unrelated: I\u2019m hungry.", "category": "demanding", "reason": "Same redirect" },
+      { "text": "We can discuss your problem after we discuss my empty bowl.", "category": "demanding", "reason": "Same prioritize-me energy" }
+    ]
+  },
+  {
+    "group_id": 52,
+    "concept": "'I don\u2019t know' decoded \u2014 pattern cluster",
+    "keeper": { "text": "\u2018I don\u2019t know\u2019 means \u2018I know exactly what I want to say and it\u2019s gonna start a fight.\u2019", "category": "wise" },
+    "cuts": [
+      { "text": "\u2018I don\u2019t know\u2019 usually means I know. I just don\u2019t want to be in charge of knowing.", "category": "wise", "reason": "Same observation, keeper is sharper" },
+      { "text": "I say \u2018I don\u2019t know\u2019 a lot. I know a lot of things. I just don\u2019t know if I know them correctly.", "category": "chaotic", "reason": "Third version of this idea" },
+      { "text": "Sometimes \u2018I don\u2019t know\u2019 means \u2018I don\u2019t want to say it out loud yet.\u2019", "category": "wise", "reason": "Fourth version" }
+    ]
+  },
+  {
+    "group_id": 38,
+    "concept": "Rules are suggestions \u2014 pattern cluster",
+    "keeper": { "text": "Rules are suggestions. I choose not to follow them.", "category": "chaotic" },
+    "cuts": [
+      { "text": "That\u2019s not allowed? Interesting. Anyway.", "category": "chaotic", "reason": "Same rules-don\u2019t-apply energy" },
+      { "text": "Rules are for dogs.", "category": "chaotic", "reason": "Same anti-rules" },
+      { "text": "Rules are for people who get caught.", "category": "chaotic", "reason": "Same concept" },
+      { "text": "That rule was for somebody else.", "category": "chaotic", "reason": "Same exemption-from-rules" }
+    ]
+  },
+  {
+    "group_id": 104,
+    "concept": "Warmth/comfort observations \u2014 pattern cluster",
+    "keeper": { "text": "Warm. Eyes closed. Nothing\u2019s on fire. This is as good as it gets. And it\u2019s good.", "category": "nurturing" },
+    "cuts": [
+      { "text": "Warm body, warm spot. Everything else is details.", "category": "nurturing", "reason": "Same warmth-is-enough" },
+      { "text": "Warm light. Solid ground. Still breathing. Good enough.", "category": "nurturing", "reason": "Same present-moment inventory" },
+      { "text": "Groomed. Stretched. Horizontal. Paradise.", "category": "nurturing", "reason": "Same list-of-comfort format" }
+    ]
+  },
+  {
+    "group_id": 106,
+    "concept": "Something in the air / energy shifted \u2014 pattern cluster",
+    "keeper": { "text": "The energy shifted. Be alert.", "category": "mystical" },
+    "cuts": [
+      { "text": "Something\u2019s off. I can\u2019t prove it. But I know.", "category": "mystical", "reason": "Same sensing-a-shift" },
+      { "text": "Something in the air shifted. I felt it in my ears before I felt it anywhere else.", "category": "mystical", "reason": "Same observation" },
+      { "text": "Hair standing up. Something shifted. Haven\u2019t figured out what yet.", "category": "mystical", "reason": "Same physical-shift-sensing" }
+    ]
+  },
+  {
+    "group_id": 112,
+    "concept": "Hairball as metaphor \u2014 pattern cluster",
+    "keeper": { "text": "The hairball comes when it is ready. You cannot rush it.", "category": "mystical" },
+    "cuts": [
+      { "text": "What cannot be digested must be released.", "category": "mystical", "reason": "Same philosophy" },
+      { "text": "Not everything you swallow is meant to stay.", "category": "mystical", "reason": "Same concept" },
+      { "text": "What you\u2019ve been holding will find its way out.", "category": "mystical", "reason": "Same energy" },
+      { "text": "Hack it up. You\u2019ll feel better.", "category": "mystical", "reason": "Same advice" }
+    ]
+  },
+  {
+    "group_id": 114,
+    "concept": "I know more than I\u2019m sharing \u2014 pattern cluster",
+    "keeper": { "text": "I have thousands of answers I\u2019ll never give you. Know that.", "category": "mystical" },
+    "cuts": [
+      { "text": "The universe and I have an understanding. I\u2019m not sharing.", "category": "mystical", "reason": "Same withholding" },
+      { "text": "I know something you don\u2019t know. :)", "category": "mystical", "reason": "Same smugness" },
+      { "text": "I\u2019ve been sworn to secrecy.", "category": "mystical", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 117,
+    "concept": "Spiritual awakening / higher frequency \u2014 pattern cluster",
+    "keeper": { "text": "Spiritual awakening in progress. Do not disturb.", "category": "mystical" },
+    "cuts": [
+      { "text": "I\u2019m on a frequency you haven\u2019t found yet.", "category": "mystical", "reason": "Same concept" },
+      { "text": "I am vibrating at a frequency only the houseplants understand.", "category": "mystical", "reason": "Same frequency concept" }
+    ]
+  },
+  {
+    "group_id": 1,
+    "concept": "Cat dismissing with \u2018no\u2019 \u2014 pattern cluster",
+    "keeper": { "text": "No.", "category": "cold" },
+    "cuts": [
+      { "text": "Hmm. No.", "category": "cold", "reason": "Just 'No.' with filler" },
+      { "text": "Hard no.", "category": "cold", "reason": "Synonym without personality" },
+      { "text": "Absolutely not.", "category": "cold", "reason": "Same energy, just louder" },
+      { "text": "I refuse.", "category": "cold", "reason": "Same dismissal, less punch" }
+    ]
+  },
+  {
+    "group_id": 3,
+    "concept": "Oracle is closed/unavailable \u2014 pattern cluster",
+    "keeper": { "text": "The oracle is closed.", "category": "cold" },
+    "cuts": [
+      { "text": "I\u2019m unavailable.", "category": "cold", "reason": "Same message, less character" },
+      { "text": "My answer is my absence.", "category": "cold", "reason": "Overwrought version" },
+      { "text": "I\u2019ve chosen not to engage.", "category": "cold", "reason": "Corporate-speak" },
+      { "text": "The oracle has no comment.", "category": "cold", "reason": "Same concept without earning space" }
+    ]
+  },
+  {
+    "group_id": 7,
+    "concept": "The audacity \u2014 pattern cluster",
+    "keeper": { "text": "The audacity. The AUDACITY.", "category": "angry" },
+    "cuts": [
+      { "text": "The nerve. The absolute nerve.", "category": "angry", "reason": "Same structure, 'audacity' is more iconic" },
+      { "text": "The audacity of this question.", "category": "judgy", "reason": "Weaker, more specific" },
+      { "text": "The audacity to ask. The audacity to receive. Be audacious.", "category": "demanding", "reason": "Overworks the word" },
+      { "text": "The audacity. And I say this with full audacity of my own.", "category": "judgy", "reason": "Extended, dilutes punch" }
+    ]
+  }
+];
+
+// -- STORAGE --
+const STORAGE_KEY = 'cull-r3-pattern-floods-v3';
+
+function saveState() {
+  const state = { cutItems, groupReviewed, focusedGroup, focusedItem, activeTab };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+// -- STATE --
+// cutItems[gi] is a Set of item indices that have been cut
+// itemIndex: 0 = keeper, 1+ = cuts (1-based into cuts array)
+let cutItems = DATA.map(() => new Set());
+// groupReviewed[gi] = true if group has been explicitly marked reviewed
+let groupReviewed = DATA.map(() => false);
+let focusedGroup = 0;
+let focusedItem = 0;
+let activeTab = 'cuts';
+
+// Restore from localStorage
+const saved = loadState();
+if (saved) {
+  if (saved.cutItems) {
+    saved.cutItems.forEach((arr, gi) => {
+      if (gi < cutItems.length) cutItems[gi] = new Set(arr);
+    });
+  }
+  if (saved.groupReviewed) {
+    saved.groupReviewed.forEach((val, gi) => {
+      if (gi < groupReviewed.length) groupReviewed[gi] = val;
+    });
+  }
+  if (typeof saved.focusedGroup === 'number') focusedGroup = saved.focusedGroup;
+  if (typeof saved.focusedItem === 'number') focusedItem = saved.focusedItem;
+  if (saved.activeTab) activeTab = saved.activeTab;
+}
+
+// Override saveState to serialize Sets as arrays
+function saveState() {
+  const state = {
+    cutItems: cutItems.map(s => [...s]),
+    groupReviewed,
+    focusedGroup,
+    focusedItem,
+    activeTab
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// Helper: total items in a group (keeper + cuts)
+function groupItemCount(gi) {
+  return 1 + DATA[gi].cuts.length;
+}
+
+// Helper: is a group considered "reviewed"?
+// A group is reviewed if: explicitly marked reviewed OR at least one item has been cut
+function isGroupReviewed(gi) {
+  return groupReviewed[gi] || cutItems[gi].size > 0;
+}
+
+// -- RENDER --
+function render() {
+  const container = document.getElementById('container');
+  container.innerHTML = '';
+
+  DATA.forEach((group, gi) => {
+    const reviewed = isGroupReviewed(gi);
+    const el = document.createElement('div');
+    el.className = 'group' + (gi === focusedGroup ? ' focused' : '') + (reviewed ? ' group-reviewed' : '');
+    el.id = 'group-' + gi;
+    el.dataset.gi = gi;
+
+    const cutCount = cutItems[gi].size;
+    const totalItems = groupItemCount(gi);
+
+    let badgeText, badgeClass;
+    if (reviewed && cutCount > 0) {
+      badgeText = `${cutCount} cut, ${totalItems - cutCount} stay`;
+      badgeClass = 'has-cuts';
+    } else if (reviewed) {
+      badgeText = 'Reviewed \u2014 all stay';
+      badgeClass = 'done';
+    } else {
+      badgeText = `${totalItems} items`;
+      badgeClass = 'pending';
+    }
+
+    el.innerHTML = `
+      <div class="group-header" onclick="toggleGroup(${gi})">
+        <span class="group-id">#${group.group_id}</span>
+        <span class="group-title">${escHtml(group.concept)}</span>
+        <span class="group-badge ${badgeClass}">${badgeText}</span>
+        <span class="collapse-icon">&#9660;</span>
+      </div>
+      <div class="group-body">
+        ${renderKeeper(gi, group.keeper)}
+        ${group.cuts.map((cut, ci) => renderCut(gi, ci, cut)).join('')}
+        ${renderGroupDone(gi)}
+      </div>
+    `;
+    container.appendChild(el);
+  });
+
+  // Set active export tab
+  document.querySelectorAll('.export-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === activeTab);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function renderKeeper(gi, keeper) {
+  const isCut = cutItems[gi].has(0);
+  const isFocused = gi === focusedGroup && focusedItem === 0;
+  let cls = 'keeper-block';
+  if (isFocused) cls += ' item-focused';
+  if (isCut) cls += ' decided-cut';
+
+  let decidedHtml = '';
+  if (isCut) decidedHtml = '<span class="decided-label was-cut">CUT</span>';
+
+  return `
+    <div class="${cls}" id="item-${gi}-0" data-gi="${gi}" data-ci="0">
+      <div class="keeper-label">Suggested Keeper</div>
+      <div class="keeper-text">${escHtml(keeper.text)}</div>
+      <span class="keeper-cat">${keeper.category}</span>
+      <div class="cut-actions" style="margin-top: 10px;">
+        <button class="btn btn-cut${isCut ? ' active' : ''}" onclick="toggleCut(${gi},0)">CUT</button>
+        ${decidedHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderCut(gi, ci, cut) {
+  const itemIdx = ci + 1;
+  const isCut = cutItems[gi].has(itemIdx);
+  const isFocused = gi === focusedGroup && focusedItem === itemIdx;
+  let cls = 'cut-item';
+  if (isFocused) cls += ' item-focused';
+  if (isCut) cls += ' decided-cut';
+
+  let decidedHtml = '';
+  if (isCut) decidedHtml = '<span class="decided-label was-cut">CUT</span>';
+
+  return `
+    <div class="${cls}" id="item-${gi}-${itemIdx}" data-gi="${gi}" data-ci="${itemIdx}">
+      <div class="cut-text">${escHtml(cut.text)}</div>
+      <div class="cut-meta">
+        <span class="cat-tag">${cut.category}</span>
+        <span class="cut-reason">${escHtml(cut.reason)}</span>
+      </div>
+      <div class="cut-actions">
+        <button class="btn btn-cut${isCut ? ' active' : ''}" onclick="toggleCut(${gi},${itemIdx})">CUT</button>
+        ${decidedHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderGroupDone(gi) {
+  const reviewed = isGroupReviewed(gi);
+  const isExplicit = groupReviewed[gi];
+  return `
+    <div class="group-done-row">
+      <button class="btn-reviewed${isExplicit ? ' active' : ''}" onclick="toggleGroupReviewed(${gi})">
+        ${reviewed ? (isExplicit ? 'Reviewed' : 'Reviewed (has cuts)') : 'Mark Reviewed'}
+      </button>
+    </div>
+  `;
+}
+
+function escHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// -- ACTIONS --
+function toggleCut(gi, itemIdx) {
+  if (cutItems[gi].has(itemIdx)) {
+    cutItems[gi].delete(itemIdx);
+  } else {
+    cutItems[gi].add(itemIdx);
+  }
+  reRenderGroup(gi);
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function toggleGroupReviewed(gi) {
+  groupReviewed[gi] = !groupReviewed[gi];
+  reRenderGroup(gi);
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function reRenderGroup(gi) {
+  const groupEl = document.getElementById('group-' + gi);
+  if (!groupEl) return;
+  const group = DATA[gi];
+  const reviewed = isGroupReviewed(gi);
+
+  groupEl.className = 'group' + (gi === focusedGroup ? ' focused' : '') + (reviewed ? ' group-reviewed' : '');
+  if (groupEl.classList.contains('collapsed')) groupEl.className += ' collapsed';
+
+  const cutCount = cutItems[gi].size;
+  const totalItems = groupItemCount(gi);
+
+  const badge = groupEl.querySelector('.group-badge');
+  if (reviewed && cutCount > 0) {
+    badge.textContent = `${cutCount} cut, ${totalItems - cutCount} stay`;
+    badge.className = 'group-badge has-cuts';
+  } else if (reviewed) {
+    badge.textContent = 'Reviewed \u2014 all stay';
+    badge.className = 'group-badge done';
+  } else {
+    badge.textContent = `${totalItems} items`;
+    badge.className = 'group-badge pending';
+  }
+
+  const body = groupEl.querySelector('.group-body');
+  body.innerHTML = `
+    ${renderKeeper(gi, group.keeper)}
+    ${group.cuts.map((cut, ci) => renderCut(gi, ci, cut)).join('')}
+    ${renderGroupDone(gi)}
+  `;
+}
+
+function toggleGroup(gi) {
+  const el = document.getElementById('group-' + gi);
+  if (!el) return;
+  el.classList.toggle('collapsed');
+}
+
+// -- STATS --
+function updateStats() {
+  const totalGroups = DATA.length;
+  const reviewedGroups = DATA.filter((_, gi) => isGroupReviewed(gi)).length;
+  const totalCuts = cutItems.reduce((sum, s) => sum + s.size, 0);
+  const totalItems = DATA.reduce((sum, g) => sum + 1 + g.cuts.length, 0);
+  const remaining = totalItems - totalCuts;
+
+  document.getElementById('stat-groups').textContent = `${reviewedGroups}/${totalGroups}`;
+  document.getElementById('stat-cut').textContent = totalCuts;
+  document.getElementById('stat-remaining').textContent = remaining;
+
+  const pct = totalGroups > 0 ? Math.round((reviewedGroups / totalGroups) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  const jumpBtn = document.getElementById('btn-jump');
+  jumpBtn.disabled = reviewedGroups >= totalGroups;
+}
+
+// -- JUMP --
+function jumpToNext() {
+  for (let gi = 0; gi < DATA.length; gi++) {
+    if (!isGroupReviewed(gi)) {
+      focusedGroup = gi;
+      focusedItem = 0;
+      updateFocusVisuals();
+      const groupEl = document.getElementById('group-' + gi);
+      if (groupEl && groupEl.classList.contains('collapsed')) {
+        groupEl.classList.remove('collapsed');
+      }
+      scrollToGroup(gi);
+      saveState();
+      return;
+    }
+  }
+}
+
+// -- KEYBOARD --
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  const key = e.key.toLowerCase();
+
+  if (key === 'j') {
+    e.preventDefault();
+    focusedGroup = Math.min(focusedGroup + 1, DATA.length - 1);
+    focusedItem = 0;
+    scrollToGroup(focusedGroup);
+    updateFocusVisuals();
+    saveState();
+  } else if (key === 'k') {
+    e.preventDefault();
+    focusedGroup = Math.max(focusedGroup - 1, 0);
+    focusedItem = 0;
+    scrollToGroup(focusedGroup);
+    updateFocusVisuals();
+    saveState();
+  } else if (key === 'arrowdown') {
+    e.preventDefault();
+    const maxItem = groupItemCount(focusedGroup) - 1;
+    focusedItem = Math.min(focusedItem + 1, maxItem);
+    scrollToItem(focusedGroup, focusedItem);
+    updateFocusVisuals();
+    saveState();
+  } else if (key === 'arrowup') {
+    e.preventDefault();
+    focusedItem = Math.max(focusedItem - 1, 0);
+    scrollToItem(focusedGroup, focusedItem);
+    updateFocusVisuals();
+    saveState();
+  } else if (key === 'n') {
+    e.preventDefault();
+    toggleCut(focusedGroup, focusedItem);
+  } else if (key === 'd' || key === 'enter') {
+    e.preventDefault();
+    toggleGroupReviewed(focusedGroup);
+  } else if (key === 'c') {
+    e.preventDefault();
+    toggleGroup(focusedGroup);
+  }
+});
+
+function scrollToGroup(gi) {
+  const el = document.getElementById('group-' + gi);
+  if (!el) return;
+  if (el.classList.contains('collapsed')) el.classList.remove('collapsed');
+  const headerH = document.getElementById('header').offsetHeight + 40;
+  const rect = el.getBoundingClientRect();
+  const scrollTop = window.scrollY + rect.top - headerH;
+  window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+}
+
+function scrollToItem(gi, itemIdx) {
+  const el = document.getElementById('item-' + gi + '-' + itemIdx);
+  if (!el) return;
+  const groupEl = document.getElementById('group-' + gi);
+  if (groupEl && groupEl.classList.contains('collapsed')) groupEl.classList.remove('collapsed');
+  const headerH = document.getElementById('header').offsetHeight + 40;
+  const rect = el.getBoundingClientRect();
+  const scrollTop = window.scrollY + rect.top - headerH;
+  window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+}
+
+function updateFocusVisuals() {
+  document.querySelectorAll('.group').forEach((el, i) => {
+    el.classList.toggle('focused', i === focusedGroup);
+  });
+  document.querySelectorAll('.keeper-block, .cut-item').forEach(el => {
+    const gi = parseInt(el.dataset.gi);
+    const ci = parseInt(el.dataset.ci);
+    el.classList.toggle('item-focused', gi === focusedGroup && ci === focusedItem);
+  });
+}
+
+// -- EXPORT --
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.export-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  updateExport();
+  saveState();
+}
+
+function updateExport() {
+  const pre = document.getElementById('export-pre');
+
+  if (activeTab === 'cuts') {
+    const cuts = [];
+    DATA.forEach((group, gi) => {
+      if (cutItems[gi].has(0)) {
+        cuts.push({ text: group.keeper.text, category: group.keeper.category, group: group.concept });
+      }
+      group.cuts.forEach((cut, ci) => {
+        if (cutItems[gi].has(ci + 1)) {
+          cuts.push({ text: cut.text, category: cut.category, group: group.concept });
+        }
+      });
+    });
+    pre.textContent = JSON.stringify(cuts, null, 2);
+  } else if (activeTab === 'keeps') {
+    const keeps = [];
+    DATA.forEach((group, gi) => {
+      if (!cutItems[gi].has(0)) {
+        keeps.push({ text: group.keeper.text, category: group.keeper.category });
+      }
+      group.cuts.forEach((cut, ci) => {
+        if (!cutItems[gi].has(ci + 1)) {
+          keeps.push({ text: cut.text, category: cut.category });
+        }
+      });
+    });
+    pre.textContent = JSON.stringify(keeps, null, 2);
+  } else if (activeTab === 'all') {
+    const allCuts = [];
+    const allKeeps = [];
+    DATA.forEach((group, gi) => {
+      const allItems = [
+        { data: group.keeper, itemIdx: 0 },
+        ...group.cuts.map((cut, ci) => ({ data: cut, itemIdx: ci + 1 }))
+      ];
+      allItems.forEach(({ data, itemIdx }) => {
+        const entry = { text: data.text, category: data.category };
+        if (cutItems[gi].has(itemIdx)) {
+          entry.group = group.concept;
+          allCuts.push(entry);
+        } else {
+          allKeeps.push(entry);
+        }
+      });
+    });
+    const totalItems = DATA.reduce((sum, g) => sum + 1 + g.cuts.length, 0);
+    const result = {
+      summary: {
+        total_items: totalItems,
+        cuts: allCuts.length,
+        keeps: allKeeps.length,
+        groups_reviewed: DATA.filter((_, gi) => isGroupReviewed(gi)).length,
+        groups_total: DATA.length
+      },
+      cuts: allCuts,
+      keeps: allKeeps
+    };
+    pre.textContent = JSON.stringify(result, null, 2);
+  }
+
+  const btn = document.getElementById('btn-copy');
+  btn.textContent = 'Copy';
+  btn.classList.remove('copied');
+}
+
+function copyExport() {
+  const pre = document.getElementById('export-pre');
+  const btn = document.getElementById('btn-copy');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    const range = document.createRange();
+    range.selectNodeContents(pre);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// -- INIT --
+render();
+</script>
+</body>
+</html>

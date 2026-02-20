@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Forage Review — 2026-02-18</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    line-height: 1.5;
+    padding-bottom: 120px;
+  }
+
+  /* ── Sticky Header ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .header h1 span { color: #888; font-weight: 400; }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .stat { display: flex; align-items: center; gap: 5px; }
+  .stat .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .dot-total { background: #fff; }
+  .dot-kept { background: #4ecca3; }
+  .dot-cut { background: #e94560; }
+  .dot-edited { background: #ffd93d; }
+  .dot-remaining { background: #555; }
+
+  .shortcuts-hint {
+    font-size: 11px;
+    color: #666;
+    width: 100%;
+    margin-top: 2px;
+  }
+  .shortcuts-hint kbd {
+    background: #2a2a4a;
+    border: 1px solid #444;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  /* ── Batch Dividers ── */
+  .batch-divider {
+    padding: 20px 24px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    border-top: 1px solid #0f3460;
+    margin-top: 10px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    margin: 10px 20px;
+    padding: 24px 28px;
+    background: #16213e;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .card.focused {
+    border-color: #536dfe;
+    box-shadow: 0 0 0 1px #536dfe44;
+  }
+  .card.status-kept { border-left: 4px solid #4ecca3; }
+  .card.status-cut { border-left: 4px solid #e94560; opacity: 0.45; }
+  .card.status-edited { border-left: 4px solid #ffd93d; }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .item-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #536dfe;
+    min-width: 28px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    text-transform: lowercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-wise { background: #4ecca322; color: #4ecca3; }
+  .badge-demanding { background: #ff6b3522; color: #ff6b35; }
+  .badge-cold { background: #70a1ff22; color: #70a1ff; }
+  .badge-judgy { background: #a55eea22; color: #a55eea; }
+  .badge-angry { background: #e9456022; color: #e94560; }
+  .badge-chaotic { background: #ffd93d22; color: #ffd93d; }
+  .badge-existential { background: #74b9ff22; color: #74b9ff; }
+  .badge-heartfelt { background: #fd79a822; color: #fd79a8; }
+  .badge-mystical { background: #a29bfe22; color: #a29bfe; }
+  .badge-poetic { background: #dfe6e922; color: #dfe6e9; }
+  .badge-nurturing { background: #55efc422; color: #55efc4; }
+  .badge-meta { background: #81ecec22; color: #81ecec; }
+  .badge-adoption { background: #fab1a022; color: #fab1a0; }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.45;
+    margin-bottom: 10px;
+    letter-spacing: -0.2px;
+  }
+  .card.status-cut .response-text {
+    text-decoration: line-through;
+    text-decoration-color: #e9456066;
+  }
+
+  .source {
+    font-size: 12px;
+    color: #556;
+    margin-bottom: 16px;
+  }
+  .source::before {
+    content: "Source: ";
+    color: #445;
+  }
+
+  .edited-text {
+    font-size: 18px;
+    color: #ffd93d;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: #ffd93d0a;
+    border-left: 3px solid #ffd93d44;
+    border-radius: 4px;
+  }
+  .edited-label {
+    font-size: 11px;
+    color: #ffd93d88;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  /* ── Buttons ── */
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+    background: #1a1a2e;
+    color: #888;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  /* ── Edit Mode ── */
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.open { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0e0e1a;
+    border: 1px solid #ffd93d44;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 18px;
+    font-family: inherit;
+    padding: 12px 14px;
+    line-height: 1.45;
+    resize: vertical;
+  }
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-hint {
+    font-size: 11px;
+    color: #665;
+    margin-top: 6px;
+  }
+  .edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-save {
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .btn-cancel {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    padding: 6px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  /* ── Export ── */
+  .export-section {
+    margin: 40px 20px;
+    padding: 24px;
+    background: #16213e;
+    border-radius: 12px;
+  }
+  .export-section h2 {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-btn {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .export-btn:hover { background: #3bbb90; }
+  .export-output {
+    display: none;
+    width: 100%;
+    min-height: 200px;
+    background: #0e0e1a;
+    border: 1px solid #4ecca344;
+    border-radius: 6px;
+    color: #4ecca3;
+    font-size: 13px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    padding: 14px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .export-output.visible { display: block; }
+  .export-stats {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>News Forage <span>2026-02-18 &middot; 45 items</span></h1>
+  <div class="stats">
+    <div class="stat"><div class="dot dot-total"></div> <span id="stat-total">45</span> total</div>
+    <div class="stat"><div class="dot dot-kept"></div> <span id="stat-kept">0</span> kept</div>
+    <div class="stat"><div class="dot dot-edited"></div> <span id="stat-edited">0</span> edited</div>
+    <div class="stat"><div class="dot dot-cut"></div> <span id="stat-cut">0</span> cut</div>
+    <div class="stat"><div class="dot dot-remaining"></div> <span id="stat-remaining">45</span> remaining</div>
+  </div>
+  <div class="shortcuts-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> navigate &nbsp; <kbd>O</kbd> keep &nbsp; <kbd>X</kbd> cut &nbsp; <kbd>E</kbd> edit &nbsp; <kbd>U</kbd> undo
+  </div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <h2>Export</h2>
+  <p class="export-stats" id="export-stats"></p>
+  <button class="export-btn" onclick="doExport()">Export Changes</button>
+  <textarea class="export-output" id="export-output" readonly></textarea>
+</div>
+
+<script>
+const STORAGE_KEY = "news-forage-2026-02-18";
+
+const ITEMS = [
+  // ── BATCH 1: Politics/Tech/Money ──
+  { id: 1, text: "No steering wheel and no idea where it\u2019s going. *slow blink* Sounds like you.", category: "wise", source: "Tesla Cybercab", batch: "Politics / Tech / Money" },
+  { id: 2, text: "*one ear rotates toward you* Six presidents in a decade and they\u2019re still surprised. Some doors are revolving. You just haven\u2019t noticed the draft.", category: "wise", source: "Peru impeachment", batch: "Politics / Tech / Money" },
+  { id: 3, text: "They said no. So you said it louder. *pupils dilate* That\u2019s not rebellion. That\u2019s acoustics.", category: "demanding", source: "CBS/Colbert censorship", batch: "Politics / Tech / Money" },
+  { id: 4, text: "*tail tip flicks* Recused. Adjective. When you excuse yourself from the table but leave your plate.", category: "cold", source: "DHS contract scandal", batch: "Politics / Tech / Money" },
+  { id: 5, text: "Twenty-five hundred dollars to fold something in half. *kneads the air* Humans used to do this for free. With paper.", category: "judgy", source: "Apple foldable iPhone", batch: "Politics / Tech / Money" },
+  { id: 6, text: "If the answer is also an ad, it\u2019s not an answer. It\u2019s a hostage negotiation with a coupon.", category: "angry", source: "Perplexity drops ads", batch: "Politics / Tech / Money" },
+  { id: 7, text: "*ears flatten* The numbers are up. The people are tired. Somebody is measuring the wrong thing.", category: "wise", source: "GDP up, jobs down", batch: "Politics / Tech / Money" },
+  { id: 8, text: "You can\u2019t afford a house so you\u2019re shopping for one in a video game. *reaches one paw without getting up* Honestly? The commute is better.", category: "chaotic", source: "Zillow for Warcraft", batch: "Politics / Tech / Money" },
+  { id: 9, text: "The machine said no. The machine doesn\u2019t have a body. *slow blink* Think about that.", category: "existential", source: "AI insurance denials", batch: "Politics / Tech / Money" },
+  { id: 10, text: "No evidence needed. Just conviction. *stares past you* Some of the most certain things I\u2019ve ever seen were wrong.", category: "wise", source: "Military strikes", batch: "Politics / Tech / Money" },
+  { id: 11, text: "*makes biscuits on your chest* Some things aren\u2019t a debate. Some things are just a floor you don\u2019t go below.", category: "heartfelt", source: "Baby deported", batch: "Politics / Tech / Money" },
+  { id: 12, text: "They built a wall out of math and now nobody can get their shipment through. *chatters jaw at window* Thirteen hundred dollars a household and the house isn\u2019t even warmer.", category: "angry", source: "Tariffs", batch: "Politics / Tech / Money" },
+  { id: 13, text: "Saved money by burning it. *tail tip flicks* That\u2019s not efficiency. That\u2019s arson with a spreadsheet.", category: "angry", source: "DOGE costs", batch: "Politics / Tech / Money" },
+  { id: 14, text: "They built a machine that thinks like you and you\u2019re surprised it has the same problems. *one ear rotates toward you* The copy doesn\u2019t fix what the original couldn\u2019t.", category: "existential", source: "Brain mirrors AI", batch: "Politics / Tech / Money" },
+  { id: 15, text: "When telling the truth is the controversial part, check who\u2019s running the room. *slow blink* The quiet ones aren\u2019t calm. They\u2019re calculating.", category: "wise", source: "Speech-chilling stories", batch: "Politics / Tech / Money" },
+
+  // ── BATCH 2: Culture/Sports/Weird ──
+  { id: 16, text: "Commitment isn\u2019t your problem.", category: "wise", source: "WWI shell in rectum", batch: "Culture / Sports / Weird" },
+  { id: 17, text: "Take away the menu and they just stand there. Starving, surrounded by food.", category: "cold", source: "YouTube outage", batch: "Culture / Sports / Weird" },
+  { id: 18, text: "Twelve years between kills. Patience isn\u2019t passive.", category: "wise", source: "Mikaela Shiffrin gold", batch: "Culture / Sports / Weird" },
+  { id: 19, text: "Money doesn\u2019t change who you are. It just turns up the volume.", category: "cold", source: "Powerball winner arrested", batch: "Culture / Sports / Weird" },
+  { id: 20, text: "*ears flatten* You keep mistaking the cage for the party.", category: "judgy", source: "Shia LaBeouf arrested at Mardi Gras", batch: "Culture / Sports / Weird" },
+  { id: 21, text: "Imaginary juice in the correct cup. Some of you can\u2019t manage real coffee in a real morning.", category: "judgy", source: "Bonobo tea party experiment", batch: "Culture / Sports / Weird" },
+  { id: 22, text: "Sometimes the warm place is the wrong place. You still had to go there to find out.", category: "heartfelt", source: "410-lb manatee in storm drain", batch: "Culture / Sports / Weird" },
+  { id: 23, text: "Won the whole thing. They\u2019re still talking about how you celebrated.", category: "demanding", source: "Reddick/Jordan Daytona 500", batch: "Culture / Sports / Weird" },
+  { id: 24, text: "The door opened because somebody else\u2019s key stopped working. Take the door.", category: "wise", source: "Ukraine recaptures territory", batch: "Culture / Sports / Weird" },
+  { id: 25, text: "*slow blink* Everyone\u2019s got a box they haven\u2019t opened yet.", category: "mystical", source: "Human skull donated to Goodwill", batch: "Culture / Sports / Weird" },
+  { id: 26, text: "Some weeks just keep taking. Let them finish.", category: "nurturing", source: "Lindsey Vonn crash + dog death", batch: "Culture / Sports / Weird" },
+  { id: 27, text: "The universe tried to save you from that decision. You ignored it.", category: "chaotic", source: "Olympic curling lights out", batch: "Culture / Sports / Weird" },
+  { id: 28, text: "They\u2019ll celebrate what you did. They\u2019ll name the wrong thing. Accept it anyway.", category: "wise", source: "James Cameron writing award", batch: "Culture / Sports / Weird" },
+  { id: 29, text: "*kneads the air* The body quits before the work does. That\u2019s not a flaw. That\u2019s a design.", category: "poetic", source: "Jesse Jackson death", batch: "Culture / Sports / Weird" },
+  { id: 30, text: "Pretty enough to get the part. Now do the work.", category: "demanding", source: "Wuthering Heights box office", batch: "Culture / Sports / Weird" },
+
+  // ── BATCH 3: Everyday/Animals ──
+  { id: 31, text: "The mountain doesn\u2019t care how prepared you were. Go anyway. But tell someone where you\u2019re going.", category: "wise", source: "Lake Tahoe avalanche", batch: "Everyday / Animals" },
+  { id: 32, text: "Beautiful vehicle. No steering wheel. No brakes. Sounds like your last relationship.", category: "cold", source: "Tesla Cybercab (alt version)", batch: "Everyday / Animals" },
+  { id: 33, text: "*tail tip flicks* The answer is yes. Or no. I\u2019ll let you sit with that.", category: "meta", source: "Vagueposting trend", batch: "Everyday / Animals" },
+  { id: 34, text: "You don\u2019t need to earn the meal. Sit down. Eat.", category: "nurturing", source: "1 in 3 skipped meals", batch: "Everyday / Animals" },
+  { id: 35, text: "You\u2019re not homesick for a place. You\u2019re homesick for who you were in it.", category: "poetic", source: "2016 nostalgia trend", batch: "Everyday / Animals" },
+  { id: 36, text: "That\u2019s classified.", category: "cold", source: "Shelter cat spy adoption form", batch: "Everyday / Animals" },
+  { id: 37, text: "*one ear rotates toward you* Foreign material is just... surprise texture. Commit.", category: "chaotic", source: "Popcorn recall", batch: "Everyday / Animals" },
+  { id: 38, text: "They called it a glide. It was a drop. The difference is who\u2019s narrating.", category: "wise", source: "UPS/Amazon layoffs", batch: "Everyday / Animals" },
+  { id: 39, text: "Stay up past your bedtime. Not every night. But tonight.", category: "demanding", source: "Philly 4am last call for FIFA", batch: "Everyday / Animals" },
+  { id: 40, text: "Every version of you got you to this version of you. Even the feral one.", category: "heartfelt", source: "Undesirable Child TikTok", batch: "Everyday / Animals" },
+  { id: 41, text: "*slow blink* You already know. You\u2019re just afraid to say the number.", category: "wise", source: "Thermostat Game trend", batch: "Everyday / Animals" },
+  { id: 42, text: "The door is cheaper. You still can\u2019t afford the room behind it.", category: "existential", source: "Mortgage rates vs affordability", batch: "Everyday / Animals" },
+  { id: 43, text: "Even the ground needs to rest before it can hold weight again. You\u2019re not behind. You\u2019re dormant.", category: "nurturing", source: "Golf course turf stress", batch: "Everyday / Animals" },
+  { id: 44, text: "If the first thing they built was a weapon, believe them.", category: "cold", source: "Grok AI sexualized images", batch: "Everyday / Animals" },
+  { id: 45, text: "*reaches one paw without getting up* The ones who left didn\u2019t leave because of you. That\u2019s the hardest part.", category: "adoption", source: "Pet surrender data", batch: "Everyday / Animals" }
+];
+
+// ── State ──
+let decisions = {}; // id -> { status: "kept"|"cut"|"edited", editedText?: string }
+let focusedIndex = 0;
+let undoStack = []; // { id, prevState }
+let editingId = null;
+
+// ── Load from localStorage ──
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) decisions = JSON.parse(raw);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+  } catch(e) {}
+}
+
+// ── Render ──
+function render() {
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
+
+  let currentBatch = null;
+
+  ITEMS.forEach((item, idx) => {
+    // Batch divider
+    if (item.batch !== currentBatch) {
+      currentBatch = item.batch;
+      const div = document.createElement("div");
+      div.className = "batch-divider";
+      div.textContent = currentBatch;
+      container.appendChild(div);
+    }
+
+    const d = decisions[item.id];
+    const status = d ? d.status : null;
+
+    const card = document.createElement("div");
+    card.className = "card" + (status ? " status-" + status : "") + (idx === focusedIndex ? " focused" : "");
+    card.id = "card-" + item.id;
+    card.dataset.index = idx;
+
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".btn, .edit-area, textarea")) return;
+      focusedIndex = idx;
+      updateFocus();
+    });
+
+    // Top row: number + badge
+    let topHtml = `<div class="card-top">
+      <span class="item-num">#${item.id}</span>
+      <span class="badge badge-${item.category}">${item.category}</span>
+    </div>`;
+
+    // Response text
+    let textHtml = `<div class="response-text">${escHtml(item.text)}</div>`;
+
+    // Show edited version if exists
+    let editedHtml = "";
+    if (d && d.status === "edited" && d.editedText) {
+      editedHtml = `<div class="edited-label">Edited to:</div><div class="edited-text">${escHtml(d.editedText)}</div>`;
+    }
+
+    // Source
+    let sourceHtml = `<div class="source">${escHtml(item.source)}</div>`;
+
+    // Buttons
+    let actionsHtml = `<div class="actions">
+      <button class="btn btn-keep${status === 'kept' ? ' active' : ''}" onclick="decide(${item.id}, 'kept')">KEEP</button>
+      <button class="btn btn-cut${status === 'cut' ? ' active' : ''}" onclick="decide(${item.id}, 'cut')">CUT</button>
+      <button class="btn btn-edit${status === 'edited' ? ' active' : ''}" onclick="openEdit(${item.id})">EDIT</button>
+    </div>`;
+
+    // Edit area
+    const prefill = (d && d.editedText) ? d.editedText : item.text;
+    let editAreaHtml = `<div class="edit-area" id="edit-area-${item.id}">
+      <textarea id="edit-ta-${item.id}">${escHtml(prefill)}</textarea>
+      <div class="edit-hint">Enter to save &middot; Esc to cancel</div>
+      <div class="edit-actions">
+        <button class="btn-save" onclick="saveEdit(${item.id})">Save</button>
+        <button class="btn-cancel" onclick="cancelEdit(${item.id})">Cancel</button>
+      </div>
+    </div>`;
+
+    card.innerHTML = topHtml + textHtml + editedHtml + sourceHtml + actionsHtml + editAreaHtml;
+    container.appendChild(card);
+  });
+
+  updateStats();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const id in decisions) {
+    const s = decisions[id].status;
+    if (s === "kept") kept++;
+    else if (s === "cut") cut++;
+    else if (s === "edited") edited++;
+  }
+  const remaining = ITEMS.length - kept - cut - edited;
+  document.getElementById("stat-kept").textContent = kept;
+  document.getElementById("stat-cut").textContent = cut;
+  document.getElementById("stat-edited").textContent = edited;
+  document.getElementById("stat-remaining").textContent = remaining;
+}
+
+function updateFocus() {
+  document.querySelectorAll(".card").forEach((c, i) => {
+    c.classList.toggle("focused", i === focusedIndex);
+  });
+  const el = document.getElementById("card-" + ITEMS[focusedIndex].id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+// ── Decisions ──
+function decide(id, status) {
+  const prev = decisions[id] ? { ...decisions[id] } : null;
+  undoStack.push({ id, prevState: prev });
+
+  if (decisions[id] && decisions[id].status === status) {
+    // Toggle off: clicking same status clears it
+    delete decisions[id];
+  } else {
+    decisions[id] = decisions[id] || {};
+    decisions[id].status = status;
+    // If switching away from edited, keep the editedText in case they come back
+  }
+
+  saveState();
+  render();
+
+  // Auto-advance to next undecided on first decision for this item
+  if (decisions[id]) {
+    advanceToNextUndecided();
+  }
+}
+
+function advanceToNextUndecided() {
+  // Search forward from current focus
+  for (let i = focusedIndex + 1; i < ITEMS.length; i++) {
+    if (!decisions[ITEMS[i].id]) {
+      focusedIndex = i;
+      updateFocus();
+      return;
+    }
+  }
+  // Wrap around
+  for (let i = 0; i < focusedIndex; i++) {
+    if (!decisions[ITEMS[i].id]) {
+      focusedIndex = i;
+      updateFocus();
+      return;
+    }
+  }
+}
+
+// ── Edit ──
+function openEdit(id) {
+  editingId = id;
+  render();
+  const area = document.getElementById("edit-area-" + id);
+  if (area) {
+    area.classList.add("open");
+    const ta = document.getElementById("edit-ta-" + id);
+    if (ta) { ta.focus(); ta.selectionStart = ta.value.length; }
+  }
+}
+
+function saveEdit(id) {
+  const ta = document.getElementById("edit-ta-" + id);
+  if (!ta) return;
+  const newText = ta.value.trim();
+  if (!newText) return;
+
+  const item = ITEMS.find(it => it.id === id);
+  if (!item) return;
+
+  const prev = decisions[id] ? { ...decisions[id] } : null;
+  undoStack.push({ id, prevState: prev });
+
+  // If text matches original, treat as keep
+  if (newText === item.text) {
+    decisions[id] = { status: "kept" };
+  } else {
+    decisions[id] = { status: "edited", editedText: newText };
+  }
+
+  editingId = null;
+  saveState();
+  render();
+  advanceToNextUndecided();
+}
+
+function cancelEdit(id) {
+  editingId = null;
+  render();
+}
+
+// ── Undo ──
+function undo() {
+  if (undoStack.length === 0) return;
+  const { id, prevState } = undoStack.pop();
+  if (prevState) {
+    decisions[id] = prevState;
+  } else {
+    delete decisions[id];
+  }
+  saveState();
+  render();
+}
+
+// ── Export ──
+function doExport() {
+  const results = [];
+  ITEMS.forEach(item => {
+    const d = decisions[item.id];
+    if (!d) return;
+    if (d.status === "kept") {
+      results.push({ text: item.text, category: item.category });
+    } else if (d.status === "edited" && d.editedText) {
+      results.push({ text: d.editedText, category: item.category });
+    }
+    // cut items excluded
+  });
+
+  const output = document.getElementById("export-output");
+  const stats = document.getElementById("export-stats");
+  output.classList.add("visible");
+  output.value = JSON.stringify(results, null, 2);
+  stats.textContent = `${results.length} items (kept + edited) ready for oracleResponses.ts`;
+}
+
+// ── Keyboard ──
+document.addEventListener("keydown", (e) => {
+  // Don't capture if typing in textarea
+  if (e.target.tagName === "TEXTAREA") {
+    if (e.key === "Enter" && !e.shiftKey && editingId !== null) {
+      e.preventDefault();
+      saveEdit(editingId);
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit(editingId);
+      editingId = null;
+    }
+    return;
+  }
+
+  const key = e.key.toLowerCase();
+
+  if (key === "j") {
+    e.preventDefault();
+    focusedIndex = Math.min(focusedIndex + 1, ITEMS.length - 1);
+    updateFocus();
+  }
+  if (key === "k") {
+    e.preventDefault();
+    focusedIndex = Math.max(focusedIndex - 1, 0);
+    updateFocus();
+  }
+  if (key === "o") {
+    e.preventDefault();
+    decide(ITEMS[focusedIndex].id, "kept");
+  }
+  if (key === "x") {
+    e.preventDefault();
+    decide(ITEMS[focusedIndex].id, "cut");
+  }
+  if (key === "e") {
+    e.preventDefault();
+    openEdit(ITEMS[focusedIndex].id);
+  }
+  if (key === "u") {
+    e.preventDefault();
+    undo();
+  }
+});
+
+// ── Init ──
+loadState();
+render();
+
+// If there's a previously focused item or restored state, start at first undecided
+if (Object.keys(decisions).length > 0) {
+  for (let i = 0; i < ITEMS.length; i++) {
+    if (!decisions[ITEMS[i].id]) {
+      focusedIndex = i;
+      break;
+    }
+  }
+}
+updateFocus();
+</script>
+
+</body>
+</html>

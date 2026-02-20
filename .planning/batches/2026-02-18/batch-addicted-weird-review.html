@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Binge/Addiction + Weird Taxidermy + Alien Encounters</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  /* ── Sticky Header ── */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .sticky-header h1 {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-right: auto;
+    white-space: nowrap;
+  }
+
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .stat-pill.kept { background: rgba(78,204,163,0.2); color: #4ecca3; }
+  .stat-pill.cut { background: rgba(233,69,96,0.2); color: #e94560; }
+  .stat-pill.edited { background: rgba(255,217,61,0.2); color: #ffd93d; }
+  .stat-pill.remaining { background: rgba(255,255,255,0.1); color: #aaa; }
+
+  .keyboard-hint {
+    font-size: 0.75rem;
+    color: #666;
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .keyboard-hint kbd {
+    background: #0f3460;
+    border: 1px solid #1a4080;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    color: #8899bb;
+  }
+
+  /* ── Section Dividers ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 24px 20px;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #0f3460, transparent);
+  }
+
+  .section-divider h2 {
+    font-size: 0.95rem;
+    color: #8899bb;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Cards ── */
+  .card-container { padding: 0 24px; }
+
+  .card {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s, opacity 0.3s;
+    position: relative;
+  }
+
+  .card.focused {
+    outline: 2px solid #536dfe;
+    outline-offset: 2px;
+  }
+
+  .card.decided-keep { border-color: #4ecca3; }
+  .card.decided-cut {
+    border-color: #e94560;
+    opacity: 0.45;
+  }
+  .card.decided-cut .response-text { text-decoration: line-through; }
+  .card.decided-edit { border-color: #ffd93d; }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .card-number {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #536dfe;
+    background: rgba(83,109,254,0.15);
+    padding: 2px 10px;
+    border-radius: 12px;
+  }
+
+  .category-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cat-wise { background: rgba(78,204,163,0.2); color: #4ecca3; }
+  .cat-nurturing { background: rgba(255,183,77,0.2); color: #ffb74d; }
+  .cat-existential { background: rgba(149,117,205,0.2); color: #9575cd; }
+  .cat-demanding { background: rgba(233,69,96,0.2); color: #e94560; }
+  .cat-judgy { background: rgba(255,217,61,0.2); color: #ffd93d; }
+  .cat-chaotic { background: rgba(255,112,67,0.2); color: #ff7043; }
+  .cat-heartfelt { background: rgba(244,143,177,0.2); color: #f48fb1; }
+  .cat-mystical { background: rgba(129,212,250,0.2); color: #81d4fa; }
+  .cat-cold { background: rgba(176,190,197,0.2); color: #b0bec5; }
+  .cat-meta { background: rgba(206,147,216,0.2); color: #ce93d8; }
+
+  .response-text {
+    font-size: 1.2rem;
+    color: #fff;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    transition: text-decoration 0.3s;
+  }
+
+  .decision-label {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .decision-label.keep-label { background: rgba(78,204,163,0.2); color: #4ecca3; }
+  .decision-label.cut-label { background: rgba(233,69,96,0.2); color: #e94560; }
+  .decision-label.edit-label { background: rgba(255,217,61,0.2); color: #ffd93d; }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-undo {
+    background: transparent;
+    border: 1px solid #555;
+    color: #999;
+    font-size: 0.78rem;
+    padding: 6px 14px;
+  }
+
+  /* ── Edit Area ── */
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 100px;
+    background: #0f3460;
+    border: 1px solid #1a4080;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+  }
+
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-btns {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-save {
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.82rem;
+  }
+
+  .btn-cancel {
+    background: transparent;
+    border: 1px solid #555;
+    color: #999;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+  }
+
+  /* ── Export ── */
+  .export-section {
+    margin: 60px 24px 0;
+    padding: 24px;
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 12px;
+  }
+
+  .export-section h2 {
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .export-section textarea {
+    width: 100%;
+    min-height: 200px;
+    background: #0d1b3e;
+    border: 1px solid #1a4080;
+    border-radius: 8px;
+    color: #4ecca3;
+    font-family: 'Consolas', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    padding: 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .btn-copy {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-copy:hover { opacity: 0.85; }
+
+  .copy-feedback {
+    display: inline-block;
+    margin-left: 12px;
+    color: #4ecca3;
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .copy-feedback.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ── Sticky Header ── -->
+<header class="sticky-header">
+  <h1>Binge/Addiction + Weird Taxidermy + Alien Encounters</h1>
+  <span class="stat-pill kept" id="stat-kept">Kept: 0</span>
+  <span class="stat-pill cut" id="stat-cut">Cut: 0</span>
+  <span class="stat-pill edited" id="stat-edited">Edited: 0</span>
+  <span class="stat-pill remaining" id="stat-remaining">Remaining: 15</span>
+  <div class="keyboard-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> navigate
+    <kbd>O</kbd> keep
+    <kbd>X</kbd> cut
+    <kbd>E</kbd> edit
+    <kbd>Enter</kbd> save edit
+    <kbd>Esc</kbd> cancel
+    <kbd>U</kbd> undo
+  </div>
+</header>
+
+<!-- ── Section 1: Binge/Addiction Confessions ── -->
+<div class="section-divider"><h2>Binge / Addiction Confessions</h2></div>
+<div class="card-container" id="section-binge"></div>
+
+<!-- ── Section 2: Weird Taxidermy / Oddity Collections ── -->
+<div class="section-divider"><h2>Weird Taxidermy / Oddity Collections</h2></div>
+<div class="card-container" id="section-taxidermy"></div>
+
+<!-- ── Section 3: Alien Abduction / Bizarre Encounters ── -->
+<div class="section-divider"><h2>Alien Abduction / Bizarre Encounters</h2></div>
+<div class="card-container" id="section-alien"></div>
+
+<!-- ── Export ── -->
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <textarea id="export-area" readonly></textarea>
+  <br>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+  <span class="copy-feedback" id="copy-feedback">Copied!</span>
+</div>
+
+<script>
+const STORAGE_KEY = 'batch-addicted-weird-2026-02-18';
+
+const RESPONSES = [
+  // ── Binge / Addiction Confessions ──
+  { id: 1, text: "You said one more episode six hours ago. *slow blink* I respect the commitment.", category: "wise", section: "binge" },
+  { id: 2, text: "*ears rotate toward you* Yes. But also \u2014 have you eaten today, or are you still in the Wikipedia hole about cephalopods.", category: "nurturing", section: "binge" },
+  { id: 3, text: "The answer is the same as the answer to \u2018just one more turn\u2019 at 2 AM. You already know. You\u2019re not stopping.", category: "existential", section: "binge" },
+  { id: 4, text: "A man has been adding paper buildings to the same model city for 65 years. That\u2019s not a hobby. That\u2019s a vow. Make yours.", category: "demanding", section: "binge" },
+  { id: 5, text: "*doesn\u2019t look up* I watched you scroll for four hours. You didn\u2019t even blink. Magnificent.", category: "judgy", section: "binge" },
+
+  // ── Weird Taxidermy / Oddity Collections ──
+  { id: 6, text: "What looks regal from the side looks insane from the front. You know what I\u2019m telling you.", category: "wise", section: "taxidermy" },
+  { id: 7, text: "*one ear rotates* They described it as \u2018maniacally sad.\u2019 That\u2019s a mood. That\u2019s your mood. Proceed.", category: "chaotic", section: "taxidermy" },
+  { id: 8, text: "Someone built this using nothing but the skin and a few sketches. That\u2019s more effort than you\u2019re giving it. Go.", category: "demanding", section: "taxidermy" },
+  { id: 9, text: "The first scientists who saw a platypus thought it was a hoax. Sometimes the real thing looks impossible. Do it anyway.", category: "heartfelt", section: "taxidermy" },
+  { id: 10, text: "Platypus, Flatypus, Platysausage. *blinks once* Not everything has to make sense to deserve a label.", category: "chaotic", section: "taxidermy" },
+
+  // ── Alien Abduction / Bizarre Encounters ──
+  { id: 11, text: "Two couples showed up at the same ER. Both named Patrick and Patricia. Both redheads. Both with dogs named Buddy. *pupils dilate* The universe is not subtle.", category: "mystical", section: "alien" },
+  { id: 12, text: "They\u2019ll leave you with bits and pieces of things you can remember. *tail tip flicks* That\u2019s not aliens. That\u2019s dating.", category: "cold", section: "alien" },
+  { id: 13, text: "A man walked two llamas on a leash past a film set at 4 AM and no one said a word. Be the llama guy. Don\u2019t explain yourself.", category: "wise", section: "alien" },
+  { id: 14, text: "*makes biscuits* The only things I could move were my eyes. Which is also how I feel about your situation. I see everything. I\u2019m not getting up.", category: "meta", section: "alien" },
+  { id: 15, text: "A stranger pretended to be someone\u2019s friend for two hours at a coffee shop rather than embarrass them. *headbutts your hand* Some lies are the kindest thing.", category: "heartfelt", section: "alien" },
+];
+
+// ── State ──
+let decisions = {}; // id -> { status: 'keep'|'cut'|'edit', editedText?: string }
+let focusedIndex = 0;
+let editingId = null;
+let firstDecisionMade = false;
+
+// Load from localStorage
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    decisions = JSON.parse(saved);
+    firstDecisionMade = Object.keys(decisions).length > 0;
+  }
+} catch(e) {}
+
+// ── Render ──
+function renderCards() {
+  const sections = { binge: [], taxidermy: [], alien: [] };
+  RESPONSES.forEach(r => sections[r.section].push(r));
+
+  for (const [key, items] of Object.entries(sections)) {
+    const container = document.getElementById('section-' + key);
+    container.innerHTML = '';
+    items.forEach(r => {
+      const dec = decisions[r.id];
+      const globalIdx = RESPONSES.findIndex(x => x.id === r.id);
+      let cls = 'card';
+      if (globalIdx === focusedIndex) cls += ' focused';
+      if (dec) {
+        if (dec.status === 'keep') cls += ' decided-keep';
+        else if (dec.status === 'cut') cls += ' decided-cut';
+        else if (dec.status === 'edit') cls += ' decided-edit';
+      }
+
+      const displayText = (dec && dec.status === 'edit' && dec.editedText) ? dec.editedText : r.text;
+      const isEditing = editingId === r.id;
+
+      let decisionLabel = '';
+      if (dec) {
+        if (dec.status === 'keep') decisionLabel = '<span class="decision-label keep-label">Kept</span>';
+        else if (dec.status === 'cut') decisionLabel = '<span class="decision-label cut-label">Cut</span>';
+        else if (dec.status === 'edit') decisionLabel = '<span class="decision-label edit-label">Edited</span>';
+      }
+
+      container.innerHTML += `
+        <div class="${cls}" data-id="${r.id}" data-idx="${globalIdx}">
+          ${decisionLabel}
+          <div class="card-meta">
+            <span class="card-number">#${r.id}</span>
+            <span class="category-badge cat-${r.category}">${r.category}</span>
+          </div>
+          <div class="response-text">${escapeHtml(displayText)}</div>
+          <div class="btn-row">
+            <button class="btn btn-keep" onclick="decide(${r.id}, 'keep')">Keep</button>
+            <button class="btn btn-cut" onclick="decide(${r.id}, 'cut')">Cut</button>
+            <button class="btn btn-edit" onclick="openEdit(${r.id})">Edit</button>
+            ${dec ? `<button class="btn btn-undo" onclick="undo(${r.id})">Undo</button>` : ''}
+          </div>
+          <div class="edit-area ${isEditing ? 'visible' : ''}" id="edit-area-${r.id}">
+            <textarea id="edit-ta-${r.id}">${escapeHtml(displayText)}</textarea>
+            <div class="edit-btns">
+              <button class="btn-save" onclick="saveEdit(${r.id})">Save Edit</button>
+              <button class="btn-cancel" onclick="cancelEdit(${r.id})">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  updateStats();
+  updateExport();
+  updateFocusScroll();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const d of Object.values(decisions)) {
+    if (d.status === 'keep') kept++;
+    else if (d.status === 'cut') cut++;
+    else if (d.status === 'edit') edited++;
+  }
+  const remaining = RESPONSES.length - kept - cut - edited;
+  document.getElementById('stat-kept').textContent = `Kept: ${kept}`;
+  document.getElementById('stat-cut').textContent = `Cut: ${cut}`;
+  document.getElementById('stat-edited').textContent = `Edited: ${edited}`;
+  document.getElementById('stat-remaining').textContent = `Remaining: ${remaining}`;
+}
+
+function updateExport() {
+  const exported = [];
+  for (const r of RESPONSES) {
+    const dec = decisions[r.id];
+    if (!dec) continue;
+    if (dec.status === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (dec.status === 'edit') {
+      exported.push({ text: dec.editedText || r.text, category: r.category });
+    }
+  }
+  document.getElementById('export-area').value = JSON.stringify(exported, null, 2);
+}
+
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions)); } catch(e) {}
+}
+
+// ── Actions ──
+function decide(id, status) {
+  decisions[id] = { status };
+  persist();
+
+  if (firstDecisionMade) {
+    advanceFocus();
+  }
+  firstDecisionMade = true;
+
+  renderCards();
+}
+
+function undo(id) {
+  delete decisions[id];
+  persist();
+  renderCards();
+}
+
+function openEdit(id) {
+  editingId = id;
+  renderCards();
+  const ta = document.getElementById('edit-ta-' + id);
+  if (ta) { ta.focus(); ta.selectionStart = ta.value.length; }
+}
+
+function saveEdit(id) {
+  const ta = document.getElementById('edit-ta-' + id);
+  if (!ta) return;
+  const newText = ta.value.trim();
+  if (!newText) return;
+  const original = RESPONSES.find(r => r.id === id);
+  if (newText === original.text) {
+    decisions[id] = { status: 'keep' };
+  } else {
+    decisions[id] = { status: 'edit', editedText: newText };
+  }
+  editingId = null;
+  persist();
+  advanceFocus();
+  renderCards();
+}
+
+function cancelEdit(id) {
+  editingId = null;
+  renderCards();
+}
+
+function advanceFocus() {
+  let next = focusedIndex + 1;
+  while (next < RESPONSES.length && decisions[RESPONSES[next].id]) {
+    next++;
+  }
+  if (next < RESPONSES.length) {
+    focusedIndex = next;
+  }
+}
+
+function updateFocusScroll() {
+  const focused = document.querySelector('.card.focused');
+  if (focused) {
+    const rect = focused.getBoundingClientRect();
+    const headerH = document.querySelector('.sticky-header').offsetHeight;
+    if (rect.top < headerH + 10 || rect.bottom > window.innerHeight - 40) {
+      focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+// ── Keyboard ──
+document.addEventListener('keydown', function(e) {
+  // Ignore if typing in a textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Enter' && !e.shiftKey && editingId !== null) {
+      e.preventDefault();
+      saveEdit(editingId);
+    } else if (e.key === 'Escape') {
+      cancelEdit(editingId);
+    }
+    return;
+  }
+
+  const key = e.key.toLowerCase();
+
+  if (key === 'j') {
+    e.preventDefault();
+    if (focusedIndex < RESPONSES.length - 1) { focusedIndex++; renderCards(); }
+  } else if (key === 'k') {
+    e.preventDefault();
+    if (focusedIndex > 0) { focusedIndex--; renderCards(); }
+  } else if (key === 'o') {
+    e.preventDefault();
+    decide(RESPONSES[focusedIndex].id, 'keep');
+  } else if (key === 'x') {
+    e.preventDefault();
+    decide(RESPONSES[focusedIndex].id, 'cut');
+  } else if (key === 'e') {
+    e.preventDefault();
+    openEdit(RESPONSES[focusedIndex].id);
+  } else if (key === 'u') {
+    e.preventDefault();
+    undo(RESPONSES[focusedIndex].id);
+  }
+});
+
+// ── Copy Export ──
+function copyExport() {
+  const area = document.getElementById('export-area');
+  area.select();
+  navigator.clipboard.writeText(area.value).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    fb.classList.add('visible');
+    setTimeout(() => fb.classList.remove('visible'), 1500);
+  });
+}
+
+// ── Init ──
+renderCards();
+</script>
+</body>
+</html>

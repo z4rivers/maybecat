@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 4: Tone Duplicates & Judgment Calls</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --bg-card: #16213e;
+    --bg-card-hover: #1a2744;
+    --bg-input: #0f1729;
+    --green: #4ecca3;
+    --red: #e94560;
+    --yellow: #ffd93d;
+    --blue: #4ecdc4;
+    --text: #e8e8e8;
+    --text-dim: #8892a4;
+    --text-muted: #5a6580;
+    --border: #2a3a5c;
+    --border-keeper: #4ecdc4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-bottom: 200px;
+  }
+
+  /* ─── STICKY HEADER ─── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f1729;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .header .subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-val { font-weight: 700; font-size: 16px; }
+  .stat-val.groups-reviewed { color: var(--blue); }
+  .stat-val.cuts { color: var(--red); }
+  .stat-val.remaining { color: var(--text-dim); }
+  .stat-label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-jump {
+    background: var(--yellow);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-jump:hover { transform: scale(1.03); filter: brightness(1.1); }
+  .btn-jump:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  .btn-reset-all {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-reset-all:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+  .keyboard-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    text-align: right;
+  }
+  .keyboard-hint kbd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 10px;
+    font-family: inherit;
+  }
+
+  /* ─── GROUPS ─── */
+  .groups { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+
+  .group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .group.focused { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .group.reviewed { opacity: 0.65; }
+  .group.reviewed:hover { opacity: 0.85; }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+  .group-header:hover { background: var(--bg-card-hover); }
+
+  .group-concept {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    flex: 1;
+  }
+
+  .group-id {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+
+  .group-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .group-status.pending { background: rgba(255,217,61,0.15); color: var(--yellow); }
+  .group-status.complete { background: rgba(78,204,163,0.15); color: var(--green); }
+
+  .group-summary {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-right: 8px;
+  }
+
+  .collapse-icon {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    margin-left: 8px;
+  }
+  .group.collapsed .collapse-icon { transform: rotate(-90deg); }
+
+  .group-body { padding: 0 18px 18px; }
+  .group.collapsed .group-body { display: none; }
+
+  /* ─── GROUP DONE BUTTON ─── */
+  .group-done-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 0 4px;
+  }
+
+  .btn-done {
+    background: var(--green);
+    color: #0f1729;
+    border: none;
+    padding: 8px 22px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn-done:hover { filter: brightness(1.1); transform: scale(1.03); }
+  .btn-done:active { transform: scale(0.97); }
+  .btn-done.is-reviewed {
+    background: rgba(78,204,163,0.2);
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+  /* ─── ITEM CARDS (unified) ─── */
+  .item-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .item-card.active-focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow);
+  }
+  .item-card.is-cut {
+    border-color: var(--red);
+    background: rgba(233,69,96,0.08);
+    opacity: 0.6;
+  }
+  .item-card.is-cut:hover { opacity: 0.8; }
+
+  .item-card.is-keeper {
+    border-color: var(--border-keeper);
+    background: rgba(78,205,196,0.05);
+  }
+
+  .keeper-label {
+    position: absolute;
+    top: -9px;
+    left: 14px;
+    background: var(--border-keeper);
+    color: #0f1729;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .response-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 6px;
+    margin-top: 4px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cut-reason {
+    font-size: 12px;
+    color: var(--red);
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(233,69,96,0.08);
+    border-radius: 4px;
+    border-left: 3px solid var(--red);
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: scale(1.04); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-cut { background: var(--red); color: white; }
+  .btn-cut:hover { filter: brightness(1.15); }
+  .btn-cut.selected { box-shadow: 0 0 0 2px white; }
+
+  .btn-undo-cut {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-undo-cut:hover { background: rgba(255,255,255,0.15); color: var(--text); }
+
+  .decision-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+  .decision-badge.cut-badge { background: rgba(233,69,96,0.2); color: var(--red); }
+
+  /* ─── BORDERLINE INDICATOR ─── */
+  .borderline-flag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: rgba(255,217,61,0.15);
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+  }
+
+  /* ─── EXPORT ─── */
+  .export-section {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .export-section h2 {
+    font-size: 16px;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+
+  .export-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .export-tab {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 16px;
+    border-radius: 6px 6px 0 0;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .export-tab:hover { background: rgba(255,255,255,0.08); }
+  .export-tab.active {
+    background: var(--bg-card);
+    color: var(--text);
+    border-bottom-color: var(--bg-card);
+  }
+
+  .export-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    padding: 16px;
+    position: relative;
+  }
+
+  .export-block pre {
+    font-family: inherit;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--blue);
+    color: #0f1729;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { filter: brightness(1.1); transform: scale(1.03); }
+  .btn-copy.copied { background: var(--green); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Round 4: Tone Duplicates & Judgment Calls</h1>
+      <div class="subtitle">CUT what doesn't belong. Everything else stays. Click DONE to mark a group reviewed.</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-val groups-reviewed" id="stat-groups-done">0</span>
+        <span class="stat-label" style="color: var(--text-muted);">/</span>
+        <span class="stat-val" style="color: var(--text-muted);" id="stat-groups-total">0</span>
+        <span class="stat-label">Groups</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val cuts" id="stat-cuts">0</span>
+        <span class="stat-label">Cuts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val remaining" id="stat-remaining">0</span>
+        <span class="stat-label">Remaining</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-jump" id="btn-jump" onclick="jumpToNextUnreviewed()">Jump to Next</button>
+      <button class="btn-reset-all" onclick="resetAll()">Reset All</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+  <div class="keyboard-hint">
+    <kbd>J</kbd>/<kbd>K</kbd> navigate groups &nbsp;
+    <kbd>&#8593;</kbd>/<kbd>&#8595;</kbd> navigate items &nbsp;
+    <kbd>N</kbd> cut &nbsp; <kbd>U</kbd> undo cut &nbsp;
+    <kbd>D</kbd> / <kbd>Enter</kbd> mark group done &nbsp;
+    <kbd>Space</kbd> toggle collapse
+  </div>
+</div>
+
+<div class="groups" id="groups-container"></div>
+
+<div class="export-section">
+  <h2>Export</h2>
+  <div class="export-tabs">
+    <button class="export-tab active" onclick="showExportTab('cuts', this)">Cuts</button>
+    <button class="export-tab" onclick="showExportTab('keeps', this)">Keeps</button>
+    <button class="export-tab" onclick="showExportTab('full', this)">Full Report</button>
+  </div>
+  <div class="export-block">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre id="export-content"></pre>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───
+const DATA = [
+  {
+    "group_id": 5,
+    "concept": "Points for effort, failed execution",
+    "keeper": { "text": "Points for effort. Negative points for execution.", "category": "judgy" },
+    "cuts": [
+      { "text": "A for effort. F for execution.", "category": "judgy", "reason": "Same joke with letter grades" },
+      { "text": "A for effort. We'll discuss results later.", "category": "nurturing", "reason": "Softened version" },
+      { "text": "You tried. That's... something.", "category": "judgy", "reason": "Same energy, less specificity" }
+    ]
+  },
+  {
+    "group_id": 6,
+    "concept": "Question dismissed / considered and rejected",
+    "keeper": { "text": "Your question has been received. It has also been dismissed.", "category": "judgy" },
+    "cuts": [
+      { "text": "I've given this all the consideration it deserves. Which is none.", "category": "judgy", "reason": "Same structure: considered then rejected" },
+      { "text": "I've considered your question. No.", "category": "judgy", "reason": "Same concept, shorter but less sharp" }
+    ]
+  },
+  {
+    "group_id": 10,
+    "concept": "Ask again / repeating question anger",
+    "keeper": { "text": "Ask me one more time. I dare you.", "category": "angry" },
+    "cuts": [
+      { "text": "How many times do I have to say no?", "category": "angry", "reason": "Same stop-asking energy" },
+      { "text": "This is the THIRD time you've asked.", "category": "angry", "reason": "Same tired-of-repetition" },
+      { "text": "No. And stop asking.", "category": "cold", "reason": "Weaker demand to stop" }
+    ]
+  },
+  {
+    "group_id": 11,
+    "concept": "Patience exhausted",
+    "keeper": { "text": "My patience has limits. You've found them.", "category": "angry" },
+    "cuts": [
+      { "text": "You're testing my patience. I have none.", "category": "angry", "reason": "Same concept" },
+      { "text": "You've exhausted my generosity.", "category": "angry", "reason": "Same 'used it up' energy" },
+      { "text": "Do not test me today.", "category": "angry", "reason": "Same warning, less character" }
+    ]
+  },
+  {
+    "group_id": 12,
+    "concept": "Catnip as answer",
+    "keeper": { "text": "Catnip now. Regrets later. Worth it.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Sometimes catnip is the answer.", "category": "chaotic", "reason": "Generic version" },
+      { "text": "Have you considered catnip?", "category": "chaotic", "reason": "Same suggestion, no personality" },
+      { "text": "This calls for catnip.", "category": "chaotic", "reason": "Forgettable" }
+    ]
+  },
+  {
+    "group_id": 13,
+    "concept": "Lost my thought mid-conversation",
+    "keeper": { "text": "Very important thought incoming... and it's gone.", "category": "chaotic" },
+    "cuts": [
+      { "text": "There was a thought here a second ago. It's gone now.", "category": "chaotic", "reason": "Same joke, keeper has more buildup" },
+      { "text": "I need to tell you something important. I forgot what it was.", "category": "chaotic", "reason": "Same setup-and-forget" },
+      { "text": "I had a whole plan. It's vapor now.", "category": "chaotic", "reason": "Same vanishing concept" },
+      { "text": "What was I saying? Oh right. We weren't.", "category": "cold", "reason": "Same orbit, different tone" }
+    ]
+  },
+  {
+    "group_id": 14,
+    "concept": "Forgot the question",
+    "keeper": { "text": "I have forgotten the question. I have also forgotten my name.", "category": "chaotic" },
+    "cuts": [
+      { "text": "The answer is... wait, what was the question?", "category": "chaotic", "reason": "Same gag, less escalation" },
+      { "text": "Wait, what were we talking about?", "category": "chaotic", "reason": "Minimal, no payoff" }
+    ]
+  },
+  {
+    "group_id": 15,
+    "concept": "Started chasing, forgot why",
+    "keeper": { "text": "I started chasing something and forgot what.", "category": "chaotic" },
+    "cuts": [
+      { "text": "I was going to do something but then I got comfortable.", "category": "chaotic", "reason": "Same abandoned-mission" },
+      { "text": "I know I wanted something. The wanting remains. The thing is gone.", "category": "existential", "reason": "More poetic but same orbit" }
+    ]
+  },
+  {
+    "group_id": 17,
+    "concept": "Zoomies",
+    "keeper": { "text": "Hold on I need to run at full speed for no reason. BRB.", "category": "chaotic" },
+    "cuts": [
+      { "text": "ZOOOOOOOM. Sorry, what was the question?", "category": "chaotic", "reason": "Same energy, keeper more descriptive" },
+      { "text": "RUN. Just RUN. That's the answer. RUNNING.", "category": "chaotic", "reason": "Same without the no-reason humor" },
+      { "text": "I must zoom now. The reason is classified.", "category": "chaotic", "reason": "Orbits keeper" }
+    ]
+  },
+  {
+    "group_id": 18,
+    "concept": "This is my spot",
+    "keeper": { "text": "This is my spot now. Adjust accordingly.", "category": "demanding" },
+    "cuts": [
+      { "text": "I've claimed this spot. You can have it back in 4-6 hours.", "category": "demanding", "reason": "Same claim" },
+      { "text": "I sleep here now. Adjust your life accordingly.", "category": "demanding", "reason": "Nearly identical structure" },
+      { "text": "This spot was taken. By me. Everyone else, adjust.", "category": "cold", "reason": "Third 'adjust' iteration" }
+    ]
+  },
+  {
+    "group_id": 19,
+    "concept": "Treats as payment for wisdom",
+    "keeper": { "text": "Answers cost treats. You know the exchange rate.", "category": "demanding" },
+    "cuts": [
+      { "text": "My wisdom comes with terms and conditions. Mostly treats.", "category": "demanding", "reason": "Same transactional concept" },
+      { "text": "Wisdom isn't free. Neither is my time. Pay up.", "category": "demanding", "reason": "Same pay-for-wisdom" },
+      { "text": "My services aren't free. The currency is tuna.", "category": "demanding", "reason": "Nearly identical" }
+    ]
+  },
+  {
+    "group_id": 20,
+    "concept": "Feed me first then answers",
+    "keeper": { "text": "The Oracle is hungry. Feed the Oracle. Then we talk.", "category": "demanding" },
+    "cuts": [
+      { "text": "The oracle speaks when the oracle is fed.", "category": "demanding", "reason": "Same concept, less personality" },
+      { "text": "I am but a vessel. The vessel requires tuna.", "category": "demanding", "reason": "Same idea, different wrapper" }
+    ]
+  },
+  {
+    "group_id": 21,
+    "concept": "Food urgency",
+    "keeper": { "text": "What's for dinner?", "category": "demanding" },
+    "cuts": [
+      { "text": "Is it time for breakfast?", "category": "demanding", "reason": "Same question, interchangeable" },
+      { "text": "Is it treat time yet?", "category": "demanding", "reason": "Same energy" },
+      { "text": "Can we discuss the food situation?", "category": "demanding", "reason": "Same urgency wrapped in politeness" }
+    ]
+  },
+  {
+    "group_id": 22,
+    "concept": "Thinking about seafood",
+    "keeper": { "text": "I've been thinking about shrimp.", "category": "demanding" },
+    "cuts": [
+      { "text": "I've been thinking about shrimp for three hours.", "category": "chaotic", "reason": "Nearly identical" },
+      { "text": "We should have sardines more often.", "category": "demanding", "reason": "Same craving" },
+      { "text": "Do we have any tuna?", "category": "demanding", "reason": "Same request, different fish" }
+    ]
+  },
+  {
+    "group_id": 23,
+    "concept": "Door indecision",
+    "keeper": { "text": "I wanted the door open. Now I don't.", "category": "wise" },
+    "cuts": [
+      { "text": "Let me in. Actually, let me out. Actually, leave the door open.", "category": "chaotic", "reason": "Extended version" },
+      { "text": "I wanted up. Now I want down. Don't look at me like that.", "category": "chaotic", "reason": "Direction variant" },
+      { "text": "I want in. I want out. I want the door open but I won't go through it.", "category": "chaotic", "reason": "Nearly identical to extended version" }
+    ]
+  },
+  {
+    "group_id": 27,
+    "concept": "Fascinating + dismissal",
+    "keeper": { "text": "Fascinating. Anyway.", "category": "judgy" },
+    "cuts": [
+      { "text": "Interesting. I mean, not really. But I said it.", "category": "cold", "reason": "Same pretending-to-care" },
+      { "text": "Oh no. Anyway.", "category": "cold", "reason": "Same dismiss-and-move-on" }
+    ]
+  },
+  {
+    "group_id": 29,
+    "concept": "You're asking a cat (meta awareness)",
+    "keeper": { "text": "You're asking a cat for life advice. Let that sink in.", "category": "meta" },
+    "cuts": [
+      { "text": "The real question is why you thought asking a cat was a good idea.", "category": "judgy", "reason": "Same meta observation" },
+      { "text": "You're asking the wrong virtual cat.", "category": "meta", "reason": "Same awareness" },
+      { "text": "You clicked 'Consult the Cat.' This is on you.", "category": "meta", "reason": "Same concept" },
+      { "text": "If you're asking me for permission, I don't... I mean, I'm a cat.", "category": "chaotic", "reason": "Same 'I'm just a cat'" }
+    ]
+  },
+  {
+    "group_id": 33,
+    "concept": "You're my person / I chose you",
+    "keeper": { "text": "You're my person. I don't say that lightly.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "You're my person. Don't make me regret that.", "category": "heartfelt", "reason": "Same with different tail" },
+      { "text": "I chose you. Out of everyone in this house. Don't post about it. Just sit still and don't make it weird.", "category": "wise", "reason": "Same choosing energy, overlong" }
+    ]
+  },
+  {
+    "group_id": 34,
+    "concept": "Glad it's you",
+    "keeper": { "text": "*sighs* Glad it's you.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "I don't always show it, but I'm glad you're here.", "category": "heartfelt", "reason": "Same sentiment, keeper shorter and more cat" },
+      { "text": "I'm glad we're doing this life thing together.", "category": "heartfelt", "reason": "Same gladness, more generic" }
+    ]
+  },
+  {
+    "group_id": 35,
+    "concept": "My life is better with you",
+    "keeper": { "text": "My life is better because you're in it. There. I said it.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "You've given me a good life. I've given you fur everywhere.", "category": "heartfelt", "reason": "Joke weakens sincerity" }
+    ]
+  },
+  {
+    "group_id": 36,
+    "concept": "Do nothing as wisdom",
+    "keeper": { "text": "Do nothing strategically.", "category": "wise" },
+    "cuts": [
+      { "text": "Do less. Then less than that.", "category": "wise", "reason": "Same philosophy" },
+      { "text": "The less you do, the less you do wrong.", "category": "wise", "reason": "Same concept" },
+      { "text": "Why stand when you can sit. Why sit when you can lie down.", "category": "wise", "reason": "Same minimal-effort escalation" }
+    ]
+  },
+  {
+    "group_id": 37,
+    "concept": "Some problems solve themselves",
+    "keeper": { "text": "Some problems fix themselves. Most metastasize.", "category": "wise" },
+    "cuts": [
+      { "text": "Some problems solve themselves. Some problems I solve.", "category": "wise", "reason": "Same setup, keeper has darker twist" },
+      { "text": "Wait. Sometimes problems get bored and leave.", "category": "nurturing", "reason": "Same concept, lighter" }
+    ]
+  },
+  {
+    "group_id": 41,
+    "concept": "Attention on my terms",
+    "keeper": { "text": "I'll come to you when I'm ready.", "category": "demanding" },
+    "cuts": [
+      { "text": "I don't need attention right now. You'll know when I do.", "category": "demanding", "reason": "Same on-my-schedule, longer" },
+      { "text": "Attention is on my schedule, not yours.", "category": "demanding", "reason": "Same concept restated" },
+      { "text": "When I want you, you'll know.", "category": "demanding", "reason": "Same promise" }
+    ]
+  },
+  {
+    "group_id": 42,
+    "concept": "This is mine now",
+    "keeper": { "text": "You bought this for yourself? Cute. It's mine.", "category": "demanding" },
+    "cuts": [
+      { "text": "This is mine now. Whatever it was, it's mine.", "category": "demanding", "reason": "Same claim, keeper has 'Cute'" },
+      { "text": "I sat on it. That's how ownership works.", "category": "demanding", "reason": "Same territorial claim" }
+    ]
+  },
+  {
+    "group_id": 43,
+    "concept": "Not ignoring you, ignoring your question",
+    "keeper": { "text": "I'm not ignoring you. I'm ignoring your question. There's a difference.", "category": "cold" },
+    "cuts": [
+      { "text": "*pretends not to hear*", "category": "meta", "reason": "Same energy, much less interesting" },
+      { "text": "I'm going to pretend I didn't hear that.", "category": "judgy", "reason": "Same with less character" }
+    ]
+  },
+  {
+    "group_id": 44,
+    "concept": "Everything is fine / chaos",
+    "keeper": { "text": "Everything is fine. Everything is chaos. Same thing.", "category": "chaotic" },
+    "cuts": [
+      { "text": "This is fine. Everything is fine. What were we doing?", "category": "chaotic", "reason": "Same with less payoff" },
+      { "text": "Everything is fine. I have no evidence for this. But everything is fine.", "category": "chaotic", "reason": "Same repeated 'fine'" }
+    ]
+  },
+  {
+    "group_id": 46,
+    "concept": "You came here deliberately",
+    "keeper": { "text": "*stares* So you came back. Why. Be specific.", "category": "meta" },
+    "cuts": [
+      { "text": "*tilts head* You scrolled past a lot to get here. Explain.", "category": "meta", "reason": "Same observation" },
+      { "text": "You clicked it again. *flat stare* On purpose.", "category": "meta", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 54,
+    "concept": "Inside you are two wolves",
+    "keeper": { "text": "Inside you there are two wolves. They're both doom-scrolling.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Inside you there's a feral creature. Let her out. Occasionally. With supervision.", "category": "chaotic", "reason": "Same structure, keeper has stronger punchline" }
+    ]
+  },
+  {
+    "group_id": 55,
+    "concept": "You contain multitudes",
+    "keeper": { "text": "I contain multitudes. Mostly fur and attitude.", "category": "existential" },
+    "cuts": [
+      { "text": "You contain multitudes. One of the multitudes is unhinged. Embrace her.", "category": "chaotic", "reason": "Same riff" },
+      { "text": "This cardboard box contains multitudes. And me. Mostly me.", "category": "poetic", "reason": "Third iteration" }
+    ]
+  },
+  {
+    "group_id": 59,
+    "concept": "Proximity is enough",
+    "keeper": { "text": "Being in the same room might be enough.", "category": "wise" },
+    "cuts": [
+      { "text": "Same space, different activities. That works.", "category": "wise", "reason": "Same parallel-presence" },
+      { "text": "Sometimes proximity is the point.", "category": "wise", "reason": "More abstract version" }
+    ]
+  },
+  {
+    "group_id": 61,
+    "concept": "Counter is mine",
+    "keeper": { "text": "The counter is just a high floor. Your rules are arbitrary.", "category": "wise" },
+    "cuts": [
+      { "text": "The counter is for cats. You just don't know it yet.", "category": "chaotic", "reason": "Same claim" },
+      { "text": "*walking on counter* What? I live here.", "category": "demanding", "reason": "Less interesting" },
+      { "text": "The kitchen island isn't yours. It's disputed territory.", "category": "demanding", "reason": "Same with different words" }
+    ]
+  },
+  {
+    "group_id": 62,
+    "concept": "You're not [bad], you're [reframe]",
+    "keeper": { "text": "You're not the disaster you think you are. You're a different disaster.", "category": "chaotic" },
+    "cuts": [
+      { "text": "You're not tired. You're depleted. Different thing. Worse thing.", "category": "nurturing", "reason": "Same structure" },
+      { "text": "You're not broken. You're mid-renovation.", "category": "wise", "reason": "Same reframe" },
+      { "text": "I'm not broken. I'm just between chapters.", "category": "heartfelt", "reason": "Same pattern" }
+    ]
+  },
+  {
+    "group_id": 63,
+    "concept": "You're doing great",
+    "keeper": { "text": "You're doing great sweetie. 'Great' is relative. But you're doing it.", "category": "nurturing" },
+    "cuts": [
+      { "text": "You've got this. And if you don't, that's okay too.", "category": "heartfelt", "reason": "Same encouragement-with-hedge" },
+      { "text": "You're doing better than you think. Not as good as me, but better than you think.", "category": "heartfelt", "reason": "Same backhanded encouragement" }
+    ]
+  },
+  {
+    "group_id": 64,
+    "concept": "Everyone's a mess",
+    "keeper": { "text": "Everyone's broken. You're not special. Neither am I. We're all just here.", "category": "existential" },
+    "cuts": [
+      { "text": "Everyone's a mess. You're just a specific kind of mess. Own it.", "category": "nurturing", "reason": "Same normalizing" },
+      { "text": "Everyone's winging it. You're just honest about it.", "category": "wise", "reason": "Same reassurance" }
+    ]
+  },
+  {
+    "group_id": 65,
+    "concept": "The bar is low",
+    "keeper": { "text": "The bar is underground and you're still impressed when they clear it.", "category": "cold" },
+    "cuts": [
+      { "text": "The bar is low. Go lower.", "category": "judgy", "reason": "Same concept, keeper has specificity" },
+      { "text": "The green flags you're celebrating are just... regular behavior. That's the bar.", "category": "judgy", "reason": "Same observation" }
+    ]
+  },
+  {
+    "group_id": 69,
+    "concept": "I believe in you (qualified)",
+    "keeper": { "text": "I believe in you. It's becoming a problem.", "category": "nurturing" },
+    "cuts": [
+      { "text": "I believe in you. Delusionally. Against all evidence.", "category": "nurturing", "reason": "Same concept" },
+      { "text": "I believe in you. Loosely.", "category": "heartfelt", "reason": "Same hedged belief" }
+    ]
+  },
+  {
+    "group_id": 72,
+    "concept": "You already know the answer",
+    "keeper": { "text": "*slow blink* You already know.", "category": "wise" },
+    "cuts": [
+      { "text": "You actually do know what to do. *pupils dilate* You do.", "category": "heartfelt", "reason": "Same concept" },
+      { "text": "You already made eye contact with the answer. Briefly.", "category": "wise", "reason": "Reframed same idea" }
+    ]
+  },
+  {
+    "group_id": 73,
+    "concept": "Sunbeam is sacred",
+    "keeper": { "text": "Be in the sunbeam. I'm already there. Find your own.", "category": "mystical" },
+    "cuts": [
+      { "text": "The sunny spot belongs to me. All sunny spots belong to me.", "category": "demanding", "reason": "Same territory" },
+      { "text": "I am one with the sunbeam. The sunbeam is one with me.", "category": "mystical", "reason": "Same mysticism" }
+    ]
+  },
+  {
+    "group_id": 75,
+    "concept": "The void stares back",
+    "keeper": { "text": "I have gazed into the void. The void gazed back. We have an understanding now.", "category": "mystical" },
+    "cuts": [
+      { "text": "The void stares back. The void is also tired. The void gets it.", "category": "existential", "reason": "Same concept" },
+      { "text": "*screams into the void* The void screamed back. We're friends now.", "category": "chaotic", "reason": "Same joke" }
+    ]
+  },
+  {
+    "group_id": 76,
+    "concept": "Cat has seen this before",
+    "keeper": { "text": "This has happened before. To better people.", "category": "cold" },
+    "cuts": [
+      { "text": "I've seen this before. It worked out.", "category": "wise", "reason": "Same setup" },
+      { "text": "I've seen this before. It doesn't end well. But it ends.", "category": "cold", "reason": "Same setup" },
+      { "text": "I've watched you make this mistake before. It was entertaining then too.", "category": "judgy", "reason": "Same observation" }
+    ]
+  },
+  {
+    "group_id": 77,
+    "concept": "Red dot / laser pointer metaphor",
+    "keeper": { "text": "Hunt the red dot. Never catch it. This is life.", "category": "existential" },
+    "cuts": [
+      { "text": "What if the laser dot is real and WE'RE the illusion?", "category": "existential", "reason": "Same existentialism" },
+      { "text": "What if the red dot is just... a metaphor?", "category": "existential", "reason": "Same device" },
+      { "text": "The laser pointer cannot be reasoned with.", "category": "existential", "reason": "Same territory" }
+    ]
+  },
+  {
+    "group_id": 78,
+    "concept": "Strong opinions (all correct)",
+    "keeper": { "text": "I have very strong opinions about this. All of them correct.", "category": "judgy" },
+    "cuts": [
+      { "text": "I don't have opinions. I have observations I'm weirdly committed to.", "category": "wise", "reason": "Same energy from different angle" }
+    ]
+  },
+  {
+    "group_id": 79,
+    "concept": "You're performing",
+    "keeper": { "text": "You're performing for an audience that isn't watching.", "category": "wise" },
+    "cuts": [
+      { "text": "Authentically performing authenticity. Welcome to now.", "category": "existential", "reason": "Same observation" },
+      { "text": "Rehearsed.", "category": "judgy", "reason": "Single-word version. Borderline." }
+    ]
+  },
+  {
+    "group_id": 80,
+    "concept": "Question answered itself",
+    "keeper": { "text": "That question answered itself on the way here.", "category": "judgy" },
+    "cuts": [
+      { "text": "That wasn't a question. That was a confession.", "category": "wise", "reason": "Same reframe" }
+    ]
+  },
+  {
+    "group_id": 81,
+    "concept": "You're not confused, you're scared",
+    "keeper": { "text": "You're not confused. You're scared.", "category": "wise" },
+    "cuts": [
+      { "text": "You saw the answer, didn't like it, and now you're pretending the question is still open - just like I do with the vet carrier.", "category": "wise", "reason": "Same concept, long but specific. Borderline keep." }
+    ]
+  },
+  {
+    "group_id": 82,
+    "concept": "I sit here with you",
+    "keeper": { "text": "*sits* Can't solve it. Can sit though.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "I could answer or I could just sit here with you.", "category": "heartfelt", "reason": "Same concept" },
+      { "text": "*sits down* We don't have to do anything.", "category": "nurturing", "reason": "Same energy" }
+    ]
+  },
+  {
+    "group_id": 84,
+    "concept": "Be more dog",
+    "keeper": { "text": "I can't believe I'm saying this, but... be more dog.", "category": "wise" },
+    "cuts": [
+      { "text": "Have you tried being excited about it? Like a dog would?", "category": "wise", "reason": "Same suggestion" },
+      { "text": "Sometimes the cat way is too complicated. Try stupid and enthusiastic.", "category": "chaotic", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 85,
+    "concept": "Stop chasing / patience",
+    "keeper": { "text": "Stop chasing. Sit down. Look bored. Everything interesting happens when you stop trying.", "category": "wise" },
+    "cuts": [
+      { "text": "I do not chase. I wait. *pounces the MOMENT you look away*", "category": "mystical", "reason": "Same philosophy. Borderline." }
+    ]
+  },
+  {
+    "group_id": 92,
+    "concept": "You're going to be fine",
+    "keeper": { "text": "*purrs aggressively* You're going to be fine. Shut up.", "category": "nurturing" },
+    "cuts": [
+      { "text": "Real talk though: you're gonna be fine.", "category": "nurturing", "reason": "Same reassurance, keeper has 'shut up'" },
+      { "text": "I think it'll be fine. I don't know what fine looks like here, but.", "category": "wise", "reason": "Same reassurance" }
+    ]
+  },
+  {
+    "group_id": 94,
+    "concept": "Of course you're anxious",
+    "keeper": { "text": "Of course you're anxious. Have you MET the world?", "category": "nurturing" },
+    "cuts": [
+      { "text": "The anxiety isn't lying. It's just bad at math.", "category": "chaotic", "reason": "Same validation. Borderline -- could keep both." },
+      { "text": "Your anxiety has anxiety. It's anxieties all the way down.", "category": "chaotic", "reason": "Same nesting concept" }
+    ]
+  },
+  {
+    "group_id": 100,
+    "concept": "I don't do this for everyone",
+    "keeper": { "text": "*slow approach* I don't do this for everyone.", "category": "heartfelt" },
+    "cuts": [
+      { "text": "I'm not purring for everyone. Just you. Right now.", "category": "heartfelt", "reason": "Same selective-affection" },
+      { "text": "Selective purring. You made the list.", "category": "heartfelt", "reason": "Same exclusive-love" }
+    ]
+  },
+  {
+    "group_id": 102,
+    "concept": "Nap > meaning of life",
+    "keeper": { "text": "The meaning of life is unknowable. The meaning of a nap is obvious.", "category": "existential" },
+    "cuts": [
+      { "text": "You ask 'why?' I ask 'why not nap?'", "category": "existential", "reason": "Same comparison" },
+      { "text": "Hear me out... what if naps ARE the meaning of life?", "category": "existential", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 108,
+    "concept": "I'm not difficult, I have standards",
+    "keeper": { "text": "I'm not difficult. I have standards.", "category": "judgy" },
+    "cuts": [
+      { "text": "I'm not for everyone. That's the point.", "category": "wise", "reason": "Same self-justification" },
+      { "text": "I'm not bossy. I have leadership skills you're not ready for.", "category": "judgy", "reason": "Same reframe" }
+    ]
+  },
+  {
+    "group_id": 109,
+    "concept": "Body knows before brain",
+    "keeper": { "text": "Your body already knows. Your brain is just doing paperwork.", "category": "wise" },
+    "cuts": [
+      { "text": "Body knows, brain objects.", "category": "wise", "reason": "Same concept, abbreviated" },
+      { "text": "Your body is a body of knowledge. Trust it more than your brain.", "category": "wise", "reason": "Same trust-the-body" }
+    ]
+  },
+  {
+    "group_id": 110,
+    "concept": "I'll sit while you fix it",
+    "keeper": { "text": "You fix. I sit. Division of labor.", "category": "nurturing" },
+    "cuts": [
+      { "text": "I'll sit here while you fix it.", "category": "nurturing", "reason": "Same concept" },
+      { "text": "Here for the vibes. Not the solutions.", "category": "nurturing", "reason": "Same energy" }
+    ]
+  },
+  {
+    "group_id": 111,
+    "concept": "No authority but in charge",
+    "keeper": { "text": "I have no authority here and yet somehow I'm in charge.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Every creature has a job. Mine is supervision.", "category": "wise", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 113,
+    "concept": "Forgive but don't forget",
+    "keeper": { "text": "I forgive but I do not forget. Actually, I don't forgive either.", "category": "cold" },
+    "cuts": [
+      { "text": "You think I forgot? I NEVER forget.", "category": "cold", "reason": "Same grudge energy" },
+      { "text": "Every slight is catalogued. The reckoning comes when you least expect it.", "category": "cold", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 115,
+    "concept": "Is it stupid? Yes. Am I doing it? Yes.",
+    "keeper": { "text": "Is it stupid? Yes. Am I going to do it? Absolutely.", "category": "chaotic" },
+    "cuts": [
+      { "text": "That's the dumbest thing I've ever heard and I kind of respect it.", "category": "judgy", "reason": "Same concept" },
+      { "text": "That idea is stupid enough to work beautifully.", "category": "chaotic", "reason": "Same energy" },
+      { "text": "Dumb if it fails. Legendary if it lands.", "category": "chaotic", "reason": "Same concept" }
+    ]
+  },
+  {
+    "group_id": 116,
+    "concept": "Just do it / stop overthinking",
+    "keeper": { "text": "Fine. Do it. I'm tired of watching you not do it.", "category": "chaotic" },
+    "cuts": [
+      { "text": "Have you tried just... doing the obvious thing?", "category": "wise", "reason": "Same energy, less frustration" },
+      { "text": "I don't have time for maybe. Neither do you. GO.", "category": "demanding", "reason": "Same urgency" }
+    ]
+  },
+  {
+    "group_id": 118,
+    "concept": "Box chooses you",
+    "keeper": { "text": "The box chooses you. You do not choose the box.", "category": "mystical" },
+    "cuts": [
+      { "text": "If it fits, it was meant to be.", "category": "mystical", "reason": "Same box-destiny" },
+      { "text": "The smaller the space, the safer it feels.", "category": "mystical", "reason": "Same box-comfort" }
+    ]
+  },
+  {
+    "group_id": 119,
+    "concept": "Overthinking",
+    "keeper": { "text": "You keep listing pros and cons like your heart will follow a spreadsheet.", "category": "wise" },
+    "cuts": [
+      { "text": "You're making this complicated. Simple is terrifying, isn't it?", "category": "wise", "reason": "Same observation" },
+      { "text": "Overthinking is the enemy of napping. Choose napping.", "category": "wise", "reason": "Same anti-overthinking" }
+    ]
+  },
+  {
+    "group_id": 120,
+    "concept": "Cat vs therapy",
+    "keeper": { "text": "I'm the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.", "category": "meta" },
+    "cuts": [
+      { "text": "Cheaper than therapy. More fun too.", "category": "meta", "reason": "Same comparison" }
+    ]
+  }
+];
+
+// ─── STATE ───
+// State tracks: per-item cut decisions + per-group "done" flag
+let state = {};
+let focusedGroupIdx = 0;
+let focusedItemIdx = -1; // -1 = no item focused, 0 = keeper, 1+ = cuts (offset by 1)
+let currentExportTab = 'cuts';
+
+function initState() {
+  state = {};
+  DATA.forEach((group, gi) => {
+    state[gi] = {
+      collapsed: false,
+      done: false,  // group-level "reviewed" flag
+      items: {}
+    };
+    // Keeper gets state (key 'k')
+    state[gi].items['k'] = { cut: false };
+    group.cuts.forEach((_, ci) => {
+      state[gi].items[ci] = { cut: false };
+    });
+  });
+}
+
+function getTotalItems() {
+  let t = 0;
+  DATA.forEach(g => t += 1 + g.cuts.length);
+  return t;
+}
+
+function countCuts() {
+  let cuts = 0;
+  DATA.forEach((g, gi) => {
+    if (state[gi].items['k'].cut) cuts++;
+    g.cuts.forEach((_, ci) => {
+      if (state[gi].items[ci].cut) cuts++;
+    });
+  });
+  return cuts;
+}
+
+function isGroupReviewed(gi) {
+  // A group is reviewed if:
+  // 1. The user clicked DONE on it, OR
+  // 2. At least one item has been cut
+  if (state[gi].done) return true;
+  // Check if any item was cut
+  if (state[gi].items['k'].cut) return true;
+  return DATA[gi].cuts.some((_, ci) => state[gi].items[ci].cut);
+}
+
+function countGroupsReviewed() {
+  let done = 0;
+  DATA.forEach((_, gi) => {
+    if (isGroupReviewed(gi)) done++;
+  });
+  return done;
+}
+
+function isBorderline(reason) {
+  return reason && reason.toLowerCase().includes('borderline');
+}
+
+// ─── RENDER ───
+function render() {
+  const container = document.getElementById('groups-container');
+  container.innerHTML = '';
+
+  DATA.forEach((group, gi) => {
+    const reviewed = isGroupReviewed(gi);
+    const groupEl = document.createElement('div');
+    groupEl.className = 'group' +
+      (gi === focusedGroupIdx ? ' focused' : '') +
+      (reviewed ? ' reviewed' : '') +
+      (state[gi].collapsed ? ' collapsed' : '');
+    groupEl.id = 'group-' + gi;
+
+    let cutCount = 0;
+    if (state[gi].items['k'].cut) cutCount++;
+    group.cuts.forEach((_, ci) => {
+      if (state[gi].items[ci].cut) cutCount++;
+    });
+
+    const totalInGroup = 1 + group.cuts.length;
+
+    let summaryHtml = '';
+    if (reviewed && cutCount > 0) {
+      summaryHtml = `<span class="group-summary">${cutCount} cut, ${totalInGroup - cutCount} kept</span>`;
+    }
+
+    const statusText = reviewed ? 'REVIEWED' : totalInGroup + ' items';
+
+    groupEl.innerHTML = `
+      <div class="group-header" onclick="toggleCollapse(${gi})">
+        <span class="group-id">#${group.group_id}</span>
+        <span class="group-concept">${escHtml(group.concept)}</span>
+        ${summaryHtml}
+        <span class="group-status ${reviewed ? 'complete' : 'pending'}">${statusText}</span>
+        <span class="collapse-icon">&#9660;</span>
+      </div>
+      <div class="group-body">
+        ${renderItemCard(gi, 'k', group.keeper, true)}
+        ${group.cuts.map((cut, ci) => renderItemCard(gi, ci, cut, false)).join('')}
+        ${renderGroupDoneBar(gi)}
+      </div>
+    `;
+
+    container.appendChild(groupEl);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function renderItemCard(gi, itemKey, item, isKeeper) {
+  const isCut = state[gi].items[itemKey].cut;
+  const borderline = !isKeeper && isBorderline(item.reason);
+
+  // Determine focus: keeper = focusedItemIdx 0, cuts = focusedItemIdx (ci+1)
+  const itemFocusIdx = isKeeper ? 0 : (itemKey + 1);
+  const isFocused = gi === focusedGroupIdx && focusedItemIdx === itemFocusIdx;
+
+  let cardClass = 'item-card';
+  if (isFocused) cardClass += ' active-focus';
+  if (isCut) cardClass += ' is-cut';
+  if (isKeeper && !isCut) cardClass += ' is-keeper';
+
+  const cardId = isKeeper ? `card-${gi}-k` : `card-${gi}-${itemKey}`;
+
+  let badge = '';
+  if (isCut) badge = '<span class="decision-badge cut-badge">CUT</span>';
+
+  let actionsHtml = '';
+  if (isCut) {
+    actionsHtml = `
+      <div class="item-actions">
+        <button class="btn btn-undo-cut" onclick="event.stopPropagation(); toggleCut(${gi}, '${itemKey}')">Undo Cut</button>
+        ${badge}
+      </div>
+    `;
+  } else {
+    actionsHtml = `
+      <div class="item-actions">
+        <button class="btn btn-cut" onclick="event.stopPropagation(); toggleCut(${gi}, '${itemKey}')">Cut</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="${cardClass}" id="${cardId}" onclick="focusItem(${gi}, ${itemFocusIdx})">
+      ${isKeeper ? '<span class="keeper-label">Suggested Keeper</span>' : ''}
+      <div class="response-text">${escHtml(item.text)}</div>
+      <span class="category-tag">${escHtml(item.category)}</span>
+      ${borderline ? '<span class="borderline-flag">Borderline</span>' : ''}
+      ${!isKeeper ? `<div class="cut-reason">${escHtml(item.reason)}</div>` : ''}
+      ${actionsHtml}
+    </div>
+  `;
+}
+
+function renderGroupDoneBar(gi) {
+  const reviewed = isGroupReviewed(gi);
+  // Only show DONE button if no cuts have been made (otherwise group is auto-reviewed)
+  const hasCuts = state[gi].items['k'].cut || DATA[gi].cuts.some((_, ci) => state[gi].items[ci].cut);
+
+  if (hasCuts) {
+    // Group is already reviewed via cuts, no button needed
+    return '';
+  }
+
+  const btnClass = 'btn-done' + (state[gi].done ? ' is-reviewed' : '');
+  const btnText = state[gi].done ? 'Reviewed' : 'Done - All Good';
+
+  return `
+    <div class="group-done-bar">
+      <button class="${btnClass}" onclick="event.stopPropagation(); toggleGroupDone(${gi})">${btnText}</button>
+    </div>
+  `;
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ─── ACTIONS ───
+function toggleCut(gi, itemKey) {
+  state[gi].items[itemKey].cut = !state[gi].items[itemKey].cut;
+  render();
+  saveState();
+}
+
+function toggleGroupDone(gi) {
+  state[gi].done = !state[gi].done;
+  render();
+  saveState();
+}
+
+function toggleCollapse(gi) {
+  state[gi].collapsed = !state[gi].collapsed;
+  render();
+}
+
+function focusItem(gi, itemIdx) {
+  focusedGroupIdx = gi;
+  focusedItemIdx = itemIdx;
+  render();
+}
+
+function jumpToNextUnreviewed() {
+  for (let gi = 0; gi < DATA.length; gi++) {
+    if (!isGroupReviewed(gi)) {
+      focusedGroupIdx = gi;
+      focusedItemIdx = -1;
+      state[gi].collapsed = false;
+      render();
+      const el = document.getElementById('group-' + gi);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
+}
+
+function resetAll() {
+  if (!confirm('Reset ALL decisions? This cannot be undone.')) return;
+  initState();
+  focusedGroupIdx = 0;
+  focusedItemIdx = -1;
+  render();
+  saveState();
+}
+
+// ─── STATS ───
+function updateStats() {
+  const cuts = countCuts();
+  const totalItems = getTotalItems();
+  const remaining = totalItems - cuts;
+  const groupsReviewed = countGroupsReviewed();
+
+  document.getElementById('stat-groups-done').textContent = groupsReviewed;
+  document.getElementById('stat-groups-total').textContent = DATA.length;
+  document.getElementById('stat-cuts').textContent = cuts;
+  document.getElementById('stat-remaining').textContent = remaining;
+
+  const pct = DATA.length > 0 ? (groupsReviewed / DATA.length * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const jumpBtn = document.getElementById('btn-jump');
+  jumpBtn.disabled = groupsReviewed === DATA.length;
+}
+
+// ─── EXPORT ───
+function showExportTab(tab, el) {
+  currentExportTab = tab;
+  document.querySelectorAll('.export-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  updateExport();
+}
+
+function updateExport() {
+  const pre = document.getElementById('export-content');
+
+  if (currentExportTab === 'cuts') {
+    const cuts = [];
+    DATA.forEach((g, gi) => {
+      if (state[gi].items['k'].cut) {
+        cuts.push({ text: g.keeper.text, category: g.keeper.category, group: g.concept });
+      }
+      g.cuts.forEach((cut, ci) => {
+        if (state[gi].items[ci].cut) {
+          cuts.push({ text: cut.text, category: cut.category, group: g.concept });
+        }
+      });
+    });
+    pre.textContent = JSON.stringify(cuts, null, 2);
+  } else if (currentExportTab === 'keeps') {
+    const keeps = [];
+    DATA.forEach((g, gi) => {
+      if (!state[gi].items['k'].cut) {
+        keeps.push({ text: g.keeper.text, category: g.keeper.category });
+      }
+      g.cuts.forEach((cut, ci) => {
+        if (!state[gi].items[ci].cut) {
+          keeps.push({ text: cut.text, category: cut.category });
+        }
+      });
+    });
+    pre.textContent = JSON.stringify(keeps, null, 2);
+  } else if (currentExportTab === 'full') {
+    const report = DATA.map((g, gi) => ({
+      group_id: g.group_id,
+      concept: g.concept,
+      reviewed: isGroupReviewed(gi),
+      keeper: {
+        text: g.keeper.text,
+        category: g.keeper.category,
+        decision: state[gi].items['k'].cut ? 'cut' : 'keep'
+      },
+      candidates: g.cuts.map((cut, ci) => ({
+        text: cut.text,
+        category: cut.category,
+        decision: state[gi].items[ci].cut ? 'cut' : 'keep'
+      }))
+    }));
+    pre.textContent = JSON.stringify(report, null, 2);
+  }
+}
+
+function copyExport() {
+  const pre = document.getElementById('export-content');
+  const btn = document.getElementById('btn-copy');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// ─── KEYBOARD ───
+document.addEventListener('keydown', (e) => {
+  // Skip if typing in textarea or input
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  const key = e.key.toLowerCase();
+
+  if (key === 'j') {
+    // Next group
+    e.preventDefault();
+    focusedGroupIdx = Math.min(focusedGroupIdx + 1, DATA.length - 1);
+    focusedItemIdx = -1;
+    state[focusedGroupIdx].collapsed = false;
+    render();
+    scrollToGroup(focusedGroupIdx);
+  } else if (key === 'k') {
+    // Previous group
+    e.preventDefault();
+    focusedGroupIdx = Math.max(focusedGroupIdx - 1, 0);
+    focusedItemIdx = -1;
+    state[focusedGroupIdx].collapsed = false;
+    render();
+    scrollToGroup(focusedGroupIdx);
+  } else if (key === 'arrowdown') {
+    // Next item within group
+    e.preventDefault();
+    const maxIdx = DATA[focusedGroupIdx].cuts.length;
+    focusedItemIdx = Math.min(focusedItemIdx + 1, maxIdx);
+    render();
+    scrollToCurrentItem();
+  } else if (key === 'arrowup') {
+    // Previous item within group
+    e.preventDefault();
+    focusedItemIdx = Math.max(focusedItemIdx - 1, -1);
+    render();
+    if (focusedItemIdx >= 0) {
+      scrollToCurrentItem();
+    } else {
+      scrollToGroup(focusedGroupIdx);
+    }
+  } else if (key === 'n' && focusedItemIdx >= 0) {
+    // Cut focused item
+    e.preventDefault();
+    const itemKey = focusedItemIdx === 0 ? 'k' : (focusedItemIdx - 1);
+    if (!state[focusedGroupIdx].items[itemKey].cut) {
+      toggleCut(focusedGroupIdx, itemKey);
+    }
+  } else if (key === 'u' && focusedItemIdx >= 0) {
+    // Undo cut on focused item
+    e.preventDefault();
+    const itemKey = focusedItemIdx === 0 ? 'k' : (focusedItemIdx - 1);
+    if (state[focusedGroupIdx].items[itemKey].cut) {
+      toggleCut(focusedGroupIdx, itemKey);
+    }
+  } else if (key === 'd' || key === 'enter') {
+    // Mark group as done/reviewed
+    e.preventDefault();
+    if (!isGroupReviewed(focusedGroupIdx)) {
+      state[focusedGroupIdx].done = true;
+      render();
+      saveState();
+    }
+  } else if (key === ' ') {
+    e.preventDefault();
+    toggleCollapse(focusedGroupIdx);
+  }
+});
+
+function scrollToGroup(gi) {
+  const el = document.getElementById('group-' + gi);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function scrollToCurrentItem() {
+  const gi = focusedGroupIdx;
+  if (focusedItemIdx === 0) {
+    const el = document.getElementById('card-' + gi + '-k');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    const ci = focusedItemIdx - 1;
+    const el = document.getElementById('card-' + gi + '-' + ci);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ─── PERSISTENCE ───
+const STORAGE_KEY = 'maybecat-cull-r4-tone-dupes-v3';
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ state }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (saved.state) {
+        // Validate that saved state has the new format (done flag + cut boolean)
+        const firstGroup = saved.state['0'];
+        if (firstGroup && firstGroup.items && 'k' in firstGroup.items && 'done' in firstGroup) {
+          state = saved.state;
+          return true;
+        }
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ─── INIT ───
+initState();
+if (!loadState()) {
+  // First time, fresh state
+}
+render();
+</script>
+</body>
+</html>

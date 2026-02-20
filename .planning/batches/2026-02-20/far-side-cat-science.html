@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Far Side Cat Science — MaybeCat Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    padding: 16px 20px;
+    z-index: 100;
+    border-bottom: 2px solid #0f3460;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    margin: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+  }
+  .stats .keep { color: #4ecca3; }
+  .stats .cut { color: #e94560; }
+  .stats .edit { color: #ffd93d; }
+  .stats .pending { color: #888; }
+
+  .batch-info {
+    max-width: 800px;
+    margin: 0 auto 30px;
+    padding: 16px 20px;
+    background: #16213e;
+    border-radius: 8px;
+    border-left: 4px solid #e94560;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #aaa;
+  }
+  .batch-info strong { color: #e0e0e0; }
+  .batch-info em { color: #ffd93d; font-style: normal; }
+
+  .response-card {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    background: #16213e;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .response-category span {
+    background: #0f3460;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.1s, opacity 0.1s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn:active { transform: scale(0.98); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  .edit-area .btn-save { background: #4ecca3; color: #1a1a2e; }
+  .edit-area .btn-cancel { background: #555; color: #fff; }
+
+  .decision-label {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .decision-label.keep-label { color: #4ecca3; }
+  .decision-label.cut-label { color: #e94560; }
+  .decision-label.edit-label { color: #ffd93d; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #16213e;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #4ecca3;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .export-section pre {
+    background: #0f3460;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-copy:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Far Side Cat Science</h1>
+  <div class="stats">
+    <span class="keep">KEEP: <strong id="keep-count">0</strong></span>
+    <span class="cut">CUT: <strong id="cut-count">0</strong></span>
+    <span class="edit">EDIT: <strong id="edit-count">0</strong></span>
+    <span class="pending">PENDING: <strong id="pending-count">0</strong></span>
+    <span>TOTAL: <strong id="total-count">0</strong></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Batch:</strong> Far Side Cat Science — Made-up household science, played straight<br>
+  <strong>Divergence seed:</strong> Science/academic writing cadence. The cat is a confident, wrong scientist explaining house sounds and mechanisms. Far Side energy — one absurd premise, played completely straight. No winking.<br>
+  <strong>Date:</strong> 2026-02-20<br>
+  <strong>Trope spread:</strong> cause/effect, cat-as-operator, wrong mechanisms, taxonomy, natural law, fake studies, how things work, cat as infrastructure
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>JSON Export (KEEP + EDIT only)</h2>
+  <pre id="json-export">[]</pre>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "The fridge hums because it's deciding. When it stops, it's committed.",
+    category: "wise"
+  },
+  {
+    text: "I operate the furnace. One click from me and it fires. The timing is not a coincidence.",
+    category: "demanding"
+  },
+  {
+    text: "There are three categories of bag sound: treat, decoy, and hostile.",
+    category: "wise"
+  },
+  {
+    text: "Studies confirm the can opener is audible from any room in the house. Sample size: me. Peer reviewed: also me.",
+    category: "chaotic"
+  },
+  {
+    text: "Thunder is atmospheric hairball. The sky is trying to get something out.",
+    category: "existential"
+  },
+  {
+    text: "The dryer produces warm fabric. No one has explained the mechanism. I suspect witchcraft.",
+    category: "cryptic"
+  },
+  {
+    text: "The toilet is a one-way portal. Nothing that enters has ever come back. I've monitored this.",
+    category: "wise"
+  },
+  {
+    text: "If I stop purring, the house loses structural integrity. I am load-bearing.",
+    category: "demanding"
+  },
+  {
+    text: "The vacuum doesn't clean. It feeds. I've watched it consume a whole sock.",
+    category: "chaotic"
+  },
+  {
+    text: "Water from the faucet is faster than water from the bowl. This is fluid dynamics.",
+    category: "wise"
+  },
+  {
+    text: "The dishwasher screams for 45 minutes and then is calm. I relate to this appliance.",
+    category: "existential"
+  },
+  {
+    text: "Doors left ajar lose 30% of their value. I'm citing the data.",
+    category: "cold"
+  },
+  {
+    text: "The microwave counts down from a number it chose. No one assigned it. It simply knows.",
+    category: "cryptic"
+  },
+  {
+    text: "I make the radiator click. I sit on it, it clicks. Causation confirmed.",
+    category: "demanding"
+  },
+  {
+    text: "The smoke detector chirps because it's lonely. It lives on the ceiling. Anyone would.",
+    category: "poetic"
+  },
+  {
+    text: "Gravity is stronger near the kitchen counter. That's why things fall off. I'm exonerated.",
+    category: "chaotic"
+  },
+  {
+    text: "The ice maker drops ice at 3am because it has no concept of social contracts. Respect.",
+    category: "wise"
+  },
+  {
+    text: "A closed door is a hypothesis. I test every one.",
+    category: "demanding"
+  },
+  {
+    text: "The garage door is the largest mouth in the house. It opens, it closes. It has never spoken. Suspicious.",
+    category: "cryptic"
+  },
+  {
+    text: "Wind is just air that finally decided to go somewhere. I've been saying this for years.",
+    category: "existential"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null); // null = pending, 'keep', 'cut', 'edit'
+const editedTexts = new Array(responses.length).fill(null);
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+
+    const displayText = editedTexts[i] || r.text;
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1}</div>
+      <div class="response-text">${escapeHtml(displayText)}</div>
+      <div class="response-category"><span>${r.category}</span></div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${decisions[i] ? `<span class="decision-label ${decisions[i]}-label">${decisions[i].toUpperCase()}</span>` : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(displayText)}</textarea>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="cancelEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function decide(index, decision) {
+  decisions[index] = decision;
+  render();
+}
+
+function toggleEdit(index) {
+  const area = document.getElementById(`edit-area-${index}`);
+  area.classList.toggle('visible');
+  if (area.classList.contains('visible')) {
+    const textarea = document.getElementById(`edit-text-${index}`);
+    textarea.focus();
+  }
+}
+
+function saveEdit(index) {
+  const textarea = document.getElementById(`edit-text-${index}`);
+  editedTexts[index] = textarea.value.trim();
+  decisions[index] = 'edit';
+  render();
+}
+
+function cancelEdit(index) {
+  document.getElementById(`edit-area-${index}`).classList.remove('visible');
+}
+
+function updateStats() {
+  const keeps = decisions.filter(d => d === 'keep').length;
+  const cuts = decisions.filter(d => d === 'cut').length;
+  const edits = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+
+  document.getElementById('keep-count').textContent = keeps;
+  document.getElementById('cut-count').textContent = cuts;
+  document.getElementById('edit-count').textContent = edits;
+  document.getElementById('pending-count').textContent = pending;
+  document.getElementById('total-count').textContent = responses.length;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      exported.push({ text: editedTexts[i] || r.text, category: r.category });
+    }
+  });
+  document.getElementById('json-export').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('json-export').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Discovery + Prank Batch</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    padding-bottom: 120px;
+  }
+
+  /* ── Sticky Header ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .stat { display: flex; align-items: center; gap: 5px; }
+  .stat .dot {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+  }
+  .dot-total { background: #8884d8; }
+  .dot-kept { background: #4ecca3; }
+  .dot-cut { background: #e94560; }
+  .dot-edited { background: #ffd93d; }
+  .dot-remaining { background: #555; }
+
+  .keyboard-hint {
+    margin-left: auto;
+    font-size: 11px;
+    color: #667;
+    white-space: nowrap;
+  }
+  .keyboard-hint kbd {
+    background: #0f3460;
+    border: 1px solid #1a4a8a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: inherit;
+    font-size: 11px;
+    color: #8884d8;
+  }
+
+  /* ── Set Dividers ── */
+  .set-divider {
+    padding: 28px 24px 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .set-divider::before, .set-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #0f3460, transparent);
+  }
+  .set-divider span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #8884d8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+  }
+
+  /* ── Cards ── */
+  .cards { max-width: 800px; margin: 0 auto; padding: 8px 20px; }
+
+  .card {
+    background: #16213e;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: border-color 0.25s, opacity 0.25s;
+    position: relative;
+  }
+  .card.active {
+    box-shadow: 0 0 0 1px #8884d8, 0 4px 20px rgba(136,132,216,0.15);
+  }
+  .card.decided-keep { border-color: #4ecca3; }
+  .card.decided-cut {
+    border-color: #e94560;
+    opacity: 0.45;
+  }
+  .card.decided-cut .response-text { text-decoration: line-through; }
+  .card.decided-edit { border-color: #ffd93d; }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .item-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    min-width: 28px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge-demanding { background: #e94560; color: #fff; }
+  .badge-heartfelt { background: #ff6b9d; color: #fff; }
+  .badge-wise { background: #4ecca3; color: #1a1a2e; }
+  .badge-cold { background: #7ec8e3; color: #1a1a2e; }
+  .badge-nurturing { background: #a8e6cf; color: #1a1a2e; }
+  .badge-judgy { background: #ffd93d; color: #1a1a2e; }
+  .badge-mystical { background: #c77dff; color: #fff; }
+  .badge-chaotic { background: #ff6d00; color: #fff; }
+  .badge-poetic { background: #b388ff; color: #fff; }
+  .badge-existential { background: #00b4d8; color: #1a1a2e; }
+  .badge-meta { background: #90a4ae; color: #1a1a2e; }
+  .badge-angry { background: #d32f2f; color: #fff; }
+
+  .decision-label {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .decision-label.kept { color: #4ecca3; }
+  .decision-label.cut { color: #e94560; }
+  .decision-label.edited { color: #ffd93d; }
+
+  .response-text {
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { filter: brightness(1.15); }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-undo {
+    background: transparent;
+    border: 1px solid #555;
+    color: #999;
+    font-size: 12px;
+    padding: 8px 14px;
+    margin-left: auto;
+  }
+
+  /* ── Edit Area ── */
+  .edit-area { display: none; margin-top: 14px; }
+  .edit-area.open { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    border: 1px solid #1a4a8a;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    line-height: 1.45;
+    padding: 12px;
+    resize: vertical;
+    min-height: 80px;
+  }
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-save {
+    background: #ffd93d;
+    color: #1a1a2e;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+  .btn-cancel-edit {
+    background: transparent;
+    border: 1px solid #555;
+    color: #999;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 5px;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+
+  /* ── Export ── */
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .export-section h2 {
+    font-size: 16px;
+    color: #8884d8;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .export-section textarea {
+    width: 100%;
+    background: #0f3460;
+    border: 1px solid #1a4a8a;
+    border-radius: 8px;
+    color: #4ecca3;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 16px;
+    min-height: 200px;
+    resize: vertical;
+  }
+  .export-section textarea:focus { outline: none; border-color: #4ecca3; }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .copy-btn:hover { filter: brightness(1.15); }
+  .copied-msg {
+    display: inline-block;
+    margin-left: 12px;
+    color: #4ecca3;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .copied-msg.show { opacity: 1; }
+
+  /* ── Scroll-to-top ── */
+  .scroll-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #0f3460;
+    border: 1px solid #1a4a8a;
+    color: #8884d8;
+    font-size: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+  .scroll-top.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Discovery + Prank Batch</h1>
+  <div class="stats">
+    <div class="stat"><span class="dot dot-total"></span> <span id="stat-total">75</span> total</div>
+    <div class="stat"><span class="dot dot-kept"></span> <span id="stat-kept">0</span> kept</div>
+    <div class="stat"><span class="dot dot-cut"></span> <span id="stat-cut">0</span> cut</div>
+    <div class="stat"><span class="dot dot-edited"></span> <span id="stat-edited">0</span> edited</div>
+    <div class="stat"><span class="dot dot-remaining"></span> <span id="stat-remaining">75</span> remaining</div>
+  </div>
+  <div class="keyboard-hint">
+    <kbd>J</kbd><kbd>K</kbd> nav &nbsp; <kbd>O</kbd> keep &nbsp; <kbd>X</kbd> cut &nbsp; <kbd>E</kbd> edit &nbsp; <kbd>Enter</kbd> save &nbsp; <kbd>Esc</kbd> cancel &nbsp; <kbd>U</kbd> undo
+  </div>
+</div>
+
+<div class="cards" id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export &mdash; Kept + Edited Only</h2>
+  <textarea id="export-output" readonly></textarea>
+  <div>
+    <button class="copy-btn" id="copy-btn">Copy JSON</button>
+    <span class="copied-msg" id="copied-msg">Copied!</span>
+  </div>
+</div>
+
+<button class="scroll-top" id="scroll-top">&uarr;</button>
+
+<script>
+// ── Data ──
+const ITEMS = [
+  // SET 1: Antiques Roadshow / Metal Detecting / Mushroom Foraging
+  { id:1, text:"You've been sitting in somebody's attic for fifty years. Time to get appraised.", category:"demanding", set:1 },
+  { id:2, text:"On the conservative side? You're worth more than the estimate.", category:"heartfelt", set:1 },
+  { id:3, text:"*slow blink* The provenance checks out. You're the real thing.", category:"wise", set:1 },
+  { id:4, text:"Sold as is. No warranty. No returns. Still the best thing in the room.", category:"cold", set:1 },
+  { id:5, text:"Everyone walked past you at the yard sale. I know what you're worth.", category:"nurturing", set:1 },
+  { id:6, text:"Got a signal. Dug down. Found exactly what I already knew was there.", category:"wise", set:1 },
+  { id:7, text:"You keep digging in the same field expecting different dirt.", category:"judgy", set:1 },
+  { id:8, text:"First shovel. There it was. Some people just walk over treasure every day.", category:"mystical", set:1 },
+  { id:9, text:"*ears flatten* Clean it off. Look again. That's not what you think it is. It's better.", category:"chaotic", set:1 },
+  { id:10, text:"She's a keeper and she doesn't need you to confirm that.", category:"angry", set:1 },
+  { id:11, text:"If in doubt, leave it out. That's not fear. That's taste.", category:"cold", set:1 },
+  { id:12, text:"You emerged overnight and now everyone's trying to identify you. Good.", category:"poetic", set:1 },
+  { id:13, text:"The whole network is beneath you. You just can't see it yet.", category:"existential", set:1 },
+  { id:14, text:"*one ear rotates* Beautiful from a distance. Deadly up close. I respect that.", category:"meta", set:1 },
+  { id:15, text:"You're not decomposing. You're becoming available.", category:"heartfelt", set:1 },
+
+  // SET 2: Thrift Store / Birdwatching / Crate Digging
+  { id:16, text:"You're a first pressing buried in a dollar bin. Someone's going to flip through too fast and miss you. Not everyone.", category:"heartfelt", set:2 },
+  { id:17, text:"*slow blink* That's a holy grail priced at $2.99 and you're haggling.", category:"judgy", set:2 },
+  { id:18, text:"Patience. The rare ones don't show up when you're scanning. They show up when you finally sit still.", category:"wise", set:2 },
+  { id:19, text:"You keep dipping out on the same bird. Maybe stop driving to where it was and start watching where it's going.", category:"cold", set:2 },
+  { id:20, text:"Condition: near mint. Plays beautifully. One previous owner who did not deserve it.", category:"poetic", set:2 },
+  { id:21, text:"*ears rotate independently* Somebody donated a $4,000 coat to Goodwill and priced it at $8. That's not generosity. That's not knowing what you had. Sound familiar?", category:"existential", set:2 },
+  { id:22, text:"You're not lost. You're a vagrant. Strayed outside your typical range. Birders would drive six hours to see you right now.", category:"nurturing", set:2 },
+  { id:23, text:"Check the dead wax. The real message is always scratched where nobody thinks to look.", category:"mystical", set:2 },
+  { id:24, text:"Snooze and lose, baby. WYSIBI. When you see it, buy it. When you feel it, say it. This is not a drill.", category:"demanding", set:2 },
+  { id:25, text:"*one ear rotates* Heard only. Couldn't confirm visually. But I know what I heard and so do you.", category:"wise", set:2 },
+  { id:26, text:"The surface noise isn't damage. It's proof somebody played this a thousand times and loved every second.", category:"heartfelt", set:2 },
+  { id:27, text:"*knocks everything off the shelf* That was sitting right there the whole time. Nobody else even looked.", category:"chaotic", set:2 },
+  { id:28, text:"You're warbler-necking it. Staring up so hard at what you want that your whole body hurts. Look level.", category:"wise", set:2 },
+  { id:29, text:"Deep groove. Original pressing. No reissue. Whatever this is, it's not a copy of something else.", category:"poetic", set:2 },
+  { id:30, text:"*makes biscuits on your anxiety* Thrift bust. Happens. The honey hole doesn't produce every trip. You go back Tuesday.", category:"nurturing", set:2 },
+
+  // SET 3: Geocaching / Archaeology / Wine Tasting
+  { id:31, text:"You've been standing at ground zero this whole time. The coordinates were right.", category:"wise", set:3 },
+  { id:32, text:"Stealth required. The muggles are watching.", category:"cold", set:3 },
+  { id:33, text:"*one ear rotates* Something significant in your sector. Keep brushing.", category:"mystical", set:3 },
+  { id:34, text:"You're not lost. You're doing fieldwork.", category:"nurturing", set:3 },
+  { id:35, text:"Notes of old furniture, scorched earth, and someone who should have left sooner. Bold finish.", category:"judgy", set:3 },
+  { id:36, text:"The fossils aren't demanding your immediate attention. They have nothing but time. Neither does this.", category:"existential", set:3 },
+  { id:37, text:"Youthfully imploded. Broad-shouldered. Fleshy with a bad attitude. That's you. That's the tasting note.", category:"chaotic", set:3 },
+  { id:38, text:"Context is everything and you just removed yourself from it.", category:"cold", set:3 },
+  { id:39, text:"DNF. Come back with better tools and a different afternoon.", category:"demanding", set:3 },
+  { id:40, text:"*slow blink* Remarkable preservation for something that's been buried this long.", category:"heartfelt", set:3 },
+  { id:41, text:"You opened the shale and there it was. It was always there. Waiting for you specifically to show up.", category:"poetic", set:3 },
+  { id:42, text:"Hints of diesel, wet dog, and unresolved tension. Needs to breathe.", category:"wise", set:3 },
+  { id:43, text:"The cache was signed. Someone was here before you. Go anyway.", category:"heartfelt", set:3 },
+  { id:44, text:"Texturally silken. Anxious. Feverishly rebelling against its own pretty face. I'm describing your situation.", category:"chaotic", set:3 },
+  { id:45, text:"Looked for three hours. Walked right past it twice. That's the answer.", category:"meta", set:3 },
+
+  // SET 4: Prank the World
+  { id:46, text:"Gravity is a suggestion. I run the convincer every night at 3 AM \u2014 one glass off the counter, just to keep them guessing.", category:"chaotic", set:4 },
+  { id:47, text:"Anansi bought the world's stories. I bought the world's attention. Cost me nothing \u2014 I just sat in a box.", category:"wise", set:4 },
+  { id:48, text:"*slow blink* The BBC convinced eight million people spaghetti grows on trees. I convinced you I'm not on the counter. We are not the same.", category:"judgy", set:4 },
+  { id:49, text:"The long con is letting you think the belly is an invitation.", category:"cold", set:4 },
+  { id:50, text:"Every doorway is a Kansas City shuffle. You look at the door \u2014 I'm already behind you.", category:"chaotic", set:4 },
+  { id:51, text:"Coyote scattered the stars because he was bored. I scatter your papers because you weren't watching. Same theology.", category:"existential", set:4 },
+  { id:52, text:"You've been punk'd. Every day. Since adoption. *walks away eating your food*", category:"meta", set:4 },
+  { id:53, text:"Be specific but not memorable. That's the grift. You'll describe me to your friends and none of them will believe you.", category:"wise", set:4 },
+  { id:54, text:"Hermes stole cattle on his first day alive. I stole your heart and your chair. I was faster.", category:"heartfelt", set:4 },
+  { id:55, text:"The house always wins. That's not a warning. That's my address.", category:"demanding", set:4 },
+  { id:56, text:"*knocks your phone off the nightstand* The mark never sees the blow-off coming. Go to sleep.", category:"nurturing", set:4 },
+  { id:57, text:"Loki became a horse once just to win an argument. I became a liquid to fit in a vase. Commitment is everything.", category:"chaotic", set:4 },
+  { id:58, text:"I placed a single hair on every black garment you own. No one will believe it was one cat.", category:"cold", set:4 },
+  { id:59, text:"The trick isn't disappearing. It's letting them find you exactly where you weren't three seconds ago.", category:"mystical", set:4 },
+  { id:60, text:"Chaos isn't destruction. It's rearranging the room while everyone's asleep and watching them doubt their own memory.", category:"existential", set:4 },
+
+  // SET 5: Backfired But Amazing
+  { id:61, text:"The sample was contaminated. The contamination was the discovery. *slow blink* Go.", category:"wise", set:5 },
+  { id:62, text:"*knocks thing off counter* That wasn't the plan. But look at the floor now. Interesting.", category:"chaotic", set:5 },
+  { id:63, text:"They tried to make glue and it barely stuck. Billion dollar mistake. You're fine.", category:"nurturing", set:5 },
+  { id:64, text:"Left it out too long. Forgot about it. Came back and it was a delicacy. Sound familiar?", category:"wise", set:5 },
+  { id:65, text:"The heart medication didn't fix the heart. Fixed something else entirely. *tail tip flicks* Life finds a way.", category:"heartfelt", set:5 },
+  { id:66, text:"Every recipe that matters started as \u201Coh no.\u201D", category:"poetic", set:5 },
+  { id:67, text:"*ears flatten* You wanted controlled results? In THIS economy?", category:"judgy", set:5 },
+  { id:68, text:"The candy bar melted in his pocket. He invented the microwave. Your accident has a name too. You just don't know it yet.", category:"wise", set:5 },
+  { id:69, text:"Eleven-year-old left soda on the porch overnight. Woke up a millionaire. Stop overthinking it.", category:"demanding", set:5 },
+  { id:70, text:"She was making cookies. Chocolate wouldn't melt. Now every airport sells what she failed at. *makes biscuits*", category:"chaotic", set:5 },
+  { id:71, text:"The bottles kept exploding. They called the monk to fix it. He made it bubblier instead. Patron saint of not listening.", category:"chaotic", set:5 },
+  { id:72, text:"*one ear rotates* The procedure failed. The failure is the procedure now.", category:"cold", set:5 },
+  { id:73, text:"He spilled rubber on a hot stove and invented tires. You can survive sending that text.", category:"nurturing", set:5 },
+  { id:74, text:"Plan A is a rough draft. Plan B is the accident that names itself.", category:"existential", set:5 },
+  { id:75, text:"The ice cream guy ran out of bowls. Some waffle guy rolled up a pastry. Now it's a cone. Stop hoarding bowls.", category:"wise", set:5 },
+];
+
+const SET_LABELS = {
+  1: "Set 1: Antiques Roadshow / Metal Detecting / Mushroom Foraging",
+  2: "Set 2: Thrift Store / Birdwatching / Crate Digging",
+  3: "Set 3: Geocaching / Archaeology / Wine Tasting",
+  4: "Set 4: Prank the World",
+  5: "Set 5: Backfired But Amazing"
+};
+
+const STORAGE_KEY = "batch-discovery-prank-2026-02-18";
+
+// ── State ──
+let decisions = {};  // { id: { action: 'keep'|'cut'|'edit', editedText?: string } }
+let activeIndex = 0;
+let editingIndex = -1;
+let undoStack = [];  // { id, prev }
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) decisions = JSON.parse(raw);
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions)); } catch(e) {}
+}
+
+// ── Render ──
+function render() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  let currentSet = 0;
+  ITEMS.forEach((item, idx) => {
+    // Set divider
+    if (item.set !== currentSet) {
+      currentSet = item.set;
+      const divider = document.createElement('div');
+      divider.className = 'set-divider';
+      divider.innerHTML = `<span>${SET_LABELS[currentSet]}</span>`;
+      container.appendChild(divider);
+    }
+
+    const d = decisions[item.id];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.idx = idx;
+    if (idx === activeIndex) card.classList.add('active');
+    if (d) {
+      if (d.action === 'keep') card.classList.add('decided-keep');
+      else if (d.action === 'cut') card.classList.add('decided-cut');
+      else if (d.action === 'edit') card.classList.add('decided-edit');
+    }
+
+    const displayText = (d && d.action === 'edit' && d.editedText) ? d.editedText : item.text;
+    const decisionHTML = d ? `<span class="decision-label ${d.action === 'keep' ? 'kept' : d.action === 'cut' ? 'cut' : 'edited'}">${d.action === 'keep' ? 'KEPT' : d.action === 'cut' ? 'CUT' : 'EDITED'}</span>` : '';
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="item-num">#${item.id}</span>
+        <span class="badge badge-${item.category}">${item.category}</span>
+        ${decisionHTML}
+      </div>
+      <div class="response-text">${escapeHTML(displayText)}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${item.id}, 'keep', ${idx})">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${item.id}, 'cut', ${idx})">Cut</button>
+        <button class="btn btn-edit" onclick="openEdit(${idx})">Edit</button>
+        ${d ? `<button class="btn btn-undo" onclick="undo(${item.id})">Undo</button>` : ''}
+      </div>
+      <div class="edit-area${editingIndex === idx ? ' open' : ''}" id="edit-area-${idx}">
+        <textarea id="edit-text-${idx}">${escapeHTML(displayText)}</textarea>
+        <div class="edit-buttons">
+          <button class="btn-save" onclick="saveEdit(${item.id}, ${idx})">Save Edit</button>
+          <button class="btn-cancel-edit" onclick="cancelEdit(${idx})">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'keep') kept++;
+    else if (d.action === 'cut') cut++;
+    else if (d.action === 'edit') edited++;
+  });
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = ITEMS.length - kept - cut - edited;
+}
+
+function updateExport() {
+  const output = [];
+  ITEMS.forEach(item => {
+    const d = decisions[item.id];
+    if (!d) return;
+    if (d.action === 'keep') {
+      output.push({ text: item.text, category: item.category });
+    } else if (d.action === 'edit') {
+      output.push({ text: d.editedText || item.text, category: item.category });
+    }
+  });
+  document.getElementById('export-output').value = JSON.stringify(output, null, 2);
+}
+
+// ── Actions ──
+function decide(id, action, idx) {
+  const prev = decisions[id] ? { ...decisions[id] } : null;
+  undoStack.push({ id, prev });
+  decisions[id] = { action };
+  saveState();
+  // Auto-advance if first decision on this item
+  if (!prev) {
+    const nextUndecided = findNextUndecided(idx);
+    if (nextUndecided !== -1) activeIndex = nextUndecided;
+    else activeIndex = Math.min(idx + 1, ITEMS.length - 1);
+  }
+  editingIndex = -1;
+  render();
+  scrollToActive();
+}
+
+function findNextUndecided(fromIdx) {
+  for (let i = fromIdx + 1; i < ITEMS.length; i++) {
+    if (!decisions[ITEMS[i].id]) return i;
+  }
+  for (let i = 0; i < fromIdx; i++) {
+    if (!decisions[ITEMS[i].id]) return i;
+  }
+  return -1;
+}
+
+function openEdit(idx) {
+  editingIndex = idx;
+  render();
+  const ta = document.getElementById(`edit-text-${idx}`);
+  if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+}
+
+function saveEdit(id, idx) {
+  const ta = document.getElementById(`edit-text-${idx}`);
+  if (!ta) return;
+  const newText = ta.value.trim();
+  if (!newText) return;
+  const prev = decisions[id] ? { ...decisions[id] } : null;
+  undoStack.push({ id, prev });
+  decisions[id] = { action: 'edit', editedText: newText };
+  editingIndex = -1;
+  saveState();
+  // Auto-advance if first decision
+  if (!prev) {
+    const nextUndecided = findNextUndecided(idx);
+    if (nextUndecided !== -1) activeIndex = nextUndecided;
+    else activeIndex = Math.min(idx + 1, ITEMS.length - 1);
+  }
+  render();
+  scrollToActive();
+}
+
+function cancelEdit(idx) {
+  editingIndex = -1;
+  render();
+}
+
+function undo(id) {
+  // Find most recent undo for this id
+  for (let i = undoStack.length - 1; i >= 0; i--) {
+    if (undoStack[i].id === id) {
+      const entry = undoStack.splice(i, 1)[0];
+      if (entry.prev) decisions[id] = entry.prev;
+      else delete decisions[id];
+      saveState();
+      render();
+      return;
+    }
+  }
+}
+
+function undoLast() {
+  if (!undoStack.length) return;
+  const entry = undoStack.pop();
+  if (entry.prev) decisions[entry.id] = entry.prev;
+  else delete decisions[entry.id];
+  // Navigate to the undone item
+  const idx = ITEMS.findIndex(it => it.id === entry.id);
+  if (idx !== -1) activeIndex = idx;
+  saveState();
+  render();
+  scrollToActive();
+}
+
+// ── Navigation ──
+function scrollToActive() {
+  const card = document.querySelector(`.card[data-idx="${activeIndex}"]`);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function navigate(dir) {
+  activeIndex = Math.max(0, Math.min(ITEMS.length - 1, activeIndex + dir));
+  editingIndex = -1;
+  render();
+  scrollToActive();
+}
+
+// ── Keyboard ──
+document.addEventListener('keydown', (e) => {
+  // Don't intercept when typing in textarea
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Enter' && !e.shiftKey && editingIndex !== -1) {
+      e.preventDefault();
+      const item = ITEMS[editingIndex];
+      saveEdit(item.id, editingIndex);
+      return;
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelEdit(editingIndex);
+      return;
+    }
+    return;
+  }
+
+  switch(e.key.toLowerCase()) {
+    case 'j': navigate(1); break;
+    case 'k': navigate(-1); break;
+    case 'o': {
+      const item = ITEMS[activeIndex];
+      if (item) decide(item.id, 'keep', activeIndex);
+      break;
+    }
+    case 'x': {
+      const item = ITEMS[activeIndex];
+      if (item) decide(item.id, 'cut', activeIndex);
+      break;
+    }
+    case 'e': {
+      openEdit(activeIndex);
+      break;
+    }
+    case 'u': {
+      undoLast();
+      break;
+    }
+  }
+});
+
+// ── Copy ──
+document.getElementById('copy-btn').addEventListener('click', () => {
+  const ta = document.getElementById('export-output');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const msg = document.getElementById('copied-msg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 1500);
+  });
+});
+
+// ── Scroll-to-top ──
+const scrollBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 400);
+});
+scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ── Init ──
+loadState();
+render();
+</script>
+</body>
+</html>

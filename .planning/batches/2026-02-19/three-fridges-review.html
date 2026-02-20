@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Fridges Batch Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .stat { font-size: 14px; }
+  .stat-num { font-weight: bold; font-size: 18px; }
+  .keep-color { color: #4ecca3; }
+  .cut-color { color: #e94560; }
+  .edit-color { color: #ffd93d; }
+  .pending-color { color: #888; }
+  h1 { font-size: 20px; margin-bottom: 5px; }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+  .batch-header { color: #9b59b6; font-size: 14px; font-weight: 600; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 18px; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .category { font-size: 12px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 10px; width: 100%; }
+  .edit-area.active { display: block; }
+  .edit-area textarea { width: 100%; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area select { background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; padding: 6px; margin-top: 6px; font-size: 13px; }
+  .edit-area .save-edit { margin-top: 6px; background: #ffd93d; color: #1a1a2e; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .export-section { margin-top: 30px; background: #16213e; border-radius: 8px; padding: 20px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 16px; }
+  .export-section pre { background: #0f0f23; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 13px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; cursor: pointer; }
+  .copy-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Three Fridges — Riffed from Source</h1>
+<div class="subtitle">45 responses from Twilight Zone, Punk+Kindness, Dating+Wayne. Pre-gated to what survived.</div>
+
+<div class="stats" id="stats">
+  <div class="stat">Total: <span class="stat-num" id="total-count">45</span></div>
+  <div class="stat">Keep: <span class="stat-num keep-color" id="keep-count">0</span></div>
+  <div class="stat">Cut: <span class="stat-num cut-color" id="cut-count">0</span></div>
+  <div class="stat">Edit: <span class="stat-num edit-color" id="edit-count">0</span></div>
+  <div class="stat">Pending: <span class="stat-num pending-color" id="pending-count">45</span></div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section" id="export-section" style="display:none;">
+  <h2>Export (kept + edited)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json"></pre>
+</div>
+
+<script>
+const responses = [
+  // === TWILIGHT ZONE RIFFS ===
+  { text: "You built the cage. You decorated the cage. You reviewed the cage on Yelp.", category: "chaotic", source: "Twilight Zone" },
+  { text: "Your face is catching up to what\u2019s inside you.", category: "cold", source: "Twilight Zone" },
+  { text: "You\u2019ll get exactly what you asked for. That\u2019s the bad news.", category: "wise", source: "Twilight Zone" },
+  { text: "The generous offer is always a menu.", category: "cryptic", source: "Twilight Zone" },
+  { text: "Portrait of someone who almost left.", category: "cold", source: "Twilight Zone" },
+  { text: "Everything you wanted. Now you have to live in it.", category: "cold", source: "Twilight Zone" },
+  { text: "You\u2019re right. Nobody believes you. You\u2019re still right.", category: "nurturing", source: "Twilight Zone" },
+  { text: "Unloved only for the moment.", category: "nurturing", source: "Twilight Zone" },
+  { text: "The door was always open. That was the whole problem.", category: "wise", source: "Twilight Zone" },
+  { text: "What you\u2019re afraid of already happened. You\u2019re in the after.", category: "cold", source: "Twilight Zone" },
+  { text: "The rules changed three exits ago.", category: "cryptic", source: "Twilight Zone" },
+  { text: "Every mask you own fits perfectly. Think about that.", category: "wise", source: "Twilight Zone" },
+  { text: "Contrary to your plan.", category: "cold", source: "Twilight Zone" },
+  { text: "You freed that on purpose.", category: "chaotic", source: "Twilight Zone" },
+  { text: "Minor exercise in the care and feeding of a nightmare.", category: "cold", source: "Twilight Zone" },
+
+  // === PUNK + KINDNESS RIFFS ===
+  { text: "Don\u2019t dull the blade.", category: "demanding", source: "Punk + Kindness" },
+  { text: "The porch light is on. Go.", category: "nurturing", source: "Punk + Kindness" },
+  { text: "You find the wall by pushing.", category: "wise", source: "Punk + Kindness" },
+  { text: "Nobody\u2019s going to invite you. That was the whole point.", category: "demanding", source: "Punk + Kindness" },
+  { text: "I left you the good towel.", category: "nurturing", source: "Punk + Kindness" },
+  { text: "Lowering your aim was raising it.", category: "cryptic", source: "Punk + Kindness" },
+  { text: "Scar tissue is just tissue that showed up twice.", category: "wise", source: "Punk + Kindness" },
+  { text: "I saved you a seat but I\u2019m sitting in it.", category: "chaotic", source: "Punk + Kindness" },
+  { text: "I checked the locks.", category: "nurturing", source: "Punk + Kindness" },
+  { text: "Permission was never part of this.", category: "demanding", source: "Punk + Kindness" },
+  { text: "I warmed your side of the bed. Don\u2019t make it weird.", category: "heartfelt", source: "Punk + Kindness" },
+  { text: "I noticed.", category: "heartfelt", source: "Punk + Kindness" },
+  { text: "No one hates the moon.", category: "poetic", source: "Punk + Kindness" },
+  { text: "I work best when no one\u2019s looking.", category: "wise", source: "Punk + Kindness" },
+  { text: "The burnt piece is mine.", category: "nurturing", source: "Punk + Kindness" },
+
+  // === DATING SHOWS + LIL WAYNE RIFFS ===
+  { text: "Your type on paper doesn\u2019t exist. You made them up during a panic.", category: "cold", source: "Dating + Wayne" },
+  { text: "I caught feelings once. Threw them back.", category: "cold", source: "Dating + Wayne" },
+  { text: "My world is different. Yours looks exhausting.", category: "demanding", source: "Dating + Wayne" },
+  { text: "That wasn\u2019t a spark. That was a warning light.", category: "wise", source: "Dating + Wayne" },
+  { text: "Practice makes perfect. I was born perfect. Now what.", category: "sassy", source: "Dating + Wayne" },
+  { text: "You made your bed. Now lie there wondering.", category: "cold", source: "Dating + Wayne" },
+  { text: "I don\u2019t want to be understood. Try something else.", category: "cryptic", source: "Dating + Wayne" },
+  { text: "Head turned. Body followed. Good.", category: "chaotic", source: "Dating + Wayne" },
+  { text: "You\u2019re not falling for them. You\u2019re just tired of standing.", category: "wise", source: "Dating + Wayne" },
+  { text: "The ick isn\u2019t about them. That\u2019s your taste finally waking up.", category: "sassy", source: "Dating + Wayne" },
+  { text: "You said \u2018I\u2019m not usually one to\u2014\u2019 and then you were one to.", category: "cold", source: "Dating + Wayne" },
+  { text: "It is what it is. And what it is, is your fault.", category: "sassy", source: "Dating + Wayne" },
+  { text: "Connection. Spark. Chemistry. You don\u2019t have a love problem. You have a vocabulary problem.", category: "cold", source: "Dating + Wayne" },
+  { text: "Not my usual type. But then again, my usual type is the problem.", category: "wise", source: "Dating + Wayne" },
+  { text: "I figured out how to be normal. Hated it. Went back.", category: "chaotic", source: "Dating + Wayne" }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+const categories = ["chaotic","wise","cold","judgy","sassy","demanding","heartfelt","nurturing","poetic","angry","mysterious","absurdist","unhinged","cryptic"];
+
+function render() {
+  const container = document.getElementById('items');
+  let html = '';
+  let currentSource = '';
+  state.forEach((item, i) => {
+    if (item.source !== currentSource) {
+      currentSource = item.source;
+      html += `<div class="batch-header">${currentSource}</div>`;
+    }
+    const displayText = item.editedText || item.text;
+    const displayCat = item.editedCategory || item.category;
+    html += `
+      <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+        <div class="response-text">\u201C${displayText}\u201D</div>
+        <div class="category">${displayCat}${item.editedText ? ' (edited)' : ''}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <select id="cat-${i}">${categories.map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}</select>
+          <br><button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('active');
+}
+
+function saveEdit(i) {
+  state[i].editedText = document.getElementById(`textarea-${i}`).value;
+  state[i].editedCategory = document.getElementById(`cat-${i}`).value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+
+  const exported = state.filter(s => s.status === 'keep' || s.status === 'edit');
+  const exportSection = document.getElementById('export-section');
+  if (exported.length > 0) {
+    exportSection.style.display = 'block';
+    const json = exported.map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+    document.getElementById('export-json').textContent = JSON.stringify(json, null, 2);
+  } else {
+    exportSection.style.display = 'none';
+  }
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text);
+}
+
+render();
+</script>
+</body>
+</html>

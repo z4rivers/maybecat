@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MaybeCat Review — sonnet-batch-01 (2026-02-18)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding-bottom: 80px;
+    }
+
+    /* ── Sticky header ── */
+    #stats-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #12122a;
+      border-bottom: 2px solid #2a2a4a;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    #stats-bar h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: #a0a0c0;
+      text-transform: uppercase;
+      margin-right: 8px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #7070a0;
+      margin-top: 2px;
+    }
+
+    .stat-total  .stat-value { color: #a0a0e0; }
+    .stat-kept   .stat-value { color: #4ecca3; }
+    .stat-cut    .stat-value { color: #e94560; }
+    .stat-edited .stat-value { color: #ffd93d; }
+    .stat-remain .stat-value { color: #e0e0e0; }
+
+    /* ── Progress bar ── */
+    #progress-bar-wrap {
+      flex: 1 1 200px;
+      height: 8px;
+      background: #2a2a4a;
+      border-radius: 4px;
+      overflow: hidden;
+      min-width: 120px;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4ecca3, #ffd93d);
+      width: 0%;
+      transition: width .3s;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    /* ── Theme sections ── */
+    .theme-section {
+      margin-bottom: 48px;
+    }
+
+    .theme-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #2a2a4a;
+    }
+
+    .theme-header h2 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: #c8b8ff;
+      text-transform: uppercase;
+    }
+
+    .theme-count {
+      font-size: 12px;
+      background: #2a2a4a;
+      color: #7070a0;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: .06em;
+    }
+
+    /* ── Response cards ── */
+    .card {
+      background: #22223a;
+      border: 1.5px solid #2e2e52;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+
+    .card.kept   { border-color: #4ecca3; }
+    .card.cut    { border-color: #e94560; opacity: .55; }
+    .card.edited { border-color: #ffd93d; }
+
+    .card-body {
+      padding: 16px 18px 12px;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-index {
+      font-size: 11px;
+      color: #5555a0;
+      font-variant-numeric: tabular-nums;
+      min-width: 28px;
+    }
+
+    /* Category badge colours */
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 10px;
+    }
+
+    .badge-wise        { background: #1e3a5f; color: #7ec8e3; }
+    .badge-chaotic     { background: #3d1e5f; color: #c97ef7; }
+    .badge-cold        { background: #1f2a3a; color: #8ab4cc; }
+    .badge-judgy       { background: #3a2020; color: #e07070; }
+    .badge-demanding   { background: #3a2e10; color: #e0b050; }
+    .badge-mystical    { background: #1e2f2e; color: #5ecfb8; }
+    .badge-existential { background: #2a1e3a; color: #b07de0; }
+    .badge-heartfelt   { background: #3a1e2a; color: #e07aaa; }
+    .badge-nurturing   { background: #1e3a20; color: #7ad47a; }
+    .badge-angry       { background: #3a1414; color: #e05555; }
+    .badge-poetic      { background: #1e2a3a; color: #7ab4e0; }
+    .badge-meta        { background: #2e2e2e; color: #b0b0b0; }
+    .badge-adoption    { background: #1e3a2e; color: #7ae0b0; }
+
+    .card-text {
+      font-size: 16px;
+      line-height: 1.55;
+      color: #e8e8f8;
+      font-style: italic;
+    }
+
+    .card-text em {
+      font-style: normal;
+      color: #b0b0d0;
+    }
+
+    /* ── Action buttons ── */
+    .card-actions {
+      padding: 10px 18px 14px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 6px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn:hover { opacity: .85; }
+    .btn:active { transform: scale(.97); }
+
+    .btn-keep  { background: #4ecca3; color: #0a1a14; }
+    .btn-cut   { background: #e94560; color: #fff; }
+    .btn-edit  { background: #ffd93d; color: #1a1400; }
+    .btn-undo  {
+      background: #2e2e52;
+      color: #a0a0d0;
+      margin-left: auto;
+      font-size: 11px;
+      padding: 5px 12px;
+    }
+
+    .btn.active-keep  { box-shadow: 0 0 0 2px #4ecca3; }
+    .btn.active-cut   { box-shadow: 0 0 0 2px #e94560; }
+    .btn.active-edit  { box-shadow: 0 0 0 2px #ffd93d; }
+
+    /* ── Edit textarea ── */
+    .edit-area {
+      display: none;
+      padding: 0 18px 14px;
+    }
+
+    .edit-area.visible { display: block; }
+
+    .edit-area textarea {
+      width: 100%;
+      background: #14142a;
+      border: 1.5px solid #ffd93d44;
+      border-radius: 6px;
+      color: #e8e8f8;
+      font-size: 15px;
+      font-family: inherit;
+      font-style: italic;
+      padding: 10px 12px;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+      transition: border-color .15s;
+    }
+
+    .edit-area textarea:focus {
+      outline: none;
+      border-color: #ffd93d99;
+    }
+
+    .edit-area .save-edit {
+      margin-top: 6px;
+      padding: 5px 16px;
+      background: #ffd93d;
+      color: #1a1400;
+      border: none;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* ── Export block ── */
+    #export-section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    #export-section h2 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #c8b8ff;
+      margin-bottom: 14px;
+      padding-top: 16px;
+      border-top: 2px solid #2a2a4a;
+    }
+
+    #export-meta {
+      font-size: 13px;
+      color: #7070a0;
+      margin-bottom: 12px;
+    }
+
+    #export-meta span { color: #4ecca3; font-weight: 700; }
+
+    #json-output {
+      background: #12122a;
+      border: 1.5px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 12.5px;
+      color: #a0e0c8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 500px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    #copy-btn {
+      margin-top: 12px;
+      padding: 8px 24px;
+      background: #4ecca3;
+      color: #0a1a14;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+
+    #copy-btn:hover { opacity: .85; }
+    #copy-btn.copied { background: #2e7a5e; color: #a0e0c8; }
+  </style>
+</head>
+<body>
+
+<!-- ── Sticky stats bar ── -->
+<div id="stats-bar">
+  <h1>sonnet-batch-01</h1>
+  <div class="stat stat-total">
+    <div class="stat-value" id="s-total">103</div>
+    <div class="stat-label">Total</div>
+  </div>
+  <div class="stat stat-kept">
+    <div class="stat-value" id="s-kept">0</div>
+    <div class="stat-label">Kept</div>
+  </div>
+  <div class="stat stat-cut">
+    <div class="stat-value" id="s-cut">0</div>
+    <div class="stat-label">Cut</div>
+  </div>
+  <div class="stat stat-edited">
+    <div class="stat-value" id="s-edited">0</div>
+    <div class="stat-label">Edited</div>
+  </div>
+  <div class="stat stat-remain">
+    <div class="stat-value" id="s-remain">103</div>
+    <div class="stat-label">Remaining</div>
+  </div>
+  <div id="progress-bar-wrap">
+    <div id="progress-bar"></div>
+  </div>
+</div>
+
+<main id="cards-root"></main>
+
+<!-- ── Export section ── -->
+<div id="export-section">
+  <h2>Export JSON</h2>
+  <div id="export-meta">Showing <span id="export-count">0</span> kept / edited responses</div>
+  <div id="json-output">[]</div>
+  <button id="copy-btn">Copy JSON</button>
+</div>
+
+<script>
+const DATA = [
+  // ── Where We Met (17) ──
+  { id: 1,  theme: "Where We Met",                       text: "You have arrived.",                                                                                                  category: "wise" },
+  { id: 2,  theme: "Where We Met",                       text: "Found in the warm spot. Already there. Fine.",                                                                        category: "heartfelt" },
+  { id: 3,  theme: "Where We Met",                       text: "Recalculated. Still ends here.",                                                                                      category: "wise" },
+  { id: 4,  theme: "Where We Met",                       text: "First contact: the produce aisle. The scene was disturbed. Remains disturbed.",                                       category: "chaotic" },
+  { id: 5,  theme: "Where We Met",                       text: "Original terms: temporary. Current status: *settled in permanently.*",                                                category: "judgy" },
+  { id: 6,  theme: "Where We Met",                       text: "Location. Location. Location. *Already there.*",                                                                      category: "cold" },
+  { id: 7,  theme: "Where We Met",                       text: "The specimen returned. Same chair. Same time. Without being asked.",                                                  category: "poetic" },
+  { id: 8,  theme: "Where We Met",                       text: "Site confirmed. Correct position. Begin.",                                                                            category: "wise" },
+  { id: 9,  theme: "Where We Met",                       text: "Settled over the area. Persistent. No movement expected.",                                                            category: "mystical" },
+  { id: 10, theme: "Where We Met",                       text: "Started on the couch. Then the lap. Then the left side of the bed. The territory was always this.",                  category: "chaotic" },
+  { id: 11, theme: "Where We Met",                       text: "Squatter's rights apply.",                                                                                            category: "cold" },
+  { id: 12, theme: "Where We Met",                       text: "Was already in the warm spot. You sat down around me. And here we are.",                                             category: "heartfelt" },
+  { id: 13, theme: "Where We Met",                       text: "Point of entry: unknown. Damage: ongoing.",                                                                           category: "poetic" },
+  { id: 14, theme: "Where We Met",                       text: "Condition: better than expected. Location: the last place looked.",                                                   category: "heartfelt" },
+  { id: 15, theme: "Where We Met",                       text: "Charming. Original character. Some settling. Available as-is.",                                                       category: "cold" },
+  { id: 16, theme: "Where We Met",                       text: "Returned. Without explanation. Correct decision.",                                                                    category: "wise" },
+  { id: 17, theme: "Where We Met",                       text: "Was not looking. Found it anyway. This is how it works.",                                                             category: "wise" },
+  // ── Chonky Beauty (18) ──
+  { id: 18, theme: "Chonky Beauty",                      text: "Load-bearing. Do not remove.",                                                                                        category: "demanding" },
+  { id: 19, theme: "Chonky Beauty",                      text: "Full-bodied. Bold finish. Commanding presence that lingers.",                                                         category: "heartfelt" },
+  { id: 20, theme: "Chonky Beauty",                      text: "Takes up exactly the amount of space taken up. *Blinks.*",                                                            category: "wise" },
+  { id: 21, theme: "Chonky Beauty",                      text: "Not small. Not meant to be small. That's someone else's problem.",                                                    category: "demanding" },
+  { id: 22, theme: "Chonky Beauty",                      text: "Notes of absolute certainty. Full body. Long finish. No one asked if that was okay and no one was going to.",        category: "chaotic" },
+  { id: 23, theme: "Chonky Beauty",                      text: "Arrived. Assessed. Determined: sufficient.",                                                                          category: "cold" },
+  { id: 24, theme: "Chonky Beauty",                      text: "The composition demands attention. Unapologetic use of space.",                                                       category: "poetic" },
+  { id: 25, theme: "Chonky Beauty",                      text: "Substantial. Original footprint. Character throughout.",                                                              category: "heartfelt" },
+  { id: 26, theme: "Chonky Beauty",                      text: "Weight evenly distributed. Maximum surface contact. *Optimal.*",                                                     category: "wise" },
+  { id: 27, theme: "Chonky Beauty",                      text: "Complex, with notes of 'not your concern.'",                                                                         category: "cold" },
+  { id: 28, theme: "Chonky Beauty",                      text: "Move-in ready. Not a fixer-upper. Sold as-is.",                                                                      category: "demanding" },
+  { id: 29, theme: "Chonky Beauty",                      text: "Holds the ground. Opponents adjust.",                                                                                category: "cold" },
+  { id: 30, theme: "Chonky Beauty",                      text: "The flavor is correct. The portion is not your business.",                                                            category: "judgy" },
+  { id: 31, theme: "Chonky Beauty",                      text: "*Shows belly. Maintains eye contact. Dares you to find a flaw.*",                                                    category: "heartfelt" },
+  { id: 32, theme: "Chonky Beauty",                      text: "Generous. Rich. Not for the faint.",                                                                                 category: "cold" },
+  { id: 33, theme: "Chonky Beauty",                      text: "*Displays magnificently. The territory expands accordingly.*",                                                        category: "chaotic" },
+  { id: 34, theme: "Chonky Beauty",                      text: "Bold use of all the space.",                                                                                         category: "poetic" },
+  { id: 35, theme: "Chonky Beauty",                      text: "Structural integrity confirmed. Stop poking.",                                                                        category: "demanding" },
+  // ── They Meant Something Else Entirely (17) ──
+  { id: 36, theme: "They Meant Something Else Entirely", text: "Recalculating.",                                                                                                     category: "cold" },
+  { id: 37, theme: "They Meant Something Else Entirely", text: "We have noted your position.",                                                                                       category: "cold" },
+  { id: 38, theme: "They Meant Something Else Entirely", text: "No equivalent in any language the other person speaks.",                                                             category: "existential" },
+  { id: 39, theme: "They Meant Something Else Entirely", text: "The record and the memory are not the same document.",                                                               category: "wise" },
+  { id: 40, theme: "They Meant Something Else Entirely", text: "*[inaudible]* *slow blink*",                                                                                        category: "meta" },
+  { id: 41, theme: "They Meant Something Else Entirely", text: "The cat heard 'treat.' The cat heard nothing else. *pupils dilate*",                                                 category: "chaotic" },
+  { id: 42, theme: "They Meant Something Else Entirely", text: "You heard 'maybe.' They said 'no.' Those are two completely different budgets.",                                     category: "wise" },
+  { id: 43, theme: "They Meant Something Else Entirely", text: "The witness is not being asked what they thought you meant.",                                                        category: "judgy" },
+  { id: 44, theme: "They Meant Something Else Entirely", text: "Recalculating. *Recalculating.* *one ear rotates* The destination has not changed.",                                 category: "wise" },
+  { id: 45, theme: "They Meant Something Else Entirely", text: "Do not be operating in the manner of previous expectations.",                                                        category: "chaotic" },
+  { id: 46, theme: "They Meant Something Else Entirely", text: "The thing you said and the thing you meant left for the same place and arrived separately.",                         category: "poetic" },
+  { id: 47, theme: "They Meant Something Else Entirely", text: "The most important part of that message was [REDACTED]. *sits directly on face*",                                    category: "meta" },
+  { id: 48, theme: "They Meant Something Else Entirely", text: "Talks remain productive. *slow blink that never fully opens*",                                                      category: "cold" },
+  { id: 49, theme: "They Meant Something Else Entirely", text: "Untranslatable. Closest meaning: understood, then immediately forgotten.",                                           category: "existential" },
+  { id: 50, theme: "They Meant Something Else Entirely", text: "Sustained. *turns around, sits down, faces wall*",                                                                  category: "cold" },
+  { id: 51, theme: "They Meant Something Else Entirely", text: "The message was received correctly. The message was not the message.",                                               category: "existential" },
+  { id: 52, theme: "They Meant Something Else Entirely", text: "Make a legal U-turn when possible. *chirps once*",                                                                  category: "chaotic" },
+  // ── Misunderstood (18) ──
+  { id: 53, theme: "Misunderstood",                      text: "Scientists remain puzzled by this behavior. The cat is not puzzled.",                                                 category: "meta" },
+  { id: 54, theme: "Misunderstood",                      text: "Deliberately provocative. Reappraisal ongoing.",                                                                     category: "cold" },
+  { id: 55, theme: "Misunderstood",                      text: "This is by design. *sits down in sunbeam, eyes close*",                                                              category: "wise" },
+  { id: 56, theme: "Misunderstood",                      text: "Not a bug.",                                                                                                         category: "cold" },
+  { id: 57, theme: "Misunderstood",                      text: "The work refuses easy interpretation. *slow blink*",                                                                 category: "poetic" },
+  { id: 58, theme: "Misunderstood",                      text: "Communication attempts appear unsuccessful. Subjects who continue anyway tend to survive.",                          category: "heartfelt" },
+  { id: 59, theme: "Misunderstood",                      text: "Misleading nose. Surprising finish. *headbutts your hand*",                                                          category: "poetic" },
+  { id: 60, theme: "Misunderstood",                      text: "Expected behavior. *stares at wall*",                                                                                category: "existential" },
+  { id: 61, theme: "Misunderstood",                      text: "No observable distress. Significant interior activity.",                                                             category: "wise" },
+  { id: 62, theme: "Misunderstood",                      text: "Findings suggestive of. *tail wraps around paws*",                                                                  category: "mystical" },
+  { id: 63, theme: "Misunderstood",                      text: "Despite extensive study, the interior state remains opaque. This is not a failure of study.",                        category: "wise" },
+  { id: 64, theme: "Misunderstood",                      text: "Opens considerably with air. Most people don't wait.",                                                               category: "heartfelt" },
+  { id: 65, theme: "Misunderstood",                      text: "The viewer brings their own meaning. The viewer is wrong. *slow blink*",                                             category: "cold" },
+  { id: 66, theme: "Misunderstood",                      text: "Motivations: unknown. Outcome: decisive.",                                                                           category: "cold" },
+  { id: 67, theme: "Misunderstood",                      text: "Everyone arrived with a different reading. The original is not in question.",                                        category: "existential" },
+  { id: 68, theme: "Misunderstood",                      text: "Cause of confusion: entirely preventable. By them. *looks away*",                                                   category: "judgy" },
+  { id: 69, theme: "Misunderstood",                      text: "Thought to be aloof. Correct. The aloof part was not the problem part.",                                             category: "cold" },
+  { id: 70, theme: "Misunderstood",                      text: "The documentation describes this correctly. The documentation is you.",                                              category: "meta" },
+  // ── I Thought They Said (13) ──
+  { id: 71, theme: "I Thought They Said",                text: "Thirty-two muscles in each ear. Deployed none of them at my name.",                                                  category: "cold" },
+  { id: 72, theme: "I Thought They Said",                text: "Misheard it. Preferred my version. No corrections accepted.",                                                        category: "demanding" },
+  { id: 73, theme: "I Thought They Said",                text: "Recalculating. Arriving anyway.",                                                                                    category: "chaotic" },
+  { id: 74, theme: "I Thought They Said",                text: "Not what was said. What was heard.",                                                                                 category: "wise" },
+  { id: 75, theme: "I Thought They Said",                text: "What was said: no. What was heard: not yet.",                                                                        category: "wise" },
+  { id: 76, theme: "I Thought They Said",                text: "Heard that from three rooms away. Still not coming.",                                                                category: "cold" },
+  { id: 77, theme: "I Thought They Said",                text: "The captions are approximate. The feeling is real.",                                                                 category: "heartfelt" },
+  { id: 78, theme: "I Thought They Said",                text: "If this message was not intended for you, that's between you and whoever sent it.",                                  category: "mystical" },
+  { id: 79, theme: "I Thought They Said",                text: "Not every frequency deserves acknowledgment.",                                                                       category: "judgy" },
+  { id: 80, theme: "I Thought They Said",                text: "As understood at the time of receipt.",                                                                              category: "cold" },
+  { id: 81, theme: "I Thought They Said",                text: "Heard what was useful. Left the rest.",                                                                              category: "wise" },
+  { id: 82, theme: "I Thought They Said",                text: "Signal was weak. Received what made sense.",                                                                         category: "chaotic" },
+  { id: 83, theme: "I Thought They Said",                text: "The patient reports no knowledge of this conversation.",                                                             category: "cold" },
+  // ── They Were In My Spot (20) ──
+  { id: 84,  theme: "They Were In My Spot",              text: "Seven years of continuous, uncontested occupation. Look it up.",                                                     category: "demanding" },
+  { id: 85,  theme: "They Were In My Spot",              text: "That seat has been reassigned. We can offer you the middle.",                                                        category: "judgy" },
+  { id: 86,  theme: "They Were In My Spot",              text: "The territory was never actually in dispute.",                                                                       category: "cold" },
+  { id: 87,  theme: "They Were In My Spot",              text: "Vacate and restore the premises to their original condition.",                                                       category: "angry" },
+  { id: 88,  theme: "They Were In My Spot",              text: "That table is on a hold. It has always been on a hold.",                                                             category: "mystical" },
+  { id: 89,  theme: "They Were In My Spot",              text: "This surface conveys with the occupant.",                                                                            category: "demanding" },
+  { id: 90,  theme: "They Were In My Spot",              text: "Perimeter secured. Reclamation complete. You may sit nearby.",                                                       category: "cold" },
+  { id: 91,  theme: "They Were In My Spot",              text: "Historical claim. Continuous occupation. The documentation is my body.",                                             category: "existential" },
+  { id: 92,  theme: "They Were In My Spot",              text: "Unauthorized presence detected in Zone 4. This is your only warning.",                                              category: "angry" },
+  { id: 93,  theme: "They Were In My Spot",              text: "Prior arrival. Prior claim. This is how civilization works.",                                                        category: "wise" },
+  { id: 94,  theme: "They Were In My Spot",              text: "Pre-existing claim. Not covered under your situation.",                                                              category: "cold" },
+  { id: 95,  theme: "They Were In My Spot",              text: "You're welcome for warming it up.",                                                                                  category: "judgy" },
+  { id: 96,  theme: "They Were In My Spot",              text: "Left. Came back. Still mine.",                                                                                       category: "chaotic" },
+  { id: 97,  theme: "They Were In My Spot",              text: "Call it entitlement. The entitled get the spot.",                                                                    category: "demanding" },
+  { id: 98,  theme: "They Were In My Spot",              text: "Open, notorious, and continuous. The legal standard. Also my whole thing.",                                         category: "chaotic" },
+  { id: 99,  theme: "They Were In My Spot",              text: "Ownership is just patience with paperwork.",                                                                         category: "wise" },
+  { id: 100, theme: "They Were In My Spot",              text: "The impression is still here. That tells you everything.",                                                           category: "heartfelt" },
+  { id: 101, theme: "They Were In My Spot",              text: "Unapproved modifications to a shared space will not be tolerated.",                                                  category: "angry" },
+  { id: 102, theme: "They Were In My Spot",              text: "Claimed it before you wanted it. That's just good timing.",                                                          category: "chaotic" },
+  { id: 103, theme: "They Were In My Spot",              text: "A violation has been noted.",                                                                                        category: "judgy" },
+];
+
+// State per card: null = undecided, 'kept', 'cut', 'edited'
+const state = {};
+const editedText = {};
+
+DATA.forEach(item => {
+  state[item.id] = null;
+  editedText[item.id] = item.text;
+});
+
+// ── Helpers ──
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderText(text) {
+  // *...* becomes a muted italic span
+  return escapeHtml(text).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+function badgeClass(cat) {
+  return 'badge badge-' + cat;
+}
+
+// ── Build DOM ──
+const themes = [...new Set(DATA.map(d => d.theme))];
+const root = document.getElementById('cards-root');
+
+themes.forEach(theme => {
+  const items = DATA.filter(d => d.theme === theme);
+
+  const section = document.createElement('div');
+  section.className = 'theme-section';
+  section.id = 'theme-' + theme.replace(/[^a-z0-9]/gi, '-');
+
+  const header = document.createElement('div');
+  header.className = 'theme-header';
+  header.innerHTML =
+    '<h2>' + escapeHtml(theme) + '</h2>' +
+    '<span class="theme-count">' + items.length + ' responses</span>';
+  section.appendChild(header);
+
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'card-' + item.id;
+
+    card.innerHTML =
+      '<div class="card-body">' +
+        '<div class="card-meta">' +
+          '<span class="card-index">#' + item.id + '</span>' +
+          '<span class="' + badgeClass(item.category) + '">' + item.category + '</span>' +
+        '</div>' +
+        '<div class="card-text" id="text-display-' + item.id + '">' + renderText(item.text) + '</div>' +
+      '</div>' +
+      '<div class="card-actions">' +
+        '<button class="btn btn-keep"  onclick="decide(' + item.id + ',\'kept\')">Keep</button>' +
+        '<button class="btn btn-cut"   onclick="decide(' + item.id + ',\'cut\')">Cut</button>' +
+        '<button class="btn btn-edit"  onclick="toggleEdit(' + item.id + ')">Edit</button>' +
+        '<button class="btn btn-undo"  onclick="decide(' + item.id + ',null)" id="undo-' + item.id + '" style="display:none">Undo</button>' +
+      '</div>' +
+      '<div class="edit-area" id="edit-area-' + item.id + '">' +
+        '<textarea id="edit-ta-' + item.id + '" rows="3">' + escapeHtml(item.text) + '</textarea>' +
+        '<button class="save-edit" onclick="saveEdit(' + item.id + ')">Save Edit</button>' +
+      '</div>';
+
+    section.appendChild(card);
+  });
+
+  root.appendChild(section);
+});
+
+// ── Decision logic ──
+function decide(id, decision) {
+  state[id] = decision;
+
+  const card = document.getElementById('card-' + id);
+  card.classList.remove('kept', 'cut', 'edited');
+  if (decision) card.classList.add(decision);
+
+  // Undo button visibility
+  const undoBtn = document.getElementById('undo-' + id);
+  undoBtn.style.display = decision ? 'inline-block' : 'none';
+
+  // Active button highlights
+  const keep = card.querySelector('.btn-keep');
+  const cut  = card.querySelector('.btn-cut');
+  const edit = card.querySelector('.btn-edit');
+  keep.classList.remove('active-keep');
+  cut.classList.remove('active-cut');
+  edit.classList.remove('active-edit');
+  if (decision === 'kept')   keep.classList.add('active-keep');
+  if (decision === 'cut')    cut.classList.add('active-cut');
+  if (decision === 'edited') edit.classList.add('active-edit');
+
+  // Collapse edit area unless editing
+  if (decision !== 'edited') {
+    document.getElementById('edit-area-' + id).classList.remove('visible');
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const area = document.getElementById('edit-area-' + id);
+  const nowVisible = !area.classList.contains('visible');
+  area.classList.toggle('visible', nowVisible);
+  if (nowVisible) {
+    document.getElementById('edit-ta-' + id).focus();
+  }
+}
+
+function saveEdit(id) {
+  const ta = document.getElementById('edit-ta-' + id);
+  const newText = ta.value.trim();
+  if (!newText) return;
+  editedText[id] = newText;
+  document.getElementById('text-display-' + id).innerHTML = renderText(newText);
+  decide(id, 'edited');
+  document.getElementById('edit-area-' + id).classList.remove('visible');
+}
+
+// ── Stats ──
+function updateStats() {
+  const kept   = Object.values(state).filter(v => v === 'kept').length;
+  const cut    = Object.values(state).filter(v => v === 'cut').length;
+  const edited = Object.values(state).filter(v => v === 'edited').length;
+  const total  = DATA.length;
+  const remain = total - kept - cut - edited;
+
+  document.getElementById('s-kept').textContent   = kept;
+  document.getElementById('s-cut').textContent    = cut;
+  document.getElementById('s-edited').textContent = edited;
+  document.getElementById('s-remain').textContent = remain;
+
+  const decided = kept + cut + edited;
+  document.getElementById('progress-bar').style.width = ((decided / total) * 100) + '%';
+}
+
+// ── Export ──
+function updateExport() {
+  const results = DATA
+    .filter(item => state[item.id] === 'kept' || state[item.id] === 'edited')
+    .map(item => ({ text: editedText[item.id], category: item.category }));
+
+  document.getElementById('export-count').textContent = results.length;
+  document.getElementById('json-output').textContent  = JSON.stringify(results, null, 2);
+}
+
+// ── Copy button ──
+document.getElementById('copy-btn').addEventListener('click', function () {
+  const text = document.getElementById('json-output').textContent;
+  const btn  = this;
+
+  function flash() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(flash).catch(() => fallbackCopy(text, flash));
+  } else {
+    fallbackCopy(text, flash);
+  }
+});
+
+function fallbackCopy(text, callback) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity  = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  callback();
+}
+
+// ── Init ──
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review: House Sounds Oracle</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    width: 100%;
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+  .response-number {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .response-meta {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .edit-area select {
+    margin-top: 8px;
+    margin-right: 8px;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+  .status-badge.keep { background: #4ecca3; color: #1a1a2e; }
+  .status-badge.cut { background: #e94560; color: #fff; }
+  .status-badge.edit { background: #ffd93d; color: #1a1a2e; }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  .export-section pre {
+    background: #0f3460;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>House Sounds Oracle</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pending-count">0</span></span>
+    <span style="color:#e0e0e0">| <span id="decided-count">0</span> of <span id="total-count">0</span> decided</span>
+  </div>
+  <div class="batch-info">Concept: House sounds from a cat's POV as oracular answers. Divergence: comic voice, double meanings, scene fragments, weird interpretations, emotional weight.</div>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>JSON Export (KEEP + EDIT only)</h2>
+  <pre id="json-export">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "The can opener at 6:02 PM. I was mid-stretch. Everything before that was prologue.",
+    category: "dramatic",
+    layers: "Scene fragment + emotional weight. The specific time, the interrupted action, the grandiose framing of a mundane moment."
+  },
+  {
+    text: "Keys in the door. Keys leaving the door. The whole story, every night, in two sounds.",
+    category: "poetic",
+    layers: "Double meaning + emotional weight. For the cat it's arrival/departure; for the reader it's any relationship cycle."
+  },
+  {
+    text: "The fridge opened. Nobody looked down. False alarm. But for a second — possibility.",
+    category: "wise",
+    layers: "Scene fragment + double meaning. The cat's disappointment maps onto the reader's hopes that didn't pan out."
+  },
+  {
+    text: "VACUUM. We are all going to die. Oh it stopped. Carry on.",
+    category: "chaotic",
+    layers: "Comic voice (Peanuts-level melodrama) + scale mismatch. Existential threat resolved instantly."
+  },
+  {
+    text: "The bag rustled. Could be chips. Could be trash. Hope is not knowing which.",
+    category: "cryptic",
+    layers: "Double meaning + weird interpretation. The cat's treat-or-garbage gamble maps onto any 50/50 life bet."
+  },
+  {
+    text: "Door closed. Either everyone left or everyone stayed. I'm not checking.",
+    category: "cold",
+    layers: "Double meaning + emotional weight. Schrodinger's abandonment. The refusal to look is the whole mood."
+  },
+  {
+    text: "The dryer buzzed. Warm things are coming. I have never been more patient in my life.",
+    category: "wholesome",
+    layers: "Scene fragment + emotional weight. Genuine anticipation for something small. Maps onto waiting for good news."
+  },
+  {
+    text: "Cabinet opened, cabinet closed. Nothing came out. Do humans know how cruel that is?",
+    category: "demanding",
+    layers: "Scene fragment + comic voice (Garfield energy). The cat's outrage at false hope, mapped onto being teased by possibility."
+  },
+  {
+    text: "Footsteps at 3 AM. The human joined my schedule. Finally, respect.",
+    category: "sassy",
+    layers: "Weird interpretation + comic voice. The cat reads insomnia as deference. The reader's sleepless night reframed as choice."
+  },
+  {
+    text: "DOORBELL. I don't know who's out there but I know they weren't invited. Stand behind me.",
+    category: "chaotic_wholesome",
+    layers: "Comic voice (overprotective absurdity) + emotional weight. The cat as unhinged bodyguard. Protective AND ridiculous."
+  },
+  {
+    text: "Water running in the other room. I have questions. Nobody has answers. This is how it starts.",
+    category: "cryptic",
+    layers: "Weird interpretation + escalation. The cat's suspicion of plumbing as conspiracy. Mirrors the reader's anxiety spiral."
+  },
+  {
+    text: "The toilet flushed. Something just left and it's never coming back. Let that sink in.",
+    category: "existential",
+    layers: "Weird interpretation + double meaning. The cat's genuine bewilderment at plumbing becomes an accidental philosophy of letting go."
+  },
+  {
+    text: "Garage door going up. The big portal. Something's arriving or something's leaving. Either way: enormous.",
+    category: "dramatic",
+    layers: "Emotional weight + scale shift. The cat treats the garage door like a castle gate. Maps onto any looming change."
+  },
+  {
+    text: "Tap of a spoon on a can. That's not a sound. That's a summons. I was already moving before it finished.",
+    category: "demanding",
+    layers: "Scene fragment + emotional weight. Pavlovian certainty. Maps onto hearing news you've been waiting for."
+  },
+  {
+    text: "Window opened. The whole world got louder. I'm not ready. I'm absolutely ready.",
+    category: "chaotic_wholesome",
+    layers: "Double meaning + emotional weight. The cat's sensory overwhelm as metaphor for any new opening — terrified and alive simultaneously."
+  },
+  {
+    text: "Thunder. The sky made a decision without consulting me. Bold.",
+    category: "sassy",
+    layers: "Weird interpretation + comic voice. The cat's offense at not being consulted by weather. Maps onto feeling blindsided."
+  },
+  {
+    text: "Light switch clicked. Someone just decided whether today is over. I wasn't asked.",
+    category: "cold",
+    layers: "Weird interpretation + emotional weight. The light switch as unilateral authority. The cat's resentment of having no say."
+  },
+  {
+    text: "Phone buzzing on the counter. Something's happening to someone. The counter is vibrating. I am also vibrating. Solidarity.",
+    category: "chaotic",
+    layers: "Scene fragment + comic voice (absurdist logic). The cat's physical response to a phone buzz is \"solidarity.\" Unhinged empathy."
+  },
+  {
+    text: "I heard a bag. I came running. It was laundry. The betrayal has layers.",
+    category: "wise",
+    layers: "Scene fragment + double meaning. The cat's false-positive hope mapped onto any time you rushed toward something that wasn't what you thought."
+  },
+  {
+    text: "The click before the furnace kicks on. Three seconds of silence where anything could happen. Then warmth. Always warmth.",
+    category: "nurturing",
+    layers: "Scene fragment + emotional weight. The tiny gap of uncertainty before comfort arrives. Maps onto trusting that things will be okay."
+  }
+];
+
+const states = new Array(responses.length).fill('pending');
+const editedTexts = responses.map(r => r.text);
+const editedCategories = responses.map(r => r.category);
+
+const categories = [
+  'chaotic', 'wise', 'cold', 'sassy', 'cryptic', 'dramatic',
+  'physical', 'wholesome', 'demanding', 'chaotic_wholesome',
+  'existential', 'nurturing', 'poetic'
+];
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (states[i] === 'keep' ? ' kept' : states[i] === 'cut' ? ' cut' : states[i] === 'edit' ? ' edited' : '');
+
+    let badge = '';
+    if (states[i] === 'keep') badge = '<span class="status-badge keep">KEEP</span>';
+    if (states[i] === 'cut') badge = '<span class="status-badge cut">CUT</span>';
+    if (states[i] === 'edit') badge = '<span class="status-badge edit">EDITED</span>';
+
+    const displayText = states[i] === 'edit' ? editedTexts[i] : r.text;
+    const displayCategory = states[i] === 'edit' ? editedCategories[i] : r.category;
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1} ${badge}</div>
+      <div class="response-text">"${displayText}"</div>
+      <div class="response-category">${displayCategory}</div>
+      <div class="response-meta">Layers: ${r.layers}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${displayText}</textarea>
+        <select id="edit-cat-${i}">
+          ${categories.map(c => `<option value="${c}" ${c === displayCategory ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, state) {
+  states[i] = state;
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  area.classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  editedTexts[i] = document.getElementById(`edit-text-${i}`).value;
+  editedCategories[i] = document.getElementById(`edit-cat-${i}`).value;
+  states[i] = 'edit';
+  render();
+}
+
+function updateStats() {
+  const keep = states.filter(s => s === 'keep').length;
+  const cut = states.filter(s => s === 'cut').length;
+  const edit = states.filter(s => s === 'edit').length;
+  const pending = states.filter(s => s === 'pending').length;
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = pending;
+  document.getElementById('decided-count').textContent = keep + cut + edit;
+  document.getElementById('total-count').textContent = responses.length;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (states[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (states[i] === 'edit') {
+      exported.push({ text: editedTexts[i], category: editedCategories[i] });
+    }
+  });
+  document.getElementById('json-export').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('json-export').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

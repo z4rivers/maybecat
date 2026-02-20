@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buzan Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 2rem; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 1.1rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+  h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .subtitle { color: #888; margin-bottom: 1rem; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 2px solid transparent; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; } .item.cut { border-color: #e94560; opacity: 0.5; } .item.edited { border-color: #ffd93d; }
+  .response-text { font-size: 1.3rem; line-height: 1.5; margin-bottom: 0.5rem; }
+  .category { display: inline-block; background: #0f3460; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; color: #aaa; margin-bottom: 1rem; }
+  .source-note { color: #666; font-size: 0.8rem; margin-bottom: 1rem; font-style: italic; }
+  .actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+  .btn { padding: 0.5rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: white; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 0.75rem; padding: 0.75rem; background: #0f3460; border: 1px solid #ffd93d; border-radius: 8px; color: #eee; font-size: 1.1rem; font-family: inherit; resize: vertical; min-height: 80px; display: none; }
+  .edit-area.visible { display: block; }
+  .export-section { margin-top: 3rem; padding: 1.5rem; background: #16213e; border-radius: 12px; }
+  .export-section h2 { margin-bottom: 1rem; }
+  .export-btn { background: #4ecca3; color: #1a1a2e; padding: 0.75rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+  .export-output { width: 100%; min-height: 200px; background: #0f3460; border: 1px solid #333; border-radius: 8px; color: #eee; font-family: monospace; font-size: 0.85rem; padding: 1rem; }
+  .category-select { background: #0f3460; border: 1px solid #ffd93d; border-radius: 8px; color: #eee; padding: 0.25rem 0.5rem; font-size: 0.8rem; display: none; margin-top: 0.5rem; }
+  .category-select.visible { display: inline-block; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>Buzan Radiant Thinking Batch</h1>
+  <p class="subtitle">Associative leaps — mind-map wisdom from the cat's branching brain</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending-count">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export Kept/Edited Responses</h2>
+  <button class="export-btn" onclick="exportJSON()">Generate JSON</button>
+  <textarea class="export-output" id="export-output" readonly></textarea>
+</div>
+
+<script>
+const items = [
+  {
+    text: "Your brain is a firework and you keep handing it a to-do list.",
+    category: "angry",
+    source: "Radiant thinking — brain thinks in explosions, not lines. Linear thinking as a cage imposed on something that wants to radiate."
+  },
+  {
+    text: "The organized notes got a C. The doodles got the job. Sleep on that.",
+    category: "wise",
+    source: "Buzan's discovery that messy, colorful student notes outperformed neat linear ones. The 'chaotic' students were the top performers."
+  },
+  {
+    text: "You were operating at 98% capacity before anyone taught you anything. School fixed that.",
+    category: "cold",
+    source: "Children start at 98% cognitive capacity and decline to 15% — you were a genius before the system got to you."
+  },
+  {
+    text: "*slow blink* You don't need a new idea. You need to stop strangling the forty you already have.",
+    category: "nurturing",
+    source: "One keyword per branch generates more ideas than a full phrase. Constraint creates freedom — you're overloading, not underperforming."
+  },
+  {
+    text: "The menu is a suggestion. Describe what you actually want. Watch them make it.",
+    category: "demanding",
+    source: "Buzan would walk into restaurants, reject the menu, and describe a dish to the chef. Don't accept the options as given."
+  },
+  {
+    text: "Every word you know is a door to every other word you know. You keep standing in the hallway.",
+    category: "poetic",
+    source: "Every word has infinite associations — each concept connects to every other through chains. The connections are already there."
+  },
+  {
+    text: "Remembering and inventing are the same muscle. You just keep using it to clench.",
+    category: "wise",
+    source: "Memory is creativity — same mechanism. 'When we make associations using images, memory becomes creativity.'"
+  },
+  {
+    text: "You're taking notes in a straight line about a life that goes in every direction at once.",
+    category: "heartfelt",
+    source: "Traditional linear note-taking induces a 'semi-hypnotic trance.' The tool meant to help you think is putting your thinking to sleep."
+  },
+  {
+    text: "Try less. No, actually less than that. You're still trying too hard. There. That's where the answer lives.",
+    category: "chaotic",
+    source: "Less effort = more success. 'The best results are achieved by using the right amount of effort in the right place at the right time.'"
+  },
+  {
+    text: "There's a giant sleeping in your skull and you keep asking it to alphabetize things.",
+    category: "angry",
+    source: "'Your brain is like a sleeping giant.' You have a supercomputer and you're using it for spreadsheets."
+  },
+  {
+    text: "Go faster. You'll understand more. I know that doesn't make sense. It doesn't have to.",
+    category: "chaotic",
+    source: "Faster reading = better comprehension. Speed forces pattern recognition over word-by-word processing. Counterintuitive but proven."
+  },
+  {
+    text: "The forgettable thing was reasonable. The thing you can't stop thinking about was absurd, oversized, and a little inappropriate. That's how brains file.",
+    category: "wise",
+    source: "SMASHIN' SCOPE — things that are sensory, absurd, sexual, humorous, exaggerated stick. Normal vanishes. Exaggeration is the key to memory."
+  },
+  {
+    text: "*one ear rotates* I trained myself very cleverly to become stupid. And I was very successful. Don't feel bad. You had help.",
+    category: "heartfelt",
+    source: "Direct Buzan quote: 'I trained myself very cleverly to become stupid, and I was very successful.' The system teaches you to be dumber than you are."
+  },
+  {
+    text: "Nobody taught you how to use your own brain and then everybody blamed you for the results.",
+    category: "nurturing",
+    source: "'The world is historically mentally illiterate.' Nobody taught you how to think, then punished you for not thinking well."
+  },
+  {
+    text: "You already know the answer. It's just formatted wrong. Your brain saved it as a picture and you keep searching your files for a paragraph.",
+    category: "poetic",
+    source: "Historical geniuses did their thinking in full-color images, not words. Mind maps reveal what the brain already knows but can't see in linear form."
+  },
+  {
+    text: "Draw it. I don't care if you can't draw. Draw it ugly. The ugly drawing knows things the pretty sentence doesn't.",
+    category: "demanding",
+    source: "Mind mapping — central image, not words. Leonardo, Edison, Elizabeth I all thought in images and doodles. Words are the wrong format for insight."
+  },
+  {
+    text: "You branched six times and landed somewhere perfect and now you want to explain how you got there. Don't. Just be there.",
+    category: "heartfelt",
+    source: "Radiant thinking — the brain's natural mode is associative leaps in all directions. The path doesn't need to be linear or explainable."
+  },
+  {
+    text: "Curved lines. Your neurons are curved. Your thoughts are curved. Your plans should be curved. Stop building in straight lines on a round planet.",
+    category: "chaotic",
+    source: "Law 5 of Mind Mapping — branches must be curved, not straight, because neural networks are structured with curved branches. The brain perceives curves better."
+  },
+];
+
+const container = document.getElementById('items');
+const state = items.map(() => ({ status: 'pending', editedText: '', editedCategory: '' }));
+
+function render() {
+  container.innerHTML = items.map((item, i) => `
+    <div class="item ${state[i].status === 'keep' ? 'kept' : state[i].status === 'cut' ? 'cut' : state[i].status === 'edit' ? 'edited' : ''}" id="item-${i}">
+      <div class="response-text">"${state[i].editedText || item.text}"</div>
+      <span class="category">${state[i].editedCategory || item.category}</span>
+      <div class="source-note">Inspired by: ${item.source}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <textarea class="edit-area ${state[i].status === 'edit' ? 'visible' : ''}" id="edit-${i}"
+        oninput="state[${i}].editedText=this.value">${state[i].editedText || item.text}</textarea>
+      <select class="category-select ${state[i].status === 'edit' ? 'visible' : ''}" id="cat-${i}"
+        onchange="state[${i}].editedCategory=this.value">
+        ${['chaotic','wise','cold','sassy','zen','mysterious','dramatic','playful','demanding','heartfelt','nurturing','poetic','angry'].map(c =>
+          `<option value="${c}" ${c === (state[i].editedCategory || item.category) ? 'selected' : ''}>${c}</option>`
+        ).join('')}
+      </select>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  if (status === 'edit') {
+    state[i].editedText = state[i].editedText || items[i].text;
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  state[i].status = state[i].status === 'edit' ? 'pending' : 'edit';
+  if (state[i].status === 'edit') state[i].editedText = state[i].editedText || items[i].text;
+  render();
+}
+
+function updateStats() {
+  document.getElementById('keep-count').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cut-count').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('edit-count').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pending-count').textContent = state.filter(s => s.status === 'pending').length;
+}
+
+function exportJSON() {
+  const kept = items.map((item, i) => {
+    if (state[i].status === 'keep') return { text: item.text, category: item.category };
+    if (state[i].status === 'edit') return { text: state[i].editedText || item.text, category: state[i].editedCategory || item.category };
+    return null;
+  }).filter(Boolean);
+  document.getElementById('export-output').value = JSON.stringify(kept, null, 2);
+}
+
+render();
+</script>
+</body>
+</html>

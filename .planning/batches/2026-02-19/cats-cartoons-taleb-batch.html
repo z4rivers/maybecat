@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cats × Cartoons × Taleb Batch — 2026-02-19</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .item-text { font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .item-meta { font-size: 0.75rem; color: #666; margin-bottom: 1rem; }
+  .actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .btn { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: #fff; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; }
+  .edit-area { display: none; margin-top: 0.5rem; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; font-size: 1.1rem; min-height: 60px; }
+  .item.decided-keep { border-left: 4px solid #4ecca3; }
+  .item.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+  .item.decided-edit { border-left: 4px solid #ffd93d; }
+  #export { background: #0f3460; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; }
+  #export pre { white-space: pre-wrap; font-size: 0.85rem; color: #4ecca3; }
+  #copy-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Cats × Cartoons × Taleb (Twisted)</h1>
+  <p style="color:#666;margin:0.5rem 0">Funny thought pretzels — not lectures. Concepts mangled through cat logic and cartoon delivery.</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span style="color:#666">Undecided: <span id="undecided-count">0</span></span>
+  </div>
+</div>
+<div id="items">
+
+<div class="item" id="item-1" data-text="I subtracted everything bad and now there's nothing left." data-category="existential" data-decision="">
+  <div class="item-text">I subtracted everything bad and now there's nothing left.</div>
+  <div class="item-meta">Archetype: Resigned Cat · Mode: Peanuts (flat devastation) · Taleb springboard: Via Negativa taken too far · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(1,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-2" data-text="Everything&apos;s great. That&apos;s the part before the ax." data-category="cold" data-decision="">
+  <div class="item-text">Everything's great. That's the part before the ax.</div>
+  <div class="item-meta">Archetype: Realist Cat · Mode: Far Side (mundane horror) · Taleb springboard: Turkey Problem · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(2,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-3" data-text="Have you tried getting worse at this on purpose?" data-category="chaotic" data-decision="">
+  <div class="item-text">Have you tried getting worse at this on purpose?</div>
+  <div class="item-meta">Archetype: Chaos Cat · Mode: Calvin (imagination gone wrong) · Taleb springboard: Antifragility misapplied · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(3,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-4" data-text="The safe option is where everybody dies at once." data-category="cold" data-decision="">
+  <div class="item-text">The safe option is where everybody dies at once.</div>
+  <div class="item-meta">Archetype: Dark Comedian Cat · Mode: Far Side (one-panel absurdity) · Taleb springboard: Barbell (the middle kills you) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(4,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-5" data-text="You survived this long. That&apos;s not a compliment." data-category="judgy" data-decision="">
+  <div class="item-text">You survived this long. That's not a compliment.</div>
+  <div class="item-meta">Archetype: Judge Cat · Mode: Daria (exhausted cutting intelligence) · Taleb springboard: Lindy Effect twisted · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(5,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-6" data-text="The cure is going to be so much worse. Excited?" data-category="chaotic" data-decision="">
+  <div class="item-text">The cure is going to be so much worse. Excited?</div>
+  <div class="item-meta">Archetype: Chaos Cat · Mode: Calvin (gleeful toward disaster) · Taleb springboard: Iatrogenics · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(6,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-7" data-text="Who told you to fix it? I said break more of it." data-category="demanding" data-decision="">
+  <div class="item-text">Who told you to fix it? I said break more of it.</div>
+  <div class="item-meta">Archetype: Badass Cat · Mode: Daria (reframe the premise) · Taleb springboard: Antifragility (chaos makes you stronger) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(7,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-8" data-text="Bold of you to take advice from something with nothing to lose." data-category="meta" data-decision="">
+  <div class="item-text">Bold of you to take advice from something with nothing to lose.</div>
+  <div class="item-meta">Archetype: Reluctant Therapist Cat · Mode: Daria (undercut own authority) · Taleb springboard: Skin in the Game · Category: meta</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(8,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-9" data-text="What if the thing nobody predicted is that you&apos;re fine?" data-category="heartfelt" data-decision="">
+  <div class="item-text">What if the thing nobody predicted is that you're fine?</div>
+  <div class="item-meta">Archetype: Loving Cat · Mode: Peanuts (simple gut punch) · Taleb springboard: Black Swan flipped positive · Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(9,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-10" data-text="You keep preventing small fires. How&apos;s that working?" data-category="judgy" data-decision="">
+  <div class="item-text">You keep preventing small fires. How's that working?</div>
+  <div class="item-meta">Archetype: Reluctant Therapist Cat · Mode: Daria (monotone devastation) · Taleb springboard: Suppressing volatility causes blowup · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(10,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-11" data-text="The wind that kills the candle is the same wind that&apos;s about to light you up." data-category="heartfelt" data-decision="">
+  <div class="item-text">The wind that kills the candle is the same wind that's about to light you up.</div>
+  <div class="item-meta">Archetype: Optimist Cat · Mode: Calvin (vocabulary that surprises) · Taleb springboard: Wind/candle/fire · Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(11,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-12" data-text="Middle ground is just where both sides can reach you." data-category="cold" data-decision="">
+  <div class="item-text">Middle ground is just where both sides can reach you.</div>
+  <div class="item-meta">Archetype: Street Cat · Mode: Wright (logic taken seriously) · Taleb springboard: Barbell (no middle) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(12,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-13" data-text="I removed all the bad options and now I have no options. Victory." data-category="chaotic" data-decision="">
+  <div class="item-text">I removed all the bad options and now I have no options. Victory.</div>
+  <div class="item-meta">Archetype: Messy Cat · Mode: Wright (deadpan impossible logic) · Taleb springboard: Via Negativa overcorrected · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(13,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-14" data-text="It lasted this long so it&apos;ll probably outlive you. Not sure if that helps." data-category="existential" data-decision="">
+  <div class="item-text">It lasted this long so it'll probably outlive you. Not sure if that helps.</div>
+  <div class="item-meta">Archetype: Dark Comedian Cat · Mode: Wright (two-stage detonation) · Taleb springboard: Lindy Effect · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(14,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-15" data-text="You&apos;re a candle in a hurricane and that&apos;s not the insult you think it is." data-category="nurturing" data-decision="">
+  <div class="item-text">You're a candle in a hurricane and that's not the insult you think it is.</div>
+  <div class="item-meta">Archetype: Backhanded Support Cat · Mode: Calvin (philosophy mid-crash) · Taleb springboard: Wind/candle/fire reframe · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(15,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-16" data-text="Your whole plan is &quot;nothing goes wrong.&quot; Incredible." data-category="judgy" data-decision="">
+  <div class="item-text">Your whole plan is "nothing goes wrong." Incredible.</div>
+  <div class="item-meta">Archetype: Competitive Cat · Mode: Daria (precision puncturing) · Taleb springboard: Fragility (needs calm to survive) · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(16,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-17" data-text="The turkey was having the best November of its life." data-category="cold" data-decision="">
+  <div class="item-text">The turkey was having the best November of its life.</div>
+  <div class="item-meta">Archetype: Prophet Cat · Mode: Far Side (mundane horror played straight) · Taleb springboard: Turkey Problem · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(17,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-18" data-text="Disorder is not your enemy. Your schedule is." data-category="wise" data-decision="">
+  <div class="item-text">Disorder is not your enemy. Your schedule is.</div>
+  <div class="item-meta">Archetype: Feral Cat · Mode: Wright (pivot structure) · Taleb springboard: Antifragility vs overplanning · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(18,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-19" data-text="Do less. No, more less. Too much less. Never mind." data-category="chaotic" data-decision="">
+  <div class="item-text">Do less. No, more less. Too much less. Never mind.</div>
+  <div class="item-meta">Archetype: Doubt Cat · Mode: Peanuts (resigned spiral) · Taleb springboard: Via Negativa but the cat can't stop subtracting · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(19,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-20" data-text="You don&apos;t need a prediction. You need a door." data-category="demanding" data-decision="">
+  <div class="item-text">You don't need a prediction. You need a door.</div>
+  <div class="item-meta">Archetype: Badass Cat · Mode: Peanuts (simple/devastating) · Taleb springboard: Invest in preparedness not prediction · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(20,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-21" data-text="Put 90% in cowardice and 10% in absolute recklessness. Trust me." data-category="chaotic" data-decision="">
+  <div class="item-text">Put 90% in cowardice and 10% in absolute recklessness. Trust me.</div>
+  <div class="item-meta">Archetype: Conspiracy Cat · Mode: Wright (logic sounds insane but tracks) · Taleb springboard: Barbell strategy · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(21,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-22" data-text="The thing you&apos;re protecting yourself from IS the thing." data-category="wise" data-decision="">
+  <div class="item-text">The thing you're protecting yourself from IS the thing.</div>
+  <div class="item-meta">Archetype: Detective Cat · Mode: Daria (reframe the premise) · Taleb springboard: Iatrogenics (cure = disease) · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(22,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-23" data-text="Name one person who told you to play it safe who has scars." data-category="demanding" data-decision="">
+  <div class="item-text">Name one person who told you to play it safe who has scars.</div>
+  <div class="item-meta">Archetype: Street Cat · Mode: Daria (surgical precision) · Taleb springboard: Skin in the Game (scars = credibility) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(23,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-24" data-text="This has been terrible for a long time. That&apos;s actually your best argument for staying." data-category="existential" data-decision="">
+  <div class="item-text">This has been terrible for a long time. That's actually your best argument for staying.</div>
+  <div class="item-meta">Archetype: Philosopher Cat · Mode: Wright (two-stage detonation) · Taleb springboard: Lindy Effect applied to suffering · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(24,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-25" data-text="You built a beautiful shelter from the exact thing that would have saved you." data-category="poetic" data-decision="">
+  <div class="item-text">You built a beautiful shelter from the exact thing that would have saved you.</div>
+  <div class="item-meta">Archetype: Deep Artist Cat · Mode: Calvin (philosophy with depth) · Taleb springboard: Iatrogenics / preventing the cure · Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(25,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-26" data-text="Every Thanksgiving the turkey is surprised. Every Thanksgiving." data-category="cold" data-decision="">
+  <div class="item-text">Every Thanksgiving the turkey is surprised. Every Thanksgiving.</div>
+  <div class="item-meta">Archetype: Realist Cat · Mode: Peanuts (repetition as tragedy) · Taleb springboard: Turkey Problem + humans repeat · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(26,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-27" data-text="Scars are receipts. Show me yours." data-category="demanding" data-decision="">
+  <div class="item-text">Scars are receipts. Show me yours.</div>
+  <div class="item-meta">Archetype: Badass Cat · Mode: Wright (pivot economy) · Taleb springboard: Skin in the Game (scars signal credibility) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(27,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-28" data-text="You keep crossing rivers that are four feet deep on average." data-category="wise" data-decision="">
+  <div class="item-text">You keep crossing rivers that are four feet deep on average.</div>
+  <div class="item-meta">Archetype: Reluctant Therapist Cat · Mode: Far Side (absurd premise played straight) · Taleb springboard: Never cross a river 4ft deep on average · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(28,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-29" data-text="The theater is huge and the door is small. Why are you still finding your seat?" data-category="demanding" data-decision="">
+  <div class="item-text">The theater is huge and the door is small. Why are you still finding your seat?</div>
+  <div class="item-meta">Archetype: Competitive Cat · Mode: Far Side (one collision) · Taleb springboard: Market = large theater, small door · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(29,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-30" data-text="You know what&apos;s fragile? Anything you built on &quot;probably fine.&quot;" data-category="judgy" data-decision="">
+  <div class="item-text">You know what's fragile? Anything you built on "probably fine."</div>
+  <div class="item-meta">Archetype: Karen Cat · Mode: Daria (specificity punctures) · Taleb springboard: Fragility / Black Swan exposure · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(30,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+</div>
+<div id="export">
+  <h3>Export (Kept + Edited)</h3>
+  <pre id="export-json">[]</pre>
+  <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').textContent)">Copy JSON</button>
+</div>
+<script>
+function decide(id, decision) {
+  const item = document.getElementById('item-'+id);
+  item.className = 'item decided-'+decision;
+  item.dataset.decision = decision;
+  if(decision==='edit') item.querySelector('.edit-area').style.display='block';
+  else item.querySelector('.edit-area').style.display='none';
+  item.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  item.querySelector('.btn-'+decision).classList.add('active');
+  updateStats(); updateExport();
+}
+function updateStats() {
+  const items = document.querySelectorAll('.item');
+  let k=0,c=0,e=0,u=0;
+  items.forEach(i=>{const d=i.dataset.decision;if(d==='keep')k++;else if(d==='cut')c++;else if(d==='edit')e++;else u++;});
+  document.getElementById('keep-count').textContent=k;
+  document.getElementById('cut-count').textContent=c;
+  document.getElementById('edit-count').textContent=e;
+  document.getElementById('undecided-count').textContent=u;
+}
+function updateExport() {
+  const items = document.querySelectorAll('.item');
+  const kept = [];
+  items.forEach(i=>{
+    const d=i.dataset.decision;
+    if(d==='keep') kept.push({text:i.dataset.text,category:i.dataset.category});
+    else if(d==='edit'){const ta=i.querySelector('textarea');if(ta.value)kept.push({text:ta.value,category:i.dataset.category});}
+  });
+  document.getElementById('export-json').textContent=JSON.stringify(kept,null,2);
+}
+document.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('input',updateExport));
+updateStats();
+</script>
+</body>
+</html>

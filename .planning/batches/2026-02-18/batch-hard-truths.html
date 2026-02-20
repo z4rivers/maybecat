@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch: Hard Truths (Friend Energy)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+.sticky-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 16px 24px; border-bottom: 2px solid #0f3460;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.sticky-header h1 { font-size: 1.3rem; color: #e94560; }
+.stats { display: flex; gap: 16px; font-size: 0.9rem; }
+.stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #aaa; }
+
+.card {
+  background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  border-left: 4px solid #0f3460; transition: border-color 0.3s;
+}
+.card.kept { border-left-color: #4ecca3; } .card.cut { border-left-color: #e94560; } .card.edited { border-left-color: #ffd93d; }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.card-number { color: #666; font-size: 0.8rem; }
+.category-badge {
+  background: #0f3460; color: #e94560; padding: 3px 10px; border-radius: 20px;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.response-text { font-size: 1.15rem; line-height: 1.6; color: #fff; margin-bottom: 16px; font-style: italic; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3db891; }
+.btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #f0ca2e; }
+.btn-reset { background: #333; color: #aaa; font-size: 0.75rem; } .btn-reset:hover { background: #444; }
+
+.edit-area {
+  width: 100%; margin-top: 10px; padding: 12px; background: #0d1b2a; color: #fff;
+  border: 1px solid #ffd93d; border-radius: 6px; font-size: 1rem; resize: vertical;
+  font-family: inherit; display: none; min-height: 60px;
+}
+.card.editing .edit-area { display: block; }
+
+.export-section {
+  margin-top: 40px; padding: 24px; background: #0d1b2a; border-radius: 12px; border: 1px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+.export-json {
+  width: 100%; min-height: 200px; padding: 12px; background: #1a1a2e; color: #4ecca3;
+  border: 1px solid #0f3460; border-radius: 6px; font-family: monospace; font-size: 0.85rem;
+}
+.btn-copy {
+  margin-top: 10px; padding: 10px 24px; background: #4ecca3; color: #1a1a2e;
+  border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+}
+.btn-copy:hover { background: #3db891; }
+.copy-feedback { color: #4ecca3; margin-left: 12px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Batch: Hard Truths (Friend Energy)</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="count-keep">0</span></span>
+    <span class="stat-cut">CUT: <span id="count-cut">0</span></span>
+    <span class="stat-edit">EDIT: <span id="count-edit">0</span></span>
+    <span class="stat-pending">PENDING: <span id="count-pending">0</span></span>
+    <span style="color:#666">TOTAL: <span id="count-total">0</span></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <br>
+  <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+  <span class="copy-feedback" id="copy-feedback">Copied!</span>
+</div>
+
+<script>
+const responses = [
+  { text: "You don't want advice. You want permission.", category: "wise" },
+  { text: "That thing you keep almost doing? Do it or grieve it. The almost is killing you.", category: "demanding" },
+  { text: "*slow blink* You're not confused. You're scared. Different problem.", category: "judgy" },
+  { text: "They're not going to change. You already knew that. This is me reminding you that you already knew that.", category: "wise" },
+  { text: "You keep setting yourself on fire to keep someone warm who owns a coat.", category: "judgy" },
+  { text: "The answer is the one that makes your stomach drop.", category: "wise" },
+  { text: "*headbutts your hand* You're doing better than you think. But also worse than you pretend.", category: "heartfelt" },
+  { text: "You're not being patient. You're being still because you're afraid to move.", category: "judgy" },
+  { text: "The bar was on the floor and they brought a shovel.", category: "cold" },
+  { text: "Stop rehearsing a conversation they're never going to have with you.", category: "demanding" },
+  { text: "Your gut already left. You're just waiting for your brain to pack.", category: "wise" },
+  { text: "*one ear rotates toward you* You keep calling it complicated. It's not complicated. It's just bad.", category: "judgy" },
+  { text: "You deserve the love you keep giving away for free.", category: "heartfelt" },
+  { text: "Rest isn't quitting. Quitting is what happens when you never rest.", category: "nurturing" },
+  { text: "The apology you're waiting for is never coming. Build the house without that brick.", category: "wise" },
+  { text: "You don't need more information. You need five seconds of courage.", category: "demanding" },
+  { text: "*reaches one paw without getting up* You're allowed to outgrow people you love.", category: "heartfelt" },
+  { text: "Stop watering dead plants and wondering why your garden looks like that.", category: "judgy" },
+  { text: "You're not asking the wrong questions. You're asking the right ones to the wrong person.", category: "wise" },
+  { text: "They showed you who they are. You just don't like the rerun.", category: "cold" },
+  { text: "The thing you're tolerating is the thing that's eating you.", category: "demanding" },
+  { text: "*makes biscuits on your chest* Some doors close so you stop standing in the hallway.", category: "heartfelt" },
+  { text: "You can love someone and still need them to be further away from you.", category: "nurturing" },
+  { text: "Your peace is more expensive than their feelings.", category: "demanding" },
+  { text: "That's not loyalty. That's a hostage situation you volunteered for.", category: "judgy" },
+  { text: "*tail tip flicks* Interesting that you already know what I'm going to say.", category: "wise" },
+  { text: "You're not behind. You're on a completely different road. Stop using their map.", category: "nurturing" },
+  { text: "Sometimes the bravest thing is the quiet thing. The leaving without a door slam.", category: "heartfelt" },
+  { text: "They don't miss you. They miss what you did for them. Learn the difference.", category: "cold" },
+  { text: "You said 'one more chance' four chances ago. I was counting.", category: "judgy" },
+  { text: "*slow blink* You're going to be fine. Not today. But soon. And you'll barely notice the shift.", category: "nurturing" },
+  { text: "Stop explaining yourself to people who are committed to misunderstanding you.", category: "demanding" },
+  { text: "The version of you that survives this is someone you haven't met yet. You'll like them.", category: "heartfelt" },
+  { text: "Not everything that weighs on you is yours to carry.", category: "nurturing" },
+  { text: "You keep saying 'I don't know' about something you absolutely know.", category: "wise" },
+  { text: "*pupils dilate* Oh, you already decided. You're just here for the exit interview.", category: "judgy" },
+  { text: "Healing isn't linear but you're not even walking. You're just standing at the trailhead reading the map.", category: "demanding" },
+  { text: "The right people won't make you audition to be loved.", category: "heartfelt" },
+  { text: "You're asking for a sign from someone who's been giving you signs.", category: "wise" },
+  { text: "*kneads the air* Let it be ugly for a while. Clean comes later.", category: "nurturing" }
+];
+
+const STORAGE_KEY = 'batch-hard-truths-decisions';
+
+function loadDecisions() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+}
+function saveDecisions(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  const decisions = loadDecisions();
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const d = decisions[i] || {};
+    const status = d.status || 'pending';
+    const editedText = d.editedText || r.text;
+
+    const card = document.createElement('div');
+    card.className = `card ${status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited editing' : ''}`;
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-number">#${i + 1}</span>
+        <span class="category-badge">${r.category}</span>
+      </div>
+      <div class="response-text">"${status === 'edit' ? editedText : r.text}"</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="startEdit(${i})">EDIT</button>
+        ${status !== 'pending' ? `<button class="btn btn-reset" onclick="decide(${i}, 'pending')">RESET</button>` : ''}
+      </div>
+      <textarea class="edit-area" id="edit-${i}" onblur="saveEdit(${i})">${editedText}</textarea>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  const decisions = loadDecisions();
+  if (status === 'pending') { delete decisions[i]; }
+  else {
+    decisions[i] = decisions[i] || {};
+    decisions[i].status = status;
+    if (status === 'edit') {
+      decisions[i].editedText = decisions[i].editedText || responses[i].text;
+    }
+  }
+  saveDecisions(decisions);
+  renderCards();
+  if (status === 'edit') {
+    const ta = document.getElementById(`edit-${i}`);
+    if (ta) { ta.style.display = 'block'; ta.focus(); }
+  }
+}
+
+function startEdit(i) {
+  decide(i, 'edit');
+}
+
+function saveEdit(i) {
+  const ta = document.getElementById(`edit-${i}`);
+  if (!ta) return;
+  const decisions = loadDecisions();
+  if (!decisions[i]) decisions[i] = { status: 'edit' };
+  decisions[i].editedText = ta.value;
+  decisions[i].status = 'edit';
+  saveDecisions(decisions);
+  updateExport();
+}
+
+function updateStats() {
+  const decisions = loadDecisions();
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.status === 'keep') keep++;
+    else if (d.status === 'cut') cut++;
+    else if (d.status === 'edit') edit++;
+  });
+  document.getElementById('count-keep').textContent = keep;
+  document.getElementById('count-cut').textContent = cut;
+  document.getElementById('count-edit').textContent = edit;
+  document.getElementById('count-pending').textContent = responses.length - keep - cut - edit;
+  document.getElementById('count-total').textContent = responses.length;
+}
+
+function updateExport() {
+  const decisions = loadDecisions();
+  const exported = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.status === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (d && d.status === 'edit') {
+      exported.push({ text: d.editedText || r.text, category: r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const ta = document.getElementById('export-json');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    fb.style.opacity = '1';
+    setTimeout(() => fb.style.opacity = '0', 2000);
+  });
+}
+
+renderCards();
+</script>
+</body>
+</html>

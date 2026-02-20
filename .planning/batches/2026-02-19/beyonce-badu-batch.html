@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyonce × Badu Lyrics Batch — 2026-02-19</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 1rem 0; border-bottom: 1px solid #333; z-index: 10; margin-bottom: 2rem; }
+  .stats { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; }
+  .item { background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .item-text { font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .item-meta { font-size: 0.75rem; color: #666; margin-bottom: 1rem; }
+  .actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .btn { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-cut { background: #e94560; color: #fff; } .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; }
+  .edit-area { display: none; margin-top: 0.5rem; }
+  .edit-area textarea { width: 100%; background: #0f3460; color: #eee; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; font-size: 1.1rem; min-height: 60px; }
+  .item.decided-keep { border-left: 4px solid #4ecca3; }
+  .item.decided-cut { border-left: 4px solid #e94560; opacity: 0.5; }
+  .item.decided-edit { border-left: 4px solid #ffd93d; }
+  #export { background: #0f3460; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; }
+  #export pre { white-space: pre-wrap; font-size: 0.85rem; color: #4ecca3; }
+  #copy-btn { margin-top: 1rem; padding: 0.5rem 1.2rem; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Beyonce × Badu Lyrics Batch</h1>
+  <p style="color:#666;margin:0.5rem 0">Found language from lyrics — attitude as answer. 33 candidates across both catalogs.</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span style="color:#666">Undecided: <span id="undecided-count">0</span></span>
+  </div>
+</div>
+<div id="items">
+
+<div class="item" id="item-1" data-text="I&#39;m only in competition with my last level." data-category="wise" data-decision="">
+  <div class="item-text">I'm only in competition with my last level.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(1,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(1,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(1,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-2" data-text="You don&#39;t have to believe everything you think." data-category="mystical" data-decision="">
+  <div class="item-text">You don't have to believe everything you think.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: mystical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(2,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(2,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(2,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-3" data-text="Time to eliminate things that no longer evolve you." data-category="cold" data-decision="">
+  <div class="item-text">Time to eliminate things that no longer evolve you.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(3,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(3,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(3,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-4" data-text="I was born to make mistakes. I ain&#39;t scared to take the weight." data-category="chaotic" data-decision="">
+  <div class="item-text">I was born to make mistakes. I ain't scared to take the weight.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Didn't Cha Know (Mama's Gun) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(4,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(4,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(4,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-5" data-text="Art is the absence of fear." data-category="mystical" data-decision="">
+  <div class="item-text">Art is the absence of fear.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: mystical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(5,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(5,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(5,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-6" data-text="Better think while it&#39;s still legal." data-category="judgy" data-decision="">
+  <div class="item-text">Better think while it's still legal.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: judgy</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(6,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(6,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(6,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-7" data-text="I&#39;m a recovering undercover over-lover." data-category="existential" data-decision="">
+  <div class="item-text">I'm a recovering undercover over-lover.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Bag Lady (Mama's Gun) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(7,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(7,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(7,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-8" data-text="Don&#39;t let anybody infiltrate your dream." data-category="demanding" data-decision="">
+  <div class="item-text">Don't let anybody infiltrate your dream.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(8,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(8,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(8,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-9" data-text="The pain to remain the same outweighs the pain to change." data-category="wise" data-decision="">
+  <div class="item-text">The pain to remain the same outweighs the pain to change.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(9,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(9,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(9,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-10" data-text="I planned my success. I knew it was going to happen." data-category="demanding" data-decision="">
+  <div class="item-text">I planned my success. I knew it was going to happen.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(10,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(10,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(10,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-11" data-text="I just keep going. When the water&#39;s too still, I start splashing around." data-category="chaotic" data-decision="">
+  <div class="item-text">I just keep going. When the water's too still, I start splashing around.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(11,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(11,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(11,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-12" data-text="I&#39;m more like an oven than a microwave." data-category="wise" data-decision="">
+  <div class="item-text">I'm more like an oven than a microwave.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(12,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(12,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(12,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-13" data-text="The wise healer endures the pain. Cry. Tears bring joy." data-category="heartfelt" data-decision="">
+  <div class="item-text">The wise healer endures the pain. Cry. Tears bring joy.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(13,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(13,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(13,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-14" data-text="I keep my balance because I know it&#39;s not really me, by myself." data-category="mystical" data-decision="">
+  <div class="item-text">I keep my balance because I know it's not really me, by myself.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: mystical</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(14,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(14,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(14,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-15" data-text="Hopefully my music is medicine. Some type of antidote for something." data-category="poetic" data-decision="">
+  <div class="item-text">Hopefully my music is medicine. Some type of antidote for something.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(15,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(15,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(15,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-16" data-text="I&#39;m sensitive about my shit." data-category="angry" data-decision="">
+  <div class="item-text">I'm sensitive about my shit.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Tyrone (Live, Baduizm era) · Category: angry</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(16,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(16,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(16,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-17" data-text="Breathing becomes really easy when you&#39;re laughing." data-category="nurturing" data-decision="">
+  <div class="item-text">Breathing becomes really easy when you're laughing.</div>
+  <div class="item-meta">Artist: Erykah Badu · Song: Interview / widely attributed · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(17,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(17,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(17,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-18" data-text="I&#39;m one of one." data-category="demanding" data-decision="">
+  <div class="item-text">I'm one of one.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Alien Superstar (Renaissance) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(18,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(18,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(18,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-19" data-text="Always stay gracious. Best revenge is your paper." data-category="cold" data-decision="">
+  <div class="item-text">Always stay gracious. Best revenge is your paper.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Formation (Lemonade) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(19,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(19,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(19,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-20" data-text="I break chains all by myself." data-category="demanding" data-decision="">
+  <div class="item-text">I break chains all by myself.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Freedom (Lemonade) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(20,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(20,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(20,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-21" data-text="Comfortable in my skin. Cozy with who I am." data-category="wise" data-decision="">
+  <div class="item-text">Comfortable in my skin. Cozy with who I am.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Cozy (Renaissance) · Category: wise</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(21,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(21,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(21,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-22" data-text="I dream it, I work hard, I grind till I own it." data-category="demanding" data-decision="">
+  <div class="item-text">I dream it, I work hard, I grind till I own it.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Formation (Lemonade) · Category: demanding</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(22,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(22,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(22,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-23" data-text="Nobody can judge me but me. I was born free." data-category="chaotic" data-decision="">
+  <div class="item-text">Nobody can judge me but me. I was born free.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Church Girl (Renaissance) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(23,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(23,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(23,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-24" data-text="I feel like fallin&#39; in love." data-category="heartfelt" data-decision="">
+  <div class="item-text">I feel like fallin' in love.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Cuff It (Renaissance) · Category: heartfelt</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(24,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(24,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(24,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-25" data-text="For things to stay the same, they have to change again." data-category="existential" data-decision="">
+  <div class="item-text">For things to stay the same, they have to change again.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Ameriican Requiem (Cowboy Carter) · Category: existential</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(25,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(25,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(25,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-26" data-text="I might cook, clean, but still won&#39;t fold." data-category="angry" data-decision="">
+  <div class="item-text">I might cook, clean, but still won't fold.</div>
+  <div class="item-meta">Artist: Beyonce · Song: 16 Carriages (Cowboy Carter) · Category: angry</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(26,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(26,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(26,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-27" data-text="Time heals everything. I don&#39;t need anything." data-category="cold" data-decision="">
+  <div class="item-text">Time heals everything. I don't need anything.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Just for Fun (Cowboy Carter) · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(27,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(27,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(27,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-28" data-text="Rhinestones and diamonds both shine in the light." data-category="poetic" data-decision="">
+  <div class="item-text">Rhinestones and diamonds both shine in the light.</div>
+  <div class="item-meta">Artist: Beyonce · Song: II Hands II Heaven (Cowboy Carter) · Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(28,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(28,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(28,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-29" data-text="Show me your scars and I won&#39;t walk away." data-category="nurturing" data-decision="">
+  <div class="item-text">Show me your scars and I won't walk away.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Sandcastles (Lemonade) · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(29,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(29,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(29,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-30" data-text="Step in your essence and know that you&#39;re excellent." data-category="nurturing" data-decision="">
+  <div class="item-text">Step in your essence and know that you're excellent.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Bigger (The Lion King: The Gift) · Category: nurturing</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(30,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(30,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(30,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-31" data-text="Depend on no one else to give you what you want." data-category="cold" data-decision="">
+  <div class="item-text">Depend on no one else to give you what you want.</div>
+  <div class="item-meta">Artist: Beyonce (Destiny's Child) · Song: Independent Women Pt. 1 · Category: cold</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(31,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(31,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(31,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-32" data-text="I gave water to the soil and now it feeds me." data-category="poetic" data-decision="">
+  <div class="item-text">I gave water to the soil and now it feeds me.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Protector (Cowboy Carter) · Category: poetic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(32,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(32,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(32,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+<div class="item" id="item-33" data-text="I&#39;m feeling way too loose to be tied down." data-category="chaotic" data-decision="">
+  <div class="item-text">I'm feeling way too loose to be tied down.</div>
+  <div class="item-meta">Artist: Beyonce · Song: Summer Renaissance (Renaissance) · Category: chaotic</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="decide(33,'keep')">KEEP</button>
+    <button class="btn btn-cut" onclick="decide(33,'cut')">CUT</button>
+    <button class="btn btn-edit" onclick="decide(33,'edit')">EDIT</button>
+  </div>
+  <div class="edit-area"><textarea placeholder="Edit response..."></textarea></div>
+</div>
+
+</div>
+<div id="export">
+  <h3>Export (Kept + Edited)</h3>
+  <pre id="export-json">[]</pre>
+  <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').textContent)">Copy JSON</button>
+</div>
+<script>
+function decide(id, decision) {
+  const item = document.getElementById('item-'+id);
+  item.className = 'item decided-'+decision;
+  item.dataset.decision = decision;
+  if(decision==='edit') item.querySelector('.edit-area').style.display='block';
+  else item.querySelector('.edit-area').style.display='none';
+  item.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+  item.querySelector('.btn-'+decision).classList.add('active');
+  updateStats(); updateExport();
+}
+function updateStats() {
+  const items = document.querySelectorAll('.item');
+  let k=0,c=0,e=0,u=0;
+  items.forEach(i=>{const d=i.dataset.decision;if(d==='keep')k++;else if(d==='cut')c++;else if(d==='edit')e++;else u++;});
+  document.getElementById('keep-count').textContent=k;
+  document.getElementById('cut-count').textContent=c;
+  document.getElementById('edit-count').textContent=e;
+  document.getElementById('undecided-count').textContent=u;
+}
+function updateExport() {
+  const items = document.querySelectorAll('.item');
+  const kept = [];
+  items.forEach(i=>{
+    const d=i.dataset.decision;
+    if(d==='keep') kept.push({text:i.dataset.text,category:i.dataset.category});
+    else if(d==='edit'){const ta=i.querySelector('textarea');if(ta.value)kept.push({text:ta.value,category:i.dataset.category});}
+  });
+  document.getElementById('export-json').textContent=JSON.stringify(kept,null,2);
+}
+document.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('input',updateExport));
+updateStats();
+</script>
+</body>
+</html>

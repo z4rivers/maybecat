@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Found Language: Fierce Honesty & Radical Truth</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Georgia', serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: #1a1a2e;
+  padding: 20px 0;
+  border-bottom: 2px solid #4ecca3;
+  z-index: 100;
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-size: 2em;
+  color: #ffd93d;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #888;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.9em;
+}
+
+.stats span {
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: #16213e;
+}
+
+.stats .starred-count { color: #ffd93d; }
+.stats .total-count { color: #4ecca3; }
+
+.section-header {
+  background: #16213e;
+  padding: 16px 20px;
+  margin: 30px 0 16px 0;
+  border-left: 4px solid #4ecca3;
+  font-size: 1.4em;
+  color: #4ecca3;
+  font-weight: bold;
+}
+
+.section-desc {
+  color: #888;
+  font-style: italic;
+  padding: 0 20px 16px 20px;
+  font-size: 0.9em;
+}
+
+.card {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border-left: 4px solid #333;
+  transition: border-color 0.2s;
+}
+
+.card.starred {
+  border-left-color: #ffd93d;
+  background: #1a1f3e;
+}
+
+.quote-text {
+  font-size: 1.15em;
+  line-height: 1.6;
+  color: #f0f0f0;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.quote-source {
+  color: #4ecca3;
+  font-size: 0.85em;
+  margin-bottom: 10px;
+}
+
+.quote-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.energy-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.energy-naming { background: #e94560; color: white; }
+.energy-breaking { background: #9b59b6; color: white; }
+.energy-cost { background: #e67e22; color: white; }
+.energy-fierce { background: #3498db; color: white; }
+.energy-silence { background: #7f8c8d; color: white; }
+.energy-courage { background: #2ecc71; color: white; }
+.energy-wake { background: #e74c3c; color: white; }
+.energy-mirror { background: #1abc9c; color: white; }
+.energy-reckoning { background: #f39c12; color: white; }
+.energy-tenderness { background: #e91e8f; color: white; }
+.energy-framework { background: #6c5ce7; color: white; }
+
+.star-btn {
+  background: none;
+  border: 2px solid #555;
+  color: #555;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.2s;
+}
+
+.star-btn:hover {
+  border-color: #ffd93d;
+  color: #ffd93d;
+}
+
+.star-btn.active {
+  background: #ffd93d;
+  border-color: #ffd93d;
+  color: #1a1a2e;
+  font-weight: bold;
+}
+
+.export-section {
+  margin-top: 60px;
+  padding: 30px;
+  background: #0f0f23;
+  border-radius: 8px;
+  border: 2px solid #4ecca3;
+}
+
+.export-section h2 {
+  color: #ffd93d;
+  margin-bottom: 16px;
+}
+
+#export-list {
+  background: #1a1a2e;
+  padding: 20px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85em;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  max-height: 500px;
+  overflow-y: auto;
+  color: #ccc;
+}
+
+.copy-btn {
+  margin-top: 12px;
+  background: #4ecca3;
+  color: #1a1a2e;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.copy-btn:hover {
+  background: #3dba92;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  background: #16213e;
+  border: 1px solid #333;
+  color: #aaa;
+  padding: 4px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  border-color: #4ecca3;
+  color: #4ecca3;
+}
+
+.show-starred-only {
+  background: none;
+  border: 2px solid #ffd93d;
+  color: #ffd93d;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  margin-left: auto;
+}
+
+.show-starred-only.active {
+  background: #ffd93d;
+  color: #1a1a2e;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Found Language: Fierce Honesty & Radical Truth</h1>
+  <div class="subtitle">Raw material mined from real sources. Research, not generation. For MaybeCat voice adaptation.</div>
+  <div class="stats">
+    <span class="total-count" id="total-count">Total: 0</span>
+    <span class="starred-count" id="starred-count">Starred: 0</span>
+    <button class="show-starred-only" id="show-starred-toggle" onclick="toggleStarredOnly()">Show Starred Only</button>
+  </div>
+  <div class="filter-bar" style="margin-top: 12px;">
+    <button class="filter-btn active" onclick="filterByEnergy('all')">All</button>
+    <button class="filter-btn" onclick="filterByEnergy('naming')">Naming the Elephant</button>
+    <button class="filter-btn" onclick="filterByEnergy('breaking')">Breaking Silence</button>
+    <button class="filter-btn" onclick="filterByEnergy('cost')">Cost of Pretending</button>
+    <button class="filter-btn" onclick="filterByEnergy('fierce')">Fierce Kindness</button>
+    <button class="filter-btn" onclick="filterByEnergy('silence')">Silence as Choice</button>
+    <button class="filter-btn" onclick="filterByEnergy('courage')">Courage & Vulnerability</button>
+    <button class="filter-btn" onclick="filterByEnergy('wake')">Emotional Wake</button>
+    <button class="filter-btn" onclick="filterByEnergy('mirror')">Mirror / Self-Truth</button>
+    <button class="filter-btn" onclick="filterByEnergy('reckoning')">Reckoning</button>
+    <button class="filter-btn" onclick="filterByEnergy('tenderness')">Fierce Tenderness</button>
+    <button class="filter-btn" onclick="filterByEnergy('framework')">Framework / Concept</button>
+  </div>
+</header>
+
+<div id="cards-container">
+
+<!-- ==================== SECTION: NAMING THE ELEPHANT ==================== -->
+<div class="section-header">NAMING THE ELEPHANT</div>
+<div class="section-desc">The moment someone finally says the unsaid thing. The relief of naming it.</div>
+
+<div class="card" data-energy="naming" data-id="1">
+  <div class="quote-text">"The problem named is the problem solved."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="2">
+  <div class="quote-text">"Never be afraid of the conversations you are having. Be afraid of the conversations you are not having."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="3">
+  <div class="quote-text">"What are our mokitas?" -- a Papua New Guinea word for that which everyone knows and no one will speak of: the elephant in the room.</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (referencing the word "mokita")</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="4">
+  <div class="quote-text">"Politics is when people choose their words and actions based on how they want others to react rather than based on what they really think."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="5">
+  <div class="quote-text">"Difficult conversations are almost never about getting the facts right. They are about conflicting perceptions, interpretations, and values."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="6">
+  <div class="quote-text">"When there's an elephant in the room, introduce him."</div>
+  <div class="quote-source">Randy Pausch (widely attributed)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="7">
+  <div class="quote-text">"What's the scary thing you're not saying?"</div>
+  <div class="quote-source">Common team meeting opener (Art of Accomplishment podcast)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="8">
+  <div class="quote-text">"Speak a little truth and people lose their minds."</div>
+  <div class="quote-source">Straight Outta Compton (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="9">
+  <div class="quote-text">"In any situation, the person who can most accurately describe reality without laying blame will emerge as the leader."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="10">
+  <div class="quote-text">"The mistake most of us make in our crucial conversations is we believe that we have to choose between telling the truth and keeping a friend."</div>
+  <div class="quote-source">Kerry Patterson, Crucial Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="11">
+  <div class="quote-text">"What are you pretending not to see?"</div>
+  <div class="quote-source">Rhapsody Strategies (high-impact coaching question)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="naming" data-id="12">
+  <div class="quote-text">"What's the real challenge here for you?"</div>
+  <div class="quote-source">Michael Bungay Stanier, The Coaching Habit</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-naming">Naming the Elephant</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: BREAKING SILENCE ==================== -->
+<div class="section-header">BREAKING SILENCE</div>
+<div class="section-desc">The act of speaking after staying quiet too long. The crack in the dam.</div>
+
+<div class="card" data-energy="breaking" data-id="13">
+  <div class="quote-text">"My silences had not protected me. Your silence will not protect you."</div>
+  <div class="quote-source">Audre Lorde, "The Transformation of Silence into Language and Action"</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="14">
+  <div class="quote-text">"I was going to die, if not sooner than later, whether or not I had ever spoken myself. My silences had not protected me."</div>
+  <div class="quote-source">Audre Lorde, Sister Outsider</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="15">
+  <div class="quote-text">"We have been socialized to respect fear more than our own need for language."</div>
+  <div class="quote-source">Audre Lorde</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="16">
+  <div class="quote-text">"Come out from behind yourself, into the conversation, and make it real."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 2)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="17">
+  <div class="quote-text">"It is not the genuine conversations we should dread but the unreal ones."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="18">
+  <div class="quote-text">"The point is -- if you want something from me, tell me! If you're upset with me, tell me! If there's something you want me to do or stop doing, tell me! If I said something that didn't go down well with you, stop the conversation right then and there and tell me! And if you're happy with me, tell me!"</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="19">
+  <div class="quote-text">"I'm mad as hell and I'm not going to take this anymore!"</div>
+  <div class="quote-source">Howard Beale (Peter Finch), Network (1976)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="20">
+  <div class="quote-text">"I feel like I've been in a coma for the past twenty years. And I'm just now waking up."</div>
+  <div class="quote-source">Lester Burnham (Kevin Spacey), American Beauty (1999)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="21">
+  <div class="quote-text">"This isn't life, it's just stuff. And it's become more important to you than living. Well, honey, that's just nuts."</div>
+  <div class="quote-source">Lester Burnham (Kevin Spacey), American Beauty (1999)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="22">
+  <div class="quote-text">"I didn't lose my job. It's not like 'Whoops! Where did my job go?' I quit."</div>
+  <div class="quote-source">Lester Burnham (Kevin Spacey), American Beauty (1999)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="23">
+  <div class="quote-text">"Courage starts with showing up and letting ourselves be seen."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="24">
+  <div class="quote-text">"People who wade into discomfort and vulnerability and tell the truth about their stories are the real badasses."</div>
+  <div class="quote-source">Brene Brown, Daring Greatly</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="25">
+  <div class="quote-text">"Great teams do not hold back with one another. They are unafraid to air their dirty laundry. They admit their mistakes, their weaknesses, and their concerns without fear of reprisal."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="breaking" data-id="26">
+  <div class="quote-text">"At the end of the day, at the end of the week, at the end of my life, I want to say I contributed more than I criticized."</div>
+  <div class="quote-source">Brene Brown, Dare to Lead</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-breaking">Breaking Silence</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: COST OF PRETENDING ==================== -->
+<div class="section-header">COST OF PRETENDING</div>
+<div class="section-desc">What happens when you don't say it. The price of the performance.</div>
+
+<div class="card" data-energy="cost" data-id="27">
+  <div class="quote-text">"Unreal conversations are expensive, for the individual and the organization."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="28">
+  <div class="quote-text">"The bitterest tears shed over graves are for words left unsaid and deeds left undone."</div>
+  <div class="quote-source">Harriet Beecher Stowe</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="29">
+  <div class="quote-text">"Nothing haunts us like the things we don't say."</div>
+  <div class="quote-source">Mitch Albom</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="30">
+  <div class="quote-text">"Much unhappiness has come into the world because of bewilderment and things left unsaid."</div>
+  <div class="quote-source">Fyodor Dostoevsky</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="31">
+  <div class="quote-text">"So much harm comes into this world when the wrong thing is said. But that's nothing compared to the pain from what goes unsaid."</div>
+  <div class="quote-source">Brad Meltzer</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="32">
+  <div class="quote-text">"If you trade your authenticity for safety, you may experience the following: anxiety, depression, eating disorders, addiction, rage, blame, resentment, and inexplicable grief."</div>
+  <div class="quote-source">Brene Brown, The Gifts of Imperfection</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="33">
+  <div class="quote-text">"When our conversations become constrained, when we avoid topics that might cause upset, when we accept comments or behavior that are hurtful, we no longer aim for harmony but rather toward a sort of deafness that allows us to stay in a relationship longer than we should."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="34">
+  <div class="quote-text">"We cannot selectively numb emotions. When we numb the painful emotions, we also numb the positive emotions."</div>
+  <div class="quote-source">Brene Brown, Daring Greatly</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="35">
+  <div class="quote-text">"Burnout doesn't occur because we're solving problems; it occurs because we've been trying to solve the same problem over and over."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 4)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="36">
+  <div class="quote-text">"If we don't trust one another, then we aren't going to engage in open, constructive, ideological conflict. And we'll just continue to preserve a sense of artificial harmony."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="37">
+  <div class="quote-text">"Nowhere does the tendency toward artificial harmony show itself more than in mission-driven nonprofit organizations, most notably churches. People who work in those organizations tend to have a misguided idea that they cannot be frustrated or disagreeable with one another. What they're doing is confusing being nice with being kind."</div>
+  <div class="quote-source">Patrick Lencioni</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="38">
+  <div class="quote-text">"The opposite of love isn't hate. It's indifference, lethal neutrality, apathy. You don't care. Instead of energy there's malaise, inertia. Instead of chemistry there's emptiness. Instead of substance there's frivolousness. The relationship is all but dead."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="39">
+  <div class="quote-text">"As you probably know, for every piece of subpar work you accept, for every missed deadline you let slip, you begin to feel resentment and then anger. You no longer just think the work is bad: you think the person is bad. This makes it harder to have an even-keeled conversation. You start to avoid talking to the person at all."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="40">
+  <div class="quote-text">"Telling someone to change makes it less rather than more likely that they will."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="41">
+  <div class="quote-text">"Ask yourself, 'How did I get here? How is it that I find myself in a company, a role, a relationship, or a life from which I've absented my spirit? How did I lose my way?'"</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="42">
+  <div class="quote-text">"People don't want the truth anymore, Matt. It's too messy. Keeps them up nights."</div>
+  <div class="quote-source">Sam Shepard, Safe House (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="cost" data-id="43">
+  <div class="quote-text">"It's as simple as this. When people don't unload their opinions and feel like they've been listened to, they won't really get on board."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-cost">Cost of Pretending</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: FIERCE KINDNESS ==================== -->
+<div class="section-header">FIERCE KINDNESS</div>
+<div class="section-desc">Honesty that comes from love, not cruelty. The truth delivered with care.</div>
+
+<div class="card" data-energy="fierce" data-id="44">
+  <div class="quote-text">"Clear is kind. Unclear is unkind."</div>
+  <div class="quote-source">Brene Brown, Dare to Lead</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="45">
+  <div class="quote-text">"Feeding people half-truths or bullshit to make them feel better (which is almost always about making ourselves feel more comfortable) is unkind."</div>
+  <div class="quote-source">Brene Brown, Dare to Lead</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="46">
+  <div class="quote-text">"It's brutally hard to tell people when they are screwing up. You don't want to hurt anyone's feelings; that's because you're not a sadist. You don't want that person or the rest of the team to think you're a jerk. Plus, you've been told since you learned to talk, 'If you don't have anything nice to say, don't say anything at all.' Now all of a sudden it's your job to say it. You've got to undo a lifetime of training. Management is hard."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="47">
+  <div class="quote-text">"There is something within us that responds deeply to people who level with us."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="48">
+  <div class="quote-text">"Everyone wants one person in the world to whom they can tell the truth and from whom they will hear the truth. Become that person."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="49">
+  <div class="quote-text">"The experience of being understood, versus interpreted, is so compelling you can charge admission."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="50">
+  <div class="quote-text">"Radical Candor is a simple idea: to be a good boss, you have to Care Personally at the same time that you Challenge Directly. When you challenge without caring it's obnoxious aggression; when you care without challenging it's ruinous empathy. When you do neither it's manipulative insincerity."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="51">
+  <div class="quote-text">"See? It's not mean, it's clear."</div>
+  <div class="quote-source">Kim Scott, Radical Candor (the dog training story -- a stranger bellowed "SIT!" at her puppy who was about to run into traffic, then said this)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="52">
+  <div class="quote-text">"Respect is like air. As long as it's present, nobody thinks about it. But if you take it away, it's all that people can think about."</div>
+  <div class="quote-source">Ron McMillan, Crucial Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="53">
+  <div class="quote-text">"When someone apologizes, it's amazing how much fresh air enters the room."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="54">
+  <div class="quote-text">"People almost never change without first feeling understood."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="55">
+  <div class="quote-text">"You can't move the conversation in a more positive direction until the other person feels heard and understood. And they won't feel heard and understood until you've listened."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="56">
+  <div class="quote-text">"A good rule of thumb for any relationship is to leave three unimportant things unsaid each day."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="57">
+  <div class="quote-text">"Trust is knowing that when a team member does push you, they're doing it because they care about the team."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="58">
+  <div class="quote-text">"When there is trust, conflict becomes nothing but the pursuit of truth, an attempt to find the best possible answer."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="59">
+  <div class="quote-text">"Honesty is often very hard. The truth is often painful. But the freedom it can bring is worth the trying."</div>
+  <div class="quote-source">Fred Rogers</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="fierce" data-id="60">
+  <div class="quote-text">"Truth may be vital, but without love, it is unbearable. Caritas in veritate."</div>
+  <div class="quote-source">The Two Popes (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-fierce">Fierce Kindness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: SILENCE AS CHOICE ==================== -->
+<div class="section-header">SILENCE AS CHOICE</div>
+<div class="section-desc">Silence isn't neutral. It's a decision. And it speaks volumes.</div>
+
+<div class="card" data-energy="silence" data-id="61">
+  <div class="quote-text">"Let silence do the heavy lifting."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 7)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="62">
+  <div class="quote-text">"Insight occurs in the spaces between the words."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="63">
+  <div class="quote-text">"We are masters of the unsaid words, but slaves of those we let slip out."</div>
+  <div class="quote-source">Winston Churchill</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="64">
+  <div class="quote-text">"There is no time to leave important words unsaid."</div>
+  <div class="quote-source">Paulo Coelho</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="65">
+  <div class="quote-text">"Paradoxically, there is also considerable persuasion power in inquiry and listening."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="66">
+  <div class="quote-text">"Even the lowest whisper can be heard over armies... when it's telling the truth."</div>
+  <div class="quote-source">The Interpreter (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="67">
+  <div class="quote-text">"Listen. In every office you hear the threads of love and joy and fear and guilt, the cries for celebration and reassurance, and somehow you know that connecting those threads is what you are supposed to do and business takes care of itself."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="68">
+  <div class="quote-text">"We resent being talked to. We'd rather be talked with."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="silence" data-id="69">
+  <div class="quote-text">"At the core of every successful conversation lies the free flow of relevant information."</div>
+  <div class="quote-source">Kerry Patterson, Crucial Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-silence">Silence as Choice</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: COURAGE & VULNERABILITY ==================== -->
+<div class="section-header">COURAGE & VULNERABILITY</div>
+<div class="section-desc">The raw nerve of saying the real thing. Truth as an act of bravery.</div>
+
+<div class="card" data-energy="courage" data-id="70">
+  <div class="quote-text">"Vulnerability sounds like truth and feels like courage. Truth and courage aren't always comfortable, but they're never weakness."</div>
+  <div class="quote-source">Brene Brown, Daring Greatly</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="71">
+  <div class="quote-text">"Owning our story can be hard but not nearly as difficult as spending our lives running from it."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="72">
+  <div class="quote-text">"Authenticity is a collection of choices that we have to make every day. It's about the choice to show up and be real. The choice to be honest. The choice to let our true selves be seen."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="73">
+  <div class="quote-text">"Courage is a heart word. The root of the word courage is cor -- the Latin word for heart. In one of its earliest forms, the word courage meant 'To speak one's mind by telling all one's heart.'"</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="74">
+  <div class="quote-text">"The courage to be vulnerable is not about winning or losing, it's about the courage to show up when you can't predict or control the outcome."</div>
+  <div class="quote-source">Brene Brown, Dare to Lead</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="75">
+  <div class="quote-text">"Authenticity is not something you have -- it's something you choose."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="76">
+  <div class="quote-text">"If you are open, vulnerable, disclosing, more likely than not it will be reciprocated and walls will come down."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="77">
+  <div class="quote-text">"Remember, teamwork begins by building trust. And the only way to do that is to overcome our need for invulnerability."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="78">
+  <div class="quote-text">"Our stories are not meant for everyone. Hearing them is a privilege, and we should always ask ourselves this before we share: 'Who has earned the right to hear my story?'"</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="79">
+  <div class="quote-text">"I want someone to tell me what to wear every morning. I want someone to tell me what to eat. What to like, what to hate, what to rage about, what to listen to, what band to like, what to buy tickets for, what to joke about, what not to joke about. I want someone to tell me what to believe in, who to vote for, who to love and how to tell them."</div>
+  <div class="quote-source">Fleabag, Season 2 Confession Scene (Phoebe Waller-Bridge)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="80">
+  <div class="quote-text">"The truth will set you free, but first it will make you miserable."</div>
+  <div class="quote-source">Attributed to James A. Garfield / Jamie Buckingham (1988)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="81">
+  <div class="quote-text">"The best way out is always through."</div>
+  <div class="quote-source">Robert Frost, "A Servant to Servants"</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="82">
+  <div class="quote-text">"If you are not in the arena getting your ass kicked on occasion, I'm not interested in or open to your feedback."</div>
+  <div class="quote-source">Brene Brown, Dare to Lead</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="courage" data-id="83">
+  <div class="quote-text">"Life isn't safe, isn't meant to be safe. It's meant to be challenging, broadening, frightening even at times."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-courage">Courage & Vulnerability</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: EMOTIONAL WAKE ==================== -->
+<div class="section-header">EMOTIONAL WAKE</div>
+<div class="section-desc">The ripple effect of what you say and don't say. Words as weather systems.</div>
+
+<div class="card" data-energy="wake" data-id="84">
+  <div class="quote-text">"Take responsibility for your emotional wake."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 6)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="85">
+  <div class="quote-text">"The conversation is not about the relationship; the conversation IS the relationship."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="86">
+  <div class="quote-text">"Our work, our relationships, and our lives succeed or fail one conversation at a time. While no single conversation is guaranteed to transform a company, a relationship, or a life, any single conversation can."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="87">
+  <div class="quote-text">"Remember that what gets talked about and how it gets talked about determines what will happen. Or won't happen. And that we succeed or fail, gradually then suddenly, one conversation at a time."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="88">
+  <div class="quote-text">"Intentions are invisible. We assume them from other people's behavior. In other words, we make them up."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="89">
+  <div class="quote-text">"The urge to blame is based on the fear of being blamed."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="90">
+  <div class="quote-text">"They get measured at the listener's ear, not at the speaker's mouth."</div>
+  <div class="quote-source">Kim Scott, Radical Candor (on how feedback lands)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="91">
+  <div class="quote-text">"There's no worse way to make a group of people feel excluded than to use language that pretends they are simply not in the room."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="92">
+  <div class="quote-text">"When we fail to set boundaries and hold people accountable, we feel used and mistreated. This is why we sometimes attack who they are, which is far more hurtful than addressing a behavior or a choice."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="93">
+  <div class="quote-text">"All violence is the result of people tricking themselves into believing that their pain derives from other people and that consequently those people deserve to be punished."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="94">
+  <div class="quote-text">"At the core of all anger is a need that is not being fulfilled."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="wake" data-id="95">
+  <div class="quote-text">"Analyses of others are actually expressions of our own needs and values."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-wake">Emotional Wake</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: MIRROR / SELF-TRUTH ==================== -->
+<div class="section-header">MIRROR / SELF-TRUTH</div>
+<div class="section-desc">The hardest conversation is with yourself. Looking in the mirror and not flinching.</div>
+
+<div class="card" data-energy="mirror" data-id="96">
+  <div class="quote-text">"When someone shows you who they are, believe them the first time."</div>
+  <div class="quote-source">Maya Angelou</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="97">
+  <div class="quote-text">"Your version of reality is as good as anybody's."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="98">
+  <div class="quote-text">"And how's that working for you?"</div>
+  <div class="quote-source">Common therapy phrase (Psychology Today)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="99">
+  <div class="quote-text">"Feelings aren't facts."</div>
+  <div class="quote-source">Common therapy phrase (Psychology Today)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="100">
+  <div class="quote-text">"Stop 'shoulding' on yourself."</div>
+  <div class="quote-source">Common therapy phrase (Psychology Today)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="101">
+  <div class="quote-text">"The single most important thing you can do is to shift your internal stance from 'I understand' to 'Help me understand.' Everything else follows from that."</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="102">
+  <div class="quote-text">"Healthy striving is self-focused: 'How can I improve?' Perfectionism is other-focused: 'What will they think?'"</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="103">
+  <div class="quote-text">"Shame corrodes the very part of us that believes we are capable of change."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="104">
+  <div class="quote-text">"Whose voice is represented in the shame or criticism?"</div>
+  <div class="quote-source">Barrett Brooks, Breakthrough Coaching Questions</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="105">
+  <div class="quote-text">"What does this person have that I want but haven't yet admitted to myself?"</div>
+  <div class="quote-source">Barrett Brooks, Breakthrough Coaching Questions</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="106">
+  <div class="quote-text">"I now see how owning our story and loving ourselves through that process is the bravest thing that we will ever do."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="107">
+  <div class="quote-text">"The fool tries to adjust the truth so he does not have to adjust to it."</div>
+  <div class="quote-source">Henry Cloud</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="108">
+  <div class="quote-text">"We are dangerous when we are not conscious of our responsibility for how we behave, think, and feel."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="mirror" data-id="109">
+  <div class="quote-text">"No one completes us. No one is our missing piece, our other half."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-mirror">Mirror / Self-Truth</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: RECKONING ==================== -->
+<div class="section-header">RECKONING</div>
+<div class="section-desc">The moment of accounting. When pretending runs out of road.</div>
+
+<div class="card" data-energy="reckoning" data-id="110">
+  <div class="quote-text">"You get what you tolerate."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="111">
+  <div class="quote-text">"I have not yet witnessed a spontaneous recovery from incompetence."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="112">
+  <div class="quote-text">"You can't handle the truth!"</div>
+  <div class="quote-source">Col. Nathan Jessup (Jack Nicholson), A Few Good Men (1992)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="113">
+  <div class="quote-text">"I did it for me. I liked it. I was good at it. And I was really... I was alive."</div>
+  <div class="quote-source">Walter White (Bryan Cranston), Breaking Bad finale</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="114">
+  <div class="quote-text">"You're the smartest guy I ever met, and you're too stupid to see -- he made up his mind ten minutes ago."</div>
+  <div class="quote-source">Hank Schrader (Dean Norris), Breaking Bad</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="115">
+  <div class="quote-text">"A leader's job is to get it right for the organization, not to be right."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="116">
+  <div class="quote-text">"In the end, as a leader, you are always going to get a combination of two things: what you create and what you allow."</div>
+  <div class="quote-source">Henry Cloud</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="117">
+  <div class="quote-text">"Getting to the next level always requires ending something, leaving it behind, and moving on. Without the ability to end things, people stay stuck, never becoming who they are meant to be."</div>
+  <div class="quote-source">Henry Cloud, Necessary Endings</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="118">
+  <div class="quote-text">"He told the truth, and once you've heard the truth, everything else is just cheap whiskey."</div>
+  <div class="quote-source">Switchback (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="119">
+  <div class="quote-text">"You think that not getting caught in a lie is the same thing as telling the truth."</div>
+  <div class="quote-source">Nicole Kidman, The Interpreter (film)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="120">
+  <div class="quote-text">"A fractured team is just like a broken arm or leg; fixing it is always painful, and sometimes you have to rebreak it to make it heal correctly."</div>
+  <div class="quote-source">Patrick Lencioni, The Five Dysfunctions of a Team</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="121">
+  <div class="quote-text">"A good test of a relationship is how a person responds to the word 'no.' Love respects 'no,' control does not."</div>
+  <div class="quote-source">Henry Cloud, Boundaries</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="reckoning" data-id="122">
+  <div class="quote-text">"That was the first time in my Amazon career that anyone had ever told me to just trust my common sense. I hadn't quite known it was allowed."</div>
+  <div class="quote-source">Kristi Coulter, Exit Interview</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-reckoning">Reckoning</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: FIERCE TENDERNESS ==================== -->
+<div class="section-header">FIERCE TENDERNESS</div>
+<div class="section-desc">Truth that heals. The kind of honesty that makes you cry because someone finally sees you.</div>
+
+<div class="card" data-energy="tenderness" data-id="123">
+  <div class="quote-text">"It's not your fault. It's not your fault. It's not your fault."</div>
+  <div class="quote-source">Sean Maguire (Robin Williams) to Will Hunting (Matt Damon), Good Will Hunting (1997)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="124">
+  <div class="quote-text">"We cultivate love when we allow our most vulnerable and powerful selves to be deeply seen and known."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="125">
+  <div class="quote-text">"I define connection as the energy that exists between people when they feel seen, heard, and valued; when they can give and receive without judgment; and when they derive sustenance and strength from the relationship."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="126">
+  <div class="quote-text">"You are imperfect, you are wired for struggle, but you are worthy of love and belonging."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="127">
+  <div class="quote-text">"If we can share our story with someone who responds with empathy and understanding, shame can't survive."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="128">
+  <div class="quote-text">"What I want in my life is compassion, a flow between myself and others based on a mutual giving from the heart."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="129">
+  <div class="quote-text">"Imperfections are not inadequacies; they are reminders that we're all in this together."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="130">
+  <div class="quote-text">"The wound is the place where the Light enters you."</div>
+  <div class="quote-source">Rumi</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="131">
+  <div class="quote-text">"Out beyond ideas of wrongdoing and rightdoing there is a field. I'll meet you there."</div>
+  <div class="quote-source">Rumi</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="132">
+  <div class="quote-text">"Sometimes there's so much beauty in the world I feel like I can't take it, like my heart's going to cave in."</div>
+  <div class="quote-source">Ricky Fitts, American Beauty (1999)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="133">
+  <div class="quote-text">"I want us all to stop thinking only in terms of accomplishments, of task and completion, of beating the competition, of gathering income and merchandise, of winning praise, and instead, live our lives forging the deepest relationships we can with ourselves and with one another."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="134">
+  <div class="quote-text">"To love someone fiercely, to believe in something with your whole heart, to celebrate a fleeting moment in time, to fully engage in a life that doesn't come with guarantees -- these are risks that involve vulnerability and often pain."</div>
+  <div class="quote-source">Brene Brown</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="135">
+  <div class="quote-text">"The quality of your life ultimately depends on the quality of your relationships."</div>
+  <div class="quote-source">Esther Perel</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="136">
+  <div class="quote-text">"Listen. Just listen. You don't have to agree. Just see if you can understand that there's another person who has a completely different experience of the same reality."</div>
+  <div class="quote-source">Esther Perel</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="tenderness" data-id="137">
+  <div class="quote-text">"When someone says, 'That's not me,' after doing something hurtful, they are mistaken. That is them. That is exactly them, or at least a part of them, and it may be a part of them that you do not want in your life."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (quoting Maya Angelou)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-tenderness">Fierce Tenderness</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION: FRAMEWORK / CONCEPT ==================== -->
+<div class="section-header">FRAMEWORK / CONCEPT</div>
+<div class="section-desc">The models and mental frameworks. Not quotes to adapt, but structures to understand.</div>
+
+<div class="card" data-energy="framework" data-id="138">
+  <div class="quote-text">"Master the courage to interrogate reality."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 1)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="139">
+  <div class="quote-text">"Be here, prepared to be nowhere else."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 3)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="140">
+  <div class="quote-text">"Obey your instincts."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (Principle 5)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="141">
+  <div class="quote-text">"RUINOUS EMPATHY: There's a Russian anecdote about a guy who has to amputate his dog's tail but loves him so much that he cuts it off an inch each day, rather than all at once. His desire to spare the dog pain and suffering only leads to more pain and suffering. Don't allow yourself to become that kind of boss."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="142">
+  <div class="quote-text">"Manipulatively insincere guidance happens when you don't care enough about a person to challenge directly. The culture becomes toxic -- many kissing up and kicking down, few willing to speak truth to power. It leads to a slow, painful death of innovation, and lives of quiet desperation."</div>
+  <div class="quote-source">Kim Scott, Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="143">
+  <div class="quote-text">"The Pool of Shared Meaning is the birthplace of synergy."</div>
+  <div class="quote-source">Kerry Patterson, Crucial Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="144">
+  <div class="quote-text">"Mineral Rights: In a Mineral Rights conversation, you lead with questions that get to the heart of an issue and explore what the potential solutions could be."</div>
+  <div class="quote-source">Susan Scott, Fierce Conversations (coaching model)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="145">
+  <div class="quote-text">"The three conversations within every difficult conversation: the 'What Happened' conversation, the 'Feelings' conversation, and the 'Identity' conversation -- 'How does what happened affect my self-esteem, my self-image, my sense of who I am in the world?'"</div>
+  <div class="quote-source">Douglas Stone, Difficult Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="146">
+  <div class="quote-text">"Spiritual autolysis is a process of discrimination, of unknowing what is untrue, of progressively stripping away the false and leaving only what is true."</div>
+  <div class="quote-source">Jed McKenna, Spiritual Enlightenment trilogy</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="147">
+  <div class="quote-text">"On the road to enlightenment, there is one magic word -- your mantra, your battle cry -- the word is 'further.'"</div>
+  <div class="quote-source">Jed McKenna</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="148">
+  <div class="quote-text">"Nonviolent Communication shows us a way of being very honest, without any criticism, insults, or put-downs, and without any intellectual diagnosis implying wrongness."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="149">
+  <div class="quote-text">"When we are in contact with our feelings and needs, we humans no longer make good slaves and underlings."</div>
+  <div class="quote-source">Marshall Rosenberg, Nonviolent Communication</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="150">
+  <div class="quote-text">"He's a lion. If he roars at you, you'd better roar back just as loudly -- but only if you really are a lion, too. Otherwise he'll eat you for lunch."</div>
+  <div class="quote-source">Randy Nelson (of Pixar/Apple) on Steve Jobs, quoted in Radical Candor</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="151">
+  <div class="quote-text">"I never thought of waking up as a spiritual pursuit, I just wanted to get to the truth."</div>
+  <div class="quote-source">Jed McKenna</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="152">
+  <div class="quote-text">"Remember, to know and not to do is really not to know."</div>
+  <div class="quote-source">Kerry Patterson, Crucial Conversations</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="153">
+  <div class="quote-text">"What on your mind?"</div>
+  <div class="quote-source">Michael Bungay Stanier, The Coaching Habit (The Kickstart Question)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+<div class="card" data-energy="framework" data-id="154">
+  <div class="quote-text">"And what else?"</div>
+  <div class="quote-source">Michael Bungay Stanier, The Coaching Habit (The AWE Question)</div>
+  <div class="quote-meta">
+    <span class="energy-badge energy-framework">Framework / Concept</span>
+    <button class="star-btn" onclick="toggleStar(this)">STAR</button>
+  </div>
+</div>
+
+</div><!-- end cards-container -->
+
+<!-- ==================== EXPORT SECTION ==================== -->
+<div class="export-section">
+  <h2>Starred Items (Export)</h2>
+  <p style="color: #888; margin-bottom: 16px;">Click STAR on any card above to add it here. Persists via localStorage.</p>
+  <div id="export-list">No items starred yet.</div>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'fierce-honesty-stars';
+let starredIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+let currentFilter = 'all';
+let showStarredOnly = false;
+
+function init() {
+  // Restore starred state
+  starredIds.forEach(id => {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+      card.classList.add('starred');
+      const btn = card.querySelector('.star-btn');
+      if (btn) btn.classList.add('active');
+    }
+  });
+  updateStats();
+  updateExport();
+}
+
+function toggleStar(btn) {
+  const card = btn.closest('.card');
+  const id = card.dataset.id;
+
+  if (starredIds.has(id)) {
+    starredIds.delete(id);
+    card.classList.remove('starred');
+    btn.classList.remove('active');
+  } else {
+    starredIds.add(id);
+    card.classList.add('starred');
+    btn.classList.add('active');
+  }
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...starredIds]));
+  updateStats();
+  updateExport();
+  applyFilters();
+}
+
+function updateStats() {
+  const totalCards = document.querySelectorAll('.card').length;
+  document.getElementById('total-count').textContent = `Total: ${totalCards}`;
+  document.getElementById('starred-count').textContent = `Starred: ${starredIds.size}`;
+}
+
+function updateExport() {
+  const exportEl = document.getElementById('export-list');
+  if (starredIds.size === 0) {
+    exportEl.textContent = 'No items starred yet.';
+    return;
+  }
+
+  let lines = [];
+  starredIds.forEach(id => {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+      const text = card.querySelector('.quote-text').textContent;
+      const source = card.querySelector('.quote-source').textContent;
+      const energy = card.querySelector('.energy-badge').textContent;
+      lines.push(`[${energy}] ${text}\n  -- ${source}\n`);
+    }
+  });
+
+  exportEl.textContent = lines.join('\n');
+}
+
+function copyExport() {
+  const text = document.getElementById('export-list').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+function filterByEnergy(energy) {
+  currentFilter = energy;
+
+  // Update filter button states
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent === 'All' && energy === 'all') btn.classList.add('active');
+  });
+  if (energy !== 'all') {
+    event.target.classList.add('active');
+  }
+
+  applyFilters();
+}
+
+function toggleStarredOnly() {
+  showStarredOnly = !showStarredOnly;
+  const btn = document.getElementById('show-starred-toggle');
+  btn.classList.toggle('active', showStarredOnly);
+  btn.textContent = showStarredOnly ? 'Show All' : 'Show Starred Only';
+  applyFilters();
+}
+
+function applyFilters() {
+  const cards = document.querySelectorAll('.card');
+  const sections = document.querySelectorAll('.section-header, .section-desc');
+
+  cards.forEach(card => {
+    const matchesEnergy = currentFilter === 'all' || card.dataset.energy === currentFilter;
+    const matchesStar = !showStarredOnly || starredIds.has(card.dataset.id);
+    card.style.display = (matchesEnergy && matchesStar) ? 'block' : 'none';
+  });
+
+  // Show/hide section headers based on visible cards
+  sections.forEach(section => {
+    if (currentFilter === 'all' && !showStarredOnly) {
+      section.style.display = 'block';
+    } else if (showStarredOnly) {
+      section.style.display = 'none';
+    } else {
+      section.style.display = 'block';
+    }
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>
