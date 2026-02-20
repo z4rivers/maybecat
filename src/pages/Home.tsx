@@ -83,8 +83,33 @@ export function Oracle() {
   const selectionContentRef = useRef<HTMLDivElement>(null);
   const [selectionScale, setSelectionScale] = useState(1);
 
+  // Responsive visible cats — fewer on smaller screens so cards stay readable
+  const [visibleCats, setVisibleCats] = useState(() => {
+    if (typeof window === 'undefined') return 4;
+    if (window.innerWidth < 640) return 2;
+    if (window.innerWidth < 1024) return 3;
+    return 4;
+  });
+
+  useEffect(() => {
+    const sm = window.matchMedia('(max-width: 639px)');
+    const lg = window.matchMedia('(min-width: 1024px)');
+
+    const update = () => {
+      if (sm.matches) setVisibleCats(2);
+      else if (lg.matches) setVisibleCats(4);
+      else setVisibleCats(3);
+    };
+
+    sm.addEventListener('change', update);
+    lg.addEventListener('change', update);
+    return () => {
+      sm.removeEventListener('change', update);
+      lg.removeEventListener('change', update);
+    };
+  }, []);
+
   // Carousel navigation - infinite circular rotation
-  const VISIBLE_CATS = 4;
 
   const nextCat = useCallback(() => {
     setCarouselIndex(i => (i + 1) % (shelterCats.length + 1));
@@ -101,7 +126,7 @@ export function Oracle() {
     if (shelterCats.length === 0) return [];
     const totalSlots = shelterCats.length + 1; // +1 for refresh card
     const slots: CarouselSlot[] = [];
-    for (let i = 0; i < Math.min(VISIBLE_CATS, totalSlots); i++) {
+    for (let i = 0; i < Math.min(visibleCats, totalSlots); i++) {
       const idx = (carouselIndex + i) % totalSlots;
       if (idx < shelterCats.length) {
         slots.push({ type: 'cat', cat: shelterCats[idx] });
@@ -110,7 +135,7 @@ export function Oracle() {
       }
     }
     return slots;
-  }, [shelterCats, carouselIndex]);
+  }, [shelterCats, carouselIndex, visibleCats]);
 
   // Analyze image brightness and determine if it needs enhancement
   // Skip for external URLs (CORS issues) - only analyze user uploads (data: URLs)
@@ -282,7 +307,7 @@ export function Oracle() {
     ro.observe(container);
     ro.observe(content);
     return () => ro.disconnect();
-  }, [catImage, shelterCats, loadingShelterCats]);
+  }, [catImage, shelterCats, loadingShelterCats, visibleCats]);
 
   const clearCat = useCallback(() => {
     clearCatStorage();
