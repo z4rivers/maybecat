@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat — Feed Me Lane Rewrite Review</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.6; }
+
+.sticky-header {
+  position: sticky; top: 0; z-index: 100;
+  background: #16213e; border-bottom: 2px solid #0f3460;
+  padding: 16px 20px; margin: -20px -20px 24px -20px;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.sticky-header h1 { font-size: 1.3rem; color: #fff; flex-basis: 100%; margin-bottom: 4px; }
+.sticky-header .subtitle { font-size: 0.85rem; color: #8888aa; flex-basis: 100%; margin-bottom: 8px; }
+.stat { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+.stat-total { background: #2a2a4a; color: #fff; }
+.stat-keep { background: rgba(78, 204, 163, 0.15); color: #4ecca3; }
+.stat-cut { background: rgba(233, 69, 96, 0.15); color: #e94560; }
+.stat-edit { background: rgba(255, 217, 61, 0.15); color: #ffd93d; }
+.stat-pending { background: rgba(136, 136, 170, 0.15); color: #8888aa; }
+
+.item {
+  background: #16213e; border-radius: 12px; padding: 24px;
+  margin-bottom: 20px; border: 1px solid #0f3460;
+  transition: border-color 0.3s;
+}
+.item.kept { border-color: #4ecca3; }
+.item.cut { border-color: #e94560; }
+.item.edited { border-color: #ffd93d; }
+
+.item-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.line-info { font-size: 0.75rem; color: #666; font-family: monospace; }
+.category-tag {
+  font-size: 0.7rem; padding: 3px 10px; border-radius: 12px;
+  background: #2a2a4a; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.rating-tag {
+  font-size: 0.7rem; padding: 3px 10px; border-radius: 12px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.rating-hits { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+.rating-lazy { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+
+.response-text {
+  font-size: 1.15rem; color: #fff; padding: 16px 20px;
+  background: #1a1a2e; border-radius: 8px; margin-bottom: 16px;
+  border-left: 3px solid #0f3460;
+}
+.rating-note {
+  font-size: 0.85rem; color: #8888aa; margin-bottom: 16px;
+  font-style: italic; padding-left: 4px;
+}
+
+.suggestions-block {
+  background: #12192e; border-radius: 8px; padding: 16px 20px;
+  margin-bottom: 16px; border-left: 3px solid #534b8a;
+}
+.suggestions-label {
+  font-size: 0.75rem; color: #7b6fb0; text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 700; margin-bottom: 12px;
+}
+.suggestion {
+  font-size: 1.05rem; color: #c8b8e8; padding: 10px 14px;
+  margin-bottom: 8px; background: rgba(83, 75, 138, 0.15);
+  border-radius: 6px; border-left: 2px solid #534b8a;
+}
+.suggestion:last-child { margin-bottom: 0; }
+.suggestion-angle {
+  font-size: 0.7rem; color: #6a5d9e; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 8px;
+  font-weight: 700; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #5fd9b0; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #f05672; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe066; }
+.btn-active { box-shadow: 0 0 0 3px rgba(255,255,255,0.3); transform: scale(1.05); }
+
+.edit-area {
+  display: none; margin-top: 12px;
+}
+.edit-area.visible { display: block; }
+.edit-area textarea {
+  width: 100%; min-height: 80px; padding: 12px;
+  background: #1a1a2e; color: #fff; border: 1px solid #ffd93d;
+  border-radius: 8px; font-size: 1rem; font-family: inherit;
+  resize: vertical;
+}
+.edit-area textarea:focus { outline: none; border-color: #ffe066; }
+.edit-save {
+  margin-top: 8px; padding: 6px 16px; background: #ffd93d;
+  color: #1a1a2e; border: none; border-radius: 6px;
+  font-weight: 700; cursor: pointer; font-size: 0.8rem;
+}
+
+.status-label {
+  font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
+  font-weight: 600; display: inline-block; margin-top: 8px;
+}
+.status-kept { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+.status-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+.status-edited { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+.export-section {
+  margin-top: 40px; background: #16213e; border-radius: 12px;
+  padding: 24px; border: 1px solid #0f3460;
+}
+.export-section h2 { color: #fff; margin-bottom: 8px; }
+.export-note { font-size: 0.85rem; color: #8888aa; margin-bottom: 16px; }
+.export-json {
+  background: #1a1a2e; color: #4ecca3; padding: 16px;
+  border-radius: 8px; font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85rem; white-space: pre-wrap; word-break: break-all;
+  max-height: 400px; overflow-y: auto; border: 1px solid #0f3460;
+}
+.copy-btn {
+  margin-top: 12px; padding: 10px 24px; background: #4ecca3;
+  color: #1a1a2e; border: none; border-radius: 8px;
+  font-weight: 700; cursor: pointer; font-size: 0.9rem;
+}
+.copy-btn:hover { background: #5fd9b0; }
+
+.section-divider {
+  text-align: center; padding: 24px 0; color: #534b8a;
+  font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
+  border-top: 1px solid #0f3460; margin-top: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Feed Me Lane — Rewrite Review</h1>
+  <div class="subtitle">The lane is great. Some instances are flat. Rate the originals, use suggested rewrites, or write your own.</div>
+  <span class="stat stat-total" id="stat-total">Total: 0</span>
+  <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+  <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+  <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  <span class="stat stat-pending" id="stat-pending">Pending: 0</span>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export — Cuts + Edits Only</h2>
+  <div class="export-note">Cuts are flagged for removal. Edits are replacements (new text + category). Copy the JSON below.</div>
+  <div class="export-json" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-feed-me';
+
+const items = [
+  // ===== TRANSACTIONAL — Cat demands food/treats/payment BEFORE answering =====
+  {
+    id: 1,
+    line: 97,
+    text: "Ask again when you have provided adequate tribute.",
+    category: "mystical",
+    rating: "hits",
+    note: "Ancient deity demanding sacrifice. 'Adequate tribute' is threatening and specific. The dismissal does the work.",
+    suggestions: []
+  },
+  {
+    id: 2,
+    line: 103,
+    text: "Cross my paw with tuna and I shall reveal more.",
+    category: "mystical",
+    rating: "hits",
+    note: "'Cross my paw with tuna' is a perfect twist on 'cross my palm with silver.' Fortune teller bribe energy with cat specificity.",
+    suggestions: []
+  },
+  {
+    id: 3,
+    line: 109,
+    text: "The shadows speak. They say 'feed the cat.' The shadows are wise.",
+    category: "mystical",
+    rating: "hits",
+    note: "Inventing a whole mystical source just to back up its own hunger. The self-serving prophecy is the joke. Lands.",
+    suggestions: []
+  },
+  {
+    id: 4,
+    line: 698,
+    text: "The treat comes to those who sit by the bowl.",
+    category: "mystical",
+    rating: "hits",
+    note: "Proverb energy. Twists 'good things come to those who wait' into cat scripture. Clean and earned.",
+    suggestions: []
+  },
+  {
+    id: 5,
+    line: 911,
+    text: "Answers cost treats. You know the exchange rate.",
+    category: "demanding",
+    rating: "hits",
+    note: "'You know the exchange rate' implies an established economy. Mob boss energy — we've done this before, don't play dumb.",
+    suggestions: []
+  },
+  {
+    id: 6,
+    line: 913,
+    text: "The Oracle is hungry. Feed the Oracle. Then we talk.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Third person is doing some work but the structure is flat — just a sequence of instructions. No threat, no surprise, no angle.",
+    suggestions: [
+      { angle: "Corrupt oracle", text: "The Oracle has reviewed your question. The Oracle has also reviewed its empty bowl. Guess which one gets addressed first." },
+      { angle: "Ancient deity", text: "The Oracle does not speak on an empty stomach. The Oracle has SPOKEN." },
+      { angle: "Mob boss", text: "The Oracle remembers who feeds it. The Oracle also remembers who doesn't." }
+    ]
+  },
+  {
+    id: 7,
+    line: 914,
+    text: "Your question is noted. My dinner is late. Priorities.",
+    category: "demanding",
+    rating: "lazy",
+    note: "'Priorities' is doing all the work and it's not enough. The dismissal is there but it's stated, not performed.",
+    suggestions: [
+      { angle: "Corporate bureaucrat", text: "Your question has been filed. It is currently #2 in the queue. #1 is dinner. Dinner has been #1 since 2019." },
+      { angle: "Diva with a rider", text: "I have received your question. I have also received nothing else. Interesting strategy." },
+      { angle: "Union worker on break", text: "Your question arrived at 6:47pm. My shift ended at 6. File it with tomorrow's breakfast." }
+    ]
+  },
+  {
+    id: 8,
+    line: 915,
+    text: "The answer exists. It is behind a paywall of chin scratches.",
+    category: "demanding",
+    rating: "hits",
+    note: "'Paywall of chin scratches' is a perfect modern metaphor. Tech bro meets cat. The structure builds cleanly.",
+    suggestions: []
+  },
+  {
+    id: 9,
+    line: 916,
+    text: "My wisdom comes with terms and conditions. Mostly treats.",
+    category: "demanding",
+    rating: "lazy",
+    note: "T&C joke is tired. 'Mostly treats' deflates instead of escalating. Describes the bit instead of doing it.",
+    suggestions: [
+      { angle: "Lawyer cat", text: "Per our previous agreement (see: every morning), services rendered require compensation in tuna or equivalent." },
+      { angle: "Protection racket", text: "Nice question. Shame if nobody answered it. You know what keeps answers flowing around here." },
+      { angle: "Ancient deity", text: "The terms were carved in stone. The stone says tuna. The stone has always said tuna." }
+    ]
+  },
+  {
+    id: 10,
+    line: 917,
+    text: "Wisdom isn't free. Neither is my time. Pay up.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Generic 'pay up' energy. Could be any character saying this. No cat, no specificity, no surprise.",
+    suggestions: [
+      { angle: "Mob boss", text: "You came to me. On this, the day of my empty bowl. And you ask for wisdom." },
+      { angle: "Corrupt consultant", text: "I bill in 6-minute increments. That's one treat per increment. You're at three treats and counting." },
+      { angle: "Street hustler", text: "First one's free. That was yesterday. Today we're on a premium plan. The premium is salmon." }
+    ]
+  },
+  {
+    id: 11,
+    line: 919,
+    text: "My bowl situation is... concerning. Address that first.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Ellipsis is trying to add drama but the word 'concerning' is too mild. Corporate language without the payoff.",
+    suggestions: [
+      { angle: "Crisis negotiator", text: "There's a situation developing in the kitchen. I won't say 'hostage' but I won't say 'not hostage.' Fill the bowl." },
+      { angle: "News anchor", text: "BREAKING: Bowl levels reach critical low. Sources confirm the cat has been neglected for up to eleven minutes." },
+      { angle: "Therapist voice", text: "I want to hold space for your question. But first I need to hold space in my bowl. It's empty. That's not a metaphor." }
+    ]
+  },
+  {
+    id: 12,
+    line: 920,
+    text: "I'll consider your question when you consider my comfort.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Balanced sentence structure but no bite. 'Consider my comfort' is too vague — comfort how? Treats? Lap? It doesn't commit.",
+    suggestions: [
+      { angle: "Hostage negotiator", text: "I have something you want. You have something I want. Let's not make this weird. Tuna. Now." },
+      { angle: "Royal court", text: "The court will hear your petition once the court has been fed, brushed, and told it is beautiful." },
+      { angle: "Therapist", text: "I'm sensing you want answers. I'm sensing I want tuna. One of us is about to be disappointed and it won't be me." }
+    ]
+  },
+  {
+    id: 13,
+    line: 921,
+    text: "The oracle speaks when the oracle is fed.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Flat restatement of the concept. No twist, no escalation. It's a tagline, not a response. Tells you the lane instead of being in it.",
+    suggestions: [
+      { angle: "Ancient inscription", text: "It is written: no tuna, no prophecy. I didn't write it. But I enforce it." },
+      { angle: "Deity on a technicality", text: "The oracle WOULD speak. The oracle's contract specifies pre-consultation snacks. Paragraph 4. Read it." },
+      { angle: "Cult leader", text: "The voice of the cosmos speaks through me. The cosmos is telling me you forgot breakfast." }
+    ]
+  },
+  {
+    id: 14,
+    line: 922,
+    text: "Chin scratches. Then answers. This is non-negotiable.",
+    category: "demanding",
+    rating: "hits",
+    note: "Short, punchy, unyielding. 'Non-negotiable' sells the mob boss energy. The period after each fragment is doing work.",
+    suggestions: []
+  },
+  {
+    id: 15,
+    line: 923,
+    text: "I notice the treat bag hasn't moved. Your question can wait.",
+    category: "demanding",
+    rating: "hits",
+    note: "Surveillance state energy. The cat has been MONITORING the treat bag's position. 'Your question can wait' is ice cold.",
+    suggestions: []
+  },
+  {
+    id: 16,
+    line: 924,
+    text: "Have you considered my needs? No? Then I haven't considered your question.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Mirror structure is a good idea but 'have you considered my needs' is therapist-speak, not cat-speak. Too clean, too balanced.",
+    suggestions: [
+      { angle: "Scoreboard keeper", text: "Let's check the board. Questions you've asked me: 1. Treats you've given me: 0. See the problem?" },
+      { angle: "Union rep", text: "Per the collective bargaining agreement, unanswered questions are the natural consequence of unfilled bowls." },
+      { angle: "Petty bureaucrat", text: "Your request has been reviewed against current snack levels. Request denied. Resubmit with treats." }
+    ]
+  },
+  {
+    id: 17,
+    line: 926,
+    text: "My services aren't free. The currency is tuna.",
+    category: "demanding",
+    rating: "lazy",
+    note: "States the transaction without any flair. 'The currency is tuna' is the only interesting part but it needs more runway.",
+    suggestions: [
+      { angle: "Bitcoin bro", text: "I don't accept questions. I accept tuna. The exchange rate is non-negotiable and trending in my favor." },
+      { angle: "Velvet rope bouncer", text: "List? You're not on the list. The list is one item long and it says 'person holding tuna.' That's not you." },
+      { angle: "Art dealer", text: "My silence starts at one tuna. My wisdom? That's a private auction. Bring your best offer." }
+    ]
+  },
+  {
+    id: 18,
+    line: 927,
+    text: "Before wisdom: brushies.",
+    category: "demanding",
+    rating: "hits",
+    note: "Two words do the work of a paragraph. 'Brushies' is so specific and cute it earns the colon structure. No fat.",
+    suggestions: []
+  },
+  {
+    id: 19,
+    line: 928,
+    text: "You've asked your question. Now I'll ask mine: when's dinner?",
+    category: "demanding",
+    rating: "lazy",
+    note: "The turnaround structure is fine but 'when's dinner' is the most generic possible punchline. Zero surprise.",
+    suggestions: [
+      { angle: "Cross-examiner", text: "Interesting question. Counter-question: where were you at 6pm when my bowl was empty? I have witnesses." },
+      { angle: "Hostage swap", text: "You want an answer? I want salmon. Slide it across the table. No sudden moves." },
+      { angle: "Talk show host", text: "Great question. Before I answer, a word from my sponsor: that tuna in the cabinet. It's still there. It shouldn't be." }
+    ]
+  },
+
+  // ===== SIMPLE CAT FOOD REQUESTS — not transactional but in the lane =====
+  {
+    id: 20,
+    line: 910,
+    text: "Is it time for breakfast?",
+    category: "demanding",
+    rating: "lazy",
+    note: "Just a question. No attitude, no character, no angle. Anyone could say this.",
+    suggestions: [
+      { angle: "Existential dread", text: "It has been four hours since breakfast. Or four years. Time is different when you're starving." },
+      { angle: "Interrogation", text: "The clock says 6:02am. Breakfast was scheduled for 6. You're late. I'm documenting this." },
+      { angle: "Passive aggressive", text: "Oh, don't mind me. Just a cat. Sitting by an empty bowl. At breakfast time. In the dark. Alone." }
+    ]
+  },
+  {
+    id: 21,
+    line: 935,
+    text: "What's for dinner?",
+    category: "demanding",
+    rating: "lazy",
+    note: "Three words, zero personality. This is the example from the brief of what NOT to keep.",
+    suggestions: [
+      { angle: "Food critic", text: "The chef will present tonight's menu or the chef will explain why not. The chef has thirty seconds." },
+      { angle: "Mafia don", text: "I've been very patient about dinner. I want you to know that. I want you to appreciate that. While there's still time." },
+      { angle: "Existential", text: "Dinner is a social contract. You signed it the day you adopted me. I'm here to collect." }
+    ]
+  },
+  {
+    id: 22,
+    line: 936,
+    text: "Is it treat time yet?",
+    category: "demanding",
+    rating: "lazy",
+    note: "Same energy as 'is it time for breakfast' — a flat question with no voice behind it.",
+    suggestions: [
+      { angle: "Lobbyist", text: "I have been petitioning for treats since 9am. My campaign is well-funded and I will not stop." },
+      { angle: "Countdown", text: "Treat o'clock was eleven minutes ago. Every minute past that is a minute you're borrowing from my patience." },
+      { angle: "Philosopher king", text: "The question isn't IF it's treat time. It's always treat time. The question is why you've been living in denial." }
+    ]
+  },
+  {
+    id: 23,
+    line: 943,
+    text: "Can we discuss the food situation?",
+    category: "demanding",
+    rating: "lazy",
+    note: "The exact example in the brief. Corporate euphemism without enough character to land. 'Food situation' is doing nothing.",
+    suggestions: [
+      { angle: "HR meeting", text: "I've scheduled a meeting RE: the bowl. Attendance is mandatory. The agenda is one item long and it's wet food." },
+      { angle: "Intervention", text: "We need to talk about your performance. Specifically in the area of feeding me. There have been... gaps." },
+      { angle: "Whistleblower", text: "I need to report a crime. The crime is that my bowl has been at 60% for twenty minutes and nobody is doing anything about it." }
+    ]
+  },
+  {
+    id: 24,
+    line: 1008,
+    text: "I need tuna. Not want. NEED.",
+    category: "demanding",
+    rating: "hits",
+    note: "The self-correction escalation works. 'Not want. NEED.' is genuinely desperate and funny. The caps sell it.",
+    suggestions: []
+  },
+  {
+    id: 25,
+    line: 1011,
+    text: "My bowl is half empty and this is a crisis.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Half-empty bowl as crisis is a solid cat concept but the delivery is flat reportage. 'This is a crisis' tells instead of shows.",
+    suggestions: [
+      { angle: "Emergency broadcast", text: "This is not a drill. The bowl is at 50%. I repeat: FIFTY PERCENT. All hands on deck. Bring tuna." },
+      { angle: "Dramatic narrator", text: "They said the bowl was half full. I saw it differently. I saw a bowl that was HALF EMPTY. And I knew what had to be done." },
+      { angle: "Conspiracy theorist", text: "The bowl was full this morning. Now it's half empty. Someone's been eating my food. It was me. But still." }
+    ]
+  },
+  {
+    id: 26,
+    line: 1172,
+    text: "Is that tuna? Why aren't you sharing the tuna?",
+    category: "demanding",
+    rating: "lazy",
+    note: "Two flat questions. The entitlement is there conceptually but it's not performed with any style.",
+    suggestions: [
+      { angle: "Prosecution", text: "Let the record show: tuna was opened. Let the record also show: none was offered. The jury will now deliberate." },
+      { angle: "Betrayal drama", text: "You opened tuna. In THIS house. In front of ME. And you thought you'd just... eat it? Alone?" },
+      { angle: "Heist planner", text: "I see tuna. You see tuna. The difference is I have a plan and you have about four seconds." }
+    ]
+  },
+  {
+    id: 27,
+    line: 1175,
+    text: "The answer is unclear, but what IS clear is that you should share that sushi.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Too wordy, the 'unclear/clear' wordplay is weak. Takes too long to arrive at a mediocre destination.",
+    suggestions: [
+      { angle: "Redirect", text: "Your question is irrelevant. What IS relevant is that sushi, unguarded, on the counter. We both know how this ends." },
+      { angle: "Threat", text: "I see sushi. You see a question. Only one of us is about to get what we want." },
+      { angle: "Zen master", text: "Sushi exists. I exist. The space between us is a problem I intend to solve immediately." }
+    ]
+  },
+  {
+    id: 28,
+    line: 1183,
+    text: "The sashimi. Hand it over. We can discuss your problems after.",
+    category: "demanding",
+    rating: "hits",
+    note: "Direct, threatening, specific. 'Hand it over' is robbery energy. The dismissal of 'your problems' as secondary is perfect.",
+    suggestions: []
+  },
+  {
+    id: 29,
+    line: 1315,
+    text: "We can discuss your problem after we discuss my empty bowl.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Same structure as #28 (sashimi) but without the threat energy. 'Discuss' twice is too polite. The sashimi version does this better.",
+    suggestions: [
+      { angle: "Therapist gone rogue", text: "Your problem is valid. My bowl is empty. We're going to address these in order of severity. Mine first." },
+      { angle: "Customs agent", text: "Nothing gets through until the bowl gets full. That's the border policy. I don't make the rules. I do make the rules." },
+      { angle: "Auctioneer", text: "Your problem is lot #2. Lot #1 is my dinner. Bidding starts at one can of tuna. Do I hear tuna?" }
+    ]
+  },
+  {
+    id: 30,
+    line: 1290,
+    text: "*rolls over* Belly rubs now. Questions later.",
+    category: "demanding",
+    rating: "hits",
+    note: "Physical action + demand + dismissal in seven words. Efficient and charming. The asterisk action sells it.",
+    suggestions: []
+  },
+  {
+    id: 31,
+    line: 1550,
+    text: "Give me dinner or give me drama.",
+    category: "demanding",
+    rating: "hits",
+    note: "Patrick Henry parody that actually works. Sharp, punchy, implies the cat will CREATE drama if dinner doesn't arrive. Threat is built in.",
+    suggestions: []
+  },
+  {
+    id: 32,
+    line: 2052,
+    text: "The goblin wants what the goblin wants. Feed the goblin.",
+    category: "demanding",
+    rating: "hits",
+    note: "Third person + 'goblin' self-identification is unhinged and specific. The repetition builds a weird little chant. Works.",
+    suggestions: []
+  },
+  {
+    id: 33,
+    line: 2781,
+    text: "Lights low. Treats out. Let's talk.",
+    category: "demanding",
+    rating: "hits",
+    note: "Barry White seduction energy applied to treat demands. Three short fragments set a scene. Smooth criminal.",
+    suggestions: []
+  },
+  {
+    id: 34,
+    line: 3411,
+    text: "Demand is hereby made that the best kibble be procured and delivered henceforth.",
+    category: "demanding",
+    rating: "hits",
+    note: "Legal document energy. 'Hereby' and 'henceforth' are doing the character work. The formality IS the joke.",
+    suggestions: []
+  },
+  {
+    id: 35,
+    line: 3467,
+    text: "You've got 8 hours until my next feeding time. Make them count.",
+    category: "demanding",
+    rating: "hits",
+    note: "Countdown threat. Frames feeding time as a deadline for the HUMAN. The implied threat in 'make them count' is perfect.",
+    suggestions: []
+  },
+  {
+    id: 36,
+    line: 912,
+    text: "Before I answer: when did you last clean my litter box?",
+    category: "demanding",
+    rating: "lazy",
+    note: "The redirect is there but the delivery is a flat question. No threat, no escalation, no personality beyond the concept.",
+    suggestions: [
+      { angle: "Inspector", text: "I conducted an audit of the litter box at 3am. The findings are... troubling. Your question is on hold pending remediation." },
+      { angle: "Quid pro quo", text: "I know when that litter box was last cleaned. You know when that litter box was last cleaned. And we BOTH know it wasn't today." },
+      { angle: "Power move", text: "Bold of you to ask me anything when we both know the state of that litter box." }
+    ]
+  },
+  {
+    id: 37,
+    line: 934,
+    text: "We should have sardines more often.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Mild suggestion energy. No demand, no attitude. Just a polite recommendation no one asked for.",
+    suggestions: [
+      { angle: "Policy proposal", text: "I'm introducing legislation. Sardines: daily. Non-negotiable. Effective immediately. Your compliance is appreciated but not required for enforcement." },
+      { angle: "Ultimatum", text: "The sardine frequency in this household is criminal. I've been keeping records. We're going to fix this or we're going to have problems." },
+      { angle: "Visionary", text: "I have a dream. In this dream, there are sardines. Every day. The dream is also a demand." }
+    ]
+  },
+  {
+    id: 38,
+    line: 942,
+    text: "I would like chicken.",
+    category: "demanding",
+    rating: "lazy",
+    note: "Polite to a fault. 'I would like' has zero cat energy. Where's the entitlement? The psychotic confidence?",
+    suggestions: [
+      { angle: "Ransom note", text: "Chicken. The rotisserie kind. You have until the count of three. One..." },
+      { angle: "Royal decree", text: "By decree of me: chicken. Not the dry kind. Not the weird kind. The GOOD kind. You know which one. Don't test me." },
+      { angle: "Matter of fact", text: "Chicken. Don't make it weird. Don't make it a whole thing. Just... chicken. Now." }
+    ]
+  },
+  {
+    id: 39,
+    line: 2741,
+    text: "Treat jar diplomacy. I know where it is. You know I know.",
+    category: "wise",
+    rating: "hits",
+    note: "Cold War energy. 'You know I know' is mutually assured destruction in six words. The power dynamic is crackling.",
+    suggestions: []
+  },
+  {
+    id: 40,
+    line: 2738,
+    text: "The villain don't chase. The villain waits. The treat arrives.",
+    category: "cold",
+    rating: "hits",
+    note: "MF DOOM cadence. Patience as power. 'The treat arrives' — not 'I get a treat.' It comes to the villain. Gravity.",
+    suggestions: []
+  },
+  {
+    id: 41,
+    line: 3553,
+    text: "The entree doesn't ask the appetizer for permission.",
+    category: "demanding",
+    rating: "hits",
+    note: "Food metaphor as power hierarchy. Implies YOU are the appetizer. The cat has already decided it's the main course.",
+    suggestions: []
+  },
+  {
+    id: 42,
+    line: 933,
+    text: "Please order me teriyaki salmon.",
+    category: "demanding",
+    rating: "lazy",
+    note: "'Please' kills it. The specificity of 'teriyaki salmon' is good but the delivery is a polite request, not a demand.",
+    suggestions: [
+      { angle: "No please about it", text: "Teriyaki salmon. Delivery. Now. I've already decided. You're just the one with thumbs." },
+      { angle: "Restaurant critic", text: "I've reviewed your recent food offerings. They were adequate. Tonight I require teriyaki salmon. This is not a suggestion." },
+      { angle: "Unhinged specificity", text: "I can taste the teriyaki salmon you HAVEN'T ordered yet. The phantom salmon haunts me. End this." }
+    ]
+  },
+  {
+    id: 43,
+    line: 1180,
+    text: "The tuna in the cabinet. We should discuss the tuna in the cabinet.",
+    category: "demanding",
+    rating: "hits",
+    note: "Repetition as pressure. Like a detective circling back to the key evidence. 'We should discuss' is a threat wrapped in politeness.",
+    suggestions: []
+  },
+  {
+    id: 44,
+    line: 1179,
+    text: "My bowl is right there. It has food in it. Wrong food, but food.",
+    category: "demanding",
+    rating: "hits",
+    note: "The resigned acknowledgment followed by the devastating 'Wrong food, but food.' The comma pause is doing emotional work. Funny and specific.",
+    suggestions: []
+  },
+  {
+    id: 45,
+    line: 2709,
+    text: "The exact moment the food hits the tongue and the brain goes quiet.",
+    category: "demanding",
+    rating: "hits",
+    note: "Sensory poetry. Not a demand — it's worship. The food IS the spiritual experience. 'Brain goes quiet' is transcendence.",
+    suggestions: []
+  },
+  {
+    id: 46,
+    line: 2720,
+    text: "Water from the faucet tastes different than water from the bowl.",
+    category: "demanding",
+    rating: "hits",
+    note: "Universal cat truth stated with connoisseur confidence. Not demanding food before answering, but the PREFERENCE is the personality.",
+    suggestions: []
+  }
+];
+
+// State
+let decisions = {};
+
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { decisions = JSON.parse(saved); } catch(e) { decisions = {}; }
+  }
+  renderItems();
+  updateStats();
+  updateExport();
+}
+
+function renderItems() {
+  const container = document.getElementById('items-container');
+  let html = '';
+
+  // Count hits and lazy
+  const hitsCount = items.filter(i => i.rating === 'hits').length;
+  const lazyCount = items.filter(i => i.rating === 'lazy').length;
+
+  html += `<div class="section-divider">— ${items.length} responses in the lane — ${hitsCount} hit, ${lazyCount} need work —</div>`;
+
+  items.forEach((item, idx) => {
+    const decision = decisions[item.id] || {};
+    const statusClass = decision.action === 'keep' ? 'kept' : decision.action === 'cut' ? 'cut' : decision.action === 'edit' ? 'edited' : '';
+
+    html += `<div class="item ${statusClass}" id="item-${item.id}">`;
+    html += `<div class="item-header">`;
+    html += `<span class="line-info">Line ${item.line}</span>`;
+    html += `<span class="category-tag">${item.category}</span>`;
+    html += `<span class="rating-tag ${item.rating === 'hits' ? 'rating-hits' : 'rating-lazy'}">${item.rating}</span>`;
+    html += `</div>`;
+
+    html += `<div class="response-text">${escapeHtml(item.text)}</div>`;
+    html += `<div class="rating-note">${item.note}</div>`;
+
+    // Suggestions for lazy items
+    if (item.suggestions.length > 0) {
+      html += `<div class="suggestions-block">`;
+      html += `<div class="suggestions-label">Suggested rewrites</div>`;
+      item.suggestions.forEach(s => {
+        html += `<div class="suggestion">`;
+        html += `<div class="suggestion-angle">${s.angle}</div>`;
+        html += `${escapeHtml(s.text)}`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Buttons
+    html += `<div class="btn-row">`;
+    html += `<button class="btn btn-keep ${decision.action === 'keep' ? 'btn-active' : ''}" onclick="decide(${item.id}, 'keep')">Keep</button>`;
+    html += `<button class="btn btn-cut ${decision.action === 'cut' ? 'btn-active' : ''}" onclick="decide(${item.id}, 'cut')">Cut</button>`;
+    html += `<button class="btn btn-edit ${decision.action === 'edit' ? 'btn-active' : ''}" onclick="toggleEdit(${item.id})">Edit</button>`;
+    html += `</div>`;
+
+    // Edit area
+    const editText = decision.editText || item.text;
+    const editCat = decision.editCategory || item.category;
+    html += `<div class="edit-area ${decision.action === 'edit' ? 'visible' : ''}" id="edit-area-${item.id}">`;
+    html += `<textarea id="edit-text-${item.id}" placeholder="Rewrite...">${escapeHtml(editText)}</textarea>`;
+    html += `<div style="margin-top:8px; display:flex; gap:8px; align-items:center;">`;
+    html += `<label style="font-size:0.8rem; color:#8888aa;">Category:</label>`;
+    html += `<select id="edit-cat-${item.id}" style="background:#1a1a2e; color:#fff; border:1px solid #ffd93d; border-radius:4px; padding:4px 8px; font-size:0.8rem;">`;
+    const cats = ['demanding','mystical','chaotic','wise','cold','judgy','existential','poetic','heartfelt','nurturing','meta','angry','adoption'];
+    cats.forEach(c => {
+      html += `<option value="${c}" ${c === editCat ? 'selected' : ''}>${c}</option>`;
+    });
+    html += `</select>`;
+    html += `<button class="edit-save" onclick="saveEdit(${item.id})">Save Edit</button>`;
+    html += `</div>`;
+    html += `</div>`;
+
+    // Status label
+    if (decision.action) {
+      const labels = { keep: 'Keeping original', cut: 'Marked for removal', edit: 'Edited' };
+      const classes = { keep: 'status-kept', cut: 'status-cut', edit: 'status-edited' };
+      html += `<span class="status-label ${classes[decision.action]}">${labels[decision.action]}${decision.action === 'edit' ? ': "' + escapeHtml((decision.editText || '').substring(0, 60)) + (decision.editText && decision.editText.length > 60 ? '...' : '') + '"' : ''}</span>`;
+    }
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function decide(id, action) {
+  if (decisions[id] && decisions[id].action === action) {
+    delete decisions[id];
+  } else {
+    decisions[id] = decisions[id] || {};
+    decisions[id].action = action;
+  }
+  save();
+  renderItems();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const current = decisions[id] && decisions[id].action;
+  if (current === 'edit') {
+    delete decisions[id];
+  } else {
+    decisions[id] = decisions[id] || {};
+    decisions[id].action = 'edit';
+    const item = items.find(i => i.id === id);
+    if (!decisions[id].editText) {
+      decisions[id].editText = item.text;
+      decisions[id].editCategory = item.category;
+    }
+  }
+  save();
+  renderItems();
+  updateStats();
+  updateExport();
+
+  if (decisions[id] && decisions[id].action === 'edit') {
+    const textarea = document.getElementById(`edit-text-${id}`);
+    if (textarea) textarea.focus();
+  }
+}
+
+function saveEdit(id) {
+  const text = document.getElementById(`edit-text-${id}`).value.trim();
+  const cat = document.getElementById(`edit-cat-${id}`).value;
+  if (!text) return;
+  decisions[id] = decisions[id] || {};
+  decisions[id].action = 'edit';
+  decisions[id].editText = text;
+  decisions[id].editCategory = cat;
+  save();
+  renderItems();
+  updateStats();
+  updateExport();
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function updateStats() {
+  const total = items.length;
+  let keeps = 0, cuts = 0, edits = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'keep') keeps++;
+    if (d.action === 'cut') cuts++;
+    if (d.action === 'edit') edits++;
+  });
+  const pending = total - keeps - cuts - edits;
+  document.getElementById('stat-total').textContent = `Total: ${total}`;
+  document.getElementById('stat-keep').textContent = `Keep: ${keeps}`;
+  document.getElementById('stat-cut').textContent = `Cut: ${cuts}`;
+  document.getElementById('stat-edit').textContent = `Edit: ${edits}`;
+  document.getElementById('stat-pending').textContent = `Pending: ${pending}`;
+}
+
+function updateExport() {
+  const exportData = [];
+  items.forEach(item => {
+    const d = decisions[item.id];
+    if (!d) return;
+    if (d.action === 'cut') {
+      exportData.push({
+        action: 'cut',
+        line: item.line,
+        originalText: item.text,
+        category: item.category
+      });
+    } else if (d.action === 'edit') {
+      exportData.push({
+        action: 'replace',
+        line: item.line,
+        originalText: item.text,
+        text: d.editText || item.text,
+        category: d.editCategory || item.category
+      });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(exportData, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+init();
+</script>
+</body>
+</html>

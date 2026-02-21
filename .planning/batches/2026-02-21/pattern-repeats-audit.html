@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pattern Repeats Audit — MaybeCat 2026-02-21</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 12px 20px; border-bottom: 2px solid #0f3460;
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  }
+  .sticky-header h1 { font-size: 18px; color: #e94560; margin-right: auto; }
+  .stat { font-size: 14px; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-total { color: #aaa; }
+
+  .group-header {
+    margin: 40px 0 20px 0; padding: 16px 20px;
+    background: #16213e; border-left: 4px solid #e94560;
+    border-radius: 4px;
+  }
+  .group-header h2 { font-size: 20px; color: #e94560; margin-bottom: 4px; }
+  .group-header .group-desc { font-size: 13px; color: #888; }
+
+  .item {
+    background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px;
+    border: 1px solid #0f3460; transition: border-color 0.2s;
+  }
+  .item.kept { border-color: #4ecca3; }
+  .item.cut { border-color: #e94560; }
+  .item.edited { border-color: #ffd93d; }
+
+  .item-text { font-size: 16px; line-height: 1.5; margin-bottom: 8px; color: #fff; }
+  .item-meta { font-size: 12px; color: #666; margin-bottom: 10px; }
+  .item-meta span { margin-right: 12px; }
+  .item-meta .cat-label { color: #4ecca3; background: rgba(78,204,163,0.1); padding: 2px 8px; border-radius: 4px; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area { display: none; margin-top: 8px; width: 100%; }
+  .edit-area textarea {
+    width: 100%; min-height: 60px; background: #0f3460; color: #eee;
+    border: 1px solid #4ecca3; border-radius: 4px; padding: 8px; font-size: 14px;
+    font-family: inherit; resize: vertical;
+  }
+  .edit-area .btn-save { margin-top: 6px; background: #4ecca3; color: #1a1a2e; }
+
+  #export-section {
+    margin-top: 60px; padding: 20px; background: #16213e; border-radius: 8px;
+    border: 1px solid #0f3460;
+  }
+  #export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+  #export-json {
+    width: 100%; min-height: 200px; background: #0f3460; color: #4ecca3;
+    border: 1px solid #4ecca3; border-radius: 4px; padding: 12px; font-family: monospace;
+    font-size: 12px; resize: vertical;
+  }
+  .btn-copy { margin-top: 8px; background: #4ecca3; color: #1a1a2e; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Pattern Repeats Audit</h1>
+  <span class="stat stat-total">Total: <strong id="total-count">0</strong></span>
+  <span class="stat stat-keep">Keep: <strong id="keep-count">0</strong></span>
+  <span class="stat stat-cut">Cut: <strong id="cut-count">0</strong></span>
+  <span class="stat stat-edit">Edit: <strong id="edit-count">0</strong></span>
+  <span class="stat stat-total">Undecided: <strong id="undecided-count">0</strong></span>
+</div>
+
+<div id="content"></div>
+
+<div id="export-section">
+  <h2>Export JSON (KEEP + EDIT only)</h2>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+  <textarea id="export-json" readonly></textarea>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-pattern-repeats-audit';
+
+const groups = [
+  {
+    name: "Feed me before I answer",
+    desc: "Transactional responses where the cat demands treats/food/scratches before giving wisdom. Same joke: 'my services cost something.' Is the repetition a signature move or dilution?",
+    items: [
+      { text: "Ask again when you have provided adequate tribute.", line: 97, category: "mystical" },
+      { text: "Cross my paw with tuna and I shall reveal more.", line: 103, category: "mystical" },
+      { text: "The shadows speak. They say 'feed the cat.' The shadows are wise.", line: 109, category: "mystical" },
+      { text: "Answers cost treats. You know the exchange rate.", line: 911, category: "demanding" },
+      { text: "Before I answer: when did you last clean my litter box?", line: 912, category: "demanding" },
+      { text: "The Oracle is hungry. Feed the Oracle. Then we talk.", line: 913, category: "demanding" },
+      { text: "Your question is noted. My dinner is late. Priorities.", line: 914, category: "demanding" },
+      { text: "The answer exists. It is behind a paywall of chin scratches.", line: 915, category: "demanding" },
+      { text: "My wisdom comes with terms and conditions. Mostly treats.", line: 916, category: "demanding" },
+      { text: "Wisdom isn't free. Neither is my time. Pay up.", line: 917, category: "demanding" },
+      { text: "The door. Open it. Then we'll talk.", line: 918, category: "demanding" },
+      { text: "My bowl situation is... concerning. Address that first.", line: 919, category: "demanding" },
+      { text: "I'll consider your question when you consider my comfort.", line: 920, category: "demanding" },
+      { text: "The oracle speaks when the oracle is fed.", line: 921, category: "demanding" },
+      { text: "Chin scratches. Then answers. This is non-negotiable.", line: 922, category: "demanding" },
+      { text: "I notice the treat bag hasn't moved. Your question can wait.", line: 923, category: "demanding" },
+      { text: "Have you considered my needs? No? Then I haven't considered your question.", line: 924, category: "demanding" },
+      { text: "The window. The bird. Let me closer. Then I'll answer.", line: 925, category: "demanding" },
+      { text: "My services aren't free. The currency is tuna.", line: 926, category: "demanding" },
+      { text: "Before wisdom: brushies.", line: 927, category: "demanding" },
+      { text: "You've asked your question. Now I'll ask mine: when's dinner?", line: 928, category: "demanding" },
+      { text: "The answer requires more information. Specifically, have you tried bribing me?", line: 1363, category: "demanding" },
+      { text: "We can discuss your problem after we discuss my empty bowl.", line: 1315, category: "demanding" },
+      { text: "Your question is interesting, but have you considered my needs?", line: 1312, category: "demanding" }
+    ]
+  },
+  {
+    name: "[Profound thing] + [but cat thing]",
+    desc: "Structure: philosophical/existential statement followed by a deflection to naps, blankets, treats, or other cat comfort. The formula is: depth + bathos. Pattern: 'X is Y. Except Z [cat thing].'",
+    items: [
+      { text: "The answer lies beneath the blankets.", line: 94, category: "mystical" },
+      { text: "What you seek is already within you. What i seek is within the cabinet.", line: 99, category: "mystical" },
+      { text: "The stars align in your favor. The blankets, however, do not.", line: 101, category: "mystical" },
+      { text: "The cosmos aligns when you least expect it. Usually during dinner.", line: 110, category: "mystical" },
+      { text: "The answer is self-care. And by self-care I mean blankets.", line: 388, category: "wise" },
+      { text: "Existence is pain. Except under blankets. There, existence is acceptable.", line: 885, category: "existential" },
+      { text: "What is a bed but a horizontal prison? What are blankets but soft oppressors?", line: 886, category: "existential" },
+      { text: "You seek meaning. I seek the warm spot. Perhaps they are the same.", line: 887, category: "existential" },
+      { text: "Nothing matters. But also, everything matters. Especially treats.", line: 888, category: "existential" },
+      { text: "The meaning of life is unknowable. The meaning of a nap is obvious.", line: 891, category: "existential" },
+      { text: "Every moment is impermanent. That's why naps must happen NOW.", line: 893, category: "existential" },
+      { text: "The universe expands. My territory also expands. Coincidence?", line: 894, category: "existential" },
+      { text: "In the end, we are all just dust. Comfortable, napping dust.", line: 895, category: "existential" },
+      { text: "You ask 'why?' I ask 'why not nap?'", line: 896, category: "existential" },
+      { text: "What is 'outside' but 'inside' with more birds?", line: 898, category: "existential" },
+      { text: "To be a cat is to know the truth: comfort is the only philosophy.", line: 899, category: "existential" },
+      { text: "The question is not 'why are we here' but 'is this the best spot?'", line: 901, category: "existential" },
+      { text: "Reality is what happens between naps.", line: 902, category: "existential" },
+      { text: "We are all in the gutter, but some of us are looking at birds.", line: 496, category: "wise" },
+      { text: "One does not simply walk into Mordor. One naps first.", line: 552, category: "wise" },
+      { text: "We're all just energy, man. Fuzzy, hungry energy.", line: 995, category: "existential" },
+      { text: "We're all made of stars. Stars that want treats.", line: 1018, category: "existential" }
+    ]
+  },
+  {
+    name: "Curiosity — 'I must investigate'",
+    desc: "Cat's need to check, explore, and involve itself in everything new. All follow the same 'something happened, I'm now involved' structure. These were added as a deliberate cluster under the CURIOSITY section header.",
+    items: [
+      { text: "What's in there? I need to know.", line: 735, category: "chaotic" },
+      { text: "If there's a door, I'm going to look behind it.", line: 736, category: "chaotic" },
+      { text: "You opened something. I'm now involved.", line: 737, category: "chaotic" },
+      { text: "Is that new? I must investigate.", line: 738, category: "chaotic" },
+      { text: "What's that sound? I will find out.", line: 739, category: "chaotic" },
+      { text: "Every bag must be checked. Those are the rules.", line: 740, category: "chaotic" },
+      { text: "A box arrived. This is now my business.", line: 741, category: "chaotic" }
+    ]
+  },
+  {
+    name: "'Yes, like [pleasant thing]'",
+    desc: "Feb 17 batch. All follow exact same structure: 'Yes, like [specific pleasant sensory experience].' Identical format, only the simile changes. Is this a charming series or a factory line?",
+    items: [
+      { text: "Yes, with all the chemistry of a great first kiss.", line: 3620, category: "wise" },
+      { text: "Yes, like peeling the wrapper of the new item you've been waiting for.", line: 3621, category: "wise" },
+      { text: "Yes, like clean sheets.", line: 3622, category: "wise" },
+      { text: "Yes, like being outside in the perfect gear in lousy weather.", line: 3623, category: "wise" },
+      { text: "Yes, like a mouse not seeing you and running right in your direction.", line: 3624, category: "wise" },
+      { text: "Yes, like a flying acrobatic leap to catch a cat dancer high in the air.", line: 3625, category: "chaotic" },
+      { text: "Yes, like thinking you are being transferred to another shelter and arriving at a forever home.", line: 3626, category: "adoption" },
+      { text: "Yes, like you aren't sure if it's time to get another cat and a cat finds you.", line: 3627, category: "adoption" },
+      { text: "Yes, like wanting this kitten, but that one being so cute too.", line: 3628, category: "adoption" },
+      { text: "Yes, like the appreciation of an older rescue cat finally being selected for adoption.", line: 3629, category: "adoption" },
+      { text: "Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.", line: 3630, category: "heartfelt" },
+      { text: "Yes, like the first stretch after a long nap.", line: 3631, category: "wise" },
+      { text: "Yes, like the sound of the can opener.", line: 3632, category: "wise" },
+      { text: "Yes, the way two cats who've never met touch noses.", line: 3633, category: "heartfelt" }
+    ]
+  },
+  {
+    name: "Stoner/Catnip 'what if'",
+    desc: "The MUNCHIES section. Stoned cat energy: deep 'what if' questions, cosmic revelations about paws, laser dots, and crinkle balls. Also includes the munchies sub-pattern (hungry while high) and the 'forgot what I was doing' sub-pattern.",
+    items: [
+      { text: "The catnip is speaking. I must listen.", line: 985, category: "chaotic" },
+      { text: "I have seen the infinite and it is shaped like a crinkle ball.", line: 986, category: "mystical" },
+      { text: "What if the laser dot is real and WE'RE the illusion?", line: 987, category: "existential" },
+      { text: "I just realized that purring is just my motor running.", line: 988, category: "chaotic" },
+      { text: "Everything is connected. Especially the toys I batted under the couch.", line: 989, category: "mystical" },
+      { text: "I am vibrating at a frequency only the houseplants understand.", line: 990, category: "mystical" },
+      { text: "What if boxes are just the universe hugging us?", line: 991, category: "existential" },
+      { text: "I can see through time. Time is a nap.", line: 992, category: "mystical" },
+      { text: "The ceiling fan knows all our secrets.", line: 993, category: "mystical" },
+      { text: "Have you ever really LOOKED at your paw?", line: 994, category: "chaotic" },
+      { text: "We're all just energy, man. Fuzzy, hungry energy.", line: 995, category: "existential" },
+      { text: "I think the floor is breathing but it's fine.", line: 996, category: "chaotic" },
+      { text: "My whiskers are downloading information from the cosmos.", line: 997, category: "mystical" },
+      { text: "Dude. Dude. The treat... IS the journey.", line: 998, category: "chaotic" },
+      { text: "I just understood something important but I already forgot it.", line: 999, category: "chaotic" },
+      { text: "The scritches... I can feel them in my SOUL.", line: 1000, category: "chaotic" },
+      { text: "What if we're all just cats dreaming we're humans dreaming we're cats?", line: 1001, category: "existential" },
+      { text: "Time is a flat circle and I have been chasing it.", line: 1002, category: "existential" },
+      { text: "I am one with the sunbeam. The sunbeam is one with me.", line: 1003, category: "mystical" },
+      { text: "The cardboard speaks truths the furniture cannot.", line: 1004, category: "mystical" },
+      { text: "We should order something.", line: 1005, category: "chaotic" },
+      { text: "I would destroy an entire rotisserie chicken right now.", line: 1006, category: "chaotic" },
+      { text: "Imagine if kibble was, like, infinite.", line: 1007, category: "chaotic" },
+      { text: "I need tuna. Not want. NEED.", line: 1008, category: "demanding" },
+      { text: "What if there's a snack I haven't even conceived of yet?", line: 1009, category: "existential" },
+      { text: "Hear me out: salmon wrapped in more salmon.", line: 1010, category: "chaotic" },
+      { text: "My bowl is half empty and this is a crisis.", line: 1011, category: "demanding" },
+      { text: "The crunchies... they call to me across space and time.", line: 1012, category: "mystical" },
+      { text: "I just thought about cheese for like ten minutes.", line: 1013, category: "chaotic" },
+      { text: "Why do we eat? To fill the void. What is the void? Hungry.", line: 1014, category: "existential" },
+      { text: "You ever just stare at nothing and see everything?", line: 1015, category: "mystical" },
+      { text: "I have achieved enlightenment. It tastes like chicken.", line: 1016, category: "chaotic" },
+      { text: "The universe provides. Specifically, it provides crinkle balls.", line: 1017, category: "mystical" },
+      { text: "We're all made of stars. Stars that want treats.", line: 1018, category: "existential" },
+      { text: "I've been staring at this for an hour. It's a wall.", line: 1023, category: "chaotic" },
+      { text: "I started chasing something and forgot what.", line: 1024, category: "chaotic" },
+      { text: "I need to tell you something important. I forgot what it was.", line: 1025, category: "chaotic" },
+      { text: "I know I wanted something. The wanting remains. The thing is gone.", line: 1026, category: "existential" },
+      { text: "My brain is buffering. Please wait.", line: 1027, category: "chaotic" },
+      { text: "I have been sitting here for how long? Doesn't matter. Time is fake.", line: 1028, category: "chaotic" },
+      { text: "Why did I come in here? Why does anyone go anywhere?", line: 1029, category: "existential" },
+      { text: "The answer is... wait, what was the question?", line: 1030, category: "chaotic" },
+      { text: "Something just happened. Or did it?", line: 1031, category: "chaotic" },
+      { text: "I had a whole plan. It's vapor now.", line: 1032, category: "chaotic" },
+      { text: "Very important thought incoming... and it's gone.", line: 1033, category: "chaotic" },
+      { text: "I spaced out so hard I became one with the couch.", line: 1034, category: "chaotic" },
+      { text: "The world got really interesting and then I blinked.", line: 1035, category: "chaotic" },
+      { text: "Did I say that out loud or just think it?", line: 1036, category: "chaotic" },
+      { text: "I've been looking at this toy for twenty minutes. It hasn't moved. I might not have either.", line: 1037, category: "chaotic" },
+      { text: "Bro.", line: 1038, category: "chaotic" },
+      { text: "Dude.", line: 1039, category: "chaotic" },
+      { text: "Processing... processing... still processing...", line: 1040, category: "chaotic" }
+    ]
+  },
+  {
+    name: "'May cause...' medical oddities",
+    desc: "Batch 28: Medical Oddities. All 'May cause...' responses follow identical structure. Also includes the old-timey medical diagnoses that share the same 'clinical label as answer' energy. Is the full set justified as a series, or should it be trimmed?",
+    items: [
+      { text: "Suffering from the vapours.", line: 2979, category: "existential" },
+      { text: "A case of green sickness.", line: 2980, category: "mystical" },
+      { text: "Diagnosed with nostalgia.", line: 2981, category: "existential" },
+      { text: "Brain fever.", line: 2982, category: "chaotic" },
+      { text: "Visitation of God.", line: 2983, category: "mystical" },
+      { text: "Mortification.", line: 2984, category: "existential" },
+      { text: "Suffering an immoderate flux.", line: 2985, category: "chaotic" },
+      { text: "Congestion of the brain.", line: 2986, category: "wise" },
+      { text: "Inflammation of the passions.", line: 2987, category: "demanding" },
+      { text: "An overabundance of sanguine humour.", line: 2988, category: "chaotic" },
+      { text: "Excessive animal spirits.", line: 2989, category: "chaotic" },
+      { text: "Admitted for disappointed love.", line: 2990, category: "heartfelt" },
+      { text: "Masturbatory insanity.", line: 2991, category: "chaotic" },
+      { text: "Suffering from an overheated brain.", line: 2992, category: "chaotic" },
+      { text: "May cause compulsive shopping.", line: 2993, category: "chaotic" },
+      { text: "May cause cooking while asleep.", line: 2994, category: "chaotic" },
+      { text: "May cause increased interest in sexual activity.", line: 2995, category: "demanding" },
+      { text: "May cause aggressive behavior toward inanimate objects.", line: 2996, category: "chaotic" },
+      { text: "May cause purple urine.", line: 2997, category: "chaotic" },
+      { text: "May cause musical hallucinations.", line: 2998, category: "mystical" },
+      { text: "May cause a sense of impending doom.", line: 2999, category: "existential" },
+      { text: "May cause excessive yawning.", line: 3000, category: "cold" },
+      { text: "May cause inappropriate happiness.", line: 3001, category: "chaotic" },
+      { text: "May cause vivid, disturbing dreams.", line: 3002, category: "mystical" },
+      { text: "Thinking abnormal.", line: 3003, category: "existential" },
+      { text: "May cause spontaneous orgasm.", line: 3004, category: "chaotic" },
+      { text: "May cause your sweat to smell like maple syrup.", line: 3005, category: "mystical" },
+      { text: "May cause the sensation of your head stretching.", line: 3006, category: "chaotic" }
+    ]
+  },
+  {
+    name: "Single-word verdicts",
+    desc: "One-word responses used as devastating judgments. All follow the same pattern: [Adjective]. Period. Some are cold, some judgy, some wise, some mystical. The cluster sits at lines 1669-1699 but the concept appears elsewhere too. Is the density of the cluster the brand or filler?",
+    items: [
+      { text: "Rancid.", line: 1669, category: "cold" },
+      { text: "Transparent.", line: 1670, category: "judgy" },
+      { text: "Unripe.", line: 1671, category: "wise" },
+      { text: "Stale.", line: 1672, category: "cold" },
+      { text: "Threadbare.", line: 1673, category: "judgy" },
+      { text: "Borrowed.", line: 1674, category: "wise" },
+      { text: "Counterfeit.", line: 1675, category: "cold" },
+      { text: "Fermenting.", line: 1676, category: "mystical" },
+      { text: "Curdled.", line: 1677, category: "cold" },
+      { text: "Hollow.", line: 1679, category: "cold" },
+      { text: "Borrowed time.", line: 1681, category: "mystical" },
+      { text: "Overripe.", line: 1683, category: "wise" },
+      { text: "Diluted.", line: 1684, category: "judgy" },
+      { text: "Secondhand.", line: 1685, category: "cold" },
+      { text: "Expired.", line: 1686, category: "cold" },
+      { text: "Lukewarm.", line: 1687, category: "judgy" },
+      { text: "Residue.", line: 1689, category: "cold" },
+      { text: "Echoes.", line: 1690, category: "mystical" },
+      { text: "Posture.", line: 1691, category: "judgy" },
+      { text: "Costume.", line: 1692, category: "judgy" },
+      { text: "Rehearsed.", line: 1693, category: "judgy" },
+      { text: "Performative.", line: 1694, category: "judgy" },
+      { text: "Ornamental.", line: 1695, category: "cold" },
+      { text: "Untested.", line: 1698, category: "wise" },
+      { text: "Circumstantial.", line: 1699, category: "wise" },
+      { text: "Liability.", line: 2117, category: "existential" },
+      { text: "Medieval.", line: 3341, category: "judgy" },
+      { text: "Dubitante.", line: 3157, category: "cold" },
+      { text: "Mortification.", line: 2984, category: "existential" },
+      { text: "Tepid whimsy.", line: 2840, category: "cold" },
+      { text: "Intriguingly bad.", line: 2841, category: "cold" },
+      { text: "Aggressively medium.", line: 2878, category: "cold" },
+      { text: "Drekitude. The lowest point in the lowest ebb.", line: 2906, category: "cold" },
+      { text: "Cascading surrender.", line: 3204, category: "cold" }
+    ]
+  }
+];
+
+// Build DOM
+const content = document.getElementById('content');
+let itemId = 0;
+const allItems = [];
+
+groups.forEach((group, gi) => {
+  const header = document.createElement('div');
+  header.className = 'group-header';
+  header.innerHTML = `
+    <h2>Pattern: ${group.name} &mdash; ${group.items.length} responses</h2>
+    <div class="group-desc">${group.desc}</div>
+  `;
+  content.appendChild(header);
+
+  group.items.forEach((item, ii) => {
+    const id = itemId++;
+    allItems.push({ id, ...item, status: 'undecided', editedText: '' });
+
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.id = `item-${id}`;
+    div.innerHTML = `
+      <div class="item-text">${escapeHtml(item.text)}</div>
+      <div class="item-meta">
+        <span>Line <strong>${item.line}</strong></span>
+        <span class="cat-label">${item.category}</span>
+        <span>Group ${gi + 1} / Item ${ii + 1}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${id}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${id}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${id})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${id}">
+        <textarea id="textarea-${id}" oninput="saveState()">${escapeHtml(item.text)}</textarea>
+        <button class="btn btn-save" onclick="saveEdit(${id})">Save Edit</button>
+      </div>
+    `;
+    content.appendChild(div);
+  });
+});
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function saveState() {
+  const state = {
+    decisions: allItems.map(i => ({
+      id: i.id,
+      status: i.status,
+      editedText: i.editedText
+    }))
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return;
+
+  try {
+    const state = JSON.parse(saved);
+    state.decisions.forEach(dec => {
+      const item = allItems.find(i => i.id === dec.id);
+      if (item) {
+        item.status = dec.status;
+        item.editedText = dec.editedText;
+
+        // Restore visual state
+        const el = document.getElementById(`item-${dec.id}`);
+        el.className = 'item ' + (dec.status === 'keep' ? 'kept' : dec.status === 'cut' ? 'cut' : dec.status === 'edited' ? 'edited' : '');
+
+        // Restore edit textarea if edited
+        if (dec.status === 'edited' && dec.editedText) {
+          const textarea = document.getElementById(`textarea-${dec.id}`);
+          textarea.value = dec.editedText;
+        }
+      }
+    });
+    updateStats();
+    updateExport();
+  } catch (e) {
+    console.error('Failed to load state:', e);
+  }
+}
+
+function decide(id, status) {
+  const item = allItems[id];
+  item.status = status;
+  const el = document.getElementById(`item-${id}`);
+  el.className = 'item ' + (status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : '');
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function toggleEdit(id) {
+  const el = document.getElementById(`edit-${id}`);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById(`textarea-${id}`);
+  const item = allItems[id];
+  item.editedText = textarea.value;
+  item.status = 'edited';
+  const el = document.getElementById(`item-${id}`);
+  el.className = 'item edited';
+  document.getElementById(`edit-${id}`).style.display = 'none';
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function updateStats() {
+  const total = allItems.length;
+  const keep = allItems.filter(i => i.status === 'keep').length;
+  const cut = allItems.filter(i => i.status === 'cut').length;
+  const edit = allItems.filter(i => i.status === 'edited').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('undecided-count').textContent = total - keep - cut - edit;
+}
+
+function updateExport() {
+  const cuts = allItems
+    .filter(i => i.status === 'cut')
+    .map(i => i.text);
+
+  const edits = allItems
+    .filter(i => i.status === 'edited')
+    .map(i => ({
+      original: i.text,
+      edited: i.editedText,
+      category: i.category,
+      line: i.line
+    }));
+
+  const total = allItems.length;
+  const cutCount = cuts.length;
+  const editCount = edits.length;
+  const keepCount = total - cutCount - editCount - allItems.filter(i => i.status === 'undecided').length;
+
+  const exportObj = {
+    cuts: cuts,
+    edits: edits,
+    summary: `${cutCount} cut, ${editCount} edited, ${keepCount} kept (untouched)`
+  };
+
+  document.getElementById('export-json').value = JSON.stringify(exportObj, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+loadState();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewrite: May Cause... &mdash; Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e94560;
+  }
+  .header-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+  }
+  .header-note {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+    max-width: 500px;
+    line-height: 1.4;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .stat-replace { color: #a78bfa; }
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+  .response-card.replaced { border-color: #a78bfa; }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+  .response-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .response-category {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+  }
+  .response-line {
+    font-size: 11px;
+    color: #444;
+  }
+  .response-number {
+    font-size: 11px;
+    color: #444;
+    float: right;
+  }
+  .rating-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rating-banger {
+    background: #4ecca320;
+    color: #4ecca3;
+    border: 1px solid #4ecca340;
+  }
+  .rating-flat {
+    background: #e9456020;
+    color: #e94560;
+    border: 1px solid #e9456040;
+  }
+  .rating-note {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 14px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 70px;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .category-select {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .category-select label {
+    font-size: 12px;
+    color: #888;
+  }
+  .category-select select {
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 10px;
+  }
+  .status-keep { background: #4ecca320; color: #4ecca3; }
+  .status-cut { background: #e9456020; color: #e94560; }
+  .status-edit { background: #ffd93d20; color: #ffd93d; }
+  .status-replace { background: #a78bfa20; color: #a78bfa; }
+
+  /* Suggestions */
+  .suggestions {
+    margin-top: 14px;
+    padding: 14px;
+    background: #0f3460;
+    border: 1px dashed #a78bfa40;
+    border-radius: 8px;
+  }
+  .suggestions-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .suggestion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .suggestion-item:last-child { border-bottom: none; }
+  .suggestion-text {
+    font-size: 15px;
+    color: #e0e0e0;
+    flex: 1;
+    cursor: pointer;
+    transition: color 0.15s;
+    line-height: 1.4;
+  }
+  .suggestion-text:hover { color: #a78bfa; }
+  .suggestion-tag {
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+    margin-top: 3px;
+  }
+  .suggestion-tag.real {
+    color: #4ecca3;
+  }
+  .suggestion-use {
+    padding: 4px 10px;
+    background: #a78bfa;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .suggestion-use:hover { opacity: 0.85; }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4ecca3;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0a0a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+  .batch-info {
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #0f3460;
+    margin: 30px 0;
+  }
+  .section-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #a78bfa30;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <div class="header-title">Rewrite: "May cause..." Lane</div>
+    <div class="header-subtitle">13 responses. Keep the bangers. Fix or replace the flat ones. &mdash; 2026-02-21</div>
+    <div class="header-note">Click any suggestion text to load it into the edit field. "REAL" tag = actual listed pharmaceutical side effect.</div>
+  </div>
+  <div class="stats">
+    <span class="stat-keep" id="stat-keep">Keep: 0</span>
+    <span class="stat-cut" id="stat-cut">Cut: 0</span>
+    <span class="stat-edit" id="stat-edit">Edit: 0</span>
+    <span class="stat-pending" id="stat-pending">Pending: 13</span>
+  </div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <div class="export-title">JSON Export (KEEP + EDIT only)</div>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <div class="batch-info">Format: [{ "text": "...", "category": "..." }] &mdash; includes line numbers for replacement reference</div>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-may-cause';
+
+const CATEGORIES = [
+  'chaotic','wise','cold','sassy','cryptic','dramatic','physical',
+  'wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic',
+  'mystical','heartfelt','judgy','angry'
+];
+
+const responses = [
+  {
+    text: "May cause compulsive shopping.",
+    category: "chaotic",
+    line: 2991,
+    rating: "banger",
+    ratingNote: "REAL listed side effect of dopamine agonists (Mirapex, Requip). The mundanity of 'shopping' against 'compulsive' is perfect. Accidentally reads as encouragement to treat yourself.",
+    suggestions: []
+  },
+  {
+    text: "May cause cooking while asleep.",
+    category: "chaotic",
+    line: 2992,
+    rating: "banger",
+    ratingNote: "REAL Ambien side effect. The specificity of 'cooking' (not just sleepwalking) is what makes it. Conjures a hilarious image. As a MaybeCat answer: oddly encouraging?",
+    suggestions: []
+  },
+  {
+    text: "May cause increased interest in sexual activity.",
+    category: "demanding",
+    line: 2993,
+    rating: "flat",
+    ratingNote: "Real but reads like the boring fine print everyone already knows. Not surprising, not funny, not uncanny. Just... a thing on a label.",
+    suggestions: [
+      { text: "May cause an irresistible urge to gamble.", tag: "REAL", tagClass: "real", note: "Actual listed side effect of Abilify & dopamine agonists. As a MaybeCat answer to 'Should I text them?' \u2014 chef's kiss." },
+      { text: "May cause sudden religious feelings.", tag: "REAL", tagClass: "real", note: "Documented in temporal lobe epilepsy medication. Unbelievably uncanny as a cat oracle response." },
+      { text: "May cause you to see everything tinted yellow.", tag: "REAL", tagClass: "real", note: "Xanthopsia \u2014 real side effect of digoxin. Literal rose-colored glasses but make it jaundiced." }
+    ]
+  },
+  {
+    text: "May cause aggressive behavior toward inanimate objects.",
+    category: "chaotic",
+    line: 2994,
+    rating: "banger",
+    ratingNote: "The 'toward inanimate objects' qualifier is the whole joke. Everyone's yelled at a printer. REAL documented behavioral side effect. As life advice: validating.",
+    suggestions: []
+  },
+  {
+    text: "May cause purple urine.",
+    category: "chaotic",
+    line: 2995,
+    rating: "banger",
+    ratingNote: "REAL (purple urine bag syndrome). The absurd specificity of the color makes it land. Short, punchy, unforgettable.",
+    suggestions: []
+  },
+  {
+    text: "May cause musical hallucinations.",
+    category: "mystical",
+    line: 2996,
+    rating: "banger",
+    ratingNote: "REAL side effect. 'Musical' does all the heavy lifting \u2014 not just hallucinations, but ones with a soundtrack. As a MaybeCat answer: the cat put a song in your head.",
+    suggestions: []
+  },
+  {
+    text: "May cause a sense of impending doom.",
+    category: "existential",
+    line: 2997,
+    rating: "banger",
+    ratingNote: "The crown jewel. REAL listed side effect (anaphylaxis warning, adenosine). The clinical language ('a sense of') makes it devastatingly funny. Perfect as a MaybeCat answer to literally any question.",
+    suggestions: []
+  },
+  {
+    text: "May cause excessive yawning.",
+    category: "cold",
+    line: 2998,
+    rating: "flat",
+    ratingNote: "Real but boring. Yawning is already associated with medication. No surprise, no uncanny valley, no accidental wisdom. Just... tired.",
+    suggestions: [
+      { text: "May cause your tears to turn blue.", tag: "REAL", tagClass: "real", note: "Cyanopsia-adjacent \u2014 real documented discoloration from rifampin and other drugs. Poetic AND clinical. As life advice: strangely beautiful." },
+      { text: "May cause uncontrollable singing.", tag: "REAL", tagClass: "real", note: "Documented neurological side effect. Imagine getting this as your MaybeCat answer. You'd screenshot it." },
+      { text: "May cause black hairy tongue.", tag: "REAL", tagClass: "real", note: "Actual side effect of antibiotics (linezolid, penicillins). So disgusting it circles back to hilarious." }
+    ]
+  },
+  {
+    text: "May cause inappropriate happiness.",
+    category: "chaotic",
+    line: 2999,
+    rating: "flat",
+    ratingNote: "Trying to be funny but 'inappropriate happiness' doesn't commit. What's inappropriate about happiness? The concept is there but the wording is soft.",
+    suggestions: [
+      { text: "May cause loss of fingerprints.", tag: "REAL", tagClass: "real", note: "Real side effect of capecitabine (chemo drug). People have been stopped at borders. As a MaybeCat answer: the cat is helping you disappear." },
+      { text: "May cause retrograde amnesia of the last 24 hours.", tag: "REAL", tagClass: "real", note: "Real (Ambien, benzodiazepines). The clinical precision of '24 hours' is what sells it. As life advice: maybe you SHOULD forget yesterday." },
+      { text: "May cause Alice in Wonderland syndrome.", tag: "REAL", tagClass: "real", note: "Actual named medical condition (montelukast, topiramate). Everything looks too big or too small. The name alone does all the work." }
+    ]
+  },
+  {
+    text: "May cause vivid, disturbing dreams.",
+    category: "mystical",
+    line: 3000,
+    rating: "flat",
+    ratingNote: "Real but generic. Everyone already associates medication with weird dreams. 'Vivid, disturbing' is trying to sound dramatic but it's the most predictable side effect on the list.",
+    suggestions: [
+      { text: "May cause exploding head syndrome.", tag: "REAL", tagClass: "real", note: "Real named condition (SSRI withdrawal). Imaginary explosions while falling asleep. The name is so alarming it's perfect. As a MaybeCat answer: the cat just detonated your brain." },
+      { text: "May cause driving while asleep.", tag: "REAL", tagClass: "real", note: "Documented Ambien side effect with FDA black box warning. More alarming than 'cooking while asleep' \u2014 escalation within the lane." },
+      { text: "May cause the persistent sensation of falling.", tag: "CONSTRUCTED", tagClass: "", note: "Not a named side effect but adjacent to real vestibular effects. The word 'persistent' does all the heavy lifting. Never-ending vertigo as life advice." }
+    ]
+  },
+  {
+    text: "May cause spontaneous orgasm.",
+    category: "chaotic",
+    line: 3002,
+    rating: "banger",
+    ratingNote: "REAL (documented SSRI side effect, particularly with yawning \u2014 yes really). The clinical 'spontaneous' against 'orgasm' is peak pharma absurdity. Screenshot-tier MaybeCat answer.",
+    suggestions: []
+  },
+  {
+    text: "May cause your sweat to smell like maple syrup.",
+    category: "mystical",
+    line: 3003,
+    rating: "banger",
+    ratingNote: "REAL metabolic condition (maple syrup urine disease, also triggered by some medications). The specificity of 'maple syrup' is perfect \u2014 not just 'change in body odor' but a SPECIFIC and DELIGHTFUL smell. Reads as a weird blessing from the cat.",
+    suggestions: []
+  },
+  {
+    text: "May cause the sensation of your head stretching.",
+    category: "chaotic",
+    line: 3004,
+    rating: "banger",
+    ratingNote: "Alice in Wonderland syndrome territory \u2014 real perceptual distortion from various medications. 'The sensation of' is perfect clinical language. You can FEEL this one. As a MaybeCat answer: the cat is expanding your mind, literally.",
+    suggestions: []
+  }
+];
+
+// State management with localStorage
+let decisions, editedTexts, editedCategories;
+
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const state = JSON.parse(saved);
+      decisions = state.decisions || new Array(responses.length).fill(null);
+      editedTexts = state.editedTexts || responses.map(r => r.text);
+      editedCategories = state.editedCategories || responses.map(r => r.category);
+    } catch(e) {
+      resetState();
+    }
+  } else {
+    resetState();
+  }
+}
+
+function resetState() {
+  decisions = new Array(responses.length).fill(null);
+  editedTexts = responses.map(r => r.text);
+  editedCategories = responses.map(r => r.category);
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    decisions: decisions,
+    editedTexts: editedTexts,
+    editedCategories: editedCategories
+  }));
+}
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    const dec = decisions[i];
+    let cardClass = 'response-card';
+    if (dec === 'keep') cardClass += ' kept';
+    else if (dec === 'cut') cardClass += ' cut';
+    else if (dec === 'edit') cardClass += ' edited';
+    card.className = cardClass;
+    card.id = 'card-' + i;
+
+    const statusBadge = dec ? `<span class="status-badge status-${dec}">${dec}</span>` : '';
+
+    const ratingBadgeClass = r.rating === 'banger' ? 'rating-banger' : 'rating-flat';
+    const ratingLabel = r.rating === 'banger' ? 'BANGER' : 'FLAT';
+
+    let catOptions = CATEGORIES.map(c =>
+      `<option value="${c}" ${c === editedCategories[i] ? 'selected' : ''}>${c}</option>`
+    ).join('');
+
+    let displayText = dec === 'edit' ? editedTexts[i] : r.text;
+
+    let suggestionsHtml = '';
+    if (r.suggestions.length > 0) {
+      let items = r.suggestions.map((s, si) => `
+        <div class="suggestion-item">
+          <div>
+            <div class="suggestion-text" onclick="useSuggestion(${i}, ${si})" title="Click to load into edit field">${s.text}</div>
+            <div style="font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4;">${s.note}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <span class="suggestion-tag ${s.tagClass}">${s.tag}</span>
+            <button class="suggestion-use" onclick="useSuggestion(${i}, ${si})">USE</button>
+          </div>
+        </div>
+      `).join('');
+
+      suggestionsHtml = `
+        <div class="suggestions">
+          <div class="suggestions-title">Suggested Replacements</div>
+          ${items}
+        </div>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1} &mdash; Line ${r.line}${statusBadge}</div>
+      <div class="response-text">"${displayText}"</div>
+      <div class="response-meta">
+        <span class="response-category">${dec === 'edit' ? editedCategories[i] : r.category}</span>
+        <span class="rating-badge ${ratingBadgeClass}">${ratingLabel}</span>
+      </div>
+      <div class="rating-note">${r.ratingNote}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${dec === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">Keep</button>
+        <button class="btn btn-cut ${dec === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit ${dec === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}" rows="2">${editedTexts[i]}</textarea>
+        <div class="category-select">
+          <label>Category:</label>
+          <select id="edit-cat-${i}">${catOptions}</select>
+        </div>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+      ${suggestionsHtml}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(index, action) {
+  if (decisions[index] === action) {
+    decisions[index] = null;
+  } else {
+    decisions[index] = action;
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function toggleEdit(index) {
+  if (decisions[index] === 'edit') {
+    decisions[index] = null;
+    renderCards();
+    updateStats();
+    updateExport();
+    saveState();
+    return;
+  }
+  decisions[index] = 'edit';
+  renderCards();
+  const area = document.getElementById('edit-area-' + index);
+  area.classList.add('visible');
+  document.getElementById('edit-text-' + index).focus();
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function saveEdit(index) {
+  editedTexts[index] = document.getElementById('edit-text-' + index).value.trim();
+  editedCategories[index] = document.getElementById('edit-cat-' + index).value;
+  decisions[index] = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function useSuggestion(responseIndex, suggestionIndex) {
+  const suggestion = responses[responseIndex].suggestions[suggestionIndex];
+  editedTexts[responseIndex] = suggestion.text;
+  decisions[responseIndex] = 'edit';
+  renderCards();
+  const area = document.getElementById('edit-area-' + responseIndex);
+  area.classList.add('visible');
+  document.getElementById('edit-text-' + responseIndex).value = suggestion.text;
+  document.getElementById('edit-text-' + responseIndex).focus();
+  updateStats();
+  updateExport();
+  saveState();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  decisions.forEach(d => {
+    if (d === 'keep') keep++;
+    else if (d === 'cut') cut++;
+    else if (d === 'edit') edit++;
+    else pending++;
+  });
+  document.getElementById('stat-keep').textContent = 'Keep: ' + keep;
+  document.getElementById('stat-cut').textContent = 'Cut: ' + cut;
+  document.getElementById('stat-edit').textContent = 'Edit: ' + edit;
+  document.getElementById('stat-pending').textContent = 'Pending: ' + pending;
+}
+
+function updateExport() {
+  const kept = [];
+  decisions.forEach((d, i) => {
+    if (d === 'keep') {
+      kept.push({ text: responses[i].text, category: responses[i].category, line: responses[i].line, action: 'keep' });
+    } else if (d === 'edit') {
+      kept.push({ text: editedTexts[i], category: editedCategories[i], line: responses[i].line, action: 'replace', original: responses[i].text });
+    } else if (d === 'cut') {
+      kept.push({ text: responses[i].text, category: responses[i].category, line: responses[i].line, action: 'cut' });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+// Init
+loadState();
+renderCards();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

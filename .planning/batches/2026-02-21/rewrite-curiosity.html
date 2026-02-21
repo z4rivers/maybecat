@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Rewrite Review: Curiosity / Investigation Lane</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .batch-info {
+    width: 100%;
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+  .response-number {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .response-meta {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .rating-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .rating-badge.hits { background: #4ecca3; color: #1a1a2e; }
+  .rating-badge.lazy { background: #e94560; color: #fff; }
+  .rating-note {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 2px solid #333;
+  }
+  .suggested-rewrites {
+    margin: 16px 0;
+    padding: 14px;
+    background: #0d1b3e;
+    border: 1px dashed #e94560;
+    border-radius: 6px;
+  }
+  .suggested-rewrites h4 {
+    font-size: 12px;
+    color: #e94560;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .suggestion {
+    background: #16213e;
+    border: 1px solid #1a3a6e;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .suggestion:hover {
+    border-color: #ffd93d;
+    background: #1a2a4e;
+  }
+  .suggestion:last-child { margin-bottom: 0; }
+  .suggestion .sugg-text {
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .suggestion .sugg-angle {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+  }
+  .suggestion .sugg-category {
+    font-size: 10px;
+    color: #4ecca3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .btn-save {
+    margin-top: 8px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .edit-area select {
+    margin-top: 8px;
+    margin-right: 8px;
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+  .status-badge.keep { background: #4ecca3; color: #1a1a2e; }
+  .status-badge.cut { background: #e94560; color: #fff; }
+  .status-badge.edit { background: #ffd93d; color: #1a1a2e; }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  .export-section p {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+  .export-section pre {
+    background: #0f3460;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Rewrite: Curiosity / Investigation Lane</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pending-count">0</span></span>
+    <span style="color:#e0e0e0">| <span id="decided-count">0</span> of <span id="total-count">0</span> decided</span>
+  </div>
+  <div class="batch-info">Rewrite batch: "Curiosity / I must investigate" lane. The LANE is great, most instances are flat. Click suggestions to load them into the edit textarea. KEEP = original is fine. EDIT = rewrite it. CUT = kill it entirely.</div>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>JSON Export (KEEP + EDIT only)</h2>
+  <p>Keeps export original text. Edits export the rewritten text. Cuts are excluded. Line numbers included for replacement reference.</p>
+  <pre id="json-export">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-curiosity';
+
+const responses = [
+  {
+    text: "What's in there? I need to know.",
+    category: "chaotic",
+    line: 735,
+    rating: "lazy",
+    ratingNote: "Generic curiosity statement. No character, no specificity. Could be any curious creature. Where's the unhinged energy?",
+    suggestions: [
+      {
+        text: "What's in there. Don't answer. I'm already inside.",
+        angle: "Already solved it / zero patience detective",
+        category: "chaotic"
+      },
+      {
+        text: "You closed that drawer too fast. I saw 40% of what's inside and I've already built a theory.",
+        angle: "Conspiracy theorist who sees connections",
+        category: "chaotic"
+      },
+      {
+        text: "That cabinet has been closed for eleven minutes. I have been sitting here for eleven minutes. These facts are not unrelated.",
+        angle: "Forensic investigator / surveillance state",
+        category: "chaotic"
+      }
+    ]
+  },
+  {
+    text: "If there's a door, I'm going to look behind it.",
+    category: "chaotic",
+    line: 736,
+    rating: "lazy",
+    ratingNote: "Statement of intent without personality. Reads like a cat fact, not a cat character. No attitude, no surprise.",
+    suggestions: [
+      {
+        text: "Every closed door is a cover-up. I have never once been wrong about this.",
+        angle: "Conspiracy theorist / unshakable confidence",
+        category: "chaotic"
+      },
+      {
+        text: "You closed that door. I heard a sound behind it. The sound was probably nothing. I need to confirm this with my entire body.",
+        angle: "Unhinged detective escalation",
+        category: "chaotic"
+      },
+      {
+        text: "A closed door is just a dare with hinges.",
+        angle: "Sharp one-liner with attitude",
+        category: "wise"
+      }
+    ]
+  },
+  {
+    text: "You opened something. I'm now involved.",
+    category: "chaotic",
+    line: 737,
+    rating: "hits",
+    ratingNote: "Short, punchy, self-inserting. 'I'm now involved' has real energy -- the cat didn't ask permission, just declared jurisdiction. The brevity works."
+  },
+  {
+    text: "Is that new? I must investigate.",
+    category: "chaotic",
+    line: 738,
+    rating: "lazy",
+    ratingNote: "The example from the brief of what NOT to do. Flat reporting. 'I must investigate' is the most boring possible thing the cat could say about investigating.",
+    suggestions: [
+      {
+        text: "You moved something. I noticed immediately. I notice everything. This is not a comfortable trait for either of us.",
+        angle: "Nosy neighbor / unsettling awareness",
+        category: "chaotic"
+      },
+      {
+        text: "That wasn't here yesterday. I have a catalog. Don't ask how. The catalog is complete.",
+        angle: "Forensic cataloger with zero chill",
+        category: "chaotic"
+      },
+      {
+        text: "New item detected. I've already sat on it, smelled it, and formed a strong opinion. You may proceed.",
+        angle: "Inspector who's already done the full workup",
+        category: "judgy"
+      }
+    ]
+  },
+  {
+    text: "What's that sound? I will find out.",
+    category: "chaotic",
+    line: 739,
+    rating: "lazy",
+    ratingNote: "Same problem as 'I must investigate.' Statement of intent that any cat would make. No escalation, no personality, no surprise.",
+    suggestions: [
+      {
+        text: "That sound has a source and the source has a motive and I will not rest.",
+        angle: "Unhinged detective who's already building the case",
+        category: "chaotic"
+      },
+      {
+        text: "I heard it. You didn't. This means I'm in charge of this investigation now.",
+        angle: "Self-appointed authority / jurisdiction grab",
+        category: "chaotic"
+      },
+      {
+        text: "A noise in the wall. Could be pipes. Could be a conspiracy. I'm going with conspiracy until the pipes prove themselves.",
+        angle: "Conspiracy theorist / paranoid investigator",
+        category: "chaotic"
+      }
+    ]
+  },
+  {
+    text: "Every bag must be checked. Those are the rules.",
+    category: "chaotic",
+    line: 740,
+    rating: "hits",
+    ratingNote: "Good. 'Those are the rules' gives it authority and absurdity -- the cat has codified its nosiness into LAW. The declarative certainty IS the joke."
+  },
+  {
+    text: "A box arrived. This is now my business.",
+    category: "chaotic",
+    line: 741,
+    rating: "hits",
+    ratingNote: "Same energy as 'I'm now involved.' Jurisdiction claim. 'My business' is funny because it's both 'my concern' and 'my enterprise.' Works."
+  },
+  {
+    text: "I must investigate this at maximum velocity.",
+    category: "chaotic",
+    line: 1085,
+    rating: "lazy",
+    ratingNote: "'I must investigate' again, just with 'at maximum velocity' bolted on. Slightly funnier but still flat. The velocity detail needs to BE the joke, not garnish on a boring sentence.",
+    suggestions: [
+      {
+        text: "RUNNING. CAN'T EXPLAIN. WILL REPORT BACK. PROBABLY.",
+        angle: "Breaking news energy / war correspondent",
+        category: "chaotic"
+      },
+      {
+        text: "I don't have time to explain why I'm sprinting. Just know it's important. It's always important.",
+        angle: "Self-important urgency with no context",
+        category: "chaotic"
+      },
+      {
+        text: "Something happened in the other room. I know this because I'm already in the other room. Fastest paws in the business.",
+        angle: "Already there / impossible speed brag",
+        category: "chaotic"
+      }
+    ]
+  },
+  {
+    text: "The shiny things are alive. I'm sure of it. I'm investigating.",
+    category: "chaotic",
+    line: 1275,
+    rating: "lazy",
+    ratingNote: "Almost there -- 'the shiny things are alive' is a good paranoid start, but 'I'm investigating' is the same dead ending. Needs to escalate into the delusion instead of trailing off into procedure.",
+    suggestions: [
+      {
+        text: "The shiny things are alive. I'm sure of it. I've been watching them for six hours and they haven't moved, which is EXACTLY what something alive would do.",
+        angle: "Conspiracy theorist -- absence of evidence IS evidence",
+        category: "chaotic"
+      },
+      {
+        text: "The shiny things are alive. One of them moved. Nobody believes me. I have witnesses. The witnesses are also me.",
+        angle: "Unhinged investigator with fabricated corroboration",
+        category: "chaotic"
+      },
+      {
+        text: "The shiny things are alive and they're organized. I've mapped their positions. They haven't changed. That's how I know they're coordinating.",
+        angle: "Paranoid detective / conspiracy board energy",
+        category: "chaotic"
+      }
+    ]
+  },
+  {
+    text: "I investigated the noise. Turns out it was me.",
+    category: "chaotic",
+    line: 2552,
+    rating: "hits",
+    ratingNote: "Perfect punchline. Investigation + self-own. The confidence-to-revelation pipeline is exactly what makes investigation-cat funny. This is the template for how the lane SHOULD work."
+  },
+  {
+    text: "Sudden movement detected. DEFCON 1.",
+    category: "chaotic",
+    line: 1080,
+    rating: "hits",
+    ratingNote: "Military register is fun. Short, punchy, escalation from zero to maximum alert. The cat as threat-level analyst works."
+  },
+  {
+    text: "INTRUDER. Oh. It's you. Still suspicious though.",
+    category: "chaotic",
+    line: 1086,
+    rating: "hits",
+    ratingNote: "Great rhythm. The whiplash from INTRUDER to recognition, then the refusal to fully stand down. 'Still suspicious though' is the perfect cat note -- never fully trusts."
+  },
+  {
+    text: "Something's off. I can't prove it. But I know.",
+    category: "mystical",
+    line: 1067,
+    rating: "hits",
+    ratingNote: "This works because it's NOT trying to be funny. Quiet certainty. The cat as instinct-driven oracle. The lane needs both the unhinged investigators AND the quietly certain ones."
+  }
+];
+
+let states, editedTexts, editedCategories;
+
+const categories = [
+  'chaotic', 'wise', 'cold', 'sassy', 'cryptic', 'dramatic',
+  'physical', 'wholesome', 'demanding', 'judgy', 'mystical',
+  'nurturing', 'poetic', 'meta', 'heartfelt', 'angry'
+];
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const data = JSON.parse(saved);
+      states = data.states || new Array(responses.length).fill('pending');
+      editedTexts = data.editedTexts || responses.map(r => r.text);
+      editedCategories = data.editedCategories || responses.map(r => r.category);
+      return;
+    }
+  } catch(e) {}
+  states = new Array(responses.length).fill('pending');
+  editedTexts = responses.map(r => r.text);
+  editedCategories = responses.map(r => r.category);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      states: states,
+      editedTexts: editedTexts,
+      editedCategories: editedCategories
+    }));
+  } catch(e) {}
+}
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (states[i] === 'keep' ? ' kept' : states[i] === 'cut' ? ' cut' : states[i] === 'edit' ? ' edited' : '');
+
+    let badge = '';
+    if (states[i] === 'keep') badge = '<span class="status-badge keep">KEEP</span>';
+    if (states[i] === 'cut') badge = '<span class="status-badge cut">CUT</span>';
+    if (states[i] === 'edit') badge = '<span class="status-badge edit">EDITED</span>';
+
+    const displayText = states[i] === 'edit' ? editedTexts[i] : r.text;
+    const displayCategory = states[i] === 'edit' ? editedCategories[i] : r.category;
+
+    let suggestionsHTML = '';
+    if (r.suggestions && r.suggestions.length > 0) {
+      suggestionsHTML = `
+        <div class="suggested-rewrites">
+          <h4>Suggested Rewrites (click to load into editor)</h4>
+          ${r.suggestions.map((s, si) => `
+            <div class="suggestion" onclick="loadSuggestion(${i}, ${si})">
+              <div class="sugg-text">"${s.text.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"</div>
+              <div class="sugg-angle">${s.angle}</div>
+              <div class="sugg-category">${s.category}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1} | Line ${r.line} ${badge}</div>
+      <div class="response-text">"${displayText}"</div>
+      <div class="response-category">${displayCategory}</div>
+      <div class="rating-badge ${r.rating}">${r.rating.toUpperCase()}</div>
+      <div class="rating-note">${r.ratingNote}</div>
+      ${suggestionsHTML}
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${displayText}</textarea>
+        <select id="edit-cat-${i}">
+          ${categories.map(c => `<option value="${c}" ${c === displayCategory ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, state) {
+  states[i] = state;
+  saveState();
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  area.classList.toggle('visible');
+}
+
+function loadSuggestion(responseIdx, suggestionIdx) {
+  const s = responses[responseIdx].suggestions[suggestionIdx];
+  const textarea = document.getElementById(`edit-text-${responseIdx}`);
+  const select = document.getElementById(`edit-cat-${responseIdx}`);
+  const area = document.getElementById(`edit-area-${responseIdx}`);
+
+  textarea.value = s.text;
+  select.value = s.category;
+  area.classList.add('visible');
+  textarea.focus();
+}
+
+function saveEdit(i) {
+  editedTexts[i] = document.getElementById(`edit-text-${i}`).value;
+  editedCategories[i] = document.getElementById(`edit-cat-${i}`).value;
+  states[i] = 'edit';
+  saveState();
+  render();
+}
+
+function updateStats() {
+  const keep = states.filter(s => s === 'keep').length;
+  const cut = states.filter(s => s === 'cut').length;
+  const edit = states.filter(s => s === 'edit').length;
+  const pending = states.filter(s => s === 'pending').length;
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = pending;
+  document.getElementById('decided-count').textContent = keep + cut + edit;
+  document.getElementById('total-count').textContent = responses.length;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (states[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category, line: r.line, action: 'keep' });
+    } else if (states[i] === 'edit') {
+      exported.push({ text: editedTexts[i], category: editedCategories[i], line: r.line, action: 'replace', original: r.text });
+    }
+  });
+  document.getElementById('json-export').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('json-export').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+loadState();
+render();
+</script>
+
+</body>
+</html>

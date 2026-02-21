@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Rewrite: "Yes, like..." & Single-Word Verdicts</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #ffd93d; margin-bottom: 8px; font-size: 1.5rem; }
+  .subtitle { color: #888; margin-bottom: 20px; font-size: 0.9rem; }
+  .section-header { background: #0f0f23; padding: 14px 18px; border-radius: 8px; margin: 30px 0 16px 0; border-left: 4px solid #ffd93d; }
+  .section-header h2 { color: #ffd93d; font-size: 1.2rem; margin-bottom: 4px; }
+  .section-header p { color: #aaa; font-size: 0.85rem; line-height: 1.4; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; font-size: 0.9rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-count { font-weight: bold; font-size: 1.1rem; }
+  .stat-keep .stat-count { color: #4ecca3; }
+  .stat-cut .stat-count { color: #e94560; }
+  .stat-edit .stat-count { color: #ffd93d; }
+  .stat-pending .stat-count { color: #888; }
+  .item { background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #333; }
+  .item.kept { border-left-color: #4ecca3; opacity: 0.6; }
+  .item.cut { border-left-color: #e94560; opacity: 0.4; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 1.1rem; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .meta { display: flex; gap: 12px; margin-bottom: 8px; font-size: 0.8rem; color: #888; }
+  .rating { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; }
+  .rating-hits { color: #4ecca3; }
+  .rating-formula { color: #e94560; }
+  .rating-redundant { color: #e94560; }
+  .rating-keeper { color: #4ecca3; }
+  .rating-similar { color: #ffa500; }
+  .note { color: #aaa; font-size: 0.82rem; margin-bottom: 6px; font-style: italic; }
+  .suggestions { background: #0f0f23; border-radius: 6px; padding: 10px 14px; margin: 8px 0; border-left: 2px solid #4ecca3; }
+  .suggestions .label { color: #4ecca3; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
+  .suggestions ul { list-style: none; padding: 0; }
+  .suggestions li { color: #ccc; font-size: 0.9rem; margin-bottom: 6px; line-height: 1.4; padding-left: 12px; position: relative; }
+  .suggestions li::before { content: "\2192"; position: absolute; left: 0; color: #4ecca3; }
+  .cluster-tag { display: inline-block; background: #2a1a3e; color: #c084fc; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-right: 4px; margin-bottom: 4px; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 8px; padding: 10px; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; font-family: inherit; font-size: 1rem; line-height: 1.4; resize: vertical; display: none; min-height: 80px; }
+  .edit-area.visible { display: block; }
+  .category-select { margin-top: 6px; padding: 4px 8px; background: #0f0f23; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; font-size: 0.85rem; display: none; }
+  .category-select.visible { display: inline-block; }
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-section p { color: #888; font-size: 0.85rem; margin-bottom: 10px; }
+  .export-box { width: 100%; min-height: 200px; background: #0f0f23; color: #4ecca3; border: 1px solid #333; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 0.85rem; }
+  .copy-btn { margin-top: 8px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .new-suggestions-section { background: #0f0f23; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #333; }
+  .new-suggestions-section h3 { color: #4ecca3; margin-bottom: 12px; }
+  .new-suggestions-section .suggestion-group { margin-bottom: 16px; }
+  .new-suggestions-section .group-label { color: #ffd93d; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+  .new-suggestions-section li { color: #ccc; font-size: 0.95rem; margin-bottom: 6px; line-height: 1.4; padding-left: 14px; position: relative; }
+  .new-suggestions-section li::before { content: "\2022"; position: absolute; left: 0; color: #4ecca3; }
+</style>
+</head>
+<body>
+<h1>Rewrite: "Yes, like..." & Single-Word Verdicts</h1>
+<p class="subtitle">Two formula groups for audit. "Yes, like X" has a visible repeating structure. Single-word verdicts skew 100% negative with zero positive.</p>
+
+<div class="stats">
+  <div class="stat stat-keep">Keep: <span class="stat-count" id="keep-count">0</span></div>
+  <div class="stat stat-edit">Edit: <span class="stat-count" id="edit-count">0</span></div>
+  <div class="stat stat-cut">Cut: <span class="stat-count" id="cut-count">0</span></div>
+  <div class="stat stat-pending">Pending: <span class="stat-count" id="pending-count">45</span></div>
+</div>
+
+<!-- ============================= -->
+<!-- GROUP 1: "Yes, like..." (14)  -->
+<!-- ============================= -->
+
+<div class="section-header">
+  <h2>Group 1: "Yes, like [pleasant thing]" &mdash; 14 responses</h2>
+  <p>All follow the same syntax: "Yes, like/with/the [nice metaphor]." When you can predict the structure before reading it, the formula is dead. A few earn their spot with cat-specific surprise or genuine emotional punch. The rest need to say yes in ways that DON'T start with "Yes, like..."</p>
+</div>
+
+<!-- 1 -->
+<div class="item" data-id="1" data-original="Yes, with all the chemistry of a great first kiss." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3618</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Generic pleasant comparison. Nothing cat about it. Could be a fortune cookie.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. And I don't say that to just anyone. I also said it to the last three people."</li>
+      <li>"Yes. The reckless kind of yes. I'm already sprinting."</li>
+      <li>"Enthusiastically and without consulting anyone."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, with all the chemistry of a great first kiss."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('1','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('1','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('1','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('1',this.value)">Yes, with all the chemistry of a great first kiss.</textarea>
+  <select class="category-select" onchange="onCategoryChange('1',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 2 -->
+<div class="item" data-id="2" data-original="Yes, like peeling the wrapper of the new item you've been waiting for." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3619</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Pleasant consumer moment. Nothing surprising, no voice.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. The kind of yes where I knock something off the counter in celebration."</li>
+      <li>"Yes, and stop asking permission. You already started walking."</li>
+      <li>"That's a yes. I just zoomied across the apartment about it."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like peeling the wrapper of the new item you've been waiting for."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('2','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('2','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('2','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('2',this.value)">Yes, like peeling the wrapper of the new item you've been waiting for.</textarea>
+  <select class="category-select" onchange="onCategoryChange('2',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 3 -->
+<div class="item" data-id="3" data-original="Yes, like clean sheets." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3620</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Shortest and most generic of the bunch. Pleasantly boring.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. Like, right now. Go. Why are you still reading this."</li>
+      <li>"Yes. I would stake one of my nine lives on it."</li>
+      <li>"Obviously yes. I'm insulted you needed to ask."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like clean sheets."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('3','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('3','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('3','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('3',this.value)">Yes, like clean sheets.</textarea>
+  <select class="category-select" onchange="onCategoryChange('3',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 4 -->
+<div class="item" data-id="4" data-original="Yes, like being outside in the perfect gear in lousy weather." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3621</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Oddly specific human experience that has nothing to do with a cat. The format is carrying dead weight.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. Rain-watching-from-the-windowsill yes."</li>
+      <li>"Yes. I'm already sitting on the thing you need to do it."</li>
+      <li>"Yes, and I say that as someone who's been outside. Overrated. But yes."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like being outside in the perfect gear in lousy weather."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('4','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('4','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('4','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('4',this.value)">Yes, like being outside in the perfect gear in lousy weather.</textarea>
+  <select class="category-select" onchange="onCategoryChange('4',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 5 -->
+<div class="item" data-id="5" data-original="Yes, like a mouse not seeing you and running right in your direction." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3622</span></div>
+  <div class="rating rating-hits">HITS &mdash; Cat-specific, predatory, unexpected. The "yes" is an ambush. The metaphor has teeth. This one earns the format.</div>
+  <div class="response-text">"Yes, like a mouse not seeing you and running right in your direction."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('5','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('5','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('5','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('5',this.value)">Yes, like a mouse not seeing you and running right in your direction.</textarea>
+  <select class="category-select" onchange="onCategoryChange('5',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 6 -->
+<div class="item" data-id="6" data-original="Yes, like a flying acrobatic leap to catch a cat dancer high in the air." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 3623</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Cat-themed but wordy and descriptive. Reads like a nature documentary caption, not a voice.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. Full send. Four paws off the ground."</li>
+      <li>"Yes. I just cleared a six-foot bookshelf about it."</li>
+      <li>"*launches off counter* YEEEEEES."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like a flying acrobatic leap to catch a cat dancer high in the air."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('6','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('6','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('6','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('6',this.value)">Yes, like a flying acrobatic leap to catch a cat dancer high in the air.</textarea>
+  <select class="category-select" onchange="onCategoryChange('6',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 7 -->
+<div class="item" data-id="7" data-original="Yes, like thinking you are being transferred to another shelter and arriving at a forever home." data-category="adoption">
+  <div class="meta"><span>Category: adoption</span><span>Line: 3624</span></div>
+  <div class="rating rating-hits">HITS &mdash; Genuine shelter-cat perspective. The twist from dread to relief is earned. Emotional and specific to a real experience. Would keep even with the format.</div>
+  <div class="response-text">"Yes, like thinking you are being transferred to another shelter and arriving at a forever home."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('7','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('7','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('7','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('7',this.value)">Yes, like thinking you are being transferred to another shelter and arriving at a forever home.</textarea>
+  <select class="category-select" onchange="onCategoryChange('7',this.value)">
+    <option value="adoption" selected>adoption</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 8 -->
+<div class="item" data-id="8" data-original="Yes, like you aren't sure if it's time to get another cat and a cat finds you." data-category="adoption">
+  <div class="meta"><span>Category: adoption</span><span>Line: 3625</span></div>
+  <div class="rating rating-hits">HITS &mdash; Real thing that happens. Warm without being sappy. The "cat finds you" reversal does work. Slightly wordy but the content earns it.</div>
+  <div class="note">Could tighten: "Yes, like not being ready for another cat and then a cat finds you." But the current version is fine.</div>
+  <div class="response-text">"Yes, like you aren't sure if it's time to get another cat and a cat finds you."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('8','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('8','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('8','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('8',this.value)">Yes, like you aren't sure if it's time to get another cat and a cat finds you.</textarea>
+  <select class="category-select" onchange="onCategoryChange('8',this.value)">
+    <option value="adoption" selected>adoption</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 9 -->
+<div class="item" data-id="9" data-original="Yes, like wanting this kitten, but that one being so cute too." data-category="adoption">
+  <div class="meta"><span>Category: adoption</span><span>Line: 3626</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Cute but low stakes. Doesn't land as a yes-answer to a life question. More of a caption than advice.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. Get both. I've never understood the concept of 'just one.'"</li>
+      <li>"Yes. And while you're at it, there's a tabby in cage 4 who's been waiting eleven months."</li>
+      <li>"Yes. Bold of you to assume there's a wrong choice here."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like wanting this kitten, but that one being so cute too."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('9','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('9','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('9','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('9',this.value)">Yes, like wanting this kitten, but that one being so cute too.</textarea>
+  <select class="category-select" onchange="onCategoryChange('9',this.value)">
+    <option value="adoption" selected>adoption</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 10 -->
+<div class="item" data-id="10" data-original="Yes, like the appreciation of an older rescue cat finally being selected for adoption." data-category="adoption">
+  <div class="meta"><span>Category: adoption</span><span>Line: 3627</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; Right sentiment, wrong execution. "The appreciation of" is essay-voice, not cat-voice. Too descriptive, too outside-looking-in.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. The way an older shelter cat walks out carrying the whole building's hope on its back."</li>
+      <li>"Yes. Senior cat gets picked energy. Quiet, enormous, world-shifting yes."</li>
+      <li>"Yes. Seven years in a cage and someone finally said your name. That kind of yes."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like the appreciation of an older rescue cat finally being selected for adoption."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('10','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('10','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('10','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('10',this.value)">Yes, like the appreciation of an older rescue cat finally being selected for adoption.</textarea>
+  <select class="category-select" onchange="onCategoryChange('10',this.value)">
+    <option value="adoption" selected>adoption</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 11 -->
+<div class="item" data-id="11" data-original="Yes, like the sounds people make when they laugh at real cat fun - not just cat videos." data-category="heartfelt">
+  <div class="meta"><span>Category: heartfelt</span><span>Line: 3628</span></div>
+  <div class="rating rating-formula">FORMULA &mdash; The "not just cat videos" qualifier is try-hard. Explaining the joke. Also "sounds people make when they laugh" is a very roundabout way to say... laughing.</div>
+  <div class="suggestions">
+    <div class="label">Suggested rewrites:</div>
+    <ul>
+      <li>"Yes. The involuntary laugh. The one that escapes before you can stop it."</li>
+      <li>"Yes. You're going to ugly-laugh about this later and I will be watching."</li>
+      <li>"Yes. Full-body, tears-running, can't-explain-why-this-is-funny yes."</li>
+    </ul>
+  </div>
+  <div class="response-text">"Yes, like the sounds people make when they laugh at real cat fun - not just cat videos."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('11','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('11','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('11','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('11',this.value)">Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.</textarea>
+  <select class="category-select" onchange="onCategoryChange('11',this.value)">
+    <option value="heartfelt" selected>heartfelt</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 12 -->
+<div class="item" data-id="12" data-original="Yes, like the first stretch after a long nap." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3629</span></div>
+  <div class="rating rating-hits">HITS &mdash; Physical, universal, immediately felt. Cat AND human. Simple but it actually works because the feeling is so specific and embodied. One of the better ones.</div>
+  <div class="response-text">"Yes, like the first stretch after a long nap."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('12','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('12','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('12','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('12',this.value)">Yes, like the first stretch after a long nap.</textarea>
+  <select class="category-select" onchange="onCategoryChange('12',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 13 -->
+<div class="item" data-id="13" data-original="Yes, like the sound of the can opener." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 3630</span></div>
+  <div class="rating rating-hits">HITS &mdash; Pavlovian cat truth. Instant recognition. Short, punchy, undeniably cat. The "yes" here means "I am already running toward it." Keeps the format but the content is so cat-specific it doesn't feel formulaic.</div>
+  <div class="response-text">"Yes, like the sound of the can opener."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('13','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('13','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('13','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('13',this.value)">Yes, like the sound of the can opener.</textarea>
+  <select class="category-select" onchange="onCategoryChange('13',this.value)">
+    <option value="wise" selected>wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- 14 -->
+<div class="item" data-id="14" data-original="Yes, the way two cats who've never met touch noses." data-category="heartfelt">
+  <div class="meta"><span>Category: heartfelt</span><span>Line: 3631</span></div>
+  <div class="rating rating-hits">HITS &mdash; Breaks the "like" syntax slightly ("the way"). Specific cat behavior that's genuinely tender. The nose-touch is a real thing cats do and it means something. Earns its spot.</div>
+  <div class="response-text">"Yes, the way two cats who've never met touch noses."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('14','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('14','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('14','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('14',this.value)">Yes, the way two cats who've never met touch noses.</textarea>
+  <select class="category-select" onchange="onCategoryChange('14',this.value)">
+    <option value="heartfelt" selected>heartfelt</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option><option value="adoption">adoption</option>
+  </select>
+</div>
+
+<!-- ==================================== -->
+<!-- GROUP 2: Single-Word Verdicts (31)   -->
+<!-- ==================================== -->
+
+<div class="section-header">
+  <h2>Group 2: Single-Word Verdicts &mdash; 31 responses</h2>
+  <p>Good concept, bad balance. The main block (lines 1669-1699) is 100% negative/dismissive. Several cluster around the same meaning ("spoiled/rotten" energy). Also: zero positive single-words in the entire pool. Scattered single-words from other batches included for completeness. After review, see suggested NEW positive/weird verdicts below.</p>
+</div>
+
+<!-- MAIN VERDICT BLOCK -->
+
+<!-- 15 -->
+<div class="item" data-id="15" data-original="Rancid." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1669</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Spoiled/rotten cluster</div>
+  <div class="note">Clusters with: Stale, Curdled, Expired, Overripe. Five words all saying "this has gone bad." Keep max 2 from this cluster.</div>
+  <span class="cluster-tag">spoiled/rotten</span>
+  <div class="response-text">"Rancid."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('15','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('15','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('15','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('15',this.value)">Rancid.</textarea>
+  <select class="category-select" onchange="onCategoryChange('15',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 16 -->
+<div class="item" data-id="16" data-original="Transparent." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1670</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Unique angle. "I see through you." Different from the spoiled cluster. Cat energy &mdash; cats DO see through you.</div>
+  <span class="cluster-tag">seeing-through-you</span>
+  <div class="response-text">"Transparent."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('16','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('16','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('16','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('16',this.value)">Transparent.</textarea>
+  <select class="category-select" onchange="onCategoryChange('16',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 17 -->
+<div class="item" data-id="17" data-original="Unripe." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1671</span></div>
+  <div class="rating rating-keeper">HITS &mdash; "Not yet" energy. Different from "gone bad" &mdash; this says "not ready yet." Has hope in it. Unique angle in the set.</div>
+  <span class="cluster-tag">timing/patience</span>
+  <div class="response-text">"Unripe."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('17','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('17','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('17','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('17',this.value)">Unripe.</textarea>
+  <select class="category-select" onchange="onCategoryChange('17',this.value)">
+    <option value="wise" selected>wise</option><option value="cold">cold</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 18 -->
+<div class="item" data-id="18" data-original="Stale." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1672</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Spoiled/rotten cluster</div>
+  <div class="note">Clusters with: Rancid, Curdled, Expired, Overripe. "Stale" is the mildest of the five &mdash; weakest hit.</div>
+  <span class="cluster-tag">spoiled/rotten</span>
+  <div class="response-text">"Stale."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('18','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('18','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('18','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('18',this.value)">Stale.</textarea>
+  <select class="category-select" onchange="onCategoryChange('18',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 19 -->
+<div class="item" data-id="19" data-original="Threadbare." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1673</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Textile word for "worn out." Has a different texture than the food-decay cluster. Evokes something that was once good but has been used up. Distinct.</div>
+  <span class="cluster-tag">worn-out</span>
+  <div class="response-text">"Threadbare."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('19','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('19','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('19','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('19',this.value)">Threadbare.</textarea>
+  <select class="category-select" onchange="onCategoryChange('19',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 20 -->
+<div class="item" data-id="20" data-original="Borrowed." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1674</span></div>
+  <div class="rating rating-keeper">HITS &mdash; "That's not yours." Authenticity judgment. Completely different from the decay cluster. Pairs well with Counterfeit and Secondhand but is the strongest of the three.</div>
+  <span class="cluster-tag">fake/not-yours</span>
+  <div class="response-text">"Borrowed."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('20','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('20','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('20','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('20',this.value)">Borrowed.</textarea>
+  <select class="category-select" onchange="onCategoryChange('20',this.value)">
+    <option value="wise" selected>wise</option><option value="cold">cold</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 21 -->
+<div class="item" data-id="21" data-original="Counterfeit." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1675</span></div>
+  <div class="rating rating-similar">SIMILAR &mdash; Fake/not-yours cluster</div>
+  <div class="note">Clusters with: Borrowed, Secondhand. Three words for "not authentic." Borrowed is warmer (maybe you'll return it), Counterfeit is harsher (deliberate fraud), Secondhand is in between. Keep 2 max.</div>
+  <span class="cluster-tag">fake/not-yours</span>
+  <div class="response-text">"Counterfeit."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('21','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('21','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('21','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('21',this.value)">Counterfeit.</textarea>
+  <select class="category-select" onchange="onCategoryChange('21',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 22 -->
+<div class="item" data-id="22" data-original="Fermenting." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1676</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Best word in the whole block. Could be bad (rotting) OR good (wine, kimchi, sourdough). The ambiguity IS the answer. Process-word, not judgment-word. Mystical category is perfect.</div>
+  <span class="cluster-tag">process/becoming</span>
+  <div class="response-text">"Fermenting."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('22','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('22','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('22','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('22',this.value)">Fermenting.</textarea>
+  <select class="category-select" onchange="onCategoryChange('22',this.value)">
+    <option value="mystical" selected>mystical</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 23 -->
+<div class="item" data-id="23" data-original="Curdled." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1677</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Spoiled/rotten cluster</div>
+  <div class="note">Clusters with: Rancid, Stale, Expired, Overripe. Five-way pileup on "gone bad." Curdled is visually strong but the cluster is bloated.</div>
+  <span class="cluster-tag">spoiled/rotten</span>
+  <div class="response-text">"Curdled."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('23','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('23','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('23','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('23',this.value)">Curdled.</textarea>
+  <select class="category-select" onchange="onCategoryChange('23',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 24 -->
+<div class="item" data-id="24" data-original="Hollow." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1679</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Structural emptiness, not decay. "There's nothing inside this." Different from the food cluster. Physical, spatial. Works.</div>
+  <span class="cluster-tag">empty/void</span>
+  <div class="response-text">"Hollow."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('24','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('24','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('24','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('24',this.value)">Hollow.</textarea>
+  <select class="category-select" onchange="onCategoryChange('24',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 25 -->
+<div class="item" data-id="25" data-original="Overripe." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1683</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Spoiled/rotten cluster</div>
+  <div class="note">Clusters with: Rancid, Stale, Curdled, Expired. "Overripe" has the interesting implication that there WAS a right time &mdash; you missed it. But with 5 in this cluster, it's still too many.</div>
+  <span class="cluster-tag">spoiled/rotten</span>
+  <div class="response-text">"Overripe."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('25','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('25','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('25','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('25',this.value)">Overripe.</textarea>
+  <select class="category-select" onchange="onCategoryChange('25',this.value)">
+    <option value="wise" selected>wise</option><option value="cold">cold</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 26 -->
+<div class="item" data-id="26" data-original="Diluted." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1684</span></div>
+  <div class="rating rating-similar">SIMILAR &mdash; Weakened/diminished cluster</div>
+  <div class="note">Clusters with: Lukewarm. Both say "not enough." Diluted is stronger &mdash; implies something was added that shouldn't have been.</div>
+  <span class="cluster-tag">weakened</span>
+  <div class="response-text">"Diluted."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('26','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('26','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('26','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('26',this.value)">Diluted.</textarea>
+  <select class="category-select" onchange="onCategoryChange('26',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 27 -->
+<div class="item" data-id="27" data-original="Secondhand." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1685</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Fake/not-yours cluster</div>
+  <div class="note">Clusters with: Borrowed, Counterfeit. Three-way overlap on "not original/authentic." Secondhand is the weakest &mdash; less specific than either Borrowed or Counterfeit.</div>
+  <span class="cluster-tag">fake/not-yours</span>
+  <div class="response-text">"Secondhand."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('27','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('27','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('27','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('27',this.value)">Secondhand.</textarea>
+  <select class="category-select" onchange="onCategoryChange('27',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 28 -->
+<div class="item" data-id="28" data-original="Expired." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1686</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Spoiled/rotten cluster</div>
+  <div class="note">Clusters with: Rancid, Stale, Curdled, Overripe. Five words for "past its date." Expired is the most clinical &mdash; has a bureaucratic coldness the others lack. If keeping one from this cluster for "official rejection" energy, this is it.</div>
+  <span class="cluster-tag">spoiled/rotten</span>
+  <div class="response-text">"Expired."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('28','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('28','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('28','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('28',this.value)">Expired.</textarea>
+  <select class="category-select" onchange="onCategoryChange('28',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 29 -->
+<div class="item" data-id="29" data-original="Lukewarm." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1687</span></div>
+  <div class="rating rating-similar">SIMILAR &mdash; Weakened/diminished cluster</div>
+  <div class="note">Clusters with: Diluted. Both say "not committed enough." Lukewarm is more common/less surprising. Diluted is the stronger word.</div>
+  <span class="cluster-tag">weakened</span>
+  <div class="response-text">"Lukewarm."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('29','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('29','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('29','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('29',this.value)">Lukewarm.</textarea>
+  <select class="category-select" onchange="onCategoryChange('29',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 30 -->
+<div class="item" data-id="30" data-original="Residue." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1689</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Gross. Physical. "What's left after the thing that mattered is gone." Not just "bad" &mdash; it's specifically the aftermath. Unique angle.</div>
+  <span class="cluster-tag">aftermath</span>
+  <div class="response-text">"Residue."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('30','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('30','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('30','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('30',this.value)">Residue.</textarea>
+  <select class="category-select" onchange="onCategoryChange('30',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 31 -->
+<div class="item" data-id="31" data-original="Echoes." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1690</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Haunting. Not negative or positive &mdash; just resonance. "This is still reverberating." Mystical category perfect. One of the best in the set.</div>
+  <span class="cluster-tag">resonance</span>
+  <div class="response-text">"Echoes."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('31','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('31','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('31','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('31',this.value)">Echoes.</textarea>
+  <select class="category-select" onchange="onCategoryChange('31',this.value)">
+    <option value="mystical" selected>mystical</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 32 -->
+<div class="item" data-id="32" data-original="Posture." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1691</span></div>
+  <div class="rating rating-similar">SIMILAR &mdash; Performance/fakeness cluster</div>
+  <div class="note">Clusters with: Costume, Rehearsed, Performative. Four words for "you're faking it." Posture = the physical act of pretending. Strongest of the four because it's the most unexpected word for this meaning.</div>
+  <span class="cluster-tag">performance/fake</span>
+  <div class="response-text">"Posture."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('32','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('32','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('32','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('32',this.value)">Posture.</textarea>
+  <select class="category-select" onchange="onCategoryChange('32',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 33 -->
+<div class="item" data-id="33" data-original="Costume." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1692</span></div>
+  <div class="rating rating-similar">SIMILAR &mdash; Performance/fakeness cluster</div>
+  <div class="note">Clusters with: Posture, Rehearsed, Performative. "Costume" is good but the cluster has four words. Keep max 2.</div>
+  <span class="cluster-tag">performance/fake</span>
+  <div class="response-text">"Costume."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('33','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('33','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('33','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('33',this.value)">Costume.</textarea>
+  <select class="category-select" onchange="onCategoryChange('33',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 34 -->
+<div class="item" data-id="34" data-original="Rehearsed." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1693</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Performance/fakeness cluster</div>
+  <div class="note">Clusters with: Posture, Costume, Performative. Four-way pileup. Rehearsed and Performative are the closest pair &mdash; both explicitly about acting. Cut one.</div>
+  <span class="cluster-tag">performance/fake</span>
+  <div class="response-text">"Rehearsed."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('34','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('34','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('34','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('34',this.value)">Rehearsed.</textarea>
+  <select class="category-select" onchange="onCategoryChange('34',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 35 -->
+<div class="item" data-id="35" data-original="Performative." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1694</span></div>
+  <div class="rating rating-redundant">REDUNDANT &mdash; Performance/fakeness cluster</div>
+  <div class="note">Clusters with: Posture, Costume, Rehearsed. Most literal/on-the-nose of the four. The others imply performance; this one just says it. Weakest because it's the least surprising.</div>
+  <span class="cluster-tag">performance/fake</span>
+  <div class="response-text">"Performative."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('35','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('35','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('35','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('35',this.value)">Performative.</textarea>
+  <select class="category-select" onchange="onCategoryChange('35',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 36 -->
+<div class="item" data-id="36" data-original="Ornamental." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 1695</span></div>
+  <div class="rating rating-keeper">HITS &mdash; "Pretty but useless." Architectural judgment. Different from "fake" (the performance cluster) &mdash; this says it's real, just decorative. Cats absolutely understand the concept of ornamental. They knock ornaments off shelves.</div>
+  <span class="cluster-tag">decorative/useless</span>
+  <div class="response-text">"Ornamental."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('36','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('36','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('36','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('36',this.value)">Ornamental.</textarea>
+  <select class="category-select" onchange="onCategoryChange('36',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 37 -->
+<div class="item" data-id="37" data-original="Untested." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1698</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Not a judgment, just an observation. "You haven't proven this yet." Has both warning and invitation in it &mdash; maybe go test it. Pairs with Unripe in the "not yet" zone but from a different domain (lab vs. garden).</div>
+  <span class="cluster-tag">timing/patience</span>
+  <div class="response-text">"Untested."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('37','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('37','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('37','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('37',this.value)">Untested.</textarea>
+  <select class="category-select" onchange="onCategoryChange('37',this.value)">
+    <option value="wise" selected>wise</option><option value="cold">cold</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 38 -->
+<div class="item" data-id="38" data-original="Circumstantial." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1699</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Legal word in a cat context. "The evidence doesn't hold up." Unexpected domain (courtroom). Would make someone re-read their own question. Good.</div>
+  <span class="cluster-tag">legal</span>
+  <div class="response-text">"Circumstantial."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('38','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('38','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('38','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('38',this.value)">Circumstantial.</textarea>
+  <select class="category-select" onchange="onCategoryChange('38',this.value)">
+    <option value="wise" selected>wise</option><option value="cold">cold</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- SCATTERED SINGLE-WORD VERDICTS -->
+
+<div class="section-header" style="border-left-color: #888; margin-top: 30px;">
+  <h2 style="color: #aaa;">Scattered Single-Word Verdicts (other batches)</h2>
+  <p>These live outside the main verdict block but use the same format. Included for completeness. Most come from specific themed batches (pop culture, archaic, legal).</p>
+</div>
+
+<!-- 39 -->
+<div class="item" data-id="39" data-original="Inconceivable." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 1858</span><span>Context: pop culture refs</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Princess Bride energy. Recognizable. People will hear Vizzini's voice. The word itself is funny because it implies the cat finds your question logically impossible. Earns its spot through cultural resonance.</div>
+  <div class="response-text">"Inconceivable."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('39','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('39','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('39','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('39',this.value)">Inconceivable.</textarea>
+  <select class="category-select" onchange="onCategoryChange('39',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 40 -->
+<div class="item" data-id="40" data-original="Allegedly." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1862</span><span>Context: pop culture refs</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Legal disclaimer as attitude. "I'm not saying you're lying, but I'm also not not saying that." Perfect cat energy. The period at the end makes it a verdict, not a conversation.</div>
+  <div class="response-text">"Allegedly."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('40','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('40','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('40','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('40',this.value)">Allegedly.</textarea>
+  <select class="category-select" onchange="onCategoryChange('40',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="cold">cold</option><option value="wise">wise</option><option value="judgy">judgy</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 41 -->
+<div class="item" data-id="41" data-original="Liability." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 2115</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Corporate/legal word as existential diagnosis. "You are a risk to yourself." Dark, funny, unexpected domain. Works.</div>
+  <span class="cluster-tag">legal</span>
+  <div class="response-text">"Liability."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('41','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('41','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('41','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('41',this.value)">Liability.</textarea>
+  <select class="category-select" onchange="onCategoryChange('41',this.value)">
+    <option value="existential" selected>existential</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 42 -->
+<div class="item" data-id="42" data-original="Mortification." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 2982</span><span>Context: archaic causes of death batch</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Double meaning: archaic medical term (tissue death) AND the modern emotional experience. Both readings work as a cat verdict. Rich.</div>
+  <div class="response-text">"Mortification."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('42','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('42','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('42','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('42',this.value)">Mortification.</textarea>
+  <select class="category-select" onchange="onCategoryChange('42',this.value)">
+    <option value="existential" selected>existential</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 43 -->
+<div class="item" data-id="43" data-original="Dubitante." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Line: 3155</span><span>Context: legal Latin batch</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Legal Latin for "doubting." Supreme Court energy in a single word. Most people won't know what it means, which is part of the joke &mdash; the cat is more educated than you. Incredible flex.</div>
+  <span class="cluster-tag">legal</span>
+  <div class="response-text">"Dubitante."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('43','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('43','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('43','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('43',this.value)">Dubitante.</textarea>
+  <select class="category-select" onchange="onCategoryChange('43',this.value)">
+    <option value="cold" selected>cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 44 -->
+<div class="item" data-id="44" data-original="Medieval." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 3339</span><span>Context: Room With a View batch</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Time period as insult. "Your thinking is medieval." Or: "This situation is medieval." Or even positive: "This goes that hard." Ambiguous in the best way. Unexpected word as verdict.</div>
+  <div class="response-text">"Medieval."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('44','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('44','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('44','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('44',this.value)">Medieval.</textarea>
+  <select class="category-select" onchange="onCategoryChange('44',this.value)">
+    <option value="judgy" selected>judgy</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="mystical">mystical</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- 45 - Borrowed time is two words but verdict-style -->
+<div class="item" data-id="45" data-original="Borrowed time." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1681</span></div>
+  <div class="rating rating-keeper">HITS &mdash; Two-word verdict (borderline format) but the phrase earns it. Ominous. "You're already past the expiration date." Different from "Borrowed" &mdash; adds temporal urgency. Mystical category is right.</div>
+  <span class="cluster-tag">temporal</span>
+  <div class="response-text">"Borrowed time."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('45','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('45','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('45','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('45',this.value)">Borrowed time.</textarea>
+  <select class="category-select" onchange="onCategoryChange('45',this.value)">
+    <option value="mystical" selected>mystical</option><option value="cold">cold</option><option value="wise">wise</option><option value="chaotic">chaotic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option><option value="demanding">demanding</option><option value="angry">angry</option>
+  </select>
+</div>
+
+<!-- ========================================== -->
+<!-- NEW SINGLE-WORD VERDICT SUGGESTIONS        -->
+<!-- ========================================== -->
+
+<div class="new-suggestions-section">
+  <h3>Suggested NEW Single-Word Verdicts</h3>
+  <p style="color: #888; margin-bottom: 16px; font-size: 0.85rem;">The current pool is 100% negative/dismissive. These suggestions fill the gap with positive, ambiguous, and weird verdicts from unexpected domains. Not for review &mdash; for inspiration when editing or adding.</p>
+
+  <div class="suggestion-group">
+    <div class="group-label">POSITIVE / AFFIRMATIVE (currently zero in pool)</div>
+    <ul>
+      <li><strong>"Overdue."</strong> &mdash; "This should have happened already." Validating. (wise)</li>
+      <li><strong>"Earned."</strong> &mdash; "You deserve this." One word of permission. (nurturing)</li>
+      <li><strong>"Inevitable."</strong> &mdash; "This was always going to happen." Cosmic yes. (mystical)</li>
+      <li><strong>"Permitted."</strong> &mdash; Bureaucratic approval. The cat stamps your form. (cold)</li>
+      <li><strong>"Imminent."</strong> &mdash; "It's already happening." Urgency as affirmation. (mystical)</li>
+      <li><strong>"Magnificent."</strong> &mdash; Pure, uncut approval. Cat looking at you like you're the sunrise. (nurturing)</li>
+      <li><strong>"Precedented."</strong> &mdash; Legal. "This has been done before and it worked." Dry approval. (wise)</li>
+    </ul>
+  </div>
+
+  <div class="suggestion-group">
+    <div class="group-label">WEIRD / PROCESS / AMBIGUOUS (not clearly positive or negative)</div>
+    <ul>
+      <li><strong>"Tectonic."</strong> &mdash; "This is shifting something deep." Geological verdict. (mystical)</li>
+      <li><strong>"Marinating."</strong> &mdash; Like Fermenting but culinary. "Let it sit." (wise)</li>
+      <li><strong>"Structural."</strong> &mdash; Architectural. Could mean "foundational" or "the problem is structural." (existential)</li>
+      <li><strong>"Contagious."</strong> &mdash; Medical word. Good or bad? Energy spreads. (chaotic)</li>
+      <li><strong>"Tidal."</strong> &mdash; "This comes and goes. You can't fight it." Oceanic. (mystical)</li>
+      <li><strong>"Carbonated."</strong> &mdash; Effervescent. Fizzy. Could lose its bubbles. Urgent freshness. (chaotic)</li>
+      <li><strong>"Migratory."</strong> &mdash; "This is moving. You can't keep it here." Animal behavior as verdict. (wise)</li>
+      <li><strong>"Seismic."</strong> &mdash; "You felt that, right?" The ground shifted. (existential)</li>
+    </ul>
+  </div>
+
+  <div class="suggestion-group">
+    <div class="group-label">UNEXPECTED DOMAINS (legal, medical, culinary, theatrical, scientific)</div>
+    <ul>
+      <li><strong>"Admissible."</strong> &mdash; Legal. "The evidence supports this." Court cat. (wise)</li>
+      <li><strong>"Operable."</strong> &mdash; Medical. "It can be fixed." Or: "It's working." Dual read. (wise)</li>
+      <li><strong>"Acquitted."</strong> &mdash; Legal. "You're free to go." Full clearance. (nurturing)</li>
+      <li><strong>"Understudy."</strong> &mdash; Theatrical. "You're the backup plan." Devastating. (cold)</li>
+      <li><strong>"Containable."</strong> &mdash; Emergency management. "This isn't as bad as it looks." (wise)</li>
+      <li><strong>"Architectural."</strong> &mdash; "The foundation matters here." Structural judgment. (existential)</li>
+      <li><strong>"Subcutaneous."</strong> &mdash; Medical. "Under the skin." Something deeper is happening. (mystical)</li>
+      <li><strong>"Combustible."</strong> &mdash; Chemistry. "Handle with care or this explodes." (chaotic)</li>
+    </ul>
+  </div>
+
+  <div class="suggestion-group">
+    <div class="group-label">CLUSTER SUMMARY &mdash; what to cut, what to keep</div>
+    <ul>
+      <li><strong>Spoiled/rotten (5):</strong> Rancid, Stale, Curdled, Expired, Overripe &mdash; keep max 2. Recommend: Expired (clinical) + Rancid (visceral). Cut: Stale, Curdled, Overripe.</li>
+      <li><strong>Fake/not-yours (3):</strong> Borrowed, Counterfeit, Secondhand &mdash; keep 2. Recommend: Borrowed (warmest) + Counterfeit (harshest). Cut: Secondhand.</li>
+      <li><strong>Performance (4):</strong> Posture, Costume, Rehearsed, Performative &mdash; keep 2. Recommend: Posture (most unexpected) + Costume (most visual). Cut: Rehearsed, Performative.</li>
+      <li><strong>Weakened (2):</strong> Diluted, Lukewarm &mdash; keep 1. Recommend: Diluted (more precise). Cut: Lukewarm.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- EXPORT -->
+
+<div class="export-section">
+  <h2>Export &mdash; Kept + Edited Responses</h2>
+  <p>Includes KEPT responses (unchanged) and EDITED responses (with new text + category). Copy to update oracleResponses.ts.</p>
+  <textarea class="export-box" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value).then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy JSON', 1500); })">Copy JSON</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-yes-verdicts';
+const categories = ['chaotic','wise','cold','heartfelt','nurturing','poetic','mystical','judgy','existential','meta','demanding','angry','adoption'];
+const items = document.querySelectorAll('.item');
+const state = {};
+
+// Load saved state or init fresh
+const saved = localStorage.getItem(STORAGE_KEY);
+const savedState = saved ? JSON.parse(saved) : null;
+
+items.forEach(item => {
+  const id = item.dataset.id;
+  if (savedState && savedState[id]) {
+    state[id] = savedState[id];
+    // Restore UI
+    const s = savedState[id];
+    item.className = 'item ' + (s.status === 'keep' ? 'kept' : s.status === 'cut' ? 'cut' : s.status === 'edit' ? 'edited' : '');
+    const editArea = item.querySelector('.edit-area');
+    const catSelect = item.querySelector('.category-select');
+    if (s.status === 'edit') {
+      editArea.classList.add('visible');
+      catSelect.classList.add('visible');
+      editArea.value = s.text;
+      // Set category select value
+      for (let opt of catSelect.options) {
+        opt.selected = (opt.value === s.category);
+      }
+    }
+  } else {
+    state[id] = { status: 'pending', original: item.dataset.original, text: item.dataset.original, category: item.dataset.category };
+  }
+});
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function updateStats() {
+  const vals = Object.values(state);
+  document.getElementById('keep-count').textContent = vals.filter(v => v.status === 'keep').length;
+  document.getElementById('edit-count').textContent = vals.filter(v => v.status === 'edit').length;
+  document.getElementById('cut-count').textContent = vals.filter(v => v.status === 'cut').length;
+  document.getElementById('pending-count').textContent = vals.filter(v => v.status === 'pending').length;
+  updateExport();
+  save();
+}
+
+function updateExport() {
+  const results = Object.entries(state)
+    .filter(([,v]) => v.status === 'keep' || v.status === 'edit')
+    .map(([,v]) => {
+      if (v.status === 'edit' && v.text !== v.original) {
+        return { original: v.original, text: v.text, category: v.category };
+      }
+      return { text: v.original, category: v.category };
+    });
+  document.getElementById('export-json').value = JSON.stringify(results, null, 2);
+}
+
+function setStatus(id, status) {
+  state[id].status = status;
+  const item = document.querySelector(`[data-id="${id}"]`);
+  item.className = 'item ' + (status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited' : '');
+  const editArea = item.querySelector('.edit-area');
+  const catSelect = item.querySelector('.category-select');
+  if (status === 'edit') {
+    editArea.classList.add('visible');
+    catSelect.classList.add('visible');
+    editArea.focus();
+  } else {
+    editArea.classList.remove('visible');
+    catSelect.classList.remove('visible');
+  }
+  updateStats();
+}
+
+function onEdit(id, text) {
+  state[id].text = text;
+  updateExport();
+  save();
+}
+
+function onCategoryChange(id, cat) {
+  state[id].category = cat;
+  updateExport();
+  save();
+}
+
+updateStats();
+</script>
+</body>
+</html>

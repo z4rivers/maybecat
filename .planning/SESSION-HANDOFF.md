@@ -1,83 +1,75 @@
-# Session Handoff — Category Blitz
+# Session Handoff — Voice Audit & Content Sprint
 
-## What We're Doing
-Going through EVERY response in oracleResponses.ts by category, generating spicy comedian-voiced alternatives, presenting side-by-side in HTML review files, applying user decisions. Goal: sharpen the whole pool.
+**Last updated:** 2026-02-21
 
-## Creative Direction
-- Cat as ALLY against the world (default stance)
-- Can roast asker when it helps (tough older sibling)
-- When kind, devastatingly kind
-- Raise ceiling + fix ratio (too much mild middle)
-- Comedy energy: channel SPECIFIC comedian voices from `/maybecat-voice` skill file
-- Nikki Glaser, Ali Wong, Mitch Hedberg, Nate Bargatze, Tig Notaro, Bill Burr, etc.
-- Each alternative should use a recognizable comedian's cadence/structure
+## What Just Happened (Feb 21 Session)
 
-## BANNED PATTERNS in alternatives
-- "You've been [doing X] for [time period]" — ZERO instances
-- "That's not [X]. That's [Y]." — overused
-- "You keep [doing X] like [comparison]" — vary it
-- Starting with "You" — at least half should NOT start with "You"
+### Infrastructure
+- 6 stale worktrees removed (~2.7 GB recovered)
+- Home.tsx protected by PreToolUse hook (blocks Edit/Write, requires explicit approval)
+- Carousel architecture documented (576 lines, `.planning/CAROUSEL-ARCHITECTURE.md`)
+- settings.local.json cleaned (69 → 37 lines)
 
-## Categories Completed
-- **wise**: Rounds 1-5 DONE (lines ~400-3669 reviewed + applied)
-  - Remaining: ~20-30 wise responses in lines 3669-4000 need round 6
-  - Generate alts, build HTML, get review, apply
+### Pool Audit — Corrected Understanding
+- Pool is **3,062 responses** (not 2,379 as previously recorded)
+- 7 orphaned categories fixed, 2 duplicates removed, 1 stoner cut, 4 curiosity rewrites, 4 new existential additions
+- **Previous gap analysis was WRONG about several things:**
+  - "96.4% doesn't answer" — FALSE. Sharp observations, cold reads, reframes ARE answers on an energetic level. The pool is full of answers.
+  - "No cat energy" on ~54 responses — FALSE. 103 of 105 flagged were KEPT. Attitude IS the voice. Personality, not species.
+  - "Pattern repeats are the worst offender" — FALSE. Repetition is brand (Garfield's lasagna). The problem is lazy instances, not the lanes themselves.
+  - "Need 200+ literal yes/no responses" — FALSE. Real gaps are missing ENERGIES (celebration, lightweight fun, permission), not missing syntax.
 
-## Categories Ready for Review (HTML built, waiting for user)
-- **chaotic**: `.planning/chaotic-round1.html` — 577 items, full category
-- **cold**: `.planning/cold-round1.html` — 238 items, full category
+### 7 Voice Principles Codified
+All saved to `/maybecat-voice` skill file AND memory:
+1. Trust the reader — cut explanation, let lines breathe
+2. Answers are energetic, not literal — count impact, not syntax
+3. Reframe, don't answer — new angle, reader closes the loop
+4. Voice is personality, not species — attitude IS the cat
+5. Specificity over cat tropes — felt experience > generic paws/zoomies
+6. Repetition is brand, boring is the problem — lazy, not too many
+7. Clean lanes add breathing room — format disappears, content lands
 
-## Categories Not Started Yet
-- judgy (~305 responses)
-- demanding (~245)
-- mystical (~219)
-- heartfelt (~172)
-- existential (~152)
-- nurturing (~143)
-- poetic (~98)
-- angry (~88)
-- meta (~87)
-- adoption (~28)
+### Review Batches Outstanding
+All in `.planning/batches/2026-02-21/`:
 
-## Workflow
-1. Launch 3-4 parallel agents to scan file ranges, find responses of target category, generate spicy alternatives using comedian voices from skill file
-2. Merge JSON files, deduplicate, build HTML review file
-3. User reviews in browser (KEEP/ALT/EDIT/CUT with keyboard shortcuts)
-4. User pastes ONLY changes back (export skips "kept" items)
-5. Agent applies changes to oracleResponses.ts, runs build verify
-6. PIPELINE: While user reviews round N, generate round N+1
+**Audit batches (3):**
+- `no-cat-energy-audit.html` — DONE. 2 cut, 2 edited, 101 kept. Verdict: sharp attitude IS MaybeCat.
+- `pattern-repeats-audit.html` — Superseded by per-lane rewrite batches below.
+- `yes-energy-stress-test.html` — Partially reviewed. "Yes, like..." originals are all keepers. Generated yes-equivalents still to review.
 
-## HTML Review Interface
-- Template: any existing `.planning/*-round1.html`
-- Dark theme (#1a1a2e), side-by-side (original muted left, alt prominent right)
-- Buttons: KEEP ORIGINAL (green), USE ALTERNATIVE (purple), EDIT (yellow), CUT (red)
-- All buttons always clickable (can change mind)
-- Auto-advance on first decision only
-- Edit prefills based on current selection (kept→original, alt→alternative)
-- Keyboard: J/K nav, O/A/E/X actions, U undo
-- Export: changes only (alt/edit/cut), NOT kept items
-- localStorage persistence per review file
+**Per-lane rewrite batches (6):**
+- `rewrite-feed-me.html` — 46 items. User says lane is clean and simple, doesn't need character angles. Needs review for lazy-vs-crafted only.
+- `rewrite-curiosity.html` — DONE. 4 replaced, 9 kept. Applied to codebase.
+- `rewrite-stoner-catnip.html` — DONE. 1 cut ("purring is my motor running"), rest all keepers. Character category.
+- `rewrite-profound-cat.html` — 60 items. 24 formula, 24 hits. Still to review.
+- `rewrite-yes-like-and-verdicts.html` — WARNING: "Yes, like..." rewrite suggestions are BAD (replace specificity with cat tropes). Trash those suggestions. Single-word verdict section may be useful.
+- `rewrite-may-cause.html` — DONE. All 13 keepers. Found language lane.
 
-## Agent Prompt Template
-Point agents to `.claude/skills/maybecat-voice/SKILL.md` for voice guidance. Give them:
-- File range to scan
-- Category to find
-- Banned patterns
-- "Pick specific comedian voice per response"
-- Output as JSON to `.planning/{category}-round{N}-batch{M}-alts.json`
+## NEXT SESSION PRIORITY: Find the Real Dead Weight
 
-## Key Rules
-- NEVER read oracleResponses.ts in main context (4200+ lines)
-- DELEGATE all generation to agents
-- 3+ parallel agents for batch generation
-- Always use bypassPermissions mode on agents
-- Run generation agents in background
-- Build HTML as soon as batches complete
-- Keep pipeline ahead of user
+### The Blind Spot
+Agents keep flagging sharp, attitudinal responses as "not MaybeCat" while leaving the actual dead weight alone. The responses that NEVER get flagged are the problem:
+- Generic fortune cookie wisdom that sounds "proper" for an oracle
+- Safe, competent, forgettable lines that pattern-match as "correct"
+- Stuff that sounds professional but has no soul, no voice, no screenshot potential
 
-## File Locations
-- Responses: `src/data/oracleResponses.ts`
-- Skill file: `.claude/skills/maybecat-voice/SKILL.md` (36KB, never main context)
-- Voice guide: `.planning/CAT-VOICE-GUIDE.md`
-- All review HTMLs: `.planning/{category}-round{N}.html`
-- All alt JSONs: `.planning/{category}-round{N}-batch{M}-alts.json`
+### What To Do
+Run an audit with the CORRECTED voice principles. Don't flag attitude. Don't flag repeats. Flag:
+- Responses that are SAFE — no one would screenshot them, no one would laugh, no one would feel anything
+- Responses that sound like every other advice app / horoscope / fortune cookie
+- Responses the agents LOVE because they sound "well-crafted" — those are the suspects
+- Mark batches as REVIEWED so the same responses stop getting re-flagged
+
+### Also Pending
+- Variety update batch review files in `.planning/batches/2026-02-20/` (7 HTML files)
+- Feed-me batch review (lazy-vs-crafted, NOT character-angle rewrites)
+- Profound+cat batch review (24 formula items)
+- Yes-energy stress test: do generated yes-equivalents fit or kill the voice?
+- Research files to trash: Buzan, funny scientists (confirmed not interesting)
+- Fierce Conversations: 20 territories researched, never batched. Keep or trash?
+
+## Hard Rules (Always)
+- **NEVER read oracleResponses.ts in main context** (4200+ lines). Send agents.
+- **Home.tsx is PROTECTED** by PreToolUse hook. Read `.planning/CAROUSEL-ARCHITECTURE.md` before any changes.
+- **Voice principles are in `/maybecat-voice` skill.** Load skill, point agents to it. Don't paste.
+- **The user IS the voice.** Support, don't replace. Ask for their examples first.

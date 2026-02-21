@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat — Rewrite: [Profound] + [Cat Thing] Formula Audit</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    flex-basis: 100%;
+  }
+  .sticky-header .subtitle {
+    font-size: 12px;
+    color: #8899aa;
+    flex-basis: 100%;
+    margin-top: -8px;
+    margin-bottom: 4px;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stat {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-total { color: #a0a0a0; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #7b8794; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-export, .btn-reset {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-export { background: #4ecca3; color: #1a1a2e; }
+  .btn-reset { background: #444; color: #ccc; }
+  .btn-export:hover, .btn-reset:hover { opacity: 0.85; }
+
+  .intro {
+    max-width: 800px;
+    margin: 0 auto 32px;
+    padding: 20px;
+    background: #16213e;
+    border-radius: 10px;
+    border-left: 4px solid #e94560;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+  .intro h2 { color: #e94560; margin-bottom: 8px; font-size: 16px; }
+  .intro p { margin-bottom: 8px; }
+  .intro strong { color: #ffd93d; }
+  .intro code { background: #0f3460; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+
+  .item {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+  .item.decided-keep { border-left-color: #4ecca3; }
+  .item.decided-cut { border-left-color: #e94560; }
+  .item.decided-edit { border-left-color: #ffd93d; }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .item-meta {
+    font-size: 12px;
+    color: #7b8794;
+  }
+  .item-meta .line-num { color: #4ecca3; }
+  .item-meta .category {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #0f3460;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #a0c4ff;
+    margin-left: 6px;
+  }
+
+  .rating {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .rating-hits { background: #4ecca322; color: #4ecca3; }
+  .rating-formula { background: #e9456022; color: #e94560; }
+
+  .item-text {
+    font-size: 17px;
+    line-height: 1.5;
+    padding: 12px 0;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .item-analysis {
+    font-size: 13px;
+    color: #8899aa;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #0f3460;
+    border-radius: 6px;
+    line-height: 1.5;
+  }
+  .item-analysis strong { color: #e0e0e0; }
+
+  .suggestions {
+    margin: 12px 0;
+    padding: 12px;
+    background: #1a1a2e;
+    border-radius: 8px;
+    border: 1px solid #2a2a4e;
+  }
+  .suggestions-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffd93d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .suggestion {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    background: #16213e;
+    border-radius: 6px;
+    line-height: 1.4;
+    color: #d0d0d0;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .suggestion:hover {
+    background: #1e2d4a;
+  }
+  .suggestion::before {
+    content: '\u2192 ';
+    color: #ffd93d;
+  }
+  .suggestion .click-hint {
+    font-size: 10px;
+    color: #556;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn {
+    padding: 8px 18px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #2a2a4e;
+    color: #a0a0a0;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 70px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #e0e0e0;
+    padding: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.4;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .export-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .export-overlay.visible { display: flex; }
+  .export-box {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: auto;
+  }
+  .export-box h2 { color: #4ecca3; margin-bottom: 16px; }
+  .export-box pre {
+    background: #0d1117;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #d0d0d0;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  .export-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn-copy {
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .btn-close-export {
+    padding: 8px 20px;
+    background: #444;
+    color: #ccc;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .copied-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 300;
+    display: none;
+  }
+  .copied-toast.visible { display: block; }
+
+  .section-divider {
+    max-width: 800px;
+    margin: 40px auto 20px;
+    padding: 12px 20px;
+    background: #0f3460;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #a0c4ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>[Profound Thing] + [Cat Thing] Formula Audit</h1>
+  <div class="subtitle">The structure can work. The formula is the problem. If you can see the template, it's dead.</div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">0</span></span>
+    <span class="stat stat-keep">Keep: <span id="stat-keep">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="stat-edit">0</span></span>
+    <span class="stat stat-pending">Pending: <span id="stat-pending">0</span></span>
+  </div>
+  <div class="controls">
+    <button class="btn-export" onclick="showExport()">Export JSON</button>
+    <button class="btn-reset" onclick="resetAll()">Reset All</button>
+  </div>
+</div>
+
+<div class="intro">
+  <h2>The Pattern</h2>
+  <p><strong>[Philosophical/profound statement] + [mundane cat behavior punchline]</strong></p>
+  <p>When the structure is invisible, it works. "Growth is uncomfortable. *me, stuck in box* I regret nothing." — you can't see the seams. The cat behavior IS the philosophy, not a punchline bolted onto it.</p>
+  <p>When the structure is visible: <code>"The meaning of life is unknowable. The meaning of a nap is obvious."</code> — that's a Mad Lib. [Big word] is [adjective]. [Small word] is [opposite adjective]. Dead from orbit.</p>
+  <p><strong>HITS</strong> = the structure is invisible, the thought feels unified, keep as-is.<br>
+  <strong>FORMULA</strong> = you can see the template, needs rewrite or cut. Suggested rewrites below each.</p>
+</div>
+
+<div class="section-divider">Existential Category &mdash; Ground Zero</div>
+
+<div id="items-container"></div>
+
+<div class="export-overlay" id="export-overlay">
+  <div class="export-box">
+    <h2>Export — Decisions</h2>
+    <pre id="export-json"></pre>
+    <div class="export-actions">
+      <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+      <button class="btn-close-export" onclick="closeExport()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="copied-toast" id="copied-toast">Copied to clipboard!</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-profound';
+
+const items = [
+  // ==============================================
+  // EXISTENTIAL CATEGORY — GROUND ZERO
+  // ==============================================
+  {
+    id: 1,
+    text: "Existence is pain. Except under blankets. There, existence is acceptable.",
+    line: 885,
+    category: "existential",
+    rating: "formula",
+    analysis: "Classic template: [Profound claim about existence]. [Except cat comfort thing]. The 'except under blankets' undercuts with the exact expected move. You can see every joint.",
+    suggestions: [
+      "I figured out why existence hurts. The blanket was bunched up weird.",
+      "Existence doesn't bother me. I found a spot where it can't reach.",
+      "Bold of existence to assume I'm participating."
+    ]
+  },
+  {
+    id: 2,
+    text: "You seek meaning. I seek the warm spot. Perhaps they are the same.",
+    line: 887,
+    category: "existential",
+    rating: "formula",
+    analysis: "Textbook [You seek BIG THING. I seek CAT THING. Perhaps same.] Three-beat formula visible from space. The 'perhaps they are the same' is the tell — it EXPLAINS the joke.",
+    suggestions: [
+      "I found the warm spot. Everything else stopped mattering. Maybe that's meaning.",
+      "You keep looking for something. I already found the warm spot. Just saying.",
+      "The warm spot doesn't care about meaning. The warm spot just IS."
+    ]
+  },
+  {
+    id: 3,
+    text: "Nothing matters. But also, everything matters. Especially treats.",
+    line: 888,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Nihilism]. [Reversal]. [Cat punchline]. Three-step descent into treats. The 'especially treats' is the safe landing pad every time.",
+    suggestions: [
+      "Everything matters exactly as much as it matters to me right now, which is: treats.",
+      "I have stared into the nothing. The nothing had treats. I stayed.",
+      "If nothing matters then I'm free to care about treats with my whole chest."
+    ]
+  },
+  {
+    id: 4,
+    text: "The meaning of life is unknowable. The meaning of a nap is obvious.",
+    line: 891,
+    category: "existential",
+    rating: "formula",
+    analysis: "The example in the brief. Perfect Mad Lib: [The meaning of BIG is HARD]. [The meaning of SMALL is EASY]. You could generate a hundred of these.",
+    suggestions: [
+      "I figured out the meaning of life but then I found a sunbeam and honestly the sunbeam was better.",
+      "The meaning of life started explaining itself to me and I fell asleep and I think that WAS the meaning.",
+      "Asked the big questions. Got tired. Napped. Woke up and the questions were gone."
+    ]
+  },
+  {
+    id: 5,
+    text: "Every moment is impermanent. That's why naps must happen NOW.",
+    line: 893,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Buddhist concept]. [Therefore CAT THING]. The urgency of naps is funny but the setup is a philosophy lecture that announces itself.",
+    suggestions: [
+      "Nothing lasts. Especially not this sunbeam. MOVING.",
+      "The urgency is real. This specific warmth won't happen again. NAP EMERGENCY.",
+      "Time is running out. For this sunbeam. The rest of you are fine."
+    ]
+  },
+  {
+    id: 6,
+    text: "The universe expands. My territory also expands. Coincidence?",
+    line: 894,
+    category: "existential",
+    rating: "hits",
+    analysis: "This one works because it's not setup+punchline — it's a genuine conspiracy theory. The cat isn't deflecting from the profound with something small. The cat genuinely believes it's CAUSING the expansion. The 'Coincidence?' sells it as paranoid confidence.",
+    suggestions: []
+  },
+  {
+    id: 7,
+    text: "In the end, we are all just dust. Comfortable, napping dust.",
+    line: 895,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Existential truth about mortality]. [But dust that does CAT THING]. Adding adjectives to 'dust' to make it cat-like is the laziest version of this formula.",
+    suggestions: [
+      "Everything ends. I'm going to spend the middle part on this specific cushion.",
+      "We're all dust eventually. I'm dust that chose this exact patch of sunlight. No regrets.",
+      "Dust doesn't worry about being dust. Dust just floats around looking gorgeous in the light."
+    ]
+  },
+  {
+    id: 8,
+    text: "You ask 'why?' I ask 'why not nap?'",
+    line: 896,
+    category: "existential",
+    rating: "formula",
+    analysis: "[You ask DEEP QUESTION]. [I ask CAT VERSION]. Direct substitution formula. Two sentences, one swap.",
+    suggestions: [
+      "Why. Why why why. Have you tried shutting up and lying down? Incredible what silence solves.",
+      "'Why' is a question for the awake. I am not that.",
+      "You keep asking why. I keep not being awake for the answer."
+    ]
+  },
+  {
+    id: 9,
+    text: "To be a cat is to know the truth: comfort is the only philosophy.",
+    line: 899,
+    category: "existential",
+    rating: "formula",
+    analysis: "[To be X is to know Y]: [cat truism]. Announces its own profundity with the colon. 'Comfort is the only philosophy' is a bumper sticker.",
+    suggestions: [
+      "I don't have a philosophy. I have a heated blanket. Same results, less reading.",
+      "Philosophers wrote books. I found the perfect spot on the couch. We are not the same.",
+      "They keep writing philosophies. I keep being comfortable. One of us is winning."
+    ]
+  },
+  {
+    id: 10,
+    text: "I contain multitudes. Mostly fur and attitude.",
+    line: 900,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Famous quote/concept]. [Deflate with cat specifics]. Whitman quote → 'fur and attitude' is a predictable landing.",
+    suggestions: [
+      "Whitman said he contained multitudes. I contain a hairball and an opinion. We're the same.",
+      "I contain multitudes. All of them are looking at you. None of them are impressed.",
+      "I contain exactly one multitude and it's whatever I want RIGHT NOW."
+    ]
+  },
+  {
+    id: 11,
+    text: "The question is not 'why are we here' but 'is this the best spot?'",
+    line: 901,
+    category: "existential",
+    rating: "formula",
+    analysis: "[The question is not BIG QUESTION but CAT QUESTION]. Direct swap formula again. Setup announces the pivot.",
+    suggestions: [
+      "Why are we here? Doesn't matter. Is this the best spot? THAT matters. I'm checking.",
+      "I've been in this spot for four hours. If that's not an answer, I don't know what is.",
+      "I've solved it. The question was never 'why.' The question was 'here?'"
+    ]
+  },
+  {
+    id: 12,
+    text: "Reality is what happens between naps.",
+    line: 902,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Deep concept] is [cat reframe]. One-liner version of the formula — cleaner, but still visible. Lennon paraphrase with 'naps' swapped in.",
+    suggestions: [
+      "I keep waking up and reality is still here. Rude.",
+      "Reality only exists when I'm awake for it, which is about four hours a day, so honestly how bad can it be.",
+      "I experience reality in short, irritated bursts."
+    ]
+  },
+  {
+    id: 13,
+    text: "We're all just energy, man. Fuzzy, hungry energy.",
+    line: 995,
+    category: "existential",
+    rating: "formula",
+    analysis: "[Stoner philosophy]. [Add cat adjectives]. 'Fuzzy, hungry' is just cat decoration on a generic thought.",
+    suggestions: [
+      "We're all energy. I'm the kind that knocks things off tables. What kind are you?",
+      "Energy can't be created or destroyed. Explains why I've been this hungry since 2019.",
+      "Dude. I'm literally vibrating. That's either enlightenment or I need to eat."
+    ]
+  },
+  {
+    id: 14,
+    text: "We're all made of stars. Stars that want treats.",
+    line: 1018,
+    category: "existential",
+    rating: "formula",
+    analysis: "Identical structure to #13. [We're all COSMIC THING]. [COSMIC THING that wants CAT THING]. Recipe card.",
+    suggestions: [
+      "Carl Sagan said we're made of stars. Stars don't get treats though so who really won.",
+      "Made of stars, acting like this. Incredible.",
+      "Stardust with an appetite. Don't question it."
+    ]
+  },
+  {
+    id: 15,
+    text: "We are all just seeking warmth. *lies on laptop*.",
+    line: 1421,
+    category: "existential",
+    rating: "hits",
+    analysis: "This works because the action IS the philosophy. The laptop isn't a punchline — it's the literal embodiment. The cat doesn't know it's being profound. The profundity is accidental, which is what makes MaybeCat work.",
+    suggestions: []
+  },
+  {
+    id: 16,
+    text: "What if boxes are just the universe hugging us?",
+    line: 991,
+    category: "existential",
+    rating: "hits",
+    analysis: "Works because it's genuinely a cat thought, not a human philosophical thought with a cat thing bolted on. A cat WOULD think this about boxes. One unified thought.",
+    suggestions: []
+  },
+
+  // ==============================================
+  // WISE CATEGORY
+  // ==============================================
+  {
+    id: 17,
+    text: "The answer is self-care. And by self-care I mean blankets.",
+    line: 388,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Advice concept]. [Redefine as cat thing]. 'And by X I mean Y' is a comedy structure that's been overused everywhere, not just here.",
+    suggestions: [
+      "Self-care is whatever I say it is and today it is this blanket and I am not taking questions.",
+      "Blankets aren't self-care. Blankets are survival. The self-care is admitting that.",
+      "My self-care routine is lying down. That's it. That's the routine."
+    ]
+  },
+  {
+    id: 18,
+    text: "The universe rewards the well-rested.",
+    line: 395,
+    category: "wise",
+    rating: "hits",
+    analysis: "Clean. Doesn't explain itself. Sounds like something a cat would genuinely believe as a universal truth. No setup+punchline structure — it's one thought.",
+    suggestions: []
+  },
+  {
+    id: 19,
+    text: "Life is like a box of... actually, I love boxes.",
+    line: 518,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Start famous quote]... [get distracted by cat thing]. The joke is 'cat likes boxes' which is the most expected possible punchline. Zero surprise.",
+    suggestions: [
+      "Life is like a box. In that I'm in one. And I'm happy. Stop asking questions.",
+      "Forrest Gump never had a box this good.",
+      "You never know what you're gonna get. I do. It's a box. I'm already in it."
+    ]
+  },
+  {
+    id: 20,
+    text: "One does not simply walk into Mordor. One naps first.",
+    line: 552,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Famous quote]. [Add nap]. The nap is bolted on. It doesn't transform the quote, just appends cat behavior.",
+    suggestions: [
+      "One does not simply walk into Mordor. One does not simply walk anywhere. What are you, a dog?",
+      "Mordor? In THIS economy? Nah.",
+      "I would simply not walk into Mordor. I would sit down. They'd have to come to me."
+    ]
+  },
+  {
+    id: 21,
+    text: "Peace is found in stillness. Also in the gap between the couch and the wall.",
+    line: 1021,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Zen wisdom]. [Also in cat hiding spot]. 'Also in' is the hinge that shows the formula. Two separate thoughts bolted together.",
+    suggestions: [
+      "I found peace. It was in the gap between the couch and the wall the whole time. No one looked there.",
+      "The gap between the couch and the wall doesn't judge. The gap understands.",
+      "Have you tried the gap between the couch and the wall? No? Then you haven't tried everything."
+    ]
+  },
+  {
+    id: 22,
+    text: "Overthinking is the enemy of napping. Choose napping.",
+    line: 1022,
+    category: "wise",
+    rating: "formula",
+    analysis: "[X is the enemy of CAT THING. Choose CAT THING.] Motivational poster format with napping swapped in.",
+    suggestions: [
+      "You're still thinking? In this economy? Lie down.",
+      "Overthinking. Underthinking. I'm not doing either. I'm horizontal.",
+      "The brain wants to solve it. The body wants to lie down. I know who wins."
+    ]
+  },
+  {
+    id: 23,
+    text: "Ambition is for people who haven't discovered naps yet.",
+    line: 2040,
+    category: "wise",
+    rating: "hits",
+    analysis: "This lands because it's a genuine worldview, not a formula. It's not [profound thing] + [cat thing] — it's a cat making an argument. There's a perspective here, not just a substitution.",
+    suggestions: []
+  },
+  {
+    id: 24,
+    text: "Grudges take up room where naps could go. Evict them.",
+    line: 3308,
+    category: "wise",
+    rating: "hits",
+    analysis: "Works because the logic is cat logic applied with authority. 'Evict them' has the commanding cat energy. It's advice that happens to be about naps, not a philosophy-then-nap formula.",
+    suggestions: []
+  },
+  {
+    id: 25,
+    text: "You don't need an answer. You need a nap and a glass of water.",
+    line: 2193,
+    category: "wise",
+    rating: "hits",
+    analysis: "Lands because it's genuinely useful advice delivered with cat confidence. Not [profound]+[cat] — it's practical wisdom. The nap feels prescriptive, not decorative.",
+    suggestions: []
+  },
+  {
+    id: 26,
+    text: "I don't know what's wrong with you. I don't know what's wrong with me. I accept that and I nap.",
+    line: 3526,
+    category: "wise",
+    rating: "hits",
+    analysis: "The nap isn't a punchline here — it's the actual coping mechanism. The honesty before it ('I don't know' x2) earns the nap as conclusion. One continuous thought.",
+    suggestions: []
+  },
+
+  // ==============================================
+  // MYSTICAL CATEGORY
+  // ==============================================
+  {
+    id: 27,
+    text: "The cosmos aligns when you least expect it. Usually during dinner.",
+    line: 110,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Mystical prophecy]. [Cat-timed specificity]. 'Usually during dinner' is the cat-appendage. Setup is generic mystic voice.",
+    suggestions: [
+      "The cosmos aligns exclusively during dinner. I've checked.",
+      "Something cosmic is happening. I can tell because it's dinnertime.",
+      "Every major spiritual revelation I've had was within ten feet of the food bowl."
+    ]
+  },
+  {
+    id: 28,
+    text: "The stars align in your favor. The blankets, however, do not.",
+    line: 101,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Cosmic good news]. [Cat-domestic bad news]. The structure is 'X does Y. Z, however, does not.' Formulaic contrast.",
+    suggestions: [
+      "Stars: aligned. Blankets: in open rebellion. Prioritize accordingly.",
+      "The stars say yes. The blankets say no. I trust the blankets.",
+      "Good things are coming. Also I have completely destroyed the blanket situation."
+    ]
+  },
+  {
+    id: 29,
+    text: "I can see through time. Time is a nap.",
+    line: 992,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Mystical claim]. [Redefine concept as cat thing]. Two sentences, second one just swaps in nap.",
+    suggestions: [
+      "I can see through time. It's boring. I went back to sleep.",
+      "Time is see-through if you nap hard enough.",
+      "I closed my eyes and when I opened them four hours were gone. That's time travel."
+    ]
+  },
+  {
+    id: 30,
+    text: "The universe provides. Specifically, it provides crinkle balls.",
+    line: 1017,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Spiritual claim]. [Specifically, cat thing]. The 'specifically' is the formula hinge — it's doing the same work every time: zoom from cosmic to domestic.",
+    suggestions: [
+      "The universe provides crinkle balls and I have never questioned the universe.",
+      "Crinkle ball appeared. I did not ask for it. I did not need to. The universe knows.",
+      "Have you considered that everything you need is already inside the crinkle ball?"
+    ]
+  },
+  {
+    id: 31,
+    text: "The stars are just the universe purring. The universe learned it from me.",
+    line: 1387,
+    category: "poetic",
+    rating: "hits",
+    analysis: "Works because the second sentence flips the power dynamic — the cat taught the UNIVERSE. That's not [profound]+[cat], that's cat supremacy as worldview. The ego makes it.",
+    suggestions: []
+  },
+  {
+    id: 32,
+    text: "I am one with the sunbeam. The sunbeam is one with me.",
+    line: 1003,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Zen unity statement with cat thing]. It's 'I am one with the Force' but sunbeam. The reversal (A=B, B=A) is an identifiable template.",
+    suggestions: [
+      "The sunbeam found me. Or I found the sunbeam. Either way this is a religious experience.",
+      "I dissolved into the sunbeam twenty minutes ago. Send help. Actually don't.",
+      "Sunbeam and I are in a committed relationship. Don't make it weird."
+    ]
+  },
+  {
+    id: 33,
+    text: "*staring out window* All things come to those who wait. Like birds. I'm waiting for birds.",
+    line: 1349,
+    category: "mystical",
+    rating: "hits",
+    analysis: "Works because the proverb gets hijacked mid-sentence by the cat's actual fixation. The cat didn't plan the wisdom — it stumbled into it while obsessing about birds. Feels organic.",
+    suggestions: []
+  },
+  {
+    id: 34,
+    text: "The universe has a plan. The plan is confusing and the universe won't explain.",
+    line: 1772,
+    category: "mystical",
+    rating: "hits",
+    analysis: "Not a [profound]+[cat] formula at all — this is genuine exasperation with the universe. Reads as a frustrated cat dealing with an incomprehensible authority figure. That's just... life.",
+    suggestions: []
+  },
+
+  // ==============================================
+  // OTHER CATEGORIES — SCATTERED INSTANCES
+  // ==============================================
+  {
+    id: 35,
+    text: "The void stares back. The void is also tired. The void gets it.",
+    line: 889,
+    category: "existential",
+    rating: "hits",
+    analysis: "Works. Three beats that build. The void being tired is unexpected — it's not deflecting to a cat behavior, it's making the void itself relatable. 'Gets it' is solidarity, not a punchline.",
+    suggestions: []
+  },
+  {
+    id: 36,
+    text: "Relax. The answer will come. Or it won't. Either way, nap.",
+    line: 1019,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Calming platitude]. [Either way, cat thing]. 'Either way, nap' is the default escape hatch. The 'or it won't' is doing work but the landing is lazy.",
+    suggestions: [
+      "Relax. The answer will come. Or it won't. I'll be asleep either way, which is my answer.",
+      "The answer shows up when it shows up. I'm not standing around waiting. I'm lying down waiting.",
+      "It'll come to you. Everything comes to you if you stay perfectly still long enough."
+    ]
+  },
+  {
+    id: 37,
+    text: "Happiness is small. On purpose. *presents a single kibble* See?",
+    line: 1397,
+    category: "wise",
+    rating: "hits",
+    analysis: "The kibble isn't a punchline — it's a demonstration. The cat is making an argument with evidence. '*presents a single kibble* See?' is showing, not telling. Unified thought.",
+    suggestions: []
+  },
+  {
+    id: 38,
+    text: "The universe expands. I discover a new closet behind the stairs. Coincidence?",
+    line: 1422,
+    category: "wise",
+    rating: "hits",
+    analysis: "Same energy as line 894 (and nearly identical). The cat genuinely believes these are connected. Conspiracy energy, not formula. But it IS a near-duplicate of item #6.",
+    suggestions: [
+      "Consider cutting as a near-duplicate of line 894: 'The universe expands. My territory also expands. Coincidence?'"
+    ]
+  },
+  {
+    id: 39,
+    text: "Growth is uncomfortable. *me, stuck in box* I regret nothing.",
+    line: 1411,
+    category: "heartfelt",
+    rating: "hits",
+    analysis: "The action IS the metaphor. The cat isn't commenting on growth from outside — it's literally experiencing discomfort and choosing it anyway. 'I regret nothing' is defiant, not a punchline.",
+    suggestions: []
+  },
+  {
+    id: 40,
+    text: "Flowers die. Chocolate melts. A cat's judgment is eternal.",
+    line: 2101,
+    category: "judgy",
+    rating: "formula",
+    analysis: "[Impermanence]. [Impermanence]. [Cat thing is permanent]. Three-step escalation ending in cat supremacy. The structure is clean but the template is visible.",
+    suggestions: [
+      "Flowers die. Chocolate melts. I am staring at you with the same expression I had when we met. Draw your own conclusions.",
+      "Everything temporary except this look I'm giving you.",
+      "Love fades. My opinion of you doesn't. That's not a compliment."
+    ]
+  },
+  {
+    id: 41,
+    text: "The truth is a hairball on the rug. Ugly. But better out than lodged in your throat.",
+    line: 1963,
+    category: "wise",
+    rating: "hits",
+    analysis: "The metaphor works because it's disgusting and specific. It's not [profound]+[cat decoration] — the hairball IS the metaphor for truth. The gross specificity earns it.",
+    suggestions: []
+  },
+  {
+    id: 42,
+    text: "The universe is indifferent. I'm slightly worse than indifferent.",
+    line: 2028,
+    category: "cold",
+    rating: "hits",
+    analysis: "Not a [profound]+[cat] formula. It's using the universe as a benchmark for how little the cat cares. The escalation ('slightly worse') is the whole joke. No cat behavior mentioned at all.",
+    suggestions: []
+  },
+  {
+    id: 43,
+    text: "Life is absurd. I find this delightful.",
+    line: 1102,
+    category: "existential",
+    rating: "hits",
+    analysis: "Two sentences but one continuous thought. No cat behavior appended — just an attitude. The cat isn't deflecting to naps or boxes, it's expressing genuine delight in absurdity. Character, not formula.",
+    suggestions: []
+  },
+  {
+    id: 44,
+    text: "Eternity is hilarious when you think about it.",
+    line: 1100,
+    category: "existential",
+    rating: "hits",
+    analysis: "Same energy as 43. No cat behavior, just perspective. The suggestion that eternity is FUNNY is so confident and mysterious it works.",
+    suggestions: []
+  },
+  {
+    id: 45,
+    text: "Time is a flat circle and I have been chasing it.",
+    line: 1002,
+    category: "existential",
+    rating: "hits",
+    analysis: "Rust Cohle quote gets hijacked by a cat chasing its tail — but the cat doesn't KNOW it's quoting True Detective. The double meaning is earned, not announced.",
+    suggestions: []
+  },
+  {
+    id: 46,
+    text: "I have achieved enlightenment. It tastes like chicken.",
+    line: 1016,
+    category: "chaotic",
+    rating: "formula",
+    analysis: "[Spiritual achievement]. [It's actually cat thing]. Same move as the others — cosmic claim deflated to mundane. 'Tastes like chicken' is also a cliche on its own.",
+    suggestions: [
+      "Enlightenment happened. I ate it. Tasted like chicken. Next question.",
+      "Achieved enlightenment during the 3am zoomies. Lost it by breakfast. Will try again tonight.",
+      "I reached nirvana. It was a shelf I'm not supposed to be on."
+    ]
+  },
+  {
+    id: 47,
+    text: "Nostalgia is a trap. But it's a comfortable trap. With snacks.",
+    line: 2035,
+    category: "wise",
+    rating: "formula",
+    analysis: "[Insight about concept]. [But cat-comfort version]. 'With snacks' is the bolted-on cat appendage. The middle sentence is fine, the third kills it.",
+    suggestions: [
+      "Nostalgia is a trap and I walked right in and it's warm in here and I'm not leaving.",
+      "Nostalgia. The most comfortable trap. I know it's a trap. I have made my choice.",
+      "They call nostalgia a trap like that's supposed to scare me. I love traps. I sit in them."
+    ]
+  },
+  {
+    id: 48,
+    text: "Peace is a closed door and a full bowl.",
+    line: 2668,
+    category: "wise",
+    rating: "hits",
+    analysis: "Clean, declarative, no setup+punchline. This IS cat philosophy stated as absolute truth. One thought, no hinge, no formula. The cat believes this completely.",
+    suggestions: []
+  },
+  {
+    id: 49,
+    text: "To want nothing is to have everything. I want almost nothing.",
+    line: 2673,
+    category: "existential",
+    rating: "hits",
+    analysis: "The 'almost' does all the work. It's not deflecting to cat behavior — it's the cat revealing it has ONE desire it won't name. Mystery, not formula.",
+    suggestions: []
+  },
+  {
+    id: 50,
+    text: "Comfort is a very slow emergency.",
+    line: 905,
+    category: "existential",
+    rating: "hits",
+    analysis: "No cat behavior mentioned. No formula. This is genuinely interesting writing — the paradox of comfort as emergency. It could be Jenny Holzer. Keep.",
+    suggestions: []
+  },
+  {
+    id: 51,
+    text: "The grind... breakfast, catbox, window, nap. Repeat.",
+    line: 2159,
+    category: "existential",
+    rating: "hits",
+    analysis: "Not [profound]+[cat]. This is a cat describing its actual day as existential dread. The mundanity IS the philosophy. No separate profound statement needed.",
+    suggestions: []
+  },
+  {
+    id: 52,
+    text: "You miss 100% of the naps you don't take. Unrelated to your question.",
+    line: 1735,
+    category: "chaotic",
+    rating: "formula",
+    analysis: "[Famous quote with nap swapped in]. [Disclaimer]. The Gretzky swap is expected. 'Unrelated to your question' tries to save it with self-awareness but self-aware formula is still formula.",
+    suggestions: [
+      "Wayne Gretzky never said anything about naps and honestly that's his loss.",
+      "You miss 100% of the naps you don't take and I take ALL of them, which makes me the greatest athlete alive.",
+      "I have never missed a nap. Think about what that means for you."
+    ]
+  },
+  {
+    id: 53,
+    text: "The world is a garbage fire. But it's OUR garbage fire. Cozy.",
+    line: 2068,
+    category: "chaotic",
+    rating: "hits",
+    analysis: "Works because 'cozy' reframes a garbage fire as warmth — that's a genuine cat thought (warm = good, source irrelevant). The possessive 'OUR' adds heart. Not a formula.",
+    suggestions: []
+  },
+  {
+    id: 54,
+    text: "Maybe the meaning of life is just... being alive? While you're alive?",
+    line: 2063,
+    category: "existential",
+    rating: "hits",
+    analysis: "No cat behavior at all. Genuine vulnerability. The hesitation ('just... being alive?') is human and real. This is the cat accidentally saying something true.",
+    suggestions: []
+  },
+  {
+    id: 55,
+    text: "What is a bed but a horizontal prison? What are blankets but soft oppressors?",
+    line: 886,
+    category: "existential",
+    rating: "hits",
+    analysis: "Works because it's parody of philosophy, not actual philosophy. The rhetorical questions are intentionally absurd. The cat is being dramatic about comfort. That's character.",
+    suggestions: []
+  },
+  {
+    id: 56,
+    text: "Does the sunbeam move, or do we move around it?",
+    line: 892,
+    category: "existential",
+    rating: "hits",
+    analysis: "Genuine koan. One thought. No punchline. A cat would actually ponder this. The philosophical form fits because the question itself is about a cat experience.",
+    suggestions: []
+  },
+  {
+    id: 57,
+    text: "Is the box empty, or is the box full of potential?",
+    line: 897,
+    category: "existential",
+    rating: "hits",
+    analysis: "Schrodinger energy without saying Schrodinger. The box IS the cat's domain. One thought, no deflection, the profundity emerges naturally from the cat object.",
+    suggestions: []
+  },
+  {
+    id: 58,
+    text: "I have seen the infinite and it is shaped like a crinkle ball.",
+    line: 986,
+    category: "mystical",
+    rating: "hits",
+    analysis: "Works because the cat is deadly serious. It genuinely believes infinity is crinkle-ball-shaped. Not deflecting from profundity — the crinkle ball IS the vision. Unified.",
+    suggestions: []
+  },
+  {
+    id: 59,
+    text: "Everything is connected. Especially the toys I batted under the couch.",
+    line: 989,
+    category: "mystical",
+    rating: "formula",
+    analysis: "[Spiritual claim]. [Especially cat thing]. 'Especially' is the hinge word again — zooming from cosmic to domestic.",
+    suggestions: [
+      "I batted seventeen toys under the couch. They're all connected now. A network. My network.",
+      "Everything under the couch is connected. I put it there. That's called infrastructure.",
+      "There are things under the couch I batted there three years ago. They're part of the foundation now."
+    ]
+  },
+  {
+    id: 60,
+    text: "Dude. Dude. The treat... IS the journey.",
+    line: 998,
+    category: "chaotic",
+    rating: "hits",
+    analysis: "The stoner energy makes it. 'Dude. Dude.' is the setup, and the italics-level emphasis on IS sells the genuine revelation. The cat isn't swapping a word in a quote — it's having a breakthrough.",
+    suggestions: []
+  }
+];
+
+// State management
+let decisions = {};
+try {
+  decisions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+} catch(e) {
+  decisions = {};
+}
+
+function saveDecisions() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+}
+
+function updateStats() {
+  const total = items.length;
+  let keep = 0, cut = 0, edit = 0;
+  items.forEach(item => {
+    const d = decisions[item.id];
+    if (d === 'keep') keep++;
+    else if (d === 'cut') cut++;
+    else if (d === 'edit') edit++;
+  });
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-keep').textContent = keep;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edit').textContent = edit;
+  document.getElementById('stat-pending').textContent = total - keep - cut - edit;
+}
+
+function setDecision(id, decision) {
+  const current = decisions[id];
+  if (current === decision) {
+    delete decisions[id];
+  } else {
+    decisions[id] = decision;
+  }
+  saveDecisions();
+  renderItem(id);
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const el = document.getElementById(`edit-area-${id}`);
+  el.classList.toggle('visible');
+  if (el.classList.contains('visible')) {
+    el.querySelector('textarea').focus();
+  }
+}
+
+function saveEditText(id) {
+  const textarea = document.getElementById(`edit-text-${id}`);
+  if (!decisions[id + '_editText'] && textarea.value === textarea.dataset.original) return;
+  decisions[id + '_editText'] = textarea.value;
+  saveDecisions();
+}
+
+function useSuggestion(id, text) {
+  const textarea = document.getElementById(`edit-text-${id}`);
+  textarea.value = text;
+  decisions[id + '_editText'] = text;
+  decisions[id] = 'edit';
+  saveDecisions();
+  const editArea = document.getElementById(`edit-area-${id}`);
+  editArea.classList.add('visible');
+  renderItem(id);
+  updateStats();
+}
+
+function renderItem(id) {
+  const item = items.find(i => i.id === id);
+  const el = document.getElementById(`item-${id}`);
+  const d = decisions[id];
+
+  el.className = 'item';
+  if (d) el.classList.add(`decided-${d}`);
+
+  // Update button states
+  ['keep', 'cut', 'edit'].forEach(btn => {
+    const btnEl = el.querySelector(`.btn-${btn}`);
+    btnEl.classList.toggle('active', d === btn);
+  });
+}
+
+function renderAll() {
+  const container = document.getElementById('items-container');
+  let lastSection = '';
+  let html = '';
+
+  items.forEach((item, index) => {
+    // Section dividers
+    let section = '';
+    if (item.id === 17) section = 'Wise Category';
+    else if (item.id === 27) section = 'Mystical Category';
+    else if (item.id === 35) section = 'Cross-Category &amp; Scattered Instances';
+
+    if (section && section !== lastSection) {
+      html += `<div class="section-divider">${section}</div>`;
+      lastSection = section;
+    }
+
+    const d = decisions[item.id];
+    const editText = decisions[item.id + '_editText'] || item.text;
+    const decClass = d ? ` decided-${d}` : '';
+
+    html += `
+    <div class="item${decClass}" id="item-${item.id}">
+      <div class="item-header">
+        <div class="item-meta">
+          #${item.id} &mdash; Line <span class="line-num">${item.line}</span>
+          <span class="category">${item.category}</span>
+        </div>
+        <span class="rating rating-${item.rating}">${item.rating.toUpperCase()}</span>
+      </div>
+      <div class="item-text">"${item.text.replace(/"/g, '&quot;').replace(/\*([^*]+)\*/g, '<span style="color:#ffd93d;font-style:italic;">*$1*</span>')}"</div>
+      <div class="item-analysis">${item.analysis}</div>
+      ${item.suggestions.length > 0 ? `
+      <div class="suggestions">
+        <div class="suggestions-label">Suggested Rewrites (click to use)</div>
+        ${item.suggestions.map((s, si) => `
+          <div class="suggestion" data-item-id="${item.id}" data-suggestion-index="${si}">${s}<span class="click-hint">click to edit</span></div>
+        `).join('')}
+      </div>` : ''}
+      <div class="actions">
+        <button class="btn btn-keep${d === 'keep' ? ' active' : ''}" onclick="setDecision(${item.id}, 'keep')">KEEP</button>
+        <button class="btn btn-cut${d === 'cut' ? ' active' : ''}" onclick="setDecision(${item.id}, 'cut')">CUT</button>
+        <button class="btn btn-edit${d === 'edit' ? ' active' : ''}" onclick="setDecision(${item.id}, 'edit'); toggleEdit(${item.id})">EDIT</button>
+      </div>
+      <div class="edit-area${d === 'edit' ? ' visible' : ''}" id="edit-area-${item.id}">
+        <textarea id="edit-text-${item.id}" data-original="${item.text.replace(/"/g, '&quot;')}" oninput="saveEditText(${item.id})">${editText.replace(/</g, '&lt;')}</textarea>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function showExport() {
+  const results = {
+    keep: [],
+    cut: [],
+    edit: [],
+    pending: []
+  };
+
+  items.forEach(item => {
+    const d = decisions[item.id];
+    const entry = {
+      text: item.text,
+      line: item.line,
+      category: item.category,
+      rating: item.rating
+    };
+
+    if (d === 'keep') {
+      results.keep.push({ text: item.text, category: item.category });
+    } else if (d === 'cut') {
+      results.cut.push({ text: item.text, category: item.category, line: item.line });
+    } else if (d === 'edit') {
+      const editText = decisions[item.id + '_editText'] || item.text;
+      results.edit.push({
+        original: item.text,
+        edited: editText,
+        category: item.category,
+        line: item.line
+      });
+    } else {
+      results.pending.push({ text: item.text, category: item.category, line: item.line });
+    }
+  });
+
+  document.getElementById('export-json').textContent = JSON.stringify(results, null, 2);
+  document.getElementById('export-overlay').classList.add('visible');
+}
+
+function closeExport() {
+  document.getElementById('export-overlay').classList.remove('visible');
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('copied-toast');
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2000);
+  });
+}
+
+function resetAll() {
+  if (!confirm('Reset all decisions? This cannot be undone.')) return;
+  decisions = {};
+  localStorage.removeItem(STORAGE_KEY);
+  renderAll();
+  updateStats();
+}
+
+// Init
+renderAll();
+updateStats();
+
+// Event delegation for suggestion clicks (avoids quote-escaping issues in inline handlers)
+document.getElementById('items-container').addEventListener('click', function(e) {
+  const suggEl = e.target.closest('.suggestion');
+  if (!suggEl) return;
+  const itemId = parseInt(suggEl.dataset.itemId);
+  const suggIndex = parseInt(suggEl.dataset.suggestionIndex);
+  const item = items.find(i => i.id === itemId);
+  if (item && item.suggestions[suggIndex]) {
+    useSuggestion(itemId, item.suggestions[suggIndex]);
+  }
+});
+</script>
+</body>
+</html>

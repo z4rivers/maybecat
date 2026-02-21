@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tia Corinne Batch — MaybeCat Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #e94560;
+  }
+  .header-subtitle {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+  }
+  .stat { padding: 4px 10px; border-radius: 4px; }
+  .stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+  .stat-pending { background: rgba(255,255,255,0.1); color: #aaa; }
+
+  .concept-note {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: #bbb;
+  }
+  .concept-note strong { color: #e94560; }
+
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.decided-keep { border-color: #4ecca3; }
+  .response-card.decided-cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.decided-edit { border-color: #ffd93d; }
+
+  .response-number {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .response-text {
+    font-size: 1.15em;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  .response-category {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .response-category span {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .response-move {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .category-edit {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .edit-area select {
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+  .edit-area label { font-size: 0.85em; color: #888; }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+  }
+  .export-section p {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .export-json {
+    background: #0a0a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85em;
+    color: #4ecca3;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: pointer;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: #3dbb92; }
+  .copied { background: #ffd93d !important; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <div class="header-title">Tia Corinne — Cute Gatekeeper</div>
+    <div class="header-subtitle">She has the answer. You probably can't have it.</div>
+  </div>
+  <div class="stats">
+    <span class="stat stat-keep" id="stat-keep">KEEP: 0</span>
+    <span class="stat stat-cut" id="stat-cut">CUT: 0</span>
+    <span class="stat stat-edit" id="stat-edit">EDIT: 0</span>
+    <span class="stat stat-pending" id="stat-pending">PENDING: 20</span>
+  </div>
+</div>
+
+<div class="concept-note">
+  <strong>Tia Corinne:</strong> Knows she's cute — not arrogance, just data. The answer is a privilege, not a right. Gatekeeping with grace. Warm from absolute power. Sometimes she surprises you and just... gives it. Those moments feel like grace.<br><br>
+  <strong>Dual read:</strong> Maps onto wanting what you can't have, the power of scarcity, knowing your own worth, confidence vs arrogance.
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h2>Export (KEEP + EDIT only)</h2>
+  <p>Click the JSON block or the button to copy. Updates live as you decide.</p>
+  <div class="export-json" id="export-json" onclick="copyExport()">[]</div>
+  <button class="copy-btn" id="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = [
+  'mystical','nurturing','poetic','cold','angry','heartfelt',
+  'judgy','chaotic','wise','existential','demanding','meta',
+  'sassy','cryptic','wholesome','chaotic_wholesome','dramatic','physical'
+];
+
+const responses = [
+  {
+    text: "I have the answer. I'm deciding if you deserve it.",
+    category: "demanding",
+    move: "Withholding — the answer exists but access is conditional"
+  },
+  {
+    text: "*slow blink* You're close. Not there yet. But close.",
+    category: "cryptic",
+    move: "Partial reveal — hinting without giving"
+  },
+  {
+    text: "Strong adults have made baby voices at me. I know what I do to people.",
+    category: "wise",
+    move: "Observing her effect — self-knowledge as power"
+  },
+  {
+    text: "I could tell you. I won't. But I could.",
+    category: "cold",
+    move: "The classic withhold — pure Tia Corinne gatekeeping"
+  },
+  {
+    text: "*walks directly into your meeting* Go ahead. Everyone's looking at me now.",
+    category: "chaotic",
+    move: "The world revolves around her — and she's correct"
+  },
+  {
+    text: "Fine. Here. Take it. Don't say I never gave you anything.",
+    category: "heartfelt",
+    move: "The rare full gift — surprise generosity that feels like grace"
+  },
+  {
+    text: "The answer is available. Limited edition. You're on the waitlist.",
+    category: "demanding",
+    move: "Economics of charm — scarcity as value"
+  },
+  {
+    text: "You came here wanting something you can't have. That's the answer, actually.",
+    category: "wise",
+    move: "Dual read — the withholding itself IS the advice"
+  },
+  {
+    text: "*tilts head at precise angle* This is strategy. Not instinct.",
+    category: "cold",
+    move: "Cuteness as currency — deployed, not accidental"
+  },
+  {
+    text: "I don't grant every audience. Yours just got interesting.",
+    category: "demanding",
+    move: "Granting access as the favor — queen energy"
+  },
+  {
+    text: "The sky is blue. Water is wet. Everyone in this room wants to pet me. We proceed from facts.",
+    category: "wise",
+    move: "Not arrogance, just data — reporting, not bragging"
+  },
+  {
+    text: "You're not ready for the answer. I can wait. I have nowhere to be except the center of attention.",
+    category: "cryptic",
+    move: "Patience from power — she has all the time because she has all the leverage"
+  },
+  {
+    text: "*purrs* That's not a yes. That's me enjoying how much you want it to be.",
+    category: "cold",
+    move: "Using the wanting against you — the purr is performance"
+  },
+  {
+    text: "Ask nicer. Not because it changes the answer. Because I like hearing it.",
+    category: "demanding",
+    move: "Making you earn it — the process is the point"
+  },
+  {
+    text: "Today? Today I feel generous. *sets answer on the table like a dead bird* You're welcome.",
+    category: "chaotic_wholesome",
+    move: "Surprise generosity — feels like grace because it's rare"
+  },
+  {
+    text: "I watched you rehearse that question. The first version was better.",
+    category: "judgy",
+    move: "She sees everything — nothing escapes her, including your nervousness"
+  },
+  {
+    text: "The confidence isn't a front. The front is pretending I don't know I'm this cute.",
+    category: "wise",
+    move: "Total self-knowledge — the distinction between confidence and arrogance"
+  },
+  {
+    text: "*shows belly* Don't touch it. I'm showing you what you can't have.",
+    category: "demanding",
+    move: "Gatekeeping with grace — the display IS the boundary"
+  },
+  {
+    text: "Part of me wants to help you. The other part is the part that decides.",
+    category: "existential",
+    move: "The internal negotiation — warm impulse vs power position"
+  },
+  {
+    text: "You'll know when I'm ready to tell you. You'll know because I'll be looking right at you and everything else will get quiet.",
+    category: "poetic",
+    move: "The rare full gift, described before it arrives — anticipation as currency"
+  }
+];
+
+const decisions = new Array(responses.length).fill(null);
+const editedTexts = {};
+const editedCategories = {};
+
+function renderResponses() {
+  const container = document.getElementById('responses');
+  container.innerHTML = responses.map((r, i) => `
+    <div class="response-card" id="card-${i}">
+      <div class="response-number">#${i + 1} of ${responses.length}</div>
+      <div class="response-text">${escapeHtml(r.text)}</div>
+      <div class="response-category"><span>${r.category}</span></div>
+      <div class="response-move">${r.move}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}" oninput="onEdit(${i})">${escapeHtml(r.text)}</textarea>
+        <div class="category-edit">
+          <label>Category:</label>
+          <select id="catselect-${i}" onchange="onCategoryEdit(${i})">
+            ${CATEGORIES.map(c => `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function decide(index, decision) {
+  decisions[index] = decision;
+  const card = document.getElementById(`card-${index}`);
+  card.className = 'response-card decided-' + decision;
+
+  // Update button active states
+  card.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  const btnClass = decision === 'keep' ? 'btn-keep' : decision === 'cut' ? 'btn-cut' : 'btn-edit';
+  card.querySelector(`.${btnClass}`).classList.add('active');
+
+  if (decision === 'edit') {
+    document.getElementById(`edit-${index}`).classList.add('visible');
+  } else {
+    document.getElementById(`edit-${index}`).classList.remove('visible');
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  decide(index, 'edit');
+}
+
+function onEdit(index) {
+  editedTexts[index] = document.getElementById(`textarea-${index}`).value;
+  updateExport();
+}
+
+function onCategoryEdit(index) {
+  editedCategories[index] = document.getElementById(`catselect-${index}`).value;
+  updateExport();
+}
+
+function updateStats() {
+  const keeps = decisions.filter(d => d === 'keep').length;
+  const cuts = decisions.filter(d => d === 'cut').length;
+  const edits = decisions.filter(d => d === 'edit').length;
+  const pending = decisions.filter(d => d === null).length;
+
+  document.getElementById('stat-keep').textContent = `KEEP: ${keeps}`;
+  document.getElementById('stat-cut').textContent = `CUT: ${cuts}`;
+  document.getElementById('stat-edit').textContent = `EDIT: ${edits}`;
+  document.getElementById('stat-pending').textContent = `PENDING: ${pending}`;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      const text = editedTexts[i] !== undefined ? editedTexts[i] : r.text;
+      const category = editedCategories[i] !== undefined ? editedCategories[i] : r.category;
+      exported.push({ text, category });
+    }
+  });
+
+  const json = JSON.stringify(exported, null, 2);
+  document.getElementById('export-json').textContent = json;
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+renderResponses();
+updateExport();
+</script>
+</body>
+</html>

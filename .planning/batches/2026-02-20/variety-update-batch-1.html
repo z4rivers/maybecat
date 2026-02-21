@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Variety Update Batch 1 — Overused Cat Tropes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #ffd93d; margin-bottom: 8px; font-size: 1.5rem; }
+  .subtitle { color: #888; margin-bottom: 20px; font-size: 0.9rem; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; font-size: 0.9rem; }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-count { font-weight: bold; font-size: 1.1rem; }
+  .stat-keep .stat-count { color: #4ecca3; }
+  .stat-cut .stat-count { color: #e94560; }
+  .stat-edit .stat-count { color: #ffd93d; }
+  .stat-pending .stat-count { color: #888; }
+  .item { background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #333; }
+  .item.kept { border-left-color: #4ecca3; opacity: 0.6; }
+  .item.cut { border-left-color: #e94560; opacity: 0.4; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 1.1rem; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .meta { display: flex; gap: 12px; margin-bottom: 8px; font-size: 0.8rem; color: #888; }
+  .trope-flag { color: #e94560; font-size: 0.85rem; margin-bottom: 4px; }
+  .suggestion { color: #4ecca3; font-size: 0.85rem; margin-bottom: 10px; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 8px; padding: 10px; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; font-family: inherit; font-size: 1rem; line-height: 1.4; resize: vertical; display: none; min-height: 80px; }
+  .edit-area.visible { display: block; }
+  .category-select { margin-top: 6px; padding: 4px 8px; background: #0f0f23; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; font-size: 0.85rem; display: none; }
+  .category-select.visible { display: inline-block; }
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-box { width: 100%; min-height: 200px; background: #0f0f23; color: #4ecca3; border: 1px solid #333; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 0.85rem; }
+  .copy-btn { margin-top: 8px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Variety Update Batch 1</h1>
+<p class="subtitle">50 existing responses using overused cat tropes (lines 1-1400) — edit to add variety from cat-behaviors.md</p>
+<div class="stats">
+  <div class="stat stat-keep">Keep as-is: <span class="stat-count" id="keep-count">0</span></div>
+  <div class="stat stat-edit">Edited: <span class="stat-count" id="edit-count">0</span></div>
+  <div class="stat stat-cut">Cut: <span class="stat-count" id="cut-count">0</span></div>
+  <div class="stat stat-pending">Pending: <span class="stat-count" id="pending-count">50</span></div>
+</div>
+
+<!-- ==================== SUNBEAM (9) ==================== -->
+
+<div class="item" data-id="1" data-original="The mists part to reveal... a sunbeam. I must go." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 104</span></div>
+  <div class="trope-flag">Trope: sunbeam — generic "cat finds a sunbeam" warmth</div>
+  <div class="suggestion">Try: "The mists part to reveal... the dryer is running. I must go." (warm dryer top) or "...a laptop charger brick on the floor. I must go."</div>
+  <div class="response-text">"The mists part to reveal... a sunbeam. I must go."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('1','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('1','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('1','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('1',this.value)">The mists part to reveal... a sunbeam. I must go.</textarea>
+  <select class="category-select" onchange="onCategoryChange('1',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="2" data-original="The sunbeam moves. I move. Who is leading?" data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 118</span></div>
+  <div class="trope-flag">Trope: sunbeam — the classic "following the sunbeam" bit</div>
+  <div class="suggestion">Try: "The heating vent kicks on. I move. Who is leading?" or "The dryer hums. I relocate. Coincidence is for amateurs."</div>
+  <div class="response-text">"The sunbeam moves. I move. Who is leading?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('2','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('2','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('2','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('2',this.value)">The sunbeam moves. I move. Who is leading?</textarea>
+  <select class="category-select" onchange="onCategoryChange('2',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="3" data-original="It is a truth universally acknowledged that a cat in possession of a sunbeam must be in want of nothing else." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 494</span></div>
+  <div class="trope-flag">Trope: sunbeam — generic sunbeam contentment</div>
+  <div class="suggestion">Try: "...a cat in possession of a warm laptop lid must be in want of nothing else." or "...a closed dryer..." — keeps Austen parody, kills the trope</div>
+  <div class="response-text">"It is a truth universally acknowledged that a cat in possession of a sunbeam must be in want of nothing else."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('3','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('3','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('3','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('3',this.value)">It is a truth universally acknowledged that a cat in possession of a sunbeam must be in want of nothing else.</textarea>
+  <select class="category-select" onchange="onCategoryChange('3',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="4" data-original="Sit in the sun. That's the whole assignment." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 599</span></div>
+  <div class="trope-flag">Trope: sunbeam — generic "sit in the sun" warmth</div>
+  <div class="suggestion">Try: "Lie on the warm dryer. That's the whole assignment." or "Find the heating vent. That's the whole assignment." — specific warmth source</div>
+  <div class="response-text">"Sit in the sun. That's the whole assignment."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('4','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('4','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('4','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('4',this.value)">Sit in the sun. That's the whole assignment.</textarea>
+  <select class="category-select" onchange="onCategoryChange('4',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="5" data-original="You seek meaning. I seek the warm spot. Perhaps they are the same." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 887</span></div>
+  <div class="trope-flag">Trope: sunbeam — generic "warm spot" (implied sunbeam)</div>
+  <div class="suggestion">Try: "You seek meaning. I seek the spot behind the TV where the warm air vents out. Perhaps they are the same." — specific warmth</div>
+  <div class="response-text">"You seek meaning. I seek the warm spot. Perhaps they are the same."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('5','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('5','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('5','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('5',this.value)">You seek meaning. I seek the warm spot. Perhaps they are the same.</textarea>
+  <select class="category-select" onchange="onCategoryChange('5',this.value)">
+    <option value="existential" selected>existential</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="6" data-original="Does the sunbeam move, or do we move around it?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 892</span></div>
+  <div class="trope-flag">Trope: sunbeam — philosophical sunbeam, still the same trope</div>
+  <div class="suggestion">Try: "Does the furnace decide when to kick on, or do I decide when to lie on the vent?" — same philosophical energy, specific heat source</div>
+  <div class="response-text">"Does the sunbeam move, or do we move around it?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('6','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('6','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('6','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('6',this.value)">Does the sunbeam move, or do we move around it?</textarea>
+  <select class="category-select" onchange="onCategoryChange('6',this.value)">
+    <option value="existential" selected>existential</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="7" data-original="I would like to sit in that sunbeam now." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Line: 937</span></div>
+  <div class="trope-flag">Trope: sunbeam — literal sunbeam request</div>
+  <div class="suggestion">Try: "Turn the dryer back on. I was using that." or "The laptop is cooling down. This is unacceptable." — specific warm-thing demanding</div>
+  <div class="response-text">"I would like to sit in that sunbeam now."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('7','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('7','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('7','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('7',this.value)">I would like to sit in that sunbeam now.</textarea>
+  <select class="category-select" onchange="onCategoryChange('7',this.value)">
+    <option value="demanding" selected>demanding</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="8" data-original="I am one with the sunbeam. The sunbeam is one with me." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1003</span></div>
+  <div class="trope-flag">Trope: sunbeam — spiritual sunbeam, still the trope</div>
+  <div class="suggestion">Try: "I am one with the router. The router is one with me." (warm electronics) or "I am one with the dryer vibration. It is one with me."</div>
+  <div class="response-text">"I am one with the sunbeam. The sunbeam is one with me."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('8','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('8','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('8','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('8',this.value)">I am one with the sunbeam. The sunbeam is one with me.</textarea>
+  <select class="category-select" onchange="onCategoryChange('8',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="9" data-original="*lying in sunbeam* The path forward will become clear. *falls asleep* ...when I wake up." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1350</span></div>
+  <div class="trope-flag">Trope: sunbeam + sleeping — double trope combo</div>
+  <div class="suggestion">Try: "*lying on closed laptop* The path forward will become clear. *falls asleep* ...when I wake up." — warm laptop lid from cat-behaviors.md</div>
+  <div class="response-text">"*lying in sunbeam* The path forward will become clear. *falls asleep* ...when I wake up."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('9','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('9','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('9','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('9',this.value)">*lying in sunbeam* The path forward will become clear. *falls asleep* ...when I wake up.</textarea>
+  <select class="category-select" onchange="onCategoryChange('9',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== KNOCKING THINGS OFF (13) ==================== -->
+
+<div class="item" data-id="10" data-original="I knocked it over. / It was between me and sun. / I have no regrets." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Line: 152</span></div>
+  <div class="trope-flag">Trope: knocking things off + sunbeam — double trope</div>
+  <div class="suggestion">Try: specific destructive act from cat-behaviors.md — stepping on keyboard, pulling tissue from box, unspooling toilet paper</div>
+  <div class="response-text">"I knocked it over. / It was between me and sun. / I have no regrets."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('10','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('10','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('10','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('10',this.value)">I knocked it over. / It was between me and sun. / I have no regrets.</textarea>
+  <select class="category-select" onchange="onCategoryChange('10',this.value)">
+    <option value="poetic" selected>poetic</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="11" data-original="That's a lot of words for someone within knocking-things-off-tables distance." data-category="judgy">
+  <div class="meta"><span>Category: judgy</span><span>Line: 278</span></div>
+  <div class="trope-flag">Trope: knocking things off tables — literally names the trope</div>
+  <div class="suggestion">Try: "That's a lot of words for someone whose earbuds are on the nightstand." (chewing through cords) — specific threat, not generic</div>
+  <div class="response-text">"That's a lot of words for someone within knocking-things-off-tables distance."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('11','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('11','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('11','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('11',this.value)">That's a lot of words for someone within knocking-things-off-tables distance.</textarea>
+  <select class="category-select" onchange="onCategoryChange('11',this.value)">
+    <option value="judgy" selected>judgy</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="12" data-original="[knocks your question off the table]" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 326</span></div>
+  <div class="trope-flag">Trope: knocking things off tables — the most literal version</div>
+  <div class="suggestion">Try: "[steps on your keyboard and sends the email]" or "[pulls a tissue out of the box, then another, then another]" — specific chaos</div>
+  <div class="response-text">"[knocks your question off the table]"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('12','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('12','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('12','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('12',this.value)">[knocks your question off the table]</textarea>
+  <select class="category-select" onchange="onCategoryChange('12',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="13" data-original="*knocks over water glass* The spirits have spoken." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 335</span></div>
+  <div class="trope-flag">Trope: knocking things off — water glass variant</div>
+  <div class="suggestion">Try: "*sticks paw in your water glass and flicks* The spirits have spoken." — from cat-behaviors.md, same energy, more specific</div>
+  <div class="response-text">"*knocks over water glass* The spirits have spoken."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('13','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('13','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('13','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('13',this.value)">*knocks over water glass* The spirits have spoken.</textarea>
+  <select class="category-select" onchange="onCategoryChange('13',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="14" data-original="I'm going to knock this over and we're both going to learn something." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 342</span></div>
+  <div class="trope-flag">Trope: knocking things off — generic knock-over threat</div>
+  <div class="suggestion">Try: "I'm going to walk across this puzzle and we're both going to learn something." or "I'm chewing through this cord and we're both going to learn something."</div>
+  <div class="response-text">"I'm going to knock this over and we're both going to learn something."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('14','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('14','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('14','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('14',this.value)">I'm going to knock this over and we're both going to learn something.</textarea>
+  <select class="category-select" onchange="onCategoryChange('14',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="15" data-original="If it ain't broke, knock it off the shelf and see what happens." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 464</span></div>
+  <div class="trope-flag">Trope: knocking things off — shelf variant</div>
+  <div class="suggestion">Try: "If it ain't broke, step on the keyboard and see what sends." or "If it ain't broke, chew through the cord and find out."</div>
+  <div class="response-text">"If it ain't broke, knock it off the shelf and see what happens."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('15','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('15','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('15','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('15',this.value)">If it ain't broke, knock it off the shelf and see what happens.</textarea>
+  <select class="category-select" onchange="onCategoryChange('15',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="16" data-original="I will knock everything you love off the counter." data-category="angry">
+  <div class="meta"><span>Category: angry</span><span>Line: 643</span></div>
+  <div class="trope-flag">Trope: knocking things off — angry counter variant</div>
+  <div class="suggestion">Try: "I will unplug everything you love." or "I will sit on the one thing you need most. For hours." — specific revenge from cat-behaviors.md</div>
+  <div class="response-text">"I will knock everything you love off the counter."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('16','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('16','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('16','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('16',this.value)">I will knock everything you love off the counter.</textarea>
+  <select class="category-select" onchange="onCategoryChange('16',this.value)">
+    <option value="angry" selected>angry</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="17" data-original="*pushes your coffee closer to the edge* I'm helping." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1240</span></div>
+  <div class="trope-flag">Trope: knocking things off — pushing-to-edge variant</div>
+  <div class="suggestion">Try: "*slowly pushing pen toward edge of desk, maintaining eye contact* I'm helping." — from cat-behaviors.md, same energy, more specific object</div>
+  <div class="response-text">"*pushes your coffee closer to the edge* I'm helping."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('17','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('17','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('17','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('17',this.value)">*pushes your coffee closer to the edge* I'm helping.</textarea>
+  <select class="category-select" onchange="onCategoryChange('17',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="18" data-original="*maintains eye contact while pushing thing off table* This is for earlier." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1327</span></div>
+  <div class="trope-flag">Trope: knocking things off tables — the eye contact variant, extremely memed</div>
+  <div class="suggestion">Try: "*maintains eye contact while sitting on the one page you need* This is for earlier." — from cat-behaviors.md (sitting on paper)</div>
+  <div class="response-text">"*maintains eye contact while pushing thing off table* This is for earlier."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('18','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('18','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('18','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('18',this.value)">*maintains eye contact while pushing thing off table* This is for earlier.</textarea>
+  <select class="category-select" onchange="onCategoryChange('18',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="19" data-original="*knocks over your water* Let go of what no longer serves you. Like this glass." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1351</span></div>
+  <div class="trope-flag">Trope: knocking things off — spiritual knock-over</div>
+  <div class="suggestion">Try: "*walks across your puzzle in progress* Let go of what no longer serves you. Like this puzzle." — from cat-behaviors.md</div>
+  <div class="response-text">"*knocks over your water* Let go of what no longer serves you. Like this glass."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('19','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('19','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('19','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('19',this.value)">*knocks over your water* Let go of what no longer serves you. Like this glass.</textarea>
+  <select class="category-select" onchange="onCategoryChange('19',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="20" data-original="*pushes your phone off the table* Pay attention to me instead." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Line: 1366</span></div>
+  <div class="trope-flag">Trope: knocking things off — phone variant</div>
+  <div class="suggestion">Try: "*sits directly on your phone* Pay attention to me instead." — same energy, different specific action (sitting on things, not pushing off)</div>
+  <div class="response-text">"*pushes your phone off the table* Pay attention to me instead."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('20','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('20','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('20','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('20',this.value)">*pushes your phone off the table* Pay attention to me instead.</textarea>
+  <select class="category-select" onchange="onCategoryChange('20',this.value)">
+    <option value="demanding" selected>demanding</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="21" data-original="*sits quietly* *knocks thing off table* Wisdom. *sits quietly again*" data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1394</span></div>
+  <div class="trope-flag">Trope: knocking things off tables — zen knock-over</div>
+  <div class="suggestion">Try: "*sits quietly* *hooks claw into page corner and drags* Wisdom. *sits quietly again*" — from cat-behaviors.md</div>
+  <div class="response-text">"*sits quietly* *knocks thing off table* Wisdom. *sits quietly again*"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('21','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('21','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('21','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('21',this.value)">*sits quietly* *knocks thing off table* Wisdom. *sits quietly again*</textarea>
+  <select class="category-select" onchange="onCategoryChange('21',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="22" data-original="*knocks fruit off counter* The fruit falls when it is ready. I decide that." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1398</span></div>
+  <div class="trope-flag">Trope: knocking things off counter — mystical knock-off</div>
+  <div class="suggestion">Try: "*pulls towel off oven handle* The towel falls when it is ready. I decide that." — from cat-behaviors.md (pulling towel off handle)</div>
+  <div class="response-text">"*knocks fruit off counter* The fruit falls when it is ready. I decide that."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('22','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('22','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('22','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('22',this.value)">*knocks fruit off counter* The fruit falls when it is ready. I decide that.</textarea>
+  <select class="category-select" onchange="onCategoryChange('22',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== BOX / IF I FITS I SITS (11) ==================== -->
+
+<div class="item" data-id="23" data-original="This box is too small. / And yet I am inside it. / Explain this. You can't." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Line: 156</span></div>
+  <div class="trope-flag">Trope: box / "if I fits I sits" — the exact meme</div>
+  <div class="suggestion">Try: "This sink is porcelain. / And yet I am inside it. / Explain this. You can't." — bathroom sink from cat-behaviors.md</div>
+  <div class="response-text">"This box is too small. / And yet I am inside it. / Explain this. You can't."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('23','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('23','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('23','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('23',this.value)">This box is too small. / And yet I am inside it. / Explain this. You can't.</textarea>
+  <select class="category-select" onchange="onCategoryChange('23',this.value)">
+    <option value="poetic" selected>poetic</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="24" data-original="I need to sit in this box now. Ask later." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 336</span></div>
+  <div class="trope-flag">Trope: box — generic box sitting</div>
+  <div class="suggestion">Try: "I need to be in this paper bag now. Ask later." or "I need to be in this drawer now. Ask later." — from cat-behaviors.md</div>
+  <div class="response-text">"I need to sit in this box now. Ask later."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('24','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('24','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('24','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('24',this.value)">I need to sit in this box now. Ask later.</textarea>
+  <select class="category-select" onchange="onCategoryChange('24',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="25" data-original="Life is like a box of... actually, I love boxes." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 518</span></div>
+  <div class="trope-flag">Trope: box — "I love boxes" punchline</div>
+  <div class="suggestion">Try: "Life is like a box of... actually, I'm already inside it." or swap box for paper bag / suitcase from cat-behaviors.md</div>
+  <div class="response-text">"Life is like a box of... actually, I love boxes."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('25','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('25','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('25','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('25',this.value)">Life is like a box of... actually, I love boxes.</textarea>
+  <select class="category-select" onchange="onCategoryChange('25',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="26" data-original="The box chooses you. You do not choose the box." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 727</span></div>
+  <div class="trope-flag">Trope: box — mystical box wisdom</div>
+  <div class="suggestion">Try: "The paper bag chooses you. You do not choose the paper bag." or "The open suitcase chooses you." — from cat-behaviors.md</div>
+  <div class="response-text">"The box chooses you. You do not choose the box."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('26','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('26','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('26','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('26',this.value)">The box chooses you. You do not choose the box.</textarea>
+  <select class="category-select" onchange="onCategoryChange('26',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="27" data-original="If it fits, it was meant to be." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 729</span></div>
+  <div class="trope-flag">Trope: box — "if I fits I sits" reworded</div>
+  <div class="suggestion">Try: "If the drawer was left open, it was meant for me." or "If the gap between the couch and wall exists, it was meant for me." — specific spaces</div>
+  <div class="response-text">"If it fits, it was meant to be."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('27','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('27','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('27','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('27',this.value)">If it fits, it was meant to be.</textarea>
+  <select class="category-select" onchange="onCategoryChange('27',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="28" data-original="Is the box empty, or is the box full of potential?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 897</span></div>
+  <div class="trope-flag">Trope: box — Schrodinger's box, memed to death</div>
+  <div class="suggestion">Try: "Is the bathroom sink empty, or is the bathroom sink full of potential?" or "Is the open suitcase empty, or..."</div>
+  <div class="response-text">"Is the box empty, or is the box full of potential?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('28','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('28','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('28','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('28',this.value)">Is the box empty, or is the box full of potential?</textarea>
+  <select class="category-select" onchange="onCategoryChange('28',this.value)">
+    <option value="existential" selected>existential</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="29" data-original="This is boring. Do you have any boxes?" data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Line: 941</span></div>
+  <div class="trope-flag">Trope: box — generic box obsession</div>
+  <div class="suggestion">Try: "This is boring. Is the suitcase open?" or "This is boring. Is there a paper bag somewhere?" — from cat-behaviors.md</div>
+  <div class="response-text">"This is boring. Do you have any boxes?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('29','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('29','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('29','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('29',this.value)">This is boring. Do you have any boxes?</textarea>
+  <select class="category-select" onchange="onCategoryChange('29',this.value)">
+    <option value="demanding" selected>demanding</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="30" data-original="What if boxes are just the universe hugging us?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 991</span></div>
+  <div class="trope-flag">Trope: box — stoner box philosophy</div>
+  <div class="suggestion">Try: "What if the bathroom sink is just the universe cradling us?" or "What if paper bags are just the universe whispering?" — from cat-behaviors.md</div>
+  <div class="response-text">"What if boxes are just the universe hugging us?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('30','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('30','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('30','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('30',this.value)">What if boxes are just the universe hugging us?</textarea>
+  <select class="category-select" onchange="onCategoryChange('30',this.value)">
+    <option value="existential" selected>existential</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="31" data-original="Peace is found in stillness. Also in boxes." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1021</span></div>
+  <div class="trope-flag">Trope: box — tacked-on box reference</div>
+  <div class="suggestion">Try: "Peace is found in stillness. Also in the gap between the couch and the wall." — from cat-behaviors.md (specific hiding spot)</div>
+  <div class="response-text">"Peace is found in stillness. Also in boxes."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('31','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('31','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('31','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('31',this.value)">Peace is found in stillness. Also in boxes.</textarea>
+  <select class="category-select" onchange="onCategoryChange('31',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="32" data-original="*from inside a box* The answer you seek is seeking you. Also, I'm in this box now." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1347</span></div>
+  <div class="trope-flag">Trope: box — cat in box delivering wisdom</div>
+  <div class="suggestion">Try: "*from inside a paper bag* The answer you seek is seeking you. Also, I'm in this bag now." or "*from inside the bathroom cabinet*" — cat-behaviors.md</div>
+  <div class="response-text">"*from inside a box* The answer you seek is seeking you. Also, I'm in this box now."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('32','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('32','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('32','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('32',this.value)">*from inside a box* The answer you seek is seeking you. Also, I'm in this box now.</textarea>
+  <select class="category-select" onchange="onCategoryChange('32',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="33" data-original="*in a box* Come, rest in the hollow of this box. There's room. Barely." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Line: 1390</span></div>
+  <div class="trope-flag">Trope: box — poetic box sitting</div>
+  <div class="suggestion">Try: "*in the bathroom sink* Come, rest in the hollow of this porcelain. There's room. Barely." — from cat-behaviors.md (sink as cradle)</div>
+  <div class="response-text">"*in a box* Come, rest in the hollow of this box. There's room. Barely."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('33','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('33','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('33','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('33',this.value)">*in a box* Come, rest in the hollow of this box. There's room. Barely.</textarea>
+  <select class="category-select" onchange="onCategoryChange('33',this.value)">
+    <option value="poetic" selected>poetic</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== LASER POINTER (2) ==================== -->
+
+<div class="item" data-id="34" data-original="The red dot escapes. / Every time, I think: this time. / Next time I'm going for the hand." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Line: 154</span></div>
+  <div class="trope-flag">Trope: laser pointer — chasing the red dot</div>
+  <div class="suggestion">Try: bottle cap on tile, hair tie flicked across room, ping pong ball down stairs, ice cube on kitchen floor — all from cat-behaviors.md chase alternatives</div>
+  <div class="response-text">"The red dot escapes. / Every time, I think: this time. / Next time I'm going for the hand."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('34','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('34','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('34','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('34',this.value)">The red dot escapes. / Every time, I think: this time. / Next time I'm going for the hand.</textarea>
+  <select class="category-select" onchange="onCategoryChange('34',this.value)">
+    <option value="poetic" selected>poetic</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="35" data-original="What if the laser dot is real and WE'RE the illusion?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 987</span></div>
+  <div class="trope-flag">Trope: laser pointer — philosophical laser dot</div>
+  <div class="suggestion">Try: "What if the cursor on the screen is real and WE'RE the illusion?" — from cat-behaviors.md (stalking cursor on laptop screen)</div>
+  <div class="response-text">"What if the laser dot is real and WE'RE the illusion?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('35','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('35','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('35','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('35',this.value)">What if the laser dot is real and WE'RE the illusion?</textarea>
+  <select class="category-select" onchange="onCategoryChange('35',this.value)">
+    <option value="existential" selected>existential</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== KNEADING / MAKING BISCUITS (3) ==================== -->
+
+<div class="item" data-id="36" data-original="*kneads the air twice, then stops* This spot will do. You'll do too." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 730</span></div>
+  <div class="trope-flag">Trope: kneading / making biscuits — the air-kneading variant</div>
+  <div class="suggestion">Try: "*slow blinks twice, then stops* This spot will do. You'll do too." or "*presses top of head into your palm*" — from cat-behaviors.md contentment alternatives</div>
+  <div class="response-text">"*kneads the air twice, then stops* This spot will do. You'll do too."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('36','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('36','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('36','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('36',this.value)">*kneads the air twice, then stops* This spot will do. You'll do too.</textarea>
+  <select class="category-select" onchange="onCategoryChange('36',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="37" data-original="*kneading blanket for five minutes* The wisdom will come when the biscuits are done." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1296</span></div>
+  <div class="trope-flag">Trope: kneading / making biscuits — literally says "biscuits"</div>
+  <div class="suggestion">Try: "*licking the same spot on a blanket, eyes half-closed, gone* The wisdom will come when I'm done." — from cat-behaviors.md (blanket licking trance)</div>
+  <div class="response-text">"*kneading blanket for five minutes* The wisdom will come when the biscuits are done."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('37','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('37','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('37','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('37',this.value)">*kneading blanket for five minutes* The wisdom will come when the biscuits are done.</textarea>
+  <select class="category-select" onchange="onCategoryChange('37',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="38" data-original="*kneading aggressively* Work through your issues. Like this. Knead them out." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 1356</span></div>
+  <div class="trope-flag">Trope: kneading — the "making biscuits = therapy" take</div>
+  <div class="suggestion">Try: "*chewing on corner of cardboard* Work through your issues. Like this. One corner at a time." — from cat-behaviors.md (cardboard chewing)</div>
+  <div class="response-text">"*kneading aggressively* Work through your issues. Like this. Knead them out."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('38','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('38','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('38','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('38',this.value)">*kneading aggressively* Work through your issues. Like this. Knead them out.</textarea>
+  <select class="category-select" onchange="onCategoryChange('38',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== 3AM ZOOMIES / MIDNIGHT CRAZIES (8) ==================== -->
+
+<div class="item" data-id="39" data-original="Three AM is when / the truth reveals itself to me. / You should be awake." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Line: 155</span></div>
+  <div class="trope-flag">Trope: 3am zoomies — the "3am is my time" cliche</div>
+  <div class="suggestion">Try: post-litter-box victory lap, or "right after the litter box / the truth reveals itself to me" — from cat-behaviors.md (post-poop energy burst)</div>
+  <div class="response-text">"Three AM is when / the truth reveals itself to me. / You should be awake."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('39','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('39','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('39','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('39',this.value)">Three AM is when / the truth reveals itself to me. / You should be awake.</textarea>
+  <select class="category-select" onchange="onCategoryChange('39',this.value)">
+    <option value="poetic" selected>poetic</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="40" data-original="Hold on I need to run at full speed for no reason. BRB." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 330</span></div>
+  <div class="trope-flag">Trope: zoomies — generic "running for no reason"</div>
+  <div class="suggestion">Try: "Hold on I just used the litter box and I need to sprint through the entire house. BRB." — post-poop victory lap from cat-behaviors.md</div>
+  <div class="response-text">"Hold on I need to run at full speed for no reason. BRB."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('40','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('40','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('40','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('40',this.value)">Hold on I need to run at full speed for no reason. BRB.</textarea>
+  <select class="category-select" onchange="onCategoryChange('40',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="41" data-original="ZOOOOOOOM. Sorry, what was the question?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 334</span></div>
+  <div class="trope-flag">Trope: zoomies — generic zoom</div>
+  <div class="suggestion">Try: "*skids across hardwood, legs in four directions* Sorry, what was the question?" — from cat-behaviors.md (slipping on hardwood)</div>
+  <div class="response-text">"ZOOOOOOOM. Sorry, what was the question?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('41','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('41','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('41','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('41',this.value)">ZOOOOOOOM. Sorry, what was the question?</textarea>
+  <select class="category-select" onchange="onCategoryChange('41',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="42" data-original="Scheduled zoomies. 9 PM. No explanation." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Line: 801</span></div>
+  <div class="trope-flag">Trope: zoomies — literally says "zoomies"</div>
+  <div class="suggestion">Try: "Scheduled post-litter-box victory lap. No explanation." or "Scheduled wall-bounce at 9 PM. No explanation." — from cat-behaviors.md</div>
+  <div class="response-text">"Scheduled zoomies. 9 PM. No explanation."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('42','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('42','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('42','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('42',this.value)">Scheduled zoomies. 9 PM. No explanation.</textarea>
+  <select class="category-select" onchange="onCategoryChange('42',this.value)">
+    <option value="wise" selected>wise</option><option value="mystical">mystical</option><option value="chaotic">chaotic</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="43" data-original="3am has its own energy." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 873</span></div>
+  <div class="trope-flag">Trope: 3am — generic "3am energy" reference</div>
+  <div class="suggestion">Try: "The moment right after the litter box has its own energy." — from cat-behaviors.md (post-poop victory lap timing)</div>
+  <div class="response-text">"3am has its own energy."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('43','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('43','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('43','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('43',this.value)">3am has its own energy.</textarea>
+  <select class="category-select" onchange="onCategoryChange('43',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="44" data-original="I make a lot of noise at 3am." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 880</span></div>
+  <div class="trope-flag">Trope: 3am — generic "noisy at 3am" cat cliche</div>
+  <div class="suggestion">Try: "I yowl while carrying a sock through the house. Announcing the kill to an empty room." — from cat-behaviors.md (specific 2am behavior)</div>
+  <div class="response-text">"I make a lot of noise at 3am."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('44','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('44','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('44','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('44',this.value)">I make a lot of noise at 3am.</textarea>
+  <select class="category-select" onchange="onCategoryChange('44',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="45" data-original="It's 4am. Perfect time to discuss your problems. LOUDLY." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1367</span></div>
+  <div class="trope-flag">Trope: 3am/4am — "waking you up in the middle of the night" variant</div>
+  <div class="suggestion">Try: "I just used the litter box. Perfect time to discuss your problems. At full gallop." — from cat-behaviors.md (post-poop sprint)</div>
+  <div class="response-text">"It's 4am. Perfect time to discuss your problems. LOUDLY."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('45','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('45','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('45','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('45',this.value)">It's 4am. Perfect time to discuss your problems. LOUDLY.</textarea>
+  <select class="category-select" onchange="onCategoryChange('45',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="46" data-original="4am is perfect. You disagree? That's a you problem." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1399</span></div>
+  <div class="trope-flag">Trope: 3am/4am — "4am is my time" cat cliche</div>
+  <div class="suggestion">Try: "Right after the litter box is perfect. You disagree? That's a you problem." — from cat-behaviors.md (post-poop energy)</div>
+  <div class="response-text">"4am is perfect. You disagree? That's a you problem."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('46','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('46','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('46','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('46',this.value)">4am is perfect. You disagree? That's a you problem.</textarea>
+  <select class="category-select" onchange="onCategoryChange('46',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== STARING AT NOTHING / SEEING GHOSTS (4) ==================== -->
+
+<div class="item" data-id="47" data-original="*stares directly at nothing for 45 seconds* ...Yes." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 329</span></div>
+  <div class="trope-flag">Trope: staring at nothing — the classic "staring at nothing" gag</div>
+  <div class="suggestion">Try: "*tracks something across the ceiling with head — smooth, slow, nothing visible* ...Yes." — from cat-behaviors.md (specific tracking motion)</div>
+  <div class="response-text">"*stares directly at nothing for 45 seconds* ...Yes."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('47','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('47','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('47','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('47',this.value)">*stares directly at nothing for 45 seconds* ...Yes.</textarea>
+  <select class="category-select" onchange="onCategoryChange('47',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="48" data-original="BREAKING NEWS: *stares at corner* That's it. That's the news." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 343</span></div>
+  <div class="trope-flag">Trope: staring at nothing — corner-staring variant</div>
+  <div class="suggestion">Try: "BREAKING NEWS: *stares at spot where a bug was ten minutes ago* That's it. That's the news." — from cat-behaviors.md</div>
+  <div class="response-text">"BREAKING NEWS: *stares at corner* That's it. That's the news."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('48','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('48','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('48','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('48',this.value)">BREAKING NEWS: *stares at corner* That's it. That's the news.</textarea>
+  <select class="category-select" onchange="onCategoryChange('48',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="49" data-original="You ever just stare at nothing and see everything?" data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1015</span></div>
+  <div class="trope-flag">Trope: staring at nothing — philosophical staring-at-nothing</div>
+  <div class="suggestion">Try: "You ever just watch the toilet flush and understand everything?" or "You ever watch rain run down a window and see everything?" — from cat-behaviors.md</div>
+  <div class="response-text">"You ever just stare at nothing and see everything?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('49','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('49','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('49','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('49',this.value)">You ever just stare at nothing and see everything?</textarea>
+  <select class="category-select" onchange="onCategoryChange('49',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="50" data-original="I'm not staring at nothing. You just can't see it." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1058</span></div>
+  <div class="trope-flag">Trope: staring at nothing / seeing ghosts — the exact "seeing ghosts" cliche</div>
+  <div class="suggestion">Try: "I'm not staring at the ceiling. Something crossed it. You're just slow." — from cat-behaviors.md (tracking something across ceiling)</div>
+  <div class="response-text">"I'm not staring at nothing. You just can't see it."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('50','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('50','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('50','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('50',this.value)">I'm not staring at nothing. You just can't see it.</textarea>
+  <select class="category-select" onchange="onCategoryChange('50',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="export-section">
+  <h2>Export — Edited Responses</h2>
+  <p style="color: #888; margin-bottom: 10px; font-size: 0.85rem;">Only includes EDITED responses (with new text). Copy and use to update oracleResponses.ts</p>
+  <textarea class="export-box" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+</div>
+
+<script>
+const categories = ['chaotic','wise','cold','sassy','wholesome','demanding','cryptic','dramatic','heartfelt','nurturing','poetic','angry','unhinged','judgy','existential','mystical','meta'];
+const items = document.querySelectorAll('.item');
+const state = {};
+
+items.forEach(item => {
+  const id = item.dataset.id;
+  state[id] = { status: 'pending', original: item.dataset.original, text: item.dataset.original, category: item.dataset.category };
+});
+
+function updateStats() {
+  const vals = Object.values(state);
+  document.getElementById('keep-count').textContent = vals.filter(v => v.status === 'keep').length;
+  document.getElementById('edit-count').textContent = vals.filter(v => v.status === 'edit').length;
+  document.getElementById('cut-count').textContent = vals.filter(v => v.status === 'cut').length;
+  document.getElementById('pending-count').textContent = vals.filter(v => v.status === 'pending').length;
+  updateExport();
+}
+
+function updateExport() {
+  const edited = Object.entries(state)
+    .filter(([,v]) => v.status === 'edit')
+    .map(([,v]) => ({ original: v.original, text: v.text, category: v.category }));
+  document.getElementById('export-json').value = JSON.stringify(edited, null, 2);
+}
+
+function setStatus(id, status) {
+  state[id].status = status;
+  const item = document.querySelector(`[data-id="${id}"]`);
+  item.className = 'item ' + (status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited' : '');
+  const editArea = item.querySelector('.edit-area');
+  const catSelect = item.querySelector('.category-select');
+  if (status === 'edit') {
+    editArea.classList.add('visible');
+    catSelect.classList.add('visible');
+    editArea.focus();
+  } else {
+    editArea.classList.remove('visible');
+    catSelect.classList.remove('visible');
+  }
+  updateStats();
+}
+
+function onEdit(id, text) {
+  state[id].text = text;
+  updateExport();
+}
+
+function onCategoryChange(id, cat) {
+  state[id].category = cat;
+  updateExport();
+}
+
+updateStats();
+</script>
+</body>
+</html>

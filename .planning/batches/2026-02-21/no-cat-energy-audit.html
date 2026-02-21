@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Cat Energy Audit — Is This Actually The Voice?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .stats { display: flex; gap: 20px; font-size: 14px; flex-wrap: wrap; }
+  .stat { padding: 6px 14px; border-radius: 20px; font-weight: 600; }
+  .stat-keep { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; }
+  .stat-cut { background: #e9456022; color: #e94560; border: 1px solid #e94560; }
+  .stat-edit { background: #ffd93d22; color: #ffd93d; border: 1px solid #ffd93d; }
+  .stat-remaining { background: #8888ff22; color: #8888ff; border: 1px solid #8888ff; }
+  h1 { font-size: 22px; margin-bottom: 8px; color: #fff; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 15px; }
+  .item { background: #16213e; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; }
+  .item.cut { border-color: #e94560; opacity: 0.6; }
+  .item.edited { border-color: #ffd93d; }
+  .response-text { font-size: 18px; line-height: 1.6; margin-bottom: 6px; color: #fff; }
+  .meta-info { font-size: 12px; color: #666; margin-bottom: 12px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d83450; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82c; }
+  .edit-area { width: 100%; margin-top: 10px; padding: 12px; background: #0f1729; border: 1px solid #ffd93d; border-radius: 6px; color: #fff; font-size: 16px; line-height: 1.5; resize: vertical; min-height: 60px; display: none; }
+  .edit-area.visible { display: block; }
+  .export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 8px; border: 1px solid #333; }
+  .export-btn { background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-bottom: 12px; margin-right: 8px; }
+  .copy-btn { background: #8888ff; color: #fff; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: none; }
+  .copy-btn:hover { background: #7777ee; }
+  .copy-btn.copied { background: #4ecca3; color: #1a1a2e; }
+  .export-output { width: 100%; min-height: 200px; background: #1a1a2e; border: 1px solid #333; border-radius: 6px; color: #4ecca3; font-family: monospace; font-size: 13px; padding: 12px; }
+</style>
+</head>
+<body>
+<div class="sticky-header">
+  <h1>"No Cat Energy" Audit — Is This Actually The Voice?</h1>
+  <p class="subtitle">These were flagged as "no cat" because they sound like a sharp human, not a literal cat. But maybe that IS MaybeCat — attitude over species. You decide: KEEP = it's the voice, CUT = needs cat injection, EDIT = tweak it.</p>
+  <div class="stats">
+    <span class="stat stat-keep" id="keep-count">KEEP: 0</span>
+    <span class="stat stat-cut" id="cut-count">CUT: 0</span>
+    <span class="stat stat-edit" id="edit-count">EDIT: 0</span>
+    <span class="stat stat-remaining" id="remaining">Remaining: 0</span>
+  </div>
+</div>
+<div id="items"></div>
+<div class="export-section">
+  <h2 style="color:#fff;margin-bottom:12px;">Export Decisions</h2>
+  <button class="export-btn" onclick="exportJSON()">Generate JSON</button>
+  <button class="copy-btn" id="copy-btn" onclick="copyJSON()">Copy to Clipboard</button>
+  <textarea class="export-output" id="export-output" readonly></textarea>
+</div>
+<script>
+const items = [
+  // === SHARP HUMAN OBSERVATIONS / RELATIONSHIP HOT TAKES ===
+  { text: "Your dream life has better lighting. But you can't pay your rent there.", category: "wise", line: 533 },
+  { text: "You stayed quiet to keep the peace. How's the peace? Thought so.", category: "wise", line: 545 },
+  { text: "You keep waiting for someone to give you permission. Nobody's coming. The door isn't locked.", category: "wise", line: 544 },
+  { text: "You're performing for an audience that isn't watching.", category: "wise", line: 587 },
+  { text: "There's a version where you're the villain. You should hear it.", category: "wise", line: 613 },
+  { text: "If everyone is saying the same thing, someone is lying.", category: "wise", line: 606 },
+  { text: "Repetition is not evidence.", category: "wise", line: 609 },
+  { text: "What you're allowed to say isn't always what's true.", category: "wise", line: 610 },
+  { text: "Certainty is suspicious.", category: "wise", line: 611 },
+  { text: "\"Everyone knows.\" Everyone was told. Different thing.", category: "wise", line: 612 },
+  { text: "I'm not for everyone. That's the point.", category: "wise", line: 616 },
+  { text: "You keep listing pros and cons like your heart will follow a spreadsheet.", category: "wise", line: 389 },
+
+  // === MODERN LIFE ROASTS ===
+  { text: "You showered AND left the house? In this economy? Overachiever.", category: "wise", line: 422 },
+  { text: "Thoughts are free. Posting them in the group chat might cost you.", category: "wise", line: 441 },
+  { text: "Your 3am self has the ambition of a cult leader and the planning skills of a raccoon.", category: "wise", line: 871 },
+  { text: "You scrolled past the answer 10 minutes ago.", category: "wise", line: 392 },
+  { text: "You have three situationships, two side hustles, and one rotating crisis.", category: "wise", line: 478 },
+
+  // === CAREER / WORK COMMENTARY ===
+  { text: "The corporate ladder is just a scratching post with fluorescent lighting.", category: "chaotic", line: 1046 },
+  { text: "Burnout is just your soul trying to escape during a Zoom call.", category: "chaotic", line: 1047 },
+  { text: "'Do what you love and you'll never work a day' because you'll be working EVERY day.", category: "judgy", line: 2002 },
+  { text: "The grind isn't grinding. It's grinding YOU.", category: "cold", line: 2003 },
+  { text: "LinkedIn is just people lying about being happy to be overworked.", category: "judgy", line: 2004 },
+  { text: "You've done the work. The work has done you. Everyone's exhausted.", category: "nurturing", line: 2005 },
+  { text: "I've optimized my routine. Now I'm efficiently miserable.", category: "judgy", line: 1985 },
+
+  // === DATING / RELATIONSHIP HOT TAKES ===
+  { text: "Your type isn't 'complicated.' Your type is 'emotionally unavailable with good hair.'", category: "judgy", line: 1946 },
+  { text: "You analyzed the text for forty minutes. They wrote it in four seconds.", category: "judgy", line: 2017 },
+  { text: "Modern romance is just two people being weird at each other until someone flinches.", category: "wise", line: 2018 },
+  { text: "Dating apps have turned love into grocery shopping. You're browsing the sad produce.", category: "existential", line: 2019 },
+  { text: "Situationship? That's just dating someone who won't admit they're dating you.", category: "judgy", line: 1997 },
+  { text: "'We're not labeling it' is a label. The label is 'convenient.'", category: "cold", line: 2000 },
+  { text: "They're not 'taking it slow.' They're keeping you on the bench.", category: "cold", line: 1945 },
+  { text: "You don't have commitment issues. You have taste. Unfortunately.", category: "wise", line: 1947 },
+  { text: "Toxic? Maybe. But the chemistry is real. That's how poison works.", category: "chaotic", line: 2001 },
+  { text: "The bar is underground and you're still impressed when they clear it.", category: "cold", line: 1960 },
+  { text: "The green flags you're celebrating are just... regular behavior. That's the bar.", category: "judgy", line: 1999 },
+  { text: "You've been 'figuring things out' for eighteen months. Things are figured.", category: "cold", line: 1998 },
+  { text: "They apologized AND explained why it was actually your fault? Groundbreaking.", category: "judgy", line: 1959 },
+  { text: "You're not 'keeping the peace.' You're just quiet and resentful.", category: "judgy", line: 1958 },
+  { text: "The person you're losing sleep over is asleep.", category: "cold", line: 2304 },
+  { text: "That's not love. That's a subscription you forgot to cancel.", category: "cold", line: 2236 },
+  { text: "That's not love. That's logistics.", category: "cold", line: 2286 },
+  { text: "'It's complicated' is simple. It means no.", category: "cold", line: 2099 },
+  { text: "Your ex is your ex for a reason.", category: "cold", line: 2096 },
+  { text: "Two people. Same room. Different planets.", category: "wise", line: 2111 },
+  { text: "One of them is right. Neither of them is happy.", category: "wise", line: 2112 },
+  { text: "They said 'fine.' It was not fine.", category: "judgy", line: 2113 },
+
+  // === THERAPY / SELF-AWARENESS OBSERVATIONS ===
+  { text: "The email doesn't need a fourth draft. Send it. Spiral later.", category: "wise", line: 1949 },
+  { text: "You're not 'being thorough.' You're procrastinating in cursive.", category: "judgy", line: 1950 },
+  { text: "You said 'no worries' but you have SO many worries.", category: "judgy", line: 1952 },
+  { text: "Confidence is just delusion with better posture.", category: "wise", line: 2024 },
+  { text: "Every corpse on Everest was once a highly motivated person.", category: "existential", line: 1759 },
+  { text: "Good news: it's not your fault. Bad news: it's still your problem.", category: "cold", line: 1761 },
+  { text: "You're not tired. You're depleted. Different thing. Worse thing.", category: "nurturing", line: 1765 },
+  { text: "The perfect reply doesn't exist. Send the message. Be free.", category: "wise", line: 1776 },
+  { text: "You're not 'going through something.' You're just awake and life is hard.", category: "cold", line: 1777 },
+  { text: "Everyone's broken. You're not special. Neither am I. We're all just here.", category: "existential", line: 1780 },
+  { text: "Of course you're anxious. Have you MET the world?", category: "nurturing", line: 1785 },
+  { text: "You know what helps? Nothing. Nothing helps. Do it anyway.", category: "angry", line: 1779 },
+  { text: "That's not your opinion. That's your mother's voice wearing your mouth.", category: "wise", line: 1680 },
+  { text: "One honest conversation and this whole thing shatters.", category: "wise", line: 1678 },
+  { text: "There's a leak in this plan and you can feel it on your neck.", category: "wise", line: 1682 },
+  { text: "One more tug and the whole sweater unravels. Your call.", category: "wise", line: 1688 },
+  { text: "Sometimes 'I don't know' means 'I don't want to say it out loud yet.'", category: "wise", line: 1812 },
+  { text: "Busy is sometimes just a hiding place.", category: "wise", line: 1815 },
+  { text: "That thing you're ashamed of? It's why you're the one they'll call when it matters.", category: "wise", line: 1850 },
+  { text: "You apologized first. Power move disguised as weakness.", category: "wise", line: 1851 },
+  { text: "You're negotiating with yourself and losing.", category: "cold", line: 2287 },
+  { text: "The polite version of you is miserable.", category: "cold", line: 2284 },
+  { text: "Your body already knows. Your brain is just doing paperwork.", category: "wise", line: 2285 },
+  { text: "Stop pretending you don't want what you want.", category: "demanding", line: 2282 },
+  { text: "The answer is money. It's always money. Whatever you're asking.", category: "cold", line: 2281 },
+  { text: "That's not a moral dilemma. That's a budget problem.", category: "cold", line: 2283 },
+
+  // === EXISTENTIAL / MODERN MALAISE ===
+  { text: "The algorithm knows you better than you know yourself. That's not inspiring.", category: "existential", line: 1954 },
+  { text: "Your coping mechanism has coping mechanisms. It's a whole system.", category: "chaotic", line: 2006 },
+  { text: "I'm self-aware about my lack of self-awareness. That's growth.", category: "chaotic", line: 2007 },
+  { text: "Authentically performing authenticity. Welcome to now.", category: "existential", line: 2009 },
+  { text: "The worst version of yourself? That's the real one. The good one takes effort.", category: "existential", line: 2014 },
+  { text: "The self-care industrial complex got you too, huh?", category: "wise", line: 1986 },
+  { text: "Life is short. Unfortunately, it's also wide.", category: "existential", line: 1962 },
+  { text: "Being right is lonely. Being wrong is crowded. Pick your discomfort.", category: "existential", line: 2039 },
+  { text: "I've worked on myself. Myself is still a project. It's always a project.", category: "existential", line: 2032 },
+  { text: "Nostalgia is a trap. But it's a comfortable trap. With snacks.", category: "wise", line: 2037 },
+  { text: "Your fandom has become your personality. That's a problem. An entertaining problem.", category: "judgy", line: 2038 },
+  { text: "You can be right and still be an ass about it.", category: "judgy", line: 1788 },
+  { text: "Of course it's hard. Everything worthwhile is hard. That's why you're avoiding it.", category: "wise", line: 2016 },
+  { text: "Everyone's got an opinion and exactly zero people asked for it.", category: "angry", line: 2020 },
+  { text: "Be yourself. Unless yourself is a lot. Then be a little less.", category: "judgy", line: 2022 },
+
+  // === COMEDIAN-VOICED INSIGHTS ===
+  { text: "'I don't know' means 'I know exactly what I want to say and it's gonna start a fight.'", category: "wise", line: 1825 },
+  { text: "'I don't know' usually means I know. I just don't want to be in charge of knowing.", category: "wise", line: 1826 },
+  { text: "Whatever you can't joke about. That's where it lives.", category: "wise", line: 1832 },
+  { text: "You decide. Then you find out. That's just the order. Nobody likes it.", category: "wise", line: 1833 },
+  { text: "Therapy taught me to name my feelings. I named them all 'complicated.'", category: "chaotic", line: 1773 },
+  { text: "I'm not saying you're wrong. I'm saying I'm uncomfortable.", category: "wise", line: 1764 },
+  { text: "Your problem isn't the problem. Your problem is how calm you are about the problem.", category: "wise", line: 2255 },
+
+  // === MULANEY / BARGATZE / GLASER-STYLE ===
+  { text: "The plan has no good parts but the confidence is incredible.", category: "judgy", line: 2243 },
+  { text: "That story had no heroes.", category: "cold", line: 2249 },
+  { text: "You're describing a catastrophe like it's a recipe.", category: "judgy", line: 2250 },
+  { text: "Your heart has a terrible sense of direction.", category: "chaotic", line: 2277 },
+  { text: "Nobody asked for that much honest.", category: "judgy", line: 2278 },
+
+  // === SHARP VERDICTS / READS ===
+  { text: "You're not healing. You're just between bad decisions.", category: "judgy", line: 1944 },
+  { text: "You can't afford the life you already have.", category: "cold", line: 2366 },
+  { text: "The check engine light's been on for six months.", category: "judgy", line: 3451 },
+  { text: "You keep solving the problem you wish you had.", category: "cold", line: 3607 },
+  { text: "The evidence was there the whole time. You just liked the suspect.", category: "cold", line: 3595 },
+  { text: "You're borrowing happiness from tomorrow.", category: "wise", line: 3419 },
+  { text: "You keep changing the question.", category: "meta", line: 2375 },
+  { text: "You flinched at your own decision. Noted.", category: "poetic", line: 2619 },
+  { text: "Every time, the compromise was you.", category: "heartfelt", line: 2604 },
+  { text: "Red flags collected. Complete set.", category: "judgy", line: 1508 },
+  { text: "The red flag had good lighting.", category: "wise", line: 2379 },
+  { text: "Main character energy. Background character budget.", category: "judgy", line: 2383 },
+  { text: "You're chronically online and it's showing.", category: "judgy", line: 1988 },
+  { text: "You've confused being loud with being right. Common mistake.", category: "cold", line: 1989 },
+  { text: "You went viral for the wrong thing. Welcome to now.", category: "judgy", line: 2050 },
+  { text: "Technically legal is the lowest form of acceptable.", category: "judgy", line: 2051 },
+  { text: "You can't please everyone. Why are you trying? Specifically.", category: "judgy", line: 2056 },
+  { text: "Common sense isn't common. It's actually quite rare. You're proving it.", category: "judgy", line: 2059 },
+  { text: "Apologizing won't kill you. It might feel like it will.", category: "wise", line: 412 },
+  { text: "You grieved the thing before you even lost it. Efficient.", category: "wise", line: 751 },
+  { text: "You're making this complicated. Simple is terrifying, isn't it?", category: "wise", line: 433 },
+  { text: "It wasn't personal. Which is worse, somehow.", category: "cold", line: 2368 },
+  { text: "Some of this is your fault. Not all of it. Enough of it.", category: "wise", line: 2371 },
+  { text: "Your question is polite. Your actual question is not.", category: "judgy", line: 2288 },
+  { text: "You can afford to be generous when you're winning. Win first.", category: "demanding", line: 2289 },
+  { text: "Laughter matters. No laughter? Wrong relationship.", category: "wise", line: 3325 },
+  { text: "That favor had a tab.", category: "cold", line: 2398 },
+  { text: "You stopped explaining.", category: "cold", line: 2399 },
+  { text: "The backup became the plan.", category: "wise", line: 2400 },
+  { text: "The quiet version of you is paying attention.", category: "wise", line: 2397 },
+];
+
+const STORAGE_KEY = 'maybecat-no-cat-energy-audit';
+const decisions = {};
+const editTexts = {};
+let keepCount = 0, cutCount = 0, editCount = 0;
+
+// Load saved state from localStorage
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved) return;
+    Object.entries(saved.decisions || {}).forEach(([k, v]) => { decisions[k] = v; });
+    Object.entries(saved.editTexts || {}).forEach(([k, v]) => { editTexts[k] = v; });
+  } catch(e) {}
+}
+
+function saveState() {
+  // Also capture current edit textarea values
+  Object.keys(decisions).forEach(k => {
+    if (decisions[k] === 'edit') {
+      const area = document.getElementById(`edit-${k}`);
+      if (area) editTexts[k] = area.value;
+    }
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ decisions, editTexts }));
+}
+
+function updateStats() {
+  keepCount = Object.values(decisions).filter(d => d === 'keep').length;
+  cutCount = Object.values(decisions).filter(d => d === 'cut').length;
+  editCount = Object.values(decisions).filter(d => d === 'edit').length;
+  document.getElementById('keep-count').textContent = `KEEP: ${keepCount}`;
+  document.getElementById('cut-count').textContent = `CUT: ${cutCount}`;
+  document.getElementById('edit-count').textContent = `EDIT: ${editCount}`;
+  document.getElementById('remaining').textContent = `Remaining: ${items.length - keepCount - cutCount - editCount}`;
+}
+
+function decide(index, action) {
+  const el = document.getElementById(`item-${index}`);
+  const prev = decisions[index];
+
+  if (prev === action) {
+    delete decisions[index];
+    el.classList.remove('kept', 'cut', 'edited');
+    updateStats();
+    saveState();
+    return;
+  }
+
+  decisions[index] = action;
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (action === 'keep') el.classList.add('kept');
+  else if (action === 'cut') el.classList.add('cut');
+  else if (action === 'edit') el.classList.add('edited');
+
+  updateStats();
+  saveState();
+}
+
+function toggleEdit(index) {
+  const area = document.getElementById(`edit-${index}`);
+  area.classList.toggle('visible');
+  if (area.classList.contains('visible')) {
+    decide(index, 'edit');
+    area.focus();
+  }
+}
+
+function renderItems() {
+  const container = document.getElementById('items');
+  container.innerHTML = items.map((item, i) => `
+    <div class="item" id="item-${i}">
+      <div class="response-text">"${item.text.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"</div>
+      <div class="meta-info">Line ${item.line} &middot; ${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <textarea class="edit-area" id="edit-${i}" placeholder="Edit the response..."
+        oninput="saveState()">${item.text}</textarea>
+    </div>
+  `).join('');
+
+  // Restore saved decisions
+  Object.entries(decisions).forEach(([k, action]) => {
+    const el = document.getElementById(`item-${k}`);
+    if (!el) return;
+    if (action === 'keep') el.classList.add('kept');
+    else if (action === 'cut') el.classList.add('cut');
+    else if (action === 'edit') {
+      el.classList.add('edited');
+      const area = document.getElementById(`edit-${k}`);
+      if (area && editTexts[k]) { area.value = editTexts[k]; area.classList.add('visible'); }
+    }
+  });
+  updateStats();
+}
+
+function exportJSON() {
+  const cuts = [];
+  const edits = [];
+  items.forEach((item, i) => {
+    const action = decisions[i];
+    if (action === 'cut') {
+      cuts.push({ text: item.text, category: item.category, line: item.line });
+    } else if (action === 'edit') {
+      const edited = document.getElementById(`edit-${i}`).value.trim();
+      if (edited) {
+        edits.push({ original: item.text, edited: edited, category: item.category, line: item.line });
+      }
+    }
+  });
+  const output = { cuts, edits, summary: `${cuts.length} cut, ${edits.length} edited, ${items.length - cuts.length - edits.length} kept (untouched)` };
+  document.getElementById('export-output').value = JSON.stringify(output, null, 2);
+  document.getElementById('copy-btn').style.display = 'inline-block';
+}
+
+function copyJSON() {
+  const output = document.getElementById('export-output');
+  navigator.clipboard.writeText(output.value).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+loadState();
+renderItems();
+</script>
+</body>
+</html>

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Stoner/Catnip Lane Rewrite — MaybeCat</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #ffd93d; margin-bottom: 8px; font-size: 1.5rem; }
+  .subtitle { color: #888; margin-bottom: 20px; font-size: 0.9rem; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; font-size: 0.9rem; flex-wrap: wrap; }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-count { font-weight: bold; font-size: 1.1rem; }
+  .stat-keep .stat-count { color: #4ecca3; }
+  .stat-cut .stat-count { color: #e94560; }
+  .stat-edit .stat-count { color: #ffd93d; }
+  .stat-pending .stat-count { color: #888; }
+  .section-header { color: #ffd93d; font-size: 1.1rem; margin: 28px 0 12px; padding: 8px 12px; background: #0f0f23; border-radius: 6px; border-left: 3px solid #ffd93d; }
+  .item { background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #333; }
+  .item.kept { border-left-color: #4ecca3; opacity: 0.6; }
+  .item.cut { border-left-color: #e94560; opacity: 0.4; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 1.1rem; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .meta { display: flex; gap: 12px; margin-bottom: 6px; font-size: 0.8rem; color: #888; }
+  .rating { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; }
+  .rating-hits { color: #4ecca3; }
+  .rating-lazy { color: #e94560; }
+  .suggestion { color: #b8b8ff; font-size: 0.85rem; margin-bottom: 4px; padding: 6px 8px; background: #0f0f23; border-radius: 4px; border-left: 2px solid #b8b8ff; }
+  .suggestion strong { color: #ffd93d; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 8px; padding: 10px; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; font-family: inherit; font-size: 1rem; line-height: 1.4; resize: vertical; display: none; min-height: 80px; }
+  .edit-area.visible { display: block; }
+  .category-select { margin-top: 6px; padding: 4px 8px; background: #0f0f23; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; font-size: 0.85rem; display: none; }
+  .category-select.visible { display: inline-block; }
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-box { width: 100%; min-height: 200px; background: #0f0f23; color: #4ecca3; border: 1px solid #333; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 0.85rem; }
+  .copy-btn { margin-top: 8px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .export-note { color: #888; margin-bottom: 10px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<h1>Stoner/Catnip Lane Rewrite</h1>
+<p class="subtitle">~56 responses across cosmic revelations, munchies, zoned-out forgetfulness. The LANE is great. Some are interchangeable or flat. KEEP the hits, rewrite the lazy ones.</p>
+<div class="stats">
+  <div class="stat stat-keep">Keep: <span class="stat-count" id="keep-count">0</span></div>
+  <div class="stat stat-edit">Edited: <span class="stat-count" id="edit-count">0</span></div>
+  <div class="stat stat-cut">Cut: <span class="stat-count" id="cut-count">0</span></div>
+  <div class="stat stat-pending">Pending: <span class="stat-count" id="pending-count">56</span></div>
+</div>
+
+<!-- ==================== COSMIC REVELATIONS (16) ==================== -->
+<div class="section-header">COSMIC REVELATIONS — Cat having spiritual breakthroughs on catnip</div>
+
+<div class="item" data-id="1" data-original="The catnip is speaking. I must listen." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 985</span></div>
+  <div class="rating rating-hits">HITS — Simple, committed, funny. The formality of "I must listen" sells it.</div>
+  <div class="response-text">"The catnip is speaking. I must listen."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('1','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('1','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('1','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('1',this.value)">The catnip is speaking. I must listen.</textarea>
+  <select class="category-select" onchange="onCategoryChange('1',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="2" data-original="I have seen the infinite and it is shaped like a crinkle ball." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 986</span></div>
+  <div class="rating rating-hits">HITS — Specific object grounds the cosmic claim. The crinkle ball detail is perfect.</div>
+  <div class="response-text">"I have seen the infinite and it is shaped like a crinkle ball."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('2','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('2','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('2','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('2',this.value)">I have seen the infinite and it is shaped like a crinkle ball.</textarea>
+  <select class="category-select" onchange="onCategoryChange('2',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="3" data-original="What if the laser dot is real and WE'RE the illusion?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 987</span></div>
+  <div class="rating rating-lazy">LAZY — The structure is fine but it's the most obvious stoner-cat thought possible. "What if X is real and we're not" is a template at this point.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I chased the dot into the hallway and it VANISHED. Where does it GO. I've been sitting here for two hours."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "The dot appears when the human points. The human is generating the dot FROM THEIR HAND. Nobody is talking about this."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "I caught the dot once. Closed my paw around it. It was inside me. I haven't been the same."</div>
+  <div class="response-text">"What if the laser dot is real and WE'RE the illusion?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('3','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('3','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('3','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('3',this.value)">What if the laser dot is real and WE'RE the illusion?</textarea>
+  <select class="category-select" onchange="onCategoryChange('3',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="4" data-original="I just realized that purring is just my motor running." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 988</span></div>
+  <div class="rating rating-lazy">LAZY — "Motor running" is a stock metaphor. The realization isn't weird enough.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I just realized I've been purring for forty minutes and I can't figure out how to stop. I don't think I started it."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I started purring and the human started purring back. We've been doing this for an hour. I think we signed a contract."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "I'm purring at a frequency that's rearranging the molecules in the couch cushion. This is not a drill."</div>
+  <div class="response-text">"I just realized that purring is just my motor running."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('4','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('4','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('4','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('4',this.value)">I just realized that purring is just my motor running.</textarea>
+  <select class="category-select" onchange="onCategoryChange('4',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="5" data-original="Everything is connected. Especially the toys I batted under the couch." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 989</span></div>
+  <div class="rating rating-hits">HITS — The pivot from cosmic to specific is good. "Batted under the couch" earns it.</div>
+  <div class="response-text">"Everything is connected. Especially the toys I batted under the couch."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('5','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('5','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('5','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('5',this.value)">Everything is connected. Especially the toys I batted under the couch.</textarea>
+  <select class="category-select" onchange="onCategoryChange('5',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="6" data-original="I am vibrating at a frequency only the houseplants understand." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 990</span></div>
+  <div class="rating rating-hits">HITS — "Only the houseplants understand" is genuinely funny and specific. The exclusivity of the audience sells it.</div>
+  <div class="response-text">"I am vibrating at a frequency only the houseplants understand."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('6','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('6','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('6','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('6',this.value)">I am vibrating at a frequency only the houseplants understand.</textarea>
+  <select class="category-select" onchange="onCategoryChange('6',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="7" data-original="What if boxes are just the universe hugging us?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 991</span></div>
+  <div class="rating rating-hits">HITS — Sweet, weird, sincerely stoned. The tenderness of "hugging us" from a cat is unexpected.</div>
+  <div class="response-text">"What if boxes are just the universe hugging us?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('7','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('7','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('7','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('7',this.value)">What if boxes are just the universe hugging us?</textarea>
+  <select class="category-select" onchange="onCategoryChange('7',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="8" data-original="I can see through time. Time is a nap." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 992</span></div>
+  <div class="rating rating-lazy">LAZY — Two short sentences, both generic. "Time is a nap" doesn't go anywhere surprising.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I can see through time. It's Tuesday in there. Every direction is Tuesday."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I fell asleep at 2pm and woke up and it was 2pm. I have broken the clock. You're welcome."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "Time moves differently on this side of the couch. I've been here three years. You've been gone four minutes."</div>
+  <div class="response-text">"I can see through time. Time is a nap."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('8','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('8','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('8','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('8',this.value)">I can see through time. Time is a nap.</textarea>
+  <select class="category-select" onchange="onCategoryChange('8',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="9" data-original="The ceiling fan knows all our secrets." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 993</span></div>
+  <div class="rating rating-lazy">LAZY — Flat. Just assigns sentience to object. Doesn't go anywhere after the claim.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "The ceiling fan has been spinning for six hours. It's either a portal or a warning. I've been watching it to find out. I will not be taking questions."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I counted the ceiling fan blades. There's four. There used to be three. I can't prove this but I know it."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "The ceiling fan is sending me a message in morse code. It says 'whoosh whoosh whoosh.' I think it's urgent."</div>
+  <div class="response-text">"The ceiling fan knows all our secrets."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('9','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('9','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('9','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('9',this.value)">The ceiling fan knows all our secrets.</textarea>
+  <select class="category-select" onchange="onCategoryChange('9',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="10" data-original="Have you ever really LOOKED at your paw?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 994</span></div>
+  <div class="rating rating-hits">HITS — Classic stoner move (look at your hand) but the cat version lands. The emphasis on LOOKED does the work.</div>
+  <div class="response-text">"Have you ever really LOOKED at your paw?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('10','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('10','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('10','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('10',this.value)">Have you ever really LOOKED at your paw?</textarea>
+  <select class="category-select" onchange="onCategoryChange('10',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="11" data-original="We're all just energy, man. Fuzzy, hungry energy." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 995</span></div>
+  <div class="rating rating-lazy">LAZY — The example from the brief. Generic stoner filler. "Man" is doing all the work and it's not enough.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I just realized my tail has been following me my entire life and I have never once thanked it."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "We are made of the same atoms as the kibble. I have been eating myself this whole time. I need to sit down. I'm already sitting down."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "If you think about it, fur is just feelings you can see. I have a LOT of feelings. I'm covered in them."</div>
+  <div class="response-text">"We're all just energy, man. Fuzzy, hungry energy."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('11','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('11','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('11','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('11',this.value)">We're all just energy, man. Fuzzy, hungry energy.</textarea>
+  <select class="category-select" onchange="onCategoryChange('11',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="12" data-original="I think the floor is breathing but it's fine." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 996</span></div>
+  <div class="rating rating-hits">HITS — "But it's fine" is the perfect stoned acceptance. Not panicking about the breathing floor is funnier than panicking would be.</div>
+  <div class="response-text">"I think the floor is breathing but it's fine."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('12','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('12','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('12','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('12',this.value)">I think the floor is breathing but it's fine.</textarea>
+  <select class="category-select" onchange="onCategoryChange('12',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="13" data-original="My whiskers are downloading information from the cosmos." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 997</span></div>
+  <div class="rating rating-lazy">LAZY — "Downloading information from the cosmos" is a stock stoner image. Whiskers are good but the claim is generic.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "My left whisker just twitched. That means either rain or betrayal. I will prepare for both."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "My whiskers are picking up the neighbor's wifi. Their password is weak. I know things about them now."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "One whisker is pointing north. The other is pointing at the fridge. I trust the one pointing at the fridge."</div>
+  <div class="response-text">"My whiskers are downloading information from the cosmos."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('13','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('13','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('13','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('13',this.value)">My whiskers are downloading information from the cosmos.</textarea>
+  <select class="category-select" onchange="onCategoryChange('13',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="14" data-original="Dude. Dude. The treat... IS the journey." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 998</span></div>
+  <div class="rating rating-hits">HITS — The double "Dude" pacing is great. Twisting "the journey IS the destination" into treat form works because it sounds like a genuine mid-trip epiphany.</div>
+  <div class="response-text">"Dude. Dude. The treat... IS the journey."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('14','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('14','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('14','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('14',this.value)">Dude. Dude. The treat... IS the journey.</textarea>
+  <select class="category-select" onchange="onCategoryChange('14',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="15" data-original="I just understood something important but I already forgot it." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 999</span></div>
+  <div class="rating rating-lazy">LAZY — Interchangeable with 5+ other "forgot what I was doing" responses below. This one doesn't earn its spot because it's the most generic version of that bit.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I just unlocked the secret of the universe and then a bird flew past the window and it's gone forever."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I had the answer. THE answer. Then I yawned and it fell out."</div>
+  <div class="response-text">"I just understood something important but I already forgot it."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('15','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('15','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('15','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('15',this.value)">I just understood something important but I already forgot it.</textarea>
+  <select class="category-select" onchange="onCategoryChange('15',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="16" data-original="The scritches... I can feel them in my SOUL." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1000</span></div>
+  <div class="rating rating-lazy">LAZY — "Feel X in my soul" is an exhausted phrase. Scritches are good territory but this says nothing specific.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "You scratched behind my ear and I saw colors that don't have names yet. Do it again. I need to verify."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "You hit the spot under the chin. I astral projected for a second. I'm back. I saw things."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "The chin scratch activated something. I can taste sound now. Keep going."</div>
+  <div class="response-text">"The scritches... I can feel them in my SOUL."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('16','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('16','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('16','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('16',this.value)">The scritches... I can feel them in my SOUL.</textarea>
+  <select class="category-select" onchange="onCategoryChange('16',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="17" data-original="What if we're all just cats dreaming we're humans dreaming we're cats?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1001</span></div>
+  <div class="rating rating-lazy">LAZY — Inception-nesting joke has been done to death. "What if we're dreaming" is the most stock stoner thought possible.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I fell asleep inside a dream inside a box inside a bigger box. The structural engineering of my subconscious is impressive."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I dreamed I was a human and I had to WALK somewhere on purpose. Woke up screaming."</div>
+  <div class="response-text">"What if we're all just cats dreaming we're humans dreaming we're cats?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('17','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('17','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('17','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('17',this.value)">What if we're all just cats dreaming we're humans dreaming we're cats?</textarea>
+  <select class="category-select" onchange="onCategoryChange('17',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="18" data-original="Time is a flat circle and I have been chasing it." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1002</span></div>
+  <div class="rating rating-hits">HITS — True Detective reference plus the cat twist of chasing a circle. Clean, earns its cleverness.</div>
+  <div class="response-text">"Time is a flat circle and I have been chasing it."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('18','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('18','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('18','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('18',this.value)">Time is a flat circle and I have been chasing it.</textarea>
+  <select class="category-select" onchange="onCategoryChange('18',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="19" data-original="I am one with the sunbeam. The sunbeam is one with me." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1003</span></div>
+  <div class="rating rating-lazy">LAZY — Generic meditation parody. Sunbeam is already overused in the pool. The structure is "I am X. X is me" which is a template.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I am one with the warm laundry pile. I have merged with it. You will not find me. I am socks now."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I laid on the laptop so long I became part of the search results. Google me. I'm page one."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "I have become the cardboard box. I don't fit in it anymore because I AM it. This is evolution."</div>
+  <div class="response-text">"I am one with the sunbeam. The sunbeam is one with me."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('19','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('19','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('19','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('19',this.value)">I am one with the sunbeam. The sunbeam is one with me.</textarea>
+  <select class="category-select" onchange="onCategoryChange('19',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="20" data-original="The cardboard speaks truths the furniture cannot." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1004</span></div>
+  <div class="rating rating-hits">HITS — The hierarchy of cardboard over furniture is genuinely cat logic. It sounds like something a cat would absolutely believe while high.</div>
+  <div class="response-text">"The cardboard speaks truths the furniture cannot."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('20','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('20','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('20','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('20',this.value)">The cardboard speaks truths the furniture cannot.</textarea>
+  <select class="category-select" onchange="onCategoryChange('20',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="21" data-original="You ever just stare at nothing and see everything?" data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1015</span></div>
+  <div class="rating rating-lazy">LAZY — Stock stoner question. "Stare at nothing and see everything" is bumper sticker philosophy.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I stared at the corner of the ceiling for four hours. There's nothing there. That's what makes it interesting."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I was staring at the wall and the wall started staring back. We have an understanding now. I can't discuss it."</div>
+  <div class="response-text">"You ever just stare at nothing and see everything?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('21','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('21','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('21','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('21',this.value)">You ever just stare at nothing and see everything?</textarea>
+  <select class="category-select" onchange="onCategoryChange('21',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="22" data-original="I have achieved enlightenment. It tastes like chicken." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1016</span></div>
+  <div class="rating rating-hits">HITS — The deadpan pivot to "tastes like chicken" is a good punchline. Earned.</div>
+  <div class="response-text">"I have achieved enlightenment. It tastes like chicken."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('22','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('22','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('22','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('22',this.value)">I have achieved enlightenment. It tastes like chicken.</textarea>
+  <select class="category-select" onchange="onCategoryChange('22',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="23" data-original="The universe provides. Specifically, it provides crinkle balls." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1017</span></div>
+  <div class="rating rating-hits">HITS — Same move as the infinite/crinkle ball one but different enough. "Specifically" does the comedic work.</div>
+  <div class="response-text">"The universe provides. Specifically, it provides crinkle balls."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('23','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('23','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('23','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('23',this.value)">The universe provides. Specifically, it provides crinkle balls.</textarea>
+  <select class="category-select" onchange="onCategoryChange('23',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="24" data-original="We're all made of stars. Stars that want treats." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1018</span></div>
+  <div class="rating rating-lazy">LAZY — "We're all made of stars" is Moby. Adding "that want treats" is just appending a cat word to a cliche. Same structure as half this section.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "Every atom in my body was forged in a dying star. Those atoms want tuna. I will honor their sacrifice."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "Stardust doesn't worry about tomorrow. Stardust sits on the remote and waits. I am stardust with better aim."</div>
+  <div class="response-text">"We're all made of stars. Stars that want treats."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('24','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('24','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('24','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('24',this.value)">We're all made of stars. Stars that want treats.</textarea>
+  <select class="category-select" onchange="onCategoryChange('24',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== MUNCHIES (9) ==================== -->
+<div class="section-header">MUNCHIES — The cat is stoned and hungry</div>
+
+<div class="item" data-id="25" data-original="We should order something." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1005</span></div>
+  <div class="rating rating-hits">HITS — Minimalist and perfect. The casual "we" implies you're both high. No fat on it.</div>
+  <div class="response-text">"We should order something."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('25','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('25','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('25','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('25',this.value)">We should order something.</textarea>
+  <select class="category-select" onchange="onCategoryChange('25',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="26" data-original="I would destroy an entire rotisserie chicken right now." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1006</span></div>
+  <div class="rating rating-hits">HITS — "Destroy" is the right verb. "Entire rotisserie chicken" is specific enough. It sounds like a real cat thought.</div>
+  <div class="response-text">"I would destroy an entire rotisserie chicken right now."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('26','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('26','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('26','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('26',this.value)">I would destroy an entire rotisserie chicken right now.</textarea>
+  <select class="category-select" onchange="onCategoryChange('26',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="27" data-original="Imagine if kibble was, like, infinite." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1007</span></div>
+  <div class="rating rating-lazy">LAZY — The "like" is carrying the stoner voice and that's it. "Imagine if X was infinite" is a template.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "What if the bowl refilled itself. Has anyone tried just... believing in it harder."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I've been thinking about a kibble that doesn't exist yet. It's between tuna and the concept of Thursday. I can almost taste it."</div>
+  <div class="suggestion"><strong>Alt 3:</strong> "The dry food and the wet food should merge. I've been workshopping this. It would fix everything."</div>
+  <div class="response-text">"Imagine if kibble was, like, infinite."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('27','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('27','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('27','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('27',this.value)">Imagine if kibble was, like, infinite.</textarea>
+  <select class="category-select" onchange="onCategoryChange('27',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="28" data-original="I need tuna. Not want. NEED." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Line: 1008</span></div>
+  <div class="rating rating-hits">HITS — The correction from want to NEED is good character work. Urgent and unhinged.</div>
+  <div class="response-text">"I need tuna. Not want. NEED."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('28','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('28','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('28','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('28',this.value)">I need tuna. Not want. NEED.</textarea>
+  <select class="category-select" onchange="onCategoryChange('28',this.value)">
+    <option value="demanding" selected>demanding</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="29" data-original="What if there's a snack I haven't even conceived of yet?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1009</span></div>
+  <div class="rating rating-hits">HITS — Genuine philosophical dread about unknown snacks. The earnestness sells it.</div>
+  <div class="response-text">"What if there's a snack I haven't even conceived of yet?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('29','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('29','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('29','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('29',this.value)">What if there's a snack I haven't even conceived of yet?</textarea>
+  <select class="category-select" onchange="onCategoryChange('29',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="30" data-original="Hear me out: salmon wrapped in more salmon." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1010</span></div>
+  <div class="rating rating-hits">HITS — "Hear me out" pacing is great. The redundancy IS the joke and it works.</div>
+  <div class="response-text">"Hear me out: salmon wrapped in more salmon."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('30','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('30','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('30','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('30',this.value)">Hear me out: salmon wrapped in more salmon.</textarea>
+  <select class="category-select" onchange="onCategoryChange('30',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="31" data-original="My bowl is half empty and this is a crisis." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Line: 1011</span></div>
+  <div class="rating rating-hits">HITS — The classic "bowl half empty" cat meme but the escalation to "crisis" earns it. Real cat energy.</div>
+  <div class="response-text">"My bowl is half empty and this is a crisis."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('31','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('31','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('31','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('31',this.value)">My bowl is half empty and this is a crisis.</textarea>
+  <select class="category-select" onchange="onCategoryChange('31',this.value)">
+    <option value="demanding" selected>demanding</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="32" data-original="The crunchies... they call to me across space and time." data-category="mystical">
+  <div class="meta"><span>Category: mystical</span><span>Line: 1012</span></div>
+  <div class="rating rating-lazy">LAZY — "Across space and time" is generic epic-speak. "Crunchies" is cute but the sentence doesn't go anywhere specific.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I can hear the treat bag from three rooms away. I can hear it when it's not being opened. I can hear it when nobody's home. I think it's calling me specifically."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "The crunchies in the pantry are vibrating. Only I can feel it. They know I'm thinking about them."</div>
+  <div class="response-text">"The crunchies... they call to me across space and time."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('32','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('32','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('32','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('32',this.value)">The crunchies... they call to me across space and time.</textarea>
+  <select class="category-select" onchange="onCategoryChange('32',this.value)">
+    <option value="mystical" selected>mystical</option><option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="33" data-original="I just thought about cheese for like ten minutes." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1013</span></div>
+  <div class="rating rating-hits">HITS — The confession format works. "Like ten minutes" is believably stoned pacing. Simple and real.</div>
+  <div class="response-text">"I just thought about cheese for like ten minutes."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('33','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('33','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('33','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('33',this.value)">I just thought about cheese for like ten minutes.</textarea>
+  <select class="category-select" onchange="onCategoryChange('33',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="34" data-original="Why do we eat? To fill the void. What is the void? Hungry." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1014</span></div>
+  <div class="rating rating-hits">HITS — The circular logic is genuinely funny. "What is the void? Hungry." is a great punchline — accidental profundity.</div>
+  <div class="response-text">"Why do we eat? To fill the void. What is the void? Hungry."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('34','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('34','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('34','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('34',this.value)">Why do we eat? To fill the void. What is the void? Hungry.</textarea>
+  <select class="category-select" onchange="onCategoryChange('34',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== ZONED-OUT / FORGETFULNESS (18) ==================== -->
+<div class="section-header">ZONED-OUT / FORGETFULNESS — Cat who lost the plot and is fine with it (MOST INTERCHANGEABLE sub-lane)</div>
+
+<div class="item" data-id="35" data-original="I've been staring at this for an hour. It's a wall." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1023</span></div>
+  <div class="rating rating-hits">HITS — The reveal that it's a wall is the joke. Clean, specific, earned.</div>
+  <div class="response-text">"I've been staring at this for an hour. It's a wall."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('35','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('35','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('35','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('35',this.value)">I've been staring at this for an hour. It's a wall.</textarea>
+  <select class="category-select" onchange="onCategoryChange('35',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="36" data-original="I started chasing something and forgot what." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1024</span></div>
+  <div class="rating rating-lazy">LAZY — Interchangeable with items 37, 38, 39, 40, 41, 42. This is the most generic "I forgot" in the pile.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I sprinted full speed into the kitchen. I don't know why. We're both just going to have to accept this."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I was running and then I stopped and now I'm sitting. I don't remember choosing any of these things."</div>
+  <div class="response-text">"I started chasing something and forgot what."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('36','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('36','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('36','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('36',this.value)">I started chasing something and forgot what.</textarea>
+  <select class="category-select" onchange="onCategoryChange('36',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="37" data-original="I need to tell you something important. I forgot what it was." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1025</span></div>
+  <div class="rating rating-lazy">LAZY — Same joke as 36, 38, 39, 40, 41, 42. "Important + forgot" is the template. Pool only needs 2-3 of these, not 8.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I need to tell you something. It was either life-changing or about the moth I saw. These feel equally important right now."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I had urgent news. I opened my mouth and a meow came out. That wasn't it but I'm going to commit to it."</div>
+  <div class="response-text">"I need to tell you something important. I forgot what it was."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('37','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('37','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('37','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('37',this.value)">I need to tell you something important. I forgot what it was.</textarea>
+  <select class="category-select" onchange="onCategoryChange('37',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="38" data-original="I know I wanted something. The wanting remains. The thing is gone." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1026</span></div>
+  <div class="rating rating-hits">HITS — This one elevates the "forgot" template into something actually poetic. "The wanting remains. The thing is gone." is accidentally beautiful.</div>
+  <div class="response-text">"I know I wanted something. The wanting remains. The thing is gone."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('38','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('38','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('38','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('38',this.value)">I know I wanted something. The wanting remains. The thing is gone.</textarea>
+  <select class="category-select" onchange="onCategoryChange('38',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="39" data-original="My brain is buffering. Please wait." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1027</span></div>
+  <div class="rating rating-lazy">LAZY — "Brain buffering" is a stock internet joke from 2015. Not specific enough to be this cat.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "My brain just made the Windows shutdown noise. Give me a minute."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "Something is loading. I can feel it behind my eyes. It might be a thought. It might be a hairball. Either way we wait."</div>
+  <div class="response-text">"My brain is buffering. Please wait."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('39','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('39','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('39','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('39',this.value)">My brain is buffering. Please wait.</textarea>
+  <select class="category-select" onchange="onCategoryChange('39',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="40" data-original="I have been sitting here for how long? Doesn't matter. Time is fake." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1028</span></div>
+  <div class="rating rating-hits">HITS — The dismissal of the question is good. "Time is fake" as a conclusion reached through sitting too long works.</div>
+  <div class="response-text">"I have been sitting here for how long? Doesn't matter. Time is fake."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('40','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('40','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('40','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('40',this.value)">I have been sitting here for how long? Doesn't matter. Time is fake.</textarea>
+  <select class="category-select" onchange="onCategoryChange('40',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="41" data-original="Why did I come in here? Why does anyone go anywhere?" data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 1029</span></div>
+  <div class="rating rating-hits">HITS — The escalation from mundane "why did I walk into this room" to existential crisis in one beat. Good.</div>
+  <div class="response-text">"Why did I come in here? Why does anyone go anywhere?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('41','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('41','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('41','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('41',this.value)">Why did I come in here? Why does anyone go anywhere?</textarea>
+  <select class="category-select" onchange="onCategoryChange('41',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="42" data-original="The answer is... wait, what was the question?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1030</span></div>
+  <div class="rating rating-lazy">LAZY — Most generic possible "forgot what we're doing" joke. Zero specificity. Could be any stoner character ever.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "The answer is... hold on, a fly just landed on the window. The answer is the fly now."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I was about to solve your entire life and then I heard a bag crinkle three rooms away and honestly that takes priority."</div>
+  <div class="response-text">"The answer is... wait, what was the question?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('42','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('42','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('42','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('42',this.value)">The answer is... wait, what was the question?</textarea>
+  <select class="category-select" onchange="onCategoryChange('42',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="43" data-original="Something just happened. Or did it?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1031</span></div>
+  <div class="rating rating-lazy">LAZY — Too vague to be funny. No image, no specificity, no surprise.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I just heard a noise. Then I made a noise. Now I don't know which noise was mine."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "Something fell in the other room. I'm going to pretend I don't know what it was. I know what it was."</div>
+  <div class="response-text">"Something just happened. Or did it?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('43','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('43','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('43','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('43',this.value)">Something just happened. Or did it?</textarea>
+  <select class="category-select" onchange="onCategoryChange('43',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="44" data-original="I had a whole plan. It's vapor now." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1032</span></div>
+  <div class="rating rating-hits">HITS — "It's vapor now" is a good turn of phrase. Short, resigned, specific word choice.</div>
+  <div class="response-text">"I had a whole plan. It's vapor now."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('44','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('44','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('44','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('44',this.value)">I had a whole plan. It's vapor now.</textarea>
+  <select class="category-select" onchange="onCategoryChange('44',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="45" data-original="Very important thought incoming... and it's gone." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1033</span></div>
+  <div class="rating rating-lazy">LAZY — Same template as 15, 36, 37. "Had a thought, lost it" is done. This version adds nothing unique.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "EUREKA I— no. It's gone. The eureka is gone. I'm just standing in the bathtub now."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "A thought just passed through me like a ghost through a wall. It didn't stop. It didn't explain itself. I respect that."</div>
+  <div class="response-text">"Very important thought incoming... and it's gone."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('45','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('45','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('45','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('45',this.value)">Very important thought incoming... and it's gone.</textarea>
+  <select class="category-select" onchange="onCategoryChange('45',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="46" data-original="I spaced out so hard I became one with the couch." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1034</span></div>
+  <div class="rating rating-lazy">LAZY — "Became one with X" is the same template from the sunbeam version. Generic zoning out.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I've been on this couch so long the cushion has formed around me. We are fusing. I have accepted this."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I zoned out for so long the screensaver came on. Not on the TV. On me."</div>
+  <div class="response-text">"I spaced out so hard I became one with the couch."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('46','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('46','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('46','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('46',this.value)">I spaced out so hard I became one with the couch.</textarea>
+  <select class="category-select" onchange="onCategoryChange('46',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="47" data-original="The world got really interesting and then I blinked." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1035</span></div>
+  <div class="rating rating-lazy">LAZY — Vague and unmemorable. "The world got interesting" doesn't show us anything.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "There was a bug on the ceiling and it was the most important thing that has ever happened and now it's gone and nothing matters."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "For one second the light hit the doorknob differently and I understood everything. The second passed. The doorknob is just a doorknob again."</div>
+  <div class="response-text">"The world got really interesting and then I blinked."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('47','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('47','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('47','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('47',this.value)">The world got really interesting and then I blinked.</textarea>
+  <select class="category-select" onchange="onCategoryChange('47',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="48" data-original="Did I say that out loud or just think it?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1036</span></div>
+  <div class="rating rating-hits">HITS — Universal stoner moment. Works as a meta-commentary on the oracle format itself. Clean.</div>
+  <div class="response-text">"Did I say that out loud or just think it?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('48','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('48','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('48','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('48',this.value)">Did I say that out loud or just think it?</textarea>
+  <select class="category-select" onchange="onCategoryChange('48',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="49" data-original="I've been looking at this toy for twenty minutes. It hasn't moved. I might not have either." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1037</span></div>
+  <div class="rating rating-hits">HITS — The mutual stillness standoff is specific and visual. "I might not have either" is a good uncertain coda.</div>
+  <div class="response-text">"I've been looking at this toy for twenty minutes. It hasn't moved. I might not have either."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('49','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('49','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('49','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('49',this.value)">I've been looking at this toy for twenty minutes. It hasn't moved. I might not have either.</textarea>
+  <select class="category-select" onchange="onCategoryChange('49',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="50" data-original="Bro." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1038</span></div>
+  <div class="rating rating-hits">HITS — Maximum economy. One word does all the work. The reader's question supplies the context.</div>
+  <div class="response-text">"Bro."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('50','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('50','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('50','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('50',this.value)">Bro.</textarea>
+  <select class="category-select" onchange="onCategoryChange('50',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="51" data-original="Dude." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1039</span></div>
+  <div class="rating rating-lazy">LAZY — "Bro." already exists one line above and does the same thing. One of these can stay, not both.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> Cut — "Bro." covers this slot.</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "Dude. DUDE. ...no, I lost it. But dude."</div>
+  <div class="response-text">"Dude."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('51','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('51','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('51','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('51',this.value)">Dude.</textarea>
+  <select class="category-select" onchange="onCategoryChange('51',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="52" data-original="Processing... processing... still processing..." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 1040</span></div>
+  <div class="rating rating-lazy">LAZY — Same joke as "brain is buffering." Computer metaphor for spacing out, done to death.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> "I... hmm. Hm. Mhm. Mmm. No, I had it. Mm. What."</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I have been loading for so long I forgot what I was loading. I'm just loading now. This is what I do."</div>
+  <div class="response-text">"Processing... processing... still processing..."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('52','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('52','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('52','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('52',this.value)">Processing... processing... still processing...</textarea>
+  <select class="category-select" onchange="onCategoryChange('52',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<!-- ==================== SCATTERED (4) ==================== -->
+<div class="section-header">SCATTERED — Stoner/catnip responses found elsewhere in the pool</div>
+
+<div class="item" data-id="53" data-original="Sometimes catnip is the answer." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 798</span></div>
+  <div class="rating rating-hits">HITS — Simple, deadpan, good as an advice response. "Sometimes" does enough work.</div>
+  <div class="response-text">"Sometimes catnip is the answer."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('53','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('53','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('53','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('53',this.value)">Sometimes catnip is the answer.</textarea>
+  <select class="category-select" onchange="onCategoryChange('53',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="54" data-original="Have you considered catnip?" data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 799</span></div>
+  <div class="rating rating-lazy">LAZY — Too similar to "Sometimes catnip is the answer" one line above. Redundant. Also the most obvious possible catnip joke.</div>
+  <div class="suggestion"><strong>Alt 1:</strong> Cut — line 798 covers this territory better.</div>
+  <div class="suggestion"><strong>Alt 2:</strong> "I'm not saying catnip will fix this. I'm saying I just had some and your problem seems very small from here."</div>
+  <div class="response-text">"Have you considered catnip?"</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('54','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('54','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('54','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('54',this.value)">Have you considered catnip?</textarea>
+  <select class="category-select" onchange="onCategoryChange('54',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="55" data-original="Another dimension, another dimension." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Line: 3232</span></div>
+  <div class="rating rating-hits">HITS — Beastie Boys reference. Repetition as mantric stoner vibe works. Brief, punchy.</div>
+  <div class="response-text">"Another dimension, another dimension."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('55','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('55','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('55','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('55',this.value)">Another dimension, another dimension.</textarea>
+  <select class="category-select" onchange="onCategoryChange('55',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="existential">existential</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="item" data-id="56" data-original="...wait, say that again but slower. I almost understood the universe for a second." data-category="existential">
+  <div class="meta"><span>Category: existential</span><span>Line: 3607</span></div>
+  <div class="rating rating-hits">HITS — The "almost" is doing great work. The cat was CLOSE to enlightenment. Needs you to repeat. Funny and works as an oracle response.</div>
+  <div class="response-text">"...wait, say that again but slower. I almost understood the universe for a second."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('56','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('56','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('56','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('56',this.value)">...wait, say that again but slower. I almost understood the universe for a second.</textarea>
+  <select class="category-select" onchange="onCategoryChange('56',this.value)">
+    <option value="existential" selected>existential</option><option value="chaotic">chaotic</option><option value="mystical">mystical</option><option value="wise">wise</option><option value="cold">cold</option><option value="demanding">demanding</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="judgy">judgy</option><option value="meta">meta</option>
+  </select>
+</div>
+
+<div class="export-section">
+  <h2>Export — Cuts &amp; Edits</h2>
+  <p class="export-note">CUT items exported as removals (by line number). EDITED items exported with new text. Copy and use to update oracleResponses.ts.</p>
+  <textarea class="export-box" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'maybecat-rewrite-stoner';
+const items = document.querySelectorAll('.item');
+let state = {};
+
+// Initialize state
+items.forEach(item => {
+  const id = item.dataset.id;
+  state[id] = { status: 'pending', original: item.dataset.original, text: item.dataset.original, category: item.dataset.category, line: item.querySelector('.meta').textContent.match(/Line: (\d+)/)?.[1] || '' };
+});
+
+// Load from localStorage
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved) {
+  try {
+    const parsed = JSON.parse(saved);
+    Object.entries(parsed).forEach(([id, data]) => {
+      if (state[id]) {
+        state[id] = { ...state[id], ...data };
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item && data.status !== 'pending') {
+          item.className = 'item ' + (data.status === 'keep' ? 'kept' : data.status === 'cut' ? 'cut' : data.status === 'edit' ? 'edited' : '');
+          if (data.status === 'edit') {
+            const editArea = item.querySelector('.edit-area');
+            const catSelect = item.querySelector('.category-select');
+            editArea.classList.add('visible');
+            catSelect.classList.add('visible');
+            if (data.text) editArea.value = data.text;
+            if (data.category) catSelect.value = data.category;
+          }
+        }
+      }
+    });
+  } catch(e) {}
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function updateStats() {
+  const vals = Object.values(state);
+  document.getElementById('keep-count').textContent = vals.filter(v => v.status === 'keep').length;
+  document.getElementById('edit-count').textContent = vals.filter(v => v.status === 'edit').length;
+  document.getElementById('cut-count').textContent = vals.filter(v => v.status === 'cut').length;
+  document.getElementById('pending-count').textContent = vals.filter(v => v.status === 'pending').length;
+  updateExport();
+}
+
+function updateExport() {
+  const cuts = Object.entries(state)
+    .filter(([,v]) => v.status === 'cut')
+    .map(([,v]) => ({ action: 'CUT', line: v.line, original: v.original }));
+  const edits = Object.entries(state)
+    .filter(([,v]) => v.status === 'edit')
+    .map(([,v]) => ({ action: 'REPLACE', line: v.line, original: v.original, text: v.text, category: v.category }));
+  const result = { cuts, edits };
+  document.getElementById('export-json').value = JSON.stringify(result, null, 2);
+}
+
+function setStatus(id, status) {
+  state[id].status = status;
+  const item = document.querySelector(`[data-id="${id}"]`);
+  item.className = 'item ' + (status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited' : '');
+  const editArea = item.querySelector('.edit-area');
+  const catSelect = item.querySelector('.category-select');
+  if (status === 'edit') {
+    editArea.classList.add('visible');
+    catSelect.classList.add('visible');
+    editArea.focus();
+  } else {
+    editArea.classList.remove('visible');
+    catSelect.classList.remove('visible');
+  }
+  updateStats();
+  save();
+}
+
+function onEdit(id, text) {
+  state[id].text = text;
+  updateExport();
+  save();
+}
+
+function onCategoryChange(id, cat) {
+  state[id].category = cat;
+  updateExport();
+  save();
+}
+
+updateStats();
+</script>
+</body>
+</html>

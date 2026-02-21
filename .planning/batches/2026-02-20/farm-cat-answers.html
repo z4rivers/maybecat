@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Cat Answers - Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 120px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e94560;
+  }
+  .header-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .response-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-color: #4ecca3; }
+  .response-card.cut { border-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-color: #ffd93d; }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .response-category {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 14px;
+  }
+  .response-number {
+    font-size: 11px;
+    color: #444;
+    float: right;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 70px;
+    background: #0f3460;
+    border: 1px solid #4ecca3;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .category-select {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .category-select label {
+    font-size: 12px;
+    color: #888;
+  }
+  .category-select select {
+    background: #0f3460;
+    color: #fff;
+    border: 1px solid #4ecca3;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 10px;
+  }
+  .status-keep { background: #4ecca320; color: #4ecca3; }
+  .status-cut { background: #e9456020; color: #e94560; }
+  .status-edit { background: #ffd93d20; color: #ffd93d; }
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .export-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4ecca3;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0a0a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+  .batch-info {
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <div class="header-title">Farm Cat Answers</div>
+    <div class="header-subtitle">Dry. Scrappy. Practical. "It'll do." &mdash; 2026-02-20</div>
+  </div>
+  <div class="stats">
+    <span class="stat-keep" id="stat-keep">Keep: 0</span>
+    <span class="stat-cut" id="stat-cut">Cut: 0</span>
+    <span class="stat-edit" id="stat-edit">Edit: 0</span>
+    <span class="stat-pending" id="stat-pending">Pending: 20</span>
+  </div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <div class="export-title">JSON Export (KEEP + EDIT only)</div>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <div class="batch-info">Format: [{ "text": "...", "category": "..." }]</div>
+</div>
+
+<script>
+const CATEGORIES = [
+  'chaotic','wise','cold','sassy','cryptic','dramatic','physical',
+  'wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'
+];
+
+const responses = [
+  { text: "Fence is down. Fix it or don't. Coyotes don't care either way.", category: "wise" },
+  { text: "Storm's coming. Not a metaphor. But also yes.", category: "cryptic" },
+  { text: "Got bit once. Bit back. Sorted.", category: "cold" },
+  { text: "It'll do.", category: "wise" },
+  { text: "Mud season. Everything's ugly. Everything still grows.", category: "poetic" },
+  { text: "Sun's almost down. Whatever you're doing, do it faster.", category: "demanding" },
+  { text: "I don't chase what doesn't run. Saves time.", category: "cold" },
+  { text: "You don't pet a barn cat. A barn cat decides you're warm.", category: "wise" },
+  { text: "Ground's frozen. Nothing's happening today. That's fine.", category: "existential" },
+  { text: "Whole field out there and you're stuck at the gate.", category: "wise" },
+  { text: "Three mice before dawn. Didn't mention it. Don't need to.", category: "cold" },
+  { text: "Hay's in. Rain held off. That's the whole victory.", category: "wholesome" },
+  { text: "Lost an ear tip to January. Still here.", category: "wise" },
+  { text: "The creek don't ask where it's going.", category: "existential" },
+  { text: "If it was easy, the dog could do it.", category: "sassy" },
+  { text: "Warm enough. Dry enough. Fed enough. Quit counting.", category: "demanding" },
+  { text: "I'll be in the barn.", category: "nurturing" },
+  { text: "You worry like a hen with one chick. Let it scratch.", category: "wise" },
+  { text: "Dawn's the same every day. Still worth showing up for.", category: "wholesome" },
+  { text: "Fix what you can. Leave what you can't. Go to sleep.", category: "wise" },
+];
+
+// State
+const decisions = new Array(responses.length).fill(null); // null | 'keep' | 'cut' | 'edit'
+const editedTexts = responses.map(r => r.text);
+const editedCategories = responses.map(r => r.category);
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] === 'keep' ? ' kept' : decisions[i] === 'cut' ? ' cut' : decisions[i] === 'edit' ? ' edited' : '');
+    card.id = 'card-' + i;
+
+    const statusBadge = decisions[i] ? `<span class="status-badge status-${decisions[i]}">${decisions[i]}</span>` : '';
+
+    let catOptions = CATEGORIES.map(c =>
+      `<option value="${c}" ${c === editedCategories[i] ? 'selected' : ''}>${c}</option>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="response-number">#${i + 1}${statusBadge}</div>
+      <div class="response-text">"${decisions[i] === 'edit' ? editedTexts[i] : r.text}"</div>
+      <div class="response-category">${decisions[i] === 'edit' ? editedCategories[i] : r.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${decisions[i] === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">Keep</button>
+        <button class="btn btn-cut ${decisions[i] === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit ${decisions[i] === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}" rows="2">${editedTexts[i]}</textarea>
+        <div class="category-select">
+          <label>Category:</label>
+          <select id="edit-cat-${i}">${catOptions}</select>
+        </div>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(index, action) {
+  if (decisions[index] === action) {
+    decisions[index] = null; // toggle off
+  } else {
+    decisions[index] = action;
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  if (decisions[index] === 'edit') {
+    decisions[index] = null;
+    renderCards();
+    updateStats();
+    updateExport();
+    return;
+  }
+  decisions[index] = 'edit';
+  renderCards();
+  const area = document.getElementById('edit-area-' + index);
+  area.classList.add('visible');
+  document.getElementById('edit-text-' + index).focus();
+  updateStats();
+  updateExport();
+}
+
+function saveEdit(index) {
+  editedTexts[index] = document.getElementById('edit-text-' + index).value.trim();
+  editedCategories[index] = document.getElementById('edit-cat-' + index).value;
+  decisions[index] = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  decisions.forEach(d => {
+    if (d === 'keep') keep++;
+    else if (d === 'cut') cut++;
+    else if (d === 'edit') edit++;
+    else pending++;
+  });
+  document.getElementById('stat-keep').textContent = 'Keep: ' + keep;
+  document.getElementById('stat-cut').textContent = 'Cut: ' + cut;
+  document.getElementById('stat-edit').textContent = 'Edit: ' + edit;
+  document.getElementById('stat-pending').textContent = 'Pending: ' + pending;
+}
+
+function updateExport() {
+  const kept = [];
+  decisions.forEach((d, i) => {
+    if (d === 'keep') {
+      kept.push({ text: responses[i].text, category: responses[i].category });
+    } else if (d === 'edit') {
+      kept.push({ text: editedTexts[i], category: editedCategories[i] });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+// Init
+renderCards();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

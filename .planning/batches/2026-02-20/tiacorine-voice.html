@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TiaCorine Voice Filter — MaybeCat Batch Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+    padding-top: 140px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 20px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #e94560;
+    flex-basis: 100%;
+  }
+  .sticky-header .subtitle {
+    font-size: 12px;
+    color: #888;
+    flex-basis: 100%;
+    margin-top: -8px;
+    margin-bottom: 4px;
+  }
+  .stat {
+    background: #1a1a2e;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-decided { color: #4ecca3; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .response-card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .response-text {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .response-category {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 14px;
+    display: inline-block;
+    background: #1a1a2e;
+    padding: 2px 10px;
+    border-radius: 4px;
+  }
+  .response-note {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-save { background: #4ecca3; color: #1a1a2e; font-size: 12px; padding: 6px 14px; }
+  .btn-cancel { background: #555; color: #fff; font-size: 12px; padding: 6px 14px; }
+  .btn-undo { background: transparent; color: #888; border: 1px solid #555; font-size: 11px; padding: 5px 12px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .edit-area.active { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #ffd93d;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area select {
+    background: #1a1a2e;
+    color: #ffd93d;
+    border: 1px solid #ffd93d;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    margin-top: 8px;
+    margin-right: 8px;
+  }
+  .edit-buttons {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+    text-transform: uppercase;
+  }
+  .status-kept { background: #4ecca3; color: #1a1a2e; }
+  .status-cut { background: #e94560; color: #fff; }
+  .status-edited { background: #ffd93d; color: #1a1a2e; }
+
+  #export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  #export-section h2 {
+    color: #4ecca3;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  #export-json {
+    background: #1a1a2e;
+    color: #4ecca3;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 500px;
+    overflow-y: auto;
+    cursor: pointer;
+    border: 1px solid #0f3460;
+  }
+  #copy-btn {
+    margin-top: 10px;
+    padding: 10px 24px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  #copy-btn:hover { opacity: 0.9; }
+  .copy-success {
+    color: #4ecca3;
+    font-size: 13px;
+    margin-left: 12px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>TiaCorine Voice Filter</h1>
+  <div class="subtitle">Bubble gum delivery, brass knuckle content. Cute surface, real talk underneath.</div>
+  <span class="stat stat-decided" id="stat-decided">0 / 20 decided</span>
+  <span class="stat stat-kept" id="stat-kept">KEEP: 0</span>
+  <span class="stat stat-cut" id="stat-cut">CUT: 0</span>
+  <span class="stat stat-edited" id="stat-edited">EDIT: 0</span>
+  <span class="stat stat-pending" id="stat-pending">Pending: 20</span>
+</div>
+
+<div id="responses-container"></div>
+
+<div id="export-section">
+  <h2>Export JSON (KEEP + EDIT only)</h2>
+  <div id="export-json">[]</div>
+  <button id="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <span class="copy-success" id="copy-success">Copied!</span>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "I feel like... actually no. I know. Do it.",
+    category: "wise",
+    note: "Casual hedge -> blunt declarative. The meandering setup makes the landing hit."
+  },
+  {
+    text: "Cute and dangerous share a parking spot. I'm in both spaces.",
+    category: "demanding",
+    note: "Self-mythology. Bubble gum + brass knuckle identity in one image."
+  },
+  {
+    text: "The universe took them out of your life and you drove back to pick them up.",
+    category: "wise",
+    note: "Cutting people off as self-care. Warm observation, hard truth underneath."
+  },
+  {
+    text: "I sound like nobody else. That's not a problem. That's the whole point.",
+    category: "demanding",
+    note: "Unboxable identity. Self-mythology without arrogance."
+  },
+  {
+    text: "*slow blink* I didn't plan this. It just happened. Best things do.",
+    category: "wise",
+    note: "Organic/unplanned energy. Anti-overthinking. The physical cat action anchors it."
+  },
+  {
+    text: "They want you in a box. You're not a box kind of situation.",
+    category: "demanding",
+    note: "Unboxable identity, directed at the reader. Warm and on their side."
+  },
+  {
+    text: "I'm not done. I'm literally just getting started. *stretches*",
+    category: "chaotic",
+    note: "Self-mythology + 'final form' energy. The stretch makes it physical and casual."
+  },
+  {
+    text: "My best self-care? Disappearing. Try it.",
+    category: "cold",
+    note: "Cutting people off energy. Cute delivery of a hard boundary."
+  },
+  {
+    text: "You keep asking how. Baby, you just do it. That's how.",
+    category: "wise",
+    note: "Anti-overthinking. Organic energy. 'When everyone says how do you do it, you just don't know because you literally just do it.'"
+  },
+  {
+    text: "I'm multiple things at once and none of them are sorry.",
+    category: "demanding",
+    note: "Unboxable identity. Contains multitudes, zero apology."
+  },
+  {
+    text: "That's the song you didn't like? Watch it be the one that goes crazy.",
+    category: "wise",
+    note: "'It's always the songs I don't like that go viral.' The thing you dismiss might be THE thing."
+  },
+  {
+    text: "Comfy. That's the whole plan. *tucks paws under*",
+    category: "nurturing",
+    note: "'Tia's gonna be comfortable.' Simple. The physical action seals it."
+  },
+  {
+    text: "I'm bubbly. I'm also the reason the last one left. Both true.",
+    category: "chaotic",
+    note: "Cute AND gangsta simultaneously. The contrast IS the identity."
+  },
+  {
+    text: "*chirps* You're overthinking it. The right answer doesn't need all that.",
+    category: "nurturing",
+    note: "Anti-overthinking energy wrapped in a sweet physical cat action."
+  },
+  {
+    text: "I was broke at Bojangles and I was still me. Nothing changes that.",
+    category: "heartfelt",
+    note: "Specific storytelling. The detail IS the proof. Identity that survives circumstance."
+  },
+  {
+    text: "Chameleon. Final form pending. Don't get comfortable.",
+    category: "demanding",
+    note: "Self-mythology. Short punch sentences. Mew energy."
+  },
+  {
+    text: "I hold back because I actually care. Don't confuse that for soft.",
+    category: "wise",
+    note: "Bubble gum over brass knuckles. The restraint IS the strength. Cute delivery of 'I could end this.'"
+  },
+  {
+    text: "Wrong lane? I'm all lanes. That's the whole thing.",
+    category: "chaotic",
+    note: "Unboxable. Refuses to choose. Short punch."
+  },
+  {
+    text: "*kneads blanket* I don't know how I do all this either. Crazy.",
+    category: "nurturing",
+    note: "Organic energy + anti-overthinking. 'I'm crazy, I don't know how I have time for all of this.'"
+  },
+  {
+    text: "If you changed, they wouldn't recognize you. Good.",
+    category: "cold",
+    note: "Cute misdirection. Sounds like a warning, lands as encouragement. Bubble gum delivery, brass knuckle liberation."
+  }
+];
+
+const state = {};
+
+function init() {
+  const container = document.getElementById('responses-container');
+  responses.forEach((r, i) => {
+    state[i] = { status: 'pending', text: r.text, category: r.category };
+    const card = document.createElement('div');
+    card.className = 'response-card';
+    card.id = `card-${i}`;
+    card.innerHTML = `
+      <div class="response-number">#${i + 1} of ${responses.length}<span class="status-badge" id="badge-${i}"></span></div>
+      <div class="response-text" id="text-${i}">${escapeHtml(r.text)}</div>
+      <div class="response-category" id="cat-${i}">${r.category}</div>
+      ${r.note ? `<div class="response-note">${escapeHtml(r.note)}</div>` : ''}
+      <div class="actions" id="actions-${i}">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${escapeHtml(r.text)}</textarea>
+        <select id="catselect-${i}">
+          ${['mystical','nurturing','poetic','cold','angry','heartfelt','judgy','chaotic','wise','existential','demanding','meta'].map(c =>
+            `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`
+          ).join('')}
+        </select>
+        <div class="edit-buttons">
+          <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn btn-cancel" onclick="cancelEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  const card = document.getElementById(`card-${i}`);
+  card.className = `response-card ${status}`;
+  const badge = document.getElementById(`badge-${i}`);
+  badge.className = `status-badge status-${status}`;
+  badge.textContent = status.toUpperCase();
+  const actions = document.getElementById(`actions-${i}`);
+  actions.innerHTML = `<button class="btn btn-undo" onclick="undecide(${i})">Undo</button>`;
+  document.getElementById(`edit-${i}`).classList.remove('active');
+  updateStats();
+  updateExport();
+}
+
+function undecide(i) {
+  state[i].status = 'pending';
+  state[i].text = responses[i].text;
+  state[i].category = responses[i].category;
+  const card = document.getElementById(`card-${i}`);
+  card.className = 'response-card';
+  const badge = document.getElementById(`badge-${i}`);
+  badge.className = 'status-badge';
+  badge.textContent = '';
+  document.getElementById(`text-${i}`).textContent = responses[i].text;
+  document.getElementById(`cat-${i}`).textContent = responses[i].category;
+  const actions = document.getElementById(`actions-${i}`);
+  actions.innerHTML = `
+    <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+    <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+    <button class="btn btn-edit" onclick="showEdit(${i})">Edit</button>
+  `;
+  document.getElementById(`textarea-${i}`).value = responses[i].text;
+  document.getElementById(`catselect-${i}`).value = responses[i].category;
+  updateStats();
+  updateExport();
+}
+
+function showEdit(i) {
+  document.getElementById(`edit-${i}`).classList.add('active');
+}
+
+function cancelEdit(i) {
+  document.getElementById(`edit-${i}`).classList.remove('active');
+  document.getElementById(`textarea-${i}`).value = state[i].text;
+  document.getElementById(`catselect-${i}`).value = state[i].category;
+}
+
+function saveEdit(i) {
+  const newText = document.getElementById(`textarea-${i}`).value.trim();
+  const newCat = document.getElementById(`catselect-${i}`).value;
+  if (!newText) return;
+  state[i].text = newText;
+  state[i].category = newCat;
+  state[i].status = 'edited';
+  document.getElementById(`text-${i}`).textContent = newText;
+  document.getElementById(`cat-${i}`).textContent = newCat;
+  const card = document.getElementById(`card-${i}`);
+  card.className = 'response-card edited';
+  const badge = document.getElementById(`badge-${i}`);
+  badge.className = 'status-badge status-edited';
+  badge.textContent = 'EDITED';
+  const actions = document.getElementById(`actions-${i}`);
+  actions.innerHTML = `<button class="btn btn-undo" onclick="undecide(${i})">Undo</button>`;
+  document.getElementById(`edit-${i}`).classList.remove('active');
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const vals = Object.values(state);
+  const total = vals.length;
+  const kept = vals.filter(s => s.status === 'kept').length;
+  const cut = vals.filter(s => s.status === 'cut').length;
+  const edited = vals.filter(s => s.status === 'edited').length;
+  const decided = kept + cut + edited;
+  const pending = total - decided;
+  document.getElementById('stat-decided').textContent = `${decided} / ${total} decided`;
+  document.getElementById('stat-kept').textContent = `KEEP: ${kept}`;
+  document.getElementById('stat-cut').textContent = `CUT: ${cut}`;
+  document.getElementById('stat-edited').textContent = `EDIT: ${edited}`;
+  document.getElementById('stat-pending').textContent = `Pending: ${pending}`;
+}
+
+function updateExport() {
+  const exported = Object.values(state)
+    .filter(s => s.status === 'kept' || s.status === 'edited')
+    .map(s => ({ text: s.text, category: s.category }));
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copy-success');
+    el.style.display = 'inline';
+    setTimeout(() => { el.style.display = 'none'; }, 2000);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

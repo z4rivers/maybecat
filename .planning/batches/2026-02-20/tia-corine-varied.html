@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tia Corine — Varied Behaviors Batch</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #ffd93d; margin-bottom: 8px; font-size: 1.5rem; }
+  .subtitle { color: #888; margin-bottom: 20px; font-size: 0.9rem; }
+  .stats { position: sticky; top: 0; background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; z-index: 100; display: flex; gap: 20px; font-size: 0.9rem; }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-count { font-weight: bold; font-size: 1.1rem; }
+  .stat-keep .stat-count { color: #4ecca3; }
+  .stat-cut .stat-count { color: #e94560; }
+  .stat-edit .stat-count { color: #ffd93d; }
+  .stat-pending .stat-count { color: #888; }
+  .item { background: #16213e; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #333; }
+  .item.kept { border-left-color: #4ecca3; opacity: 0.6; }
+  .item.cut { border-left-color: #e94560; opacity: 0.4; }
+  .item.edited { border-left-color: #ffd93d; }
+  .response-text { font-size: 1.1rem; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+  .meta { display: flex; gap: 12px; margin-bottom: 8px; font-size: 0.8rem; color: #888; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { width: 100%; margin-top: 8px; padding: 10px; background: #0f0f23; color: #e0e0e0; border: 1px solid #ffd93d; border-radius: 4px; font-family: inherit; font-size: 1rem; line-height: 1.4; resize: vertical; display: none; min-height: 80px; }
+  .edit-area.visible { display: block; }
+  .category-select { margin-top: 6px; padding: 4px 8px; background: #0f0f23; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; font-size: 0.85rem; display: none; }
+  .category-select.visible { display: inline-block; }
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-box { width: 100%; min-height: 200px; background: #0f0f23; color: #4ecca3; border: 1px solid #333; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 0.85rem; }
+  .copy-btn { margin-top: 8px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Tia Corine — Varied Behaviors</h1>
+<p class="subtitle">Bratty, bouncy, sweet-and-mean cat energy — now with VARIED behaviors and settings from cat-behaviors.md</p>
+<div class="stats">
+  <div class="stat stat-keep">Keep: <span class="stat-count" id="keep-count">0</span></div>
+  <div class="stat stat-edit">Edit: <span class="stat-count" id="edit-count">0</span></div>
+  <div class="stat stat-cut">Cut: <span class="stat-count" id="cut-count">0</span></div>
+  <div class="stat stat-pending">Pending: <span class="stat-count" id="pending-count">0</span></div>
+</div>
+
+<!-- ITEMS -->
+
+<div class="item" data-id="1" data-original="Pushed my water bowl two inches every day for a week. It&#39;s in the hallway now. That&#39;s called patience, baby." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Setting: pampered indoor</span><span>Behavior: pushing water bowl incrementally</span></div>
+  <div class="response-text">"Pushed my water bowl two inches every day for a week. It's in the hallway now. That's called patience, baby."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('1','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('1','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('1','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('1',this.value)">Pushed my water bowl two inches every day for a week. It's in the hallway now. That's called patience, baby.</textarea>
+  <select class="category-select" onchange="onCategoryChange('1',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding" selected>demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="2" data-original="Caught a stink bug. Mouthed it. Regretted it immediately. Sometimes you gotta taste the chaos before you decide." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Setting: suburban indoor/outdoor</span><span>Behavior: catching stink bug, regretting it</span></div>
+  <div class="response-text">"Caught a stink bug. Mouthed it. Regretted it immediately. Sometimes you gotta taste the chaos before you decide."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('2','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('2','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('2','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('2',this.value)">Caught a stink bug. Mouthed it. Regretted it immediately. Sometimes you gotta taste the chaos before you decide.</textarea>
+  <select class="category-select" onchange="onCategoryChange('2',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="3" data-original="I sleep on the chip display. Nobody pays and I don&#39;t move. We both know who runs this store." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Setting: bodega cat</span><span>Behavior: sleeping on chip display</span></div>
+  <div class="response-text">"I sleep on the chip display. Nobody pays and I don't move. We both know who runs this store."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('3','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('3','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('3','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('3',this.value)">I sleep on the chip display. Nobody pays and I don't move. We both know who runs this store.</textarea>
+  <select class="category-select" onchange="onCategoryChange('3',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold" selected>cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="4" data-original="Stepped on the keyboard and sent that email. It needed to go out. You were overthinking it." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Setting: stoner house</span><span>Behavior: stepping on keyboard, sending email</span></div>
+  <div class="response-text">"Stepped on the keyboard and sent that email. It needed to go out. You were overthinking it."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('4','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('4','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('4','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('4',this.value)">Stepped on the keyboard and sent that email. It needed to go out. You were overthinking it.</textarea>
+  <select class="category-select" onchange="onCategoryChange('4',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="5" data-original="Curled up in the bathroom sink while the shower steamed up the whole room. Some of y&#39;all don&#39;t know how to be comfortable and it shows." data-category="sassy">
+  <div class="meta"><span>Category: sassy</span><span>Setting: apartment cat</span><span>Behavior: curled in bathroom sink during shower steam</span></div>
+  <div class="response-text">"Curled up in the bathroom sink while the shower steamed up the whole room. Some of y'all don't know how to be comfortable and it shows."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('5','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('5','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('5','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('5',this.value)">Curled up in the bathroom sink while the shower steamed up the whole room. Some of y'all don't know how to be comfortable and it shows.</textarea>
+  <select class="category-select" onchange="onCategoryChange('5',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy" selected>sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="6" data-original="Brought a live chipmunk inside and lost it under the couch. That&#39;s not my problem anymore. That&#39;s a house problem." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Setting: suburban indoor/outdoor</span><span>Behavior: bringing live prey inside, losing it</span></div>
+  <div class="response-text">"Brought a live chipmunk inside and lost it under the couch. That's not my problem anymore. That's a house problem."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('6','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('6','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('6','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('6',this.value)">Brought a live chipmunk inside and lost it under the couch. That's not my problem anymore. That's a house problem.</textarea>
+  <select class="category-select" onchange="onCategoryChange('6',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="7" data-original="I follow you room to room but I have my own reasons for being in each one. Don&#39;t flatter yourself." data-category="sassy">
+  <div class="meta"><span>Category: sassy</span><span>Setting: pampered indoor</span><span>Behavior: following room to room, pretending independence</span></div>
+  <div class="response-text">"I follow you room to room but I have my own reasons for being in each one. Don't flatter yourself."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('7','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('7','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('7','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('7',this.value)">I follow you room to room but I have my own reasons for being in each one. Don't flatter yourself.</textarea>
+  <select class="category-select" onchange="onCategoryChange('7',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy" selected>sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="8" data-original="Left a dead vole on the doormat. That&#39;s a resume, not a gift. Know the difference." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Setting: barn cat</span><span>Behavior: leaving vole on doormat as resume</span></div>
+  <div class="response-text">"Left a dead vole on the doormat. That's a resume, not a gift. Know the difference."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('8','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('8','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('8','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('8',this.value)">Left a dead vole on the doormat. That's a resume, not a gift. Know the difference.</textarea>
+  <select class="category-select" onchange="onCategoryChange('8',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding" selected>demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="9" data-original="Fell asleep sitting up. Tipped sideways. Caught myself. Did it again. Commitment is doing the same dumb thing twice on purpose." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Setting: stoner house</span><span>Behavior: falling asleep sitting up, tipping over</span></div>
+  <div class="response-text">"Fell asleep sitting up. Tipped sideways. Caught myself. Did it again. Commitment is doing the same dumb thing twice on purpose."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('9','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('9','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('9','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('9',this.value)">Fell asleep sitting up. Tipped sideways. Caught myself. Did it again. Commitment is doing the same dumb thing twice on purpose.</textarea>
+  <select class="category-select" onchange="onCategoryChange('9',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise" selected>wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="10" data-original="Slid across the hardwood chasing a bottle cap. Legs went four different directions. Still got it. Grace is overrated." data-category="chaotic">
+  <div class="meta"><span>Category: chaotic</span><span>Setting: apartment cat</span><span>Behavior: sliding on hardwood chasing bottle cap</span></div>
+  <div class="response-text">"Slid across the hardwood chasing a bottle cap. Legs went four different directions. Still got it. Grace is overrated."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('10','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('10','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('10','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('10',this.value)">Slid across the hardwood chasing a bottle cap. Legs went four different directions. Still got it. Grace is overrated.</textarea>
+  <select class="category-select" onchange="onCategoryChange('10',this.value)">
+    <option value="chaotic" selected>chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="11" data-original="I know every car that parks on this block. I know when they leave. I know when they come back late. Information is free if you pay attention." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Setting: alley cat</span><span>Behavior: territorial surveillance, knowing every car</span></div>
+  <div class="response-text">"I know every car that parks on this block. I know when they leave. I know when they come back late. Information is free if you pay attention."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('11','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('11','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('11','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('11',this.value)">I know every car that parks on this block. I know when they leave. I know when they come back late. Information is free if you pay attention.</textarea>
+  <select class="category-select" onchange="onCategoryChange('11',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise" selected>wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="12" data-original="Sat in the open suitcase before you packed a single thing. We both know you&#39;re not going anywhere." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Setting: pampered indoor</span><span>Behavior: sitting in suitcase the moment it's unzipped</span></div>
+  <div class="response-text">"Sat in the open suitcase before you packed a single thing. We both know you're not going anywhere."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('12','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('12','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('12','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('12',this.value)">Sat in the open suitcase before you packed a single thing. We both know you're not going anywhere.</textarea>
+  <select class="category-select" onchange="onCategoryChange('12',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold" selected>cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="13" data-original="Sleeping on top of the dryer mid-cycle. The heat AND the vibration. I know what I like and I don&#39;t apologize for it." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Setting: family house</span><span>Behavior: sleeping on dryer mid-cycle</span></div>
+  <div class="response-text">"Sleeping on top of the dryer mid-cycle. The heat AND the vibration. I know what I like and I don't apologize for it."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('13','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('13','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('13','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('13',this.value)">Sleeping on top of the dryer mid-cycle. The heat AND the vibration. I know what I like and I don't apologize for it.</textarea>
+  <select class="category-select" onchange="onCategoryChange('13',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding" selected>demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="14" data-original="Pinned a spider against the baseboard with one paw. Left it there. Didn&#39;t kill it. Didn&#39;t let it go. I like options." data-category="cold">
+  <div class="meta"><span>Category: cold</span><span>Setting: apartment cat</span><span>Behavior: pinning spider against baseboard, leaving it</span></div>
+  <div class="response-text">"Pinned a spider against the baseboard with one paw. Left it there. Didn't kill it. Didn't let it go. I like options."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('14','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('14','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('14','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('14',this.value)">Pinned a spider against the baseboard with one paw. Left it there. Didn't kill it. Didn't let it go. I like options.</textarea>
+  <select class="category-select" onchange="onCategoryChange('14',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold" selected>cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="15" data-original="Yowled with a sock in my mouth at 2am. Announcing the kill to an empty room. Some things need a witness even when there isn&#39;t one." data-category="poetic">
+  <div class="meta"><span>Category: poetic</span><span>Setting: stoner house</span><span>Behavior: yowling while carrying sock at 2am</span></div>
+  <div class="response-text">"Yowled with a sock in my mouth at 2am. Announcing the kill to an empty room. Some things need a witness even when there isn't one."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('15','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('15','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('15','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('15',this.value)">Yowled with a sock in my mouth at 2am. Announcing the kill to an empty room. Some things need a witness even when there isn't one.</textarea>
+  <select class="category-select" onchange="onCategoryChange('15',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic" selected>poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="16" data-original="Misjudged the counter jump. Front claws caught it, back legs scrambled. Walked away like that was the plan. It was the plan." data-category="sassy">
+  <div class="meta"><span>Category: sassy</span><span>Setting: bodega cat</span><span>Behavior: misjudging jump, scrambling, playing it off</span></div>
+  <div class="response-text">"Misjudged the counter jump. Front claws caught it, back legs scrambled. Walked away like that was the plan. It was the plan."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('16','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('16','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('16','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('16',this.value)">Misjudged the counter jump. Front claws caught it, back legs scrambled. Walked away like that was the plan. It was the plan.</textarea>
+  <select class="category-select" onchange="onCategoryChange('16',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy" selected>sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="17" data-original="I sit on the one piece of paper you need. Out of fifty on the desk. That&#39;s not luck. That&#39;s talent." data-category="sassy">
+  <div class="meta"><span>Category: sassy</span><span>Setting: college student apartment</span><span>Behavior: sitting on the one needed paper</span></div>
+  <div class="response-text">"I sit on the one piece of paper you need. Out of fifty on the desk. That's not luck. That's talent."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('17','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('17','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('17','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('17',this.value)">I sit on the one piece of paper you need. Out of fifty on the desk. That's not luck. That's talent.</textarea>
+  <select class="category-select" onchange="onCategoryChange('17',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy" selected>sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="18" data-original="*one paw on your hand while you pet me* I&#39;m not stopping you. I&#39;m participating. There&#39;s levels to this." data-category="wholesome">
+  <div class="meta"><span>Category: wholesome</span><span>Setting: pampered indoor</span><span>Behavior: placing paw on hand during petting</span></div>
+  <div class="response-text">"*one paw on your hand while you pet me* I'm not stopping you. I'm participating. There's levels to this."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('18','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('18','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('18','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('18',this.value)">*one paw on your hand while you pet me* I'm not stopping you. I'm participating. There's levels to this.</textarea>
+  <select class="category-select" onchange="onCategoryChange('18',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome" selected>wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="19" data-original="Sleeping in the exact center of one specific stair. Always that stair. You go around. That&#39;s just how the building works now." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Setting: walkup apartment</span><span>Behavior: sleeping on one specific stair, blocking path</span></div>
+  <div class="response-text">"Sleeping in the exact center of one specific stair. Always that stair. You go around. That's just how the building works now."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('19','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('19','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('19','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('19',this.value)">Sleeping in the exact center of one specific stair. Always that stair. You go around. That's just how the building works now.</textarea>
+  <select class="category-select" onchange="onCategoryChange('19',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding" selected>demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="20" data-original="Watched the washing machine through the glass door for forty-five minutes. Tumble cycle. I was processing. Mind your business." data-category="cryptic">
+  <div class="meta"><span>Category: cryptic</span><span>Setting: family house</span><span>Behavior: watching washing machine tumble cycle</span></div>
+  <div class="response-text">"Watched the washing machine through the glass door for forty-five minutes. Tumble cycle. I was processing. Mind your business."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('20','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('20','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('20','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('20',this.value)">Watched the washing machine through the glass door for forty-five minutes. Tumble cycle. I was processing. Mind your business.</textarea>
+  <select class="category-select" onchange="onCategoryChange('20',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic" selected>cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="21" data-original="Tracked something across the ceiling real slow. Nothing there. Or maybe something only I can see. Either way, I&#39;m right." data-category="cryptic">
+  <div class="meta"><span>Category: cryptic</span><span>Setting: big empty house</span><span>Behavior: tracking invisible something across ceiling</span></div>
+  <div class="response-text">"Tracked something across the ceiling real slow. Nothing there. Or maybe something only I can see. Either way, I'm right."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('21','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('21','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('21','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('21',this.value)">Tracked something across the ceiling real slow. Nothing there. Or maybe something only I can see. Either way, I'm right.</textarea>
+  <select class="category-select" onchange="onCategoryChange('21',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic" selected>cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="22" data-original="Half an ear missing. Three yards that are mine. Come home smelling like the neighbor&#39;s garage. I earned all of this the hard way." data-category="heartfelt">
+  <div class="meta"><span>Category: heartfelt</span><span>Setting: rural outdoor / battle-worn</span><span>Behavior: territorial ownership, survival scars</span></div>
+  <div class="response-text">"Half an ear missing. Three yards that are mine. Come home smelling like the neighbor's garage. I earned all of this the hard way."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('22','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('22','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('22','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('22',this.value)">Half an ear missing. Three yards that are mine. Come home smelling like the neighbor's garage. I earned all of this the hard way.</textarea>
+  <select class="category-select" onchange="onCategoryChange('22',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt" selected>heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="23" data-original="Pulled every tissue out the box one at a time. Methodical. That&#39;s not chaos, that&#39;s a plan you don&#39;t understand yet." data-category="wise">
+  <div class="meta"><span>Category: wise</span><span>Setting: pampered indoor</span><span>Behavior: pulling tissues out one at a time</span></div>
+  <div class="response-text">"Pulled every tissue out the box one at a time. Methodical. That's not chaos, that's a plan you don't understand yet."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('23','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('23','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('23','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('23',this.value)">Pulled every tissue out the box one at a time. Methodical. That's not chaos, that's a plan you don't understand yet.</textarea>
+  <select class="category-select" onchange="onCategoryChange('23',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise" selected>wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="24" data-original="*sleeping with one paw extended, just touching you* I don&#39;t need much. Just contact. Just the pad of my foot on your arm. That&#39;s enough." data-category="nurturing">
+  <div class="meta"><span>Category: nurturing</span><span>Setting: elderly person's house</span><span>Behavior: sleeping with one paw touching you</span></div>
+  <div class="response-text">"*sleeping with one paw extended, just touching you* I don't need much. Just contact. Just the pad of my foot on your arm. That's enough."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('24','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('24','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('24','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('24',this.value)">*sleeping with one paw extended, just touching you* I don't need much. Just contact. Just the pad of my foot on your arm. That's enough.</textarea>
+  <select class="category-select" onchange="onCategoryChange('24',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding">demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing" selected>nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="item" data-id="25" data-original="Chose to sit next to the one person at the party who doesn&#39;t like cats. I don&#39;t chase fans. I make new ones." data-category="demanding">
+  <div class="meta"><span>Category: demanding</span><span>Setting: multi-person household</span><span>Behavior: choosing to sit near the person who doesn't like cats</span></div>
+  <div class="response-text">"Chose to sit next to the one person at the party who doesn't like cats. I don't chase fans. I make new ones."</div>
+  <div class="actions">
+    <button class="btn btn-keep" onclick="setStatus('25','keep')">KEEP</button>
+    <button class="btn btn-edit" onclick="setStatus('25','edit')">EDIT</button>
+    <button class="btn btn-cut" onclick="setStatus('25','cut')">CUT</button>
+  </div>
+  <textarea class="edit-area" oninput="onEdit('25',this.value)">Chose to sit next to the one person at the party who doesn't like cats. I don't chase fans. I make new ones.</textarea>
+  <select class="category-select" onchange="onCategoryChange('25',this.value)">
+    <option value="chaotic">chaotic</option><option value="wise">wise</option><option value="cold">cold</option><option value="sassy">sassy</option><option value="wholesome">wholesome</option><option value="demanding" selected>demanding</option><option value="cryptic">cryptic</option><option value="dramatic">dramatic</option><option value="heartfelt">heartfelt</option><option value="nurturing">nurturing</option><option value="poetic">poetic</option><option value="angry">angry</option><option value="unhinged">unhinged</option>
+  </select>
+</div>
+
+<div class="export-section">
+  <h2>Export — Kept + Edited</h2>
+  <textarea class="export-box" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+</div>
+
+<script>
+const categories = ['chaotic','wise','cold','sassy','wholesome','demanding','cryptic','dramatic','heartfelt','nurturing','poetic','angry','unhinged'];
+const items = document.querySelectorAll('.item');
+const state = {};
+
+items.forEach(item => {
+  const id = item.dataset.id;
+  state[id] = { status: 'pending', original: item.dataset.original, text: item.dataset.original, category: item.dataset.category };
+});
+
+function updateStats() {
+  const vals = Object.values(state);
+  document.getElementById('keep-count').textContent = vals.filter(v => v.status === 'keep').length;
+  document.getElementById('edit-count').textContent = vals.filter(v => v.status === 'edit').length;
+  document.getElementById('cut-count').textContent = vals.filter(v => v.status === 'cut').length;
+  document.getElementById('pending-count').textContent = vals.filter(v => v.status === 'pending').length;
+  updateExport();
+}
+
+function updateExport() {
+  const kept = Object.entries(state)
+    .filter(([,v]) => v.status === 'keep' || v.status === 'edit')
+    .map(([,v]) => ({ text: v.text, category: v.category }));
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function setStatus(id, status) {
+  state[id].status = status;
+  const item = document.querySelector(`[data-id="${id}"]`);
+  item.className = 'item ' + (status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited' : '');
+  const editArea = item.querySelector('.edit-area');
+  const catSelect = item.querySelector('.category-select');
+  if (status === 'edit') {
+    editArea.classList.add('visible');
+    catSelect.classList.add('visible');
+    editArea.focus();
+  } else {
+    editArea.classList.remove('visible');
+    catSelect.classList.remove('visible');
+  }
+  updateStats();
+}
+
+function onEdit(id, text) {
+  state[id].text = text;
+  updateExport();
+}
+
+function onCategoryChange(id, cat) {
+  state[id].category = cat;
+  updateExport();
+}
+
+updateStats();
+</script>
+</body>
+</html>

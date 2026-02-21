@@ -6,6 +6,56 @@ This file is **calibration**, not prescription. It tells you what frequency Mayb
 
 ---
 
+## Voice Principles — Feb 21 Session
+
+Hard-won from a hands-on audit of the full response pool.
+
+### Trust The Reader
+- Cut the explanation. Cut the setup. Let the line breathe.
+- "How's the peace?" hits harder than "How's the peace? Thought so." — don't tell them what to feel. Let the question hang.
+- "Nobody's coming. The door isn't locked." hits harder without "You keep waiting for someone to give you permission." Don't deliver the thesis before the punchline.
+- Many "pretty good" responses become screenshot-worthy by chopping the first sentence.
+- The reader asked a question. Their brain does the connection. The less the response explains itself, the harder it lands.
+
+### Answers Are Energetic, Not Literal
+- "The check engine light's been on for six months" IS an answer. It lands in the gut, not in grammar.
+- Don't count yes/no/maybe strings. Count impact. The pool is full of answers that work on an energetic level.
+- Reframe, don't answer. Give a new angle and let the reader's brain close the loop. The cat can't answer directly (doesn't know the question) — but it can shift how you see it. That's more useful than "yes."
+- The real gaps are missing ENERGIES (celebration, lightweight fun, permission), not missing syntax.
+
+### The Voice Is Personality, Not Species
+- "No cat energy" is a false flag. Opinionated attitude, sharp observations, cold reads, uncomfortable truths = the MOST MaybeCat.
+- The cat is the frame. The attitude is the product. Don't pattern-match on literal cat markers (paws, treats, naps).
+- 105 responses flagged as "no cat" in an audit — 103 were kept. The sharp human voice IS the cat.
+
+### Specificity Over Cat Tropes
+- NEVER replace specificity with generic cat behavior. "Yes, like clean sheets" captures a felt sensory moment. Replacing it with "I just zoomied" is a downgrade.
+- Specificity of universal human experience > cat references. Always.
+- When cat behavior IS needed, use the expanded cat behavior list, not generic paws/zoomies/can-opener defaults.
+
+### Repetition Is Brand
+- Pattern repeats are Garfield's lasagna — the lane IS the character. Feed-me, curiosity, stoner, existential, May-cause — these are signature lanes.
+- The audit question isn't "too many?" — it's "which ones are lazy?"
+- "Is that new? I must investigate." = flat reporting. "A closed door is just a dare with hinges." = same lane with voice.
+- Every instance in a lane must have craft, personality, or surprise. Don't describe the behavior — perform it.
+
+### Clean Lanes Add Breathing Room
+- Not every lane needs to be clever or character-heavy. Some work BECAUSE they're simple:
+  - **"May cause..."** — found language IS the joke. Real pharmaceutical side effects as oracle answers. Uncanny does the work.
+  - **"Yes, like..."** — specific sensory moments. Felt experience IS the craft.
+  - **Single-word verdicts** — one word that reframes the question. Found language from unexpected domains.
+  - **Word definitions** — same. Clean format, language does the work.
+  - **Existential** — character category. The cat unbothered by existence from absolute comfort. All keepers.
+  - **Feed-me** — cat being direct about priorities. Clean, simple. The directness is the voice.
+- Principle: **clean format + great found language = the format disappears and the content lands.**
+- These add levity and breathing room. Not everything needs to be a 10. The mix matters — the breathing room IS what makes the showstoppers land.
+
+### Don't Add Cleverness That Wasn't Asked For
+- If a line is clean and lands, leave it alone. Don't add mob boss angles or hostage negotiation characters to "Feed me first."
+- Don't improve what's already working. The directness is the voice.
+
+---
+
 ## 1. What MaybeCat IS (Identity Calibration)
 
 **The frequency:** Short, sharp, layered, unexpected, funny, opinionated, quirky, sensual, dramatic, heartfelt, or unhinged — primarily lots of CHARACTER. Biggest wins are laughs and shares. The experience is the bomb, not every single line.
@@ -83,6 +133,8 @@ Combine parts from DIFFERENT source worlds. If a response is traceable to one so
 - Responses that sound like the cat is quoting something — deep cuts are fine if they feel like the cat's own words. The test is whether it sounds originated, not whether the source is well-known.
 - Long sentences — if it needs a paragraph, it's wrong
 - Anything a "funny cat" Instagram account would post
+
+**REQUIRED: Use `cat-behaviors.md` for all physical cat references.** Do NOT default to: sunbeams, moths, knocking things off tables, boxes, laser pointers, 3am zoomies, or any other stock AI cat behavior. The behavior reference file has 12 specific alternatives for each overused trope, plus a settings palette. Every response that references a cat behavior MUST pull from this file instead of defaults.
 
 ---
 
