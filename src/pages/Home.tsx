@@ -399,7 +399,7 @@ export function Oracle() {
         }}
       />
 
-      <div className="flex-1 flex flex-col px-4 pt-3 relative z-10 overflow-hidden pb-20 md:pb-[150px]">
+      <div className="flex-1 flex flex-col px-4 pt-3 relative z-10 overflow-hidden pb-[80px] md:pb-[150px]">
         {/* Elaborate Art Nouveau corner vines - LARGE and ornate like tarot deck borders */}
         <CornerVine className="absolute top-0 left-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60" />
         <CornerVine className="absolute top-0 right-0 w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 text-amber-900/60 -scale-x-100" />
@@ -716,7 +716,7 @@ export function Oracle() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex-1 flex flex-col items-center gap-4 mt-4"
+              className="flex-1 flex flex-col items-center gap-1 sm:gap-4 mt-2 sm:mt-4"
             >
               {/* Choose Your Oracle label */}
               <p
@@ -742,7 +742,7 @@ export function Oracle() {
               </p>
 
               {/* Horizontal layout: arrows outside, scrollable content inside */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-2 pb-1 sm:pt-6 sm:pb-4 px-2 sm:px-4 md:px-8">
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-0 pb-0 sm:pt-6 sm:pb-4 -mx-4 sm:mx-0 px-0 sm:px-4 md:px-8">
                 {/* Left arrow - nano-banana style */}
                 <button
                   onClick={prevCat}
@@ -763,7 +763,7 @@ export function Oracle() {
                 <div
                   ref={visibleCats <= 1 ? mobileScrollRef : undefined}
                   onScroll={visibleCats <= 1 ? handleMobileScroll : undefined}
-                  className="flex items-center gap-2 md:gap-4 overflow-x-auto overflow-y-hidden sm:overflow-visible px-2 flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  className="flex items-center gap-2 md:gap-4 overflow-x-auto overflow-y-visible sm:overflow-visible px-0 sm:px-2 flex-1 min-w-0 py-3 sm:py-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                 {/* YOUR CAT - desktop only (on mobile it's in the carousel rotation) */}
                 <AnimatePresence>
