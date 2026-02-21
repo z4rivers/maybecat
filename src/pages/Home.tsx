@@ -607,13 +607,13 @@ export function Oracle() {
             </motion.div>
           </div>
         ) : (
-          /* ═══ CAT SELECTION VIEW — scales uniformly to fit viewport ═══ */
-          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden flex items-start justify-center">
+          /* ═══ CAT SELECTION VIEW — mobile: native scroll/swipe, desktop: scale-to-fit ═══ */
+          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden sm:overflow-hidden overflow-auto flex items-start justify-center">
             <div
               ref={selectionContentRef}
               className="flex flex-col items-center"
               style={{
-                transform: `scale(${selectionScale})`,
+                transform: visibleCats <= 2 ? 'none' : `scale(${selectionScale})`,
                 transformOrigin: 'top center',
               }}
             >
@@ -705,8 +705,8 @@ export function Oracle() {
                   <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
                 </button>
 
-                {/* Scrollable carousel content */}
-                <div className="flex items-center gap-2 md:gap-4 overflow-visible px-2">
+                {/* Scrollable carousel content — swipeable on mobile, visible on desktop */}
+                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-2">
                 {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
                 <AnimatePresence>
                   {!loadingShelterCats && (
