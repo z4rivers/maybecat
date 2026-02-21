@@ -111,8 +111,8 @@ export function Oracle() {
 
   // Carousel navigation - infinite circular rotation
 
-  // Total slots for carousel rotation (mobile: all cards rotate; desktop: only shelter cats rotate)
-  const totalSlots = visibleCats <= 1 ? shelterCats.length + 2 : shelterCats.length;
+  // Total slots: your_cat + shelter cats + refresh — all rotate together
+  const totalSlots = shelterCats.length + 2;
 
   const nextCat = useCallback(() => {
     setCarouselIndex(i => (i + 1) % totalSlots);
@@ -171,14 +171,20 @@ export function Oracle() {
       return [...base, ...base, ...base];
     }
 
-    // Desktop/tablet: Your Cat pinned left, Refresh pinned right, shelter cats rotate in between
-    const slots: CarouselSlot[] = [{ type: 'your_cat' }];
-    const middleSlots = Math.max(visibleCats - 2, 1); // reserve 2 spots for your_cat + refresh
-    for (let i = 0; i < Math.min(middleSlots, shelterCats.length); i++) {
-      const idx = (carouselIndex + i) % shelterCats.length;
-      slots.push({ type: 'cat', cat: shelterCats[idx] });
+    // Desktop/tablet: ordered sequence [your_cat, ...shelter cats, refresh], window rotates through
+    // Order: index 0 = your_cat, 1..N = shelter cats, N+1 = refresh
+    const total = shelterCats.length + 2;
+    const slots: CarouselSlot[] = [];
+    for (let i = 0; i < Math.min(visibleCats, total); i++) {
+      const idx = (carouselIndex + i) % total;
+      if (idx === 0) {
+        slots.push({ type: 'your_cat' });
+      } else if (idx <= shelterCats.length) {
+        slots.push({ type: 'cat', cat: shelterCats[idx - 1] });
+      } else {
+        slots.push({ type: 'refresh' });
+      }
     }
-    slots.push({ type: 'refresh' });
     return slots;
   }, [shelterCats, carouselIndex, visibleCats]);
 
