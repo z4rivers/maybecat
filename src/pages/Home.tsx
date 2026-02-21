@@ -742,7 +742,7 @@ export function Oracle() {
               </p>
 
               {/* Horizontal layout: arrows outside, scrollable content inside */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-3 pb-0 sm:pt-6 sm:pb-4 -mx-4 sm:mx-0 px-0 sm:px-4 md:px-8">
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-[15px] pb-0 sm:pt-6 sm:pb-4 -mx-4 sm:mx-0 px-0 sm:px-4 md:px-8">
                 {/* Left arrow - nano-banana style */}
                 <button
                   onClick={prevCat}
