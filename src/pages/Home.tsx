@@ -86,7 +86,7 @@ export function Oracle() {
   // Responsive visible cats — fewer on smaller screens so cards stay readable
   const [visibleCats, setVisibleCats] = useState(() => {
     if (typeof window === 'undefined') return 4;
-    if (window.innerWidth < 640) return 2;
+    if (window.innerWidth < 640) return 1;
     if (window.innerWidth < 1024) return 3;
     return 4;
   });
@@ -96,7 +96,7 @@ export function Oracle() {
     const lg = window.matchMedia('(min-width: 1024px)');
 
     const update = () => {
-      if (sm.matches) setVisibleCats(2);
+      if (sm.matches) setVisibleCats(1);
       else if (lg.matches) setVisibleCats(4);
       else setVisibleCats(3);
     };
@@ -111,13 +111,16 @@ export function Oracle() {
 
   // Carousel navigation - infinite circular rotation
 
+  // On mobile, Your Cat joins the rotation; total slots = shelter + refresh + your_cat
+  const totalSlots = shelterCats.length + 1 + (visibleCats <= 1 ? 1 : 0);
+
   const nextCat = useCallback(() => {
-    setCarouselIndex(i => (i + 1) % (shelterCats.length + 1));
-  }, [shelterCats.length]);
+    setCarouselIndex(i => (i + 1) % totalSlots);
+  }, [totalSlots]);
 
   const prevCat = useCallback(() => {
-    setCarouselIndex(i => (i - 1 + shelterCats.length + 1) % (shelterCats.length + 1));
-  }, [shelterCats.length]);
+    setCarouselIndex(i => (i - 1 + totalSlots) % totalSlots);
+  }, [totalSlots]);
 
   // Touch swipe for mobile carousel
   const touchStartX = useRef(0);
@@ -132,16 +135,19 @@ export function Oracle() {
     }
   }, [nextCat, prevCat]);
 
-  // Build visible slots — cats + one refresh card, all in a single rotating sequence
-  type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' };
+  // Build visible slots — cats + refresh card + your_cat (mobile only)
+  type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' } | { type: 'your_cat' };
 
   const getVisibleSlots = useCallback((): CarouselSlot[] => {
     if (shelterCats.length === 0) return [];
-    const totalSlots = shelterCats.length + 1; // +1 for refresh card
+    const isMobile = visibleCats <= 1;
+    const total = shelterCats.length + 1 + (isMobile ? 1 : 0);
     const slots: CarouselSlot[] = [];
-    for (let i = 0; i < Math.min(visibleCats, totalSlots); i++) {
-      const idx = (carouselIndex + i) % totalSlots;
-      if (idx < shelterCats.length) {
+    for (let i = 0; i < Math.min(visibleCats, total); i++) {
+      const idx = (carouselIndex + i) % total;
+      if (isMobile && idx === total - 1) {
+        slots.push({ type: 'your_cat' });
+      } else if (idx < shelterCats.length) {
         slots.push({ type: 'cat', cat: shelterCats[idx] });
       } else {
         slots.push({ type: 'refresh' });
@@ -724,9 +730,9 @@ export function Oracle() {
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleTouchEnd}
                 >
-                {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
+                {/* YOUR CAT - desktop only (on mobile it's in the carousel rotation) */}
                 <AnimatePresence>
-                  {!loadingShelterCats && (
+                  {!loadingShelterCats && visibleCats > 1 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8, x: -50 }}
                       animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -810,6 +816,49 @@ export function Oracle() {
                         const color = cardColors[i % cardColors.length];
                         const rotations = [-1.5, 0.8, -0.8, 1.5];
                         const rotation = rotations[i % rotations.length];
+
+                        if (slot.type === 'your_cat') {
+                          return (
+                            <motion.div
+                              key="your-cat-carousel"
+                              layout
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              transition={{ layout: { type: 'spring', stiffness: 200, damping: 25 }, opacity: { duration: 0.2 } }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => fileInputRef.current?.click()}
+                              className="cursor-pointer group flex-shrink-0"
+                            >
+                              <div
+                                className="w-52 h-[294px] rounded-lg overflow-hidden relative"
+                                style={{
+                                  background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
+                                  boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
+                                  border: '4px solid #78350F',
+                                }}
+                              >
+                                <div className="absolute inset-2 rounded" style={{ border: '2px solid #92400E', boxShadow: 'inset 0 0 15px rgba(120,53,15,0.2)' }} />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                                  <div
+                                    className="w-16 h-16 rounded-full flex items-center justify-center mb-3"
+                                    style={{ border: '3px dashed #78350F', background: 'radial-gradient(circle, rgba(254,243,199,0.5) 0%, transparent 70%)' }}
+                                  >
+                                    <Camera className="w-8 h-8 text-amber-800" />
+                                  </div>
+                                  <p className="font-black text-center text-xl" style={{ fontFamily: "'Cinzel Decorative', Georgia, serif", color: '#78350F', textShadow: '1px 1px 0 rgba(254,243,199,0.5)' }}>
+                                    Your Cat
+                                  </p>
+                                  <p className="text-amber-800 text-sm mt-2 text-center font-semibold">tap to upload</p>
+                                </div>
+                                <div className="absolute top-3 left-3 text-amber-800 text-base">&#10087;</div>
+                                <div className="absolute top-3 right-3 text-amber-800 text-base scale-x-[-1]">&#10087;</div>
+                                <div className="absolute bottom-3 left-3 text-amber-800 text-base scale-y-[-1]">&#10087;</div>
+                                <div className="absolute bottom-3 right-3 text-amber-800 text-base scale-[-1]">&#10087;</div>
+                              </div>
+                            </motion.div>
+                          );
+                        }
 
                         if (slot.type === 'refresh') {
                           return (
@@ -945,8 +994,8 @@ export function Oracle() {
             </motion.div>
           </div>
           {/* SEO Footer */}
-          <footer className="w-full text-center select-text pt-3 pb-4 px-4">
-            <div className="text-sm md:text-base leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
+          <footer className="w-full text-center select-text pt-3 pb-24 sm:pb-4 px-4">
+            <div className="text-base sm:text-sm md:text-base leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
               <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
             </div>
           </footer>
