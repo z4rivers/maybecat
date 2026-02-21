@@ -119,6 +119,19 @@ export function Oracle() {
     setCarouselIndex(i => (i - 1 + shelterCats.length + 1) % (shelterCats.length + 1));
   }, [shelterCats.length]);
 
+  // Touch swipe for mobile carousel
+  const touchStartX = useRef(0);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) nextCat();
+      else prevCat();
+    }
+  }, [nextCat, prevCat]);
+
   // Build visible slots — cats + one refresh card, all in a single rotating sequence
   type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' };
 
@@ -705,8 +718,12 @@ export function Oracle() {
                   <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
                 </button>
 
-                {/* Scrollable carousel content — swipeable on mobile, visible on desktop */}
-                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-2">
+                {/* Carousel content — swipe on mobile, visible on desktop */}
+                <div
+                  className="flex items-center gap-2 md:gap-4 overflow-visible px-2"
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                >
                 {/* YOUR CAT - appears after cats load, LARGER than shelter cats */}
                 <AnimatePresence>
                   {!loadingShelterCats && (
