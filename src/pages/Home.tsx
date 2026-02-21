@@ -841,6 +841,7 @@ export function Oracle() {
                   ) : (
                     <AnimatePresence mode="popLayout">
                       {getVisibleSlots().map((slot, i) => {
+                        const isMobile = visibleCats <= 1;
                         const cardColors = [
                           { bg: 'linear-gradient(145deg, #EC4899 0%, #BE185D 50%, #831843 100%)', border: '#500724', accent: '#FDF2F8' },
                           { bg: 'linear-gradient(145deg, #10B981 0%, #047857 50%, #064E3B 100%)', border: '#022C22', accent: '#D1FAE5' },
@@ -855,7 +856,7 @@ export function Oracle() {
                         if (slot.type === 'your_cat') {
                           return (
                             <motion.div
-                              key={`your-cat-${i}`}
+                              key={isMobile ? `your-cat-${i}` : 'your-cat'}
                               layout
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
@@ -898,7 +899,7 @@ export function Oracle() {
                         if (slot.type === 'refresh') {
                           return (
                             <motion.button
-                              key={`refresh-${i}`}
+                              key={isMobile ? `refresh-${i}` : 'refresh-card'}
                               layout
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
@@ -934,7 +935,7 @@ export function Oracle() {
                         const cat = slot.cat;
                         return (
                           <motion.button
-                            key={`${cat.id}-${i}`}
+                            key={isMobile ? `${cat.id}-${i}` : cat.id}
                             layout
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
