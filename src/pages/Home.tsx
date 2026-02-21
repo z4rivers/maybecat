@@ -122,6 +122,38 @@ export function Oracle() {
     setCarouselIndex(i => (i - 1 + totalSlots) % totalSlots);
   }, [totalSlots]);
 
+  // Infinite scroll for mobile — triple the cards so it wraps seamlessly
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+  const scrollReady = useRef(false);
+  const teleporting = useRef(false);
+
+  useEffect(() => {
+    if (visibleCats > 1 || !mobileScrollRef.current || shelterCats.length === 0) return;
+    const el = mobileScrollRef.current;
+    requestAnimationFrame(() => {
+      const setWidth = el.scrollWidth / 3;
+      el.scrollLeft = setWidth;
+      scrollReady.current = true;
+    });
+  }, [visibleCats, shelterCats]);
+
+  const handleMobileScroll = useCallback(() => {
+    if (!scrollReady.current || teleporting.current) return;
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    const setWidth = el.scrollWidth / 3;
+    const threshold = 50;
+    if (el.scrollLeft >= setWidth * 2 - threshold) {
+      teleporting.current = true;
+      el.scrollLeft -= setWidth;
+      requestAnimationFrame(() => { teleporting.current = false; });
+    } else if (el.scrollLeft <= threshold) {
+      teleporting.current = true;
+      el.scrollLeft += setWidth;
+      requestAnimationFrame(() => { teleporting.current = false; });
+    }
+  }, []);
+
   // Build visible slots — cats + refresh card + your_cat (mobile only)
   type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' } | { type: 'your_cat' };
 
@@ -130,13 +162,13 @@ export function Oracle() {
     const isMobile = visibleCats <= 1;
 
     if (isMobile) {
-      // Mobile: all cards in a scrollable row — Your Cat first, then shelter cats, refresh last
-      const slots: CarouselSlot[] = [{ type: 'your_cat' }];
+      // Mobile: triple the cards for infinite circular scroll
+      const base: CarouselSlot[] = [{ type: 'your_cat' }];
       for (const cat of shelterCats) {
-        slots.push({ type: 'cat', cat });
+        base.push({ type: 'cat', cat });
       }
-      slots.push({ type: 'refresh' });
-      return slots;
+      base.push({ type: 'refresh' });
+      return [...base, ...base, ...base];
     }
 
     // Desktop/tablet: carousel rotation with limited visible slots
@@ -710,7 +742,7 @@ export function Oracle() {
               </p>
 
               {/* Horizontal layout: arrows outside, scrollable content inside */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-6 pb-4 px-4 md:px-8">
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-2 pb-1 sm:pt-6 sm:pb-4 px-2 sm:px-4 md:px-8">
                 {/* Left arrow - nano-banana style */}
                 <button
                   onClick={prevCat}
@@ -727,9 +759,11 @@ export function Oracle() {
                   <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-amber-900" />
                 </button>
 
-                {/* Carousel content — swipe on mobile, visible on desktop */}
+                {/* Carousel content — infinite scroll on mobile, visible on desktop */}
                 <div
-                  className="flex items-center gap-2 md:gap-4 overflow-x-auto sm:overflow-visible px-2 flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  ref={visibleCats <= 1 ? mobileScrollRef : undefined}
+                  onScroll={visibleCats <= 1 ? handleMobileScroll : undefined}
+                  className="flex items-center gap-2 md:gap-4 overflow-x-auto overflow-y-hidden sm:overflow-visible px-2 flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                 {/* YOUR CAT - desktop only (on mobile it's in the carousel rotation) */}
                 <AnimatePresence>
@@ -821,7 +855,7 @@ export function Oracle() {
                         if (slot.type === 'your_cat') {
                           return (
                             <motion.div
-                              key="your-cat-carousel"
+                              key={`your-cat-${i}`}
                               layout
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
@@ -864,7 +898,7 @@ export function Oracle() {
                         if (slot.type === 'refresh') {
                           return (
                             <motion.button
-                              key="refresh-card"
+                              key={`refresh-${i}`}
                               layout
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
@@ -900,7 +934,7 @@ export function Oracle() {
                         const cat = slot.cat;
                         return (
                           <motion.button
-                            key={cat.id}
+                            key={`${cat.id}-${i}`}
                             layout
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
