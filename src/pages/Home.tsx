@@ -624,14 +624,20 @@ export function Oracle() {
           </div>
         ) : (
           /* ═══ CAT SELECTION VIEW — mobile: native scroll/swipe, desktop: scale-to-fit ═══ */
-          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden flex items-start justify-center">
+          <div
+            ref={visibleCats > 1 ? selectionContainerRef : undefined}
+            className={visibleCats <= 1
+              ? "flex-1 flex flex-col min-h-0"
+              : "flex-1 min-h-0 overflow-hidden flex items-start justify-center"
+            }
+          >
             <div
-              ref={selectionContentRef}
-              className="flex flex-col items-center w-full sm:w-auto"
-              style={{
-                transform: visibleCats <= 2 ? 'none' : `scale(${selectionScale})`,
+              ref={visibleCats > 1 ? selectionContentRef : undefined}
+              className={`flex flex-col items-center${visibleCats <= 1 ? ' w-full' : ''}`}
+              style={visibleCats > 1 ? {
+                transform: `scale(${selectionScale})`,
                 transformOrigin: 'top center',
-              }}
+              } : undefined}
             >
           {/* Header */}
           <header className="text-center mb-2">
