@@ -122,32 +122,29 @@ export function Oracle() {
     setCarouselIndex(i => (i - 1 + totalSlots) % totalSlots);
   }, [totalSlots]);
 
-  // Touch swipe for mobile carousel
-  const touchStartX = useRef(0);
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  }, []);
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    const delta = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(delta) > 50) {
-      if (delta > 0) nextCat();
-      else prevCat();
-    }
-  }, [nextCat, prevCat]);
-
   // Build visible slots — cats + refresh card + your_cat (mobile only)
   type CarouselSlot = { type: 'cat'; cat: ShelterCat } | { type: 'refresh' } | { type: 'your_cat' };
 
   const getVisibleSlots = useCallback((): CarouselSlot[] => {
     if (shelterCats.length === 0) return [];
     const isMobile = visibleCats <= 1;
-    const total = shelterCats.length + 1 + (isMobile ? 1 : 0);
+
+    if (isMobile) {
+      // Mobile: all cards in a scrollable row — Your Cat first, then shelter cats, refresh last
+      const slots: CarouselSlot[] = [{ type: 'your_cat' }];
+      for (const cat of shelterCats) {
+        slots.push({ type: 'cat', cat });
+      }
+      slots.push({ type: 'refresh' });
+      return slots;
+    }
+
+    // Desktop/tablet: carousel rotation with limited visible slots
+    const total = shelterCats.length + 1;
     const slots: CarouselSlot[] = [];
     for (let i = 0; i < Math.min(visibleCats, total); i++) {
       const idx = (carouselIndex + i) % total;
-      if (isMobile && idx === total - 1) {
-        slots.push({ type: 'your_cat' });
-      } else if (idx < shelterCats.length) {
+      if (idx < shelterCats.length) {
         slots.push({ type: 'cat', cat: shelterCats[idx] });
       } else {
         slots.push({ type: 'refresh' });
@@ -712,7 +709,7 @@ export function Oracle() {
                 <button
                   onClick={prevCat}
                   disabled={loadingShelterCats}
-                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
+                  className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
                   style={{
                     background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
                     borderRadius: '50%',
@@ -726,9 +723,7 @@ export function Oracle() {
 
                 {/* Carousel content — swipe on mobile, visible on desktop */}
                 <div
-                  className="flex items-center gap-2 md:gap-4 overflow-visible px-2"
-                  onTouchStart={handleTouchStart}
-                  onTouchEnd={handleTouchEnd}
+                  className="flex items-center gap-2 md:gap-4 overflow-x-auto sm:overflow-visible px-2 flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                 {/* YOUR CAT - desktop only (on mobile it's in the carousel rotation) */}
                 <AnimatePresence>
@@ -979,7 +974,7 @@ export function Oracle() {
                 <button
                   onClick={nextCat}
                   disabled={loadingShelterCats}
-                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
+                  className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 disabled:opacity-40 z-10"
                   style={{
                     background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 100%)',
                     borderRadius: '50%',
@@ -994,7 +989,7 @@ export function Oracle() {
             </motion.div>
           </div>
           {/* SEO Footer */}
-          <footer className="w-full text-center select-text pt-3 pb-24 sm:pb-4 px-4">
+          <footer className="hidden sm:block w-full text-center select-text pt-3 pb-4 px-4">
             <div className="text-base sm:text-sm md:text-base leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
               <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
             </div>
