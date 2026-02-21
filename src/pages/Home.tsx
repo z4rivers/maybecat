@@ -111,8 +111,8 @@ export function Oracle() {
 
   // Carousel navigation - infinite circular rotation
 
-  // On mobile, Your Cat joins the rotation; total slots = shelter + refresh + your_cat
-  const totalSlots = shelterCats.length + 1 + (visibleCats <= 1 ? 1 : 0);
+  // Total slots = shelter cats + refresh card + your_cat card
+  const totalSlots = shelterCats.length + 2;
 
   const nextCat = useCallback(() => {
     setCarouselIndex(i => (i + 1) % totalSlots);
@@ -172,12 +172,14 @@ export function Oracle() {
     }
 
     // Desktop/tablet: carousel rotation with limited visible slots
-    const total = shelterCats.length + 1;
+    const total = shelterCats.length + 2; // +1 refresh, +1 your_cat
     const slots: CarouselSlot[] = [];
     for (let i = 0; i < Math.min(visibleCats, total); i++) {
       const idx = (carouselIndex + i) % total;
       if (idx < shelterCats.length) {
         slots.push({ type: 'cat', cat: shelterCats[idx] });
+      } else if (idx === shelterCats.length) {
+        slots.push({ type: 'your_cat' });
       } else {
         slots.push({ type: 'refresh' });
       }
@@ -765,63 +767,7 @@ export function Oracle() {
                   onScroll={visibleCats <= 1 ? handleMobileScroll : undefined}
                   className="flex items-center gap-2 md:gap-4 overflow-x-auto overflow-y-visible sm:overflow-visible px-0 sm:px-2 flex-1 min-w-0 py-3 sm:py-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
-                {/* YOUR CAT - desktop only (on mobile it's in the carousel rotation) */}
-                <AnimatePresence>
-                  {!loadingShelterCats && visibleCats > 1 && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8, x: -50 }}
-                      animate={{ opacity: 1, scale: 1, x: 0 }}
-                      transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}
-                      whileHover={{ scale: 1.05, y: -10, rotate: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => fileInputRef.current?.click()}
-                      className="cursor-pointer group flex-shrink-0"
-                    >
-                      <div
-                        className="w-64 h-[368px] md:w-[294px] md:h-[460px] lg:w-[345px] lg:h-[518px] rounded-lg overflow-hidden relative"
-                        style={{
-                          background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
-                          boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
-                          border: '4px solid #78350F',
-                        }}
-                      >
-                        <div
-                          className="absolute inset-2 rounded"
-                          style={{
-                            border: '2px solid #92400E',
-                            boxShadow: 'inset 0 0 15px rgba(120,53,15,0.2)'
-                          }}
-                        />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                          <div
-                            className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-all"
-                            style={{
-                              border: '3px dashed #78350F',
-                              background: 'radial-gradient(circle, rgba(254,243,199,0.5) 0%, transparent 70%)'
-                            }}
-                          >
-                            <Camera className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-amber-800" />
-                          </div>
-                          <p
-                            className="font-black text-center text-xl md:text-2xl lg:text-3xl"
-                            style={{
-                              fontFamily: "'Cinzel Decorative', Georgia, serif",
-                              color: '#78350F',
-                              textShadow: '1px 1px 0 rgba(254,243,199,0.5)'
-                            }}
-                          >
-                            Your Cat
-                          </p>
-                          <p className="text-amber-800 text-sm md:text-base mt-2 text-center font-semibold">tap to upload</p>
-                        </div>
-                        <div className="absolute top-3 left-3 text-amber-800 text-base">❧</div>
-                        <div className="absolute top-3 right-3 text-amber-800 text-base scale-x-[-1]">❧</div>
-                        <div className="absolute bottom-3 left-3 text-amber-800 text-base scale-y-[-1]">❧</div>
-                        <div className="absolute bottom-3 right-3 text-amber-800 text-base scale-[-1]">❧</div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* YOUR CAT card is now in getVisibleSlots() rotation for all screen sizes */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -831,7 +777,7 @@ export function Oracle() {
                 />
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
-                <div className="flex items-end gap-3 h-[368px] md:h-[368px] lg:h-[391px]">
+                <div className="flex items-end gap-3 h-[368px] md:h-[460px] lg:h-[518px]">
                   {loadingShelterCats ? (
                     <div className="flex items-center gap-3 justify-center h-full">
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
@@ -862,12 +808,14 @@ export function Oracle() {
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.8 }}
                               transition={{ layout: { type: 'spring', stiffness: 200, damping: 25 }, opacity: { duration: 0.2 } }}
+                              whileHover={{ scale: 1.06, y: -10, rotate: 0, zIndex: 10 }}
                               whileTap={{ scale: 0.98 }}
                               onClick={() => fileInputRef.current?.click()}
+                              style={{ rotate: rotation }}
                               className="cursor-pointer group flex-shrink-0"
                             >
                               <div
-                                className="w-[260px] h-[368px] rounded-lg overflow-hidden relative"
+                                className="w-[260px] h-[368px] md:w-[294px] md:h-[460px] lg:w-[345px] lg:h-[518px] rounded-lg overflow-hidden relative"
                                 style={{
                                   background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
                                   boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
@@ -877,7 +825,7 @@ export function Oracle() {
                                 <div className="absolute inset-2 rounded" style={{ border: '2px solid #92400E', boxShadow: 'inset 0 0 15px rgba(120,53,15,0.2)' }} />
                                 <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
                                   <div
-                                    className="w-16 h-16 rounded-full flex items-center justify-center mb-3"
+                                    className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-all"
                                     style={{ border: '3px dashed #78350F', background: 'radial-gradient(circle, rgba(254,243,199,0.5) 0%, transparent 70%)' }}
                                   >
                                     <Camera className="w-8 h-8 text-amber-800" />
