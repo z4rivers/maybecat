@@ -777,7 +777,7 @@ export function Oracle() {
                 />
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
-                <div className="flex items-end gap-3 h-[368px] md:h-[460px] lg:h-[518px]">
+                <div className="flex items-center gap-3 h-[368px] md:h-[400px] lg:h-[430px]">
                   {loadingShelterCats ? (
                     <div className="flex items-center gap-3 justify-center h-full">
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
@@ -815,7 +815,7 @@ export function Oracle() {
                               className="cursor-pointer group flex-shrink-0"
                             >
                               <div
-                                className="w-[260px] h-[368px] md:w-[294px] md:h-[460px] lg:w-[345px] lg:h-[518px] rounded-lg overflow-hidden relative"
+                                className="w-[260px] h-[368px] md:w-64 md:h-[400px] lg:w-72 lg:h-[430px] rounded-lg overflow-hidden relative"
                                 style={{
                                   background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
                                   boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
