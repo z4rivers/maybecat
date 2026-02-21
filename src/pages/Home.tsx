@@ -679,7 +679,7 @@ export function Oracle() {
           </header>
 
           {/* Main content */}
-          <div className="flex-1 flex flex-col -mt-[7px] min-h-0">
+          <div className="flex-1 flex flex-col -mt-[7px] min-h-0 w-full">
           {/* Cat selection carousel */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
