@@ -742,7 +742,7 @@ export function Oracle() {
               </p>
 
               {/* Horizontal layout: arrows outside, scrollable content inside */}
-              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-0 pb-0 sm:pt-6 sm:pb-4 -mx-4 sm:mx-0 px-0 sm:px-4 md:px-8">
+              <div className="w-full flex items-center justify-center gap-2 md:gap-4 pt-3 pb-0 sm:pt-6 sm:pb-4 -mx-4 sm:mx-0 px-0 sm:px-4 md:px-8">
                 {/* Left arrow - nano-banana style */}
                 <button
                   onClick={prevCat}
@@ -831,7 +831,7 @@ export function Oracle() {
                 />
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
-                <div className="flex items-end gap-3 h-[294px] md:h-[368px] lg:h-[391px]">
+                <div className="flex items-end gap-3 h-[368px] md:h-[368px] lg:h-[391px]">
                   {loadingShelterCats ? (
                     <div className="flex items-center gap-3 justify-center h-full">
                       <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
@@ -866,7 +866,7 @@ export function Oracle() {
                               className="cursor-pointer group flex-shrink-0"
                             >
                               <div
-                                className="w-52 h-[294px] rounded-lg overflow-hidden relative"
+                                className="w-[260px] h-[368px] rounded-lg overflow-hidden relative"
                                 style={{
                                   background: 'linear-gradient(145deg, #FEF3C7 0%, #FBBF24 50%, #B45309 100%)',
                                   boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.4), 0 0 20px rgba(251,191,36,0.3)',
@@ -915,7 +915,7 @@ export function Oracle() {
                               className="relative flex-shrink-0 disabled:opacity-50"
                             >
                               <div
-                                className="w-52 h-[294px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
+                                className="w-[260px] h-[368px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
                                 style={{
                                   boxShadow: '0 15px 50px rgba(0,0,0,0.45), 0 0 20px rgba(147,51,234,0.3)',
                                   border: '4px solid #2E1065',
@@ -950,7 +950,7 @@ export function Oracle() {
                             className="relative flex-shrink-0"
                           >
                             <div
-                              className="w-52 h-[294px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
+                              className="w-[260px] h-[368px] md:w-60 md:h-[368px] lg:w-64 lg:h-[391px] rounded-lg overflow-hidden relative"
                               style={{
                                 background: color.bg,
                                 boxShadow: '0 15px 50px rgba(0,0,0,0.45), inset 0 0 40px rgba(255,255,255,0.15)',
