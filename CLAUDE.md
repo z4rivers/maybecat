@@ -39,6 +39,12 @@ A cat answers your life questions. Users ask ("Should I text them?", "Will I get
 
 ---
 
+## Protected Files
+
+**`src/pages/Home.tsx`** — Contains the carousel system (two rotation modes, mobile scroll teleporting, Framer Motion animations, responsive breakpoints). This file is protected by a PreToolUse hook. Before editing, read `.planning/CAROUSEL-ARCHITECTURE.md`. Changes require explicit user approval.
+
+---
+
 ## Key Decisions
 
 - **Dynamic range over consistent 10s** — The experience is the bomb, not every response. Crescendos (screenshot-worthy) + solid rhythm (keeps energy). Like a great song.
