@@ -624,10 +624,10 @@ export function Oracle() {
           </div>
         ) : (
           /* ═══ CAT SELECTION VIEW — mobile: native scroll/swipe, desktop: scale-to-fit ═══ */
-          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden sm:overflow-hidden overflow-auto flex items-start justify-center">
+          <div ref={selectionContainerRef} className="flex-1 min-h-0 overflow-hidden flex items-start justify-center">
             <div
               ref={selectionContentRef}
-              className="flex flex-col items-center"
+              className="flex flex-col items-center w-full sm:w-auto"
               style={{
                 transform: visibleCats <= 2 ? 'none' : `scale(${selectionScale})`,
                 transformOrigin: 'top center',
@@ -779,16 +779,16 @@ export function Oracle() {
                         <div className="absolute bottom-3 left-3 text-amber-800 text-base scale-y-[-1]">❧</div>
                         <div className="absolute bottom-3 right-3 text-amber-800 text-base scale-[-1]">❧</div>
                       </div>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
                     </motion.div>
                   )}
                 </AnimatePresence>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
 
                 {/* Shelter cats - circular carousel with 4 BIG cards */}
                 <div className="flex items-end gap-3 h-[294px] md:h-[368px] lg:h-[391px]">
