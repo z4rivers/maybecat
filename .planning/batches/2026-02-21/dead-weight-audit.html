@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dead Weight Audit — MaybeCat Response Pool</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .sticky-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-right: auto;
+  }
+
+  .stat-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .stat-reviewed { color: #a8b2d1; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+
+  .audit-note {
+    max-width: 900px;
+    margin: 24px auto 0;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #a8b2d1;
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: #8892b0;
+    line-height: 1.7;
+  }
+
+  .audit-note strong { color: #ccd6f6; }
+
+  .section-header {
+    max-width: 900px;
+    margin: 40px auto 20px;
+    padding: 0 24px;
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-header h2 .count {
+    font-size: 14px;
+    font-weight: 500;
+    color: #8892b0;
+    background: rgba(255,255,255,0.06);
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .section-definite h2 { color: #e94560; }
+  .section-borderline h2 { color: #ffd93d; }
+
+  .section-header p {
+    color: #8892b0;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .item {
+    max-width: 900px;
+    margin: 12px auto;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: border-color 0.2s;
+  }
+
+  .item.decided-keep { border-color: rgba(78, 204, 163, 0.4); }
+  .item.decided-cut { border-color: rgba(233, 69, 96, 0.4); }
+  .item.decided-edit { border-color: rgba(255, 217, 61, 0.4); }
+
+  .item-number {
+    font-size: 12px;
+    color: #5a6380;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .item-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ccd6f6;
+    line-height: 1.5;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .category-pill {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    color: #a8b2d1;
+  }
+
+  .flag-reason {
+    font-size: 12px;
+    color: #5a6380;
+    font-style: italic;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 18px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.06);
+    color: #8892b0;
+  }
+
+  .btn:hover { background: rgba(255,255,255,0.12); }
+
+  .btn-keep.active, .btn-keep:hover {
+    background: rgba(78, 204, 163, 0.15);
+    border-color: #4ecca3;
+    color: #4ecca3;
+  }
+
+  .btn-cut.active, .btn-cut:hover {
+    background: rgba(233, 69, 96, 0.15);
+    border-color: #e94560;
+    color: #e94560;
+  }
+
+  .btn-edit.active, .btn-edit:hover {
+    background: rgba(255, 217, 61, 0.15);
+    border-color: #ffd93d;
+    color: #ffd93d;
+  }
+
+  .decision-label {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: none;
+  }
+
+  .decided-keep .decision-label.label-keep {
+    display: inline-block;
+    background: rgba(78, 204, 163, 0.15);
+    color: #4ecca3;
+  }
+
+  .decided-cut .decision-label.label-cut {
+    display: inline-block;
+    background: rgba(233, 69, 96, 0.15);
+    color: #e94560;
+  }
+
+  .decided-edit .decision-label.label-edit {
+    display: inline-block;
+    background: rgba(255, 217, 61, 0.15);
+    color: #ffd93d;
+  }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255, 217, 61, 0.3);
+    border-radius: 6px;
+    color: #ccd6f6;
+    resize: vertical;
+  }
+
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-area .save-edit {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 5px 14px;
+    background: rgba(255, 217, 61, 0.15);
+    border: 1px solid #ffd93d;
+    color: #ffd93d;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .divider {
+    max-width: 900px;
+    margin: 50px auto;
+    border: none;
+    border-top: 2px dashed rgba(255,255,255,0.08);
+  }
+
+  .export-section {
+    max-width: 900px;
+    margin: 60px auto 40px;
+    padding: 0 24px;
+  }
+
+  .export-section h2 {
+    font-size: 20px;
+    color: #e94560;
+    margin-bottom: 8px;
+  }
+
+  .export-section p {
+    font-size: 13px;
+    color: #8892b0;
+    margin-bottom: 16px;
+  }
+
+  .export-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .export-tab {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    color: #8892b0;
+    border: 1px solid transparent;
+  }
+
+  .export-tab.active {
+    border-color: #e94560;
+    color: #e94560;
+    background: rgba(233, 69, 96, 0.1);
+  }
+
+  .export-block {
+    background: #0d1117;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    color: #a8b2d1;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.1);
+    color: #ccd6f6;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Dead Weight Audit</h1>
+  <div class="stat-box stat-reviewed">Reviewed: <span id="stat-reviewed">0</span> / <span id="stat-total">137</span></div>
+  <div class="stat-box stat-keep">Keep: <span id="stat-keep">0</span></div>
+  <div class="stat-box stat-cut">Cut: <span id="stat-cut">0</span></div>
+  <div class="stat-box stat-edit">Edit: <span id="stat-edit">0</span></div>
+</div>
+
+<div class="audit-note">
+  <strong>Dead Weight Audit</strong> &mdash; Flag: safe, forgettable, fortune cookie, greeting card, generic advice. <strong>NOT</strong> flagging: attitude, cold reads, edge, clean lanes, pattern repeats.
+</div>
+
+<!-- SECTION 1: DEFINITE DEAD WEIGHT -->
+<div class="section-header section-definite">
+  <h2>DEFINITE DEAD WEIGHT <span class="count">100 items</span></h2>
+  <p>Main review targets. These are flagged as likely cuts.</p>
+</div>
+
+<div id="items-definite"></div>
+
+<hr class="divider">
+
+<!-- SECTION 2: BORDERLINE -->
+<div class="section-header section-borderline">
+  <h2>BORDERLINE <span class="count">37 items</span></h2>
+  <p>Softer flags. Could go either way. Your call.</p>
+</div>
+
+<div id="items-borderline"></div>
+
+<hr class="divider">
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export</h2>
+  <div class="export-tabs">
+    <div class="export-tab active" onclick="showExport('cut')">Items marked CUT</div>
+    <div class="export-tab" onclick="showExport('keep')">Items marked KEEP</div>
+    <div class="export-tab" onclick="showExport('edit')">Items marked EDIT</div>
+    <div class="export-tab" onclick="showExport('all')">All Decisions</div>
+  </div>
+  <p>Copy the JSON below. CUT items = what to remove from oracleResponses.ts.</p>
+  <div class="export-block" id="export-block">
+    <button class="copy-btn" onclick="copyExport()">Copy</button>
+    <span id="export-content">[]</span>
+  </div>
+</div>
+
+<script>
+const ITEMS_DEFINITE = [
+  { id: "D1", text: "Your destiny is intertwined with soft fabrics.", category: "mystical", reason: "Fortune cookie. Zero attitude, zero specificity." },
+  { id: "D2", text: "The threads of fate weave around you - like a scratching post.", category: "mystical", reason: "Forced cat simile on generic mystical language." },
+  { id: "D3", text: "The cosmos aligns when you least expect it. Usually during dinner.", category: "mystical", reason: "\"The cosmos aligns\" is pure fortune cookie." },
+  { id: "D4", text: "The sunbeam moves. I move. Who is leading?", category: "mystical", reason: "Generic cat koan. Overused \"sunbeam\" word." },
+  { id: "D5", text: "Cat energy. *Meow*", category: "wise", reason: "Says nothing. Feels nothing. Just exists." },
+  { id: "D6", text: "What would a cat do? *to tune of What does the Fox say?*", category: "wise", reason: "Dated reference, parenthetical kills it." },
+  { id: "D7", text: "You can control your percentage of ownership in the world.", category: "wise", reason: "Generic motivational poster language." },
+  { id: "D8", text: "Smells like fish? I love the smell of fresh fish!", category: "wise", reason: "No attitude, no dual reading. Just a cat liking fish." },
+  { id: "D9", text: "We don't need to understand to get along. We don't need to get along to understand. We don't need a long stand to get under.", category: "wise", reason: "Generic + forced wordplay pun. Lands nowhere." },
+  { id: "D10", text: "What is a bed but a horizontal prison? What are blankets but soft oppressors?", category: "existential", reason: "Bad philosophy undergrad Twitter. Rhetorical question fortune-cookie." },
+  { id: "D11", text: "The meaning of life is unknowable. The meaning of a nap is obvious.", category: "existential", reason: "Template: \"[big concept] is hard. [Cat concept] is easy.\"" },
+  { id: "D12", text: "In the end, we are all just dust. Comfortable, napping dust.", category: "existential", reason: "Same template. Generic + cat qualifier." },
+  { id: "D13", text: "Is the box empty, or is the box full of potential?", category: "existential", reason: "Bootleg Schr\u00f6dinger without teeth." },
+  { id: "D14", text: "To be a cat is to know the truth: comfort is the only philosophy.", category: "existential", reason: "Declarative fortune cookie with cat framing." },
+  { id: "D15", text: "Reality is what happens between naps.", category: "existential", reason: "Reworking of famous quote that adds nothing surprising." },
+  { id: "D16", text: "I am one with the sunbeam. The sunbeam is one with me.", category: "mystical", reason: "Generic meditation joke. Overused sunbeam." },
+  { id: "D17", text: "The simple life: hunt, eat, sleep, repeat.", category: "wise", reason: "\"Eat. Sleep. X. Repeat.\" meme format. Dead on arrival." },
+  { id: "D18", text: "Overthinking is the enemy of napping. Choose napping.", category: "wise", reason: "Generic advice in a cat costume." },
+  { id: "D19", text: "Peace is found in stillness. Also in the gap between the couch and the wall.", category: "wise", reason: "Fortune cookie + cat location doesn't save it." },
+  { id: "D20", text: "Stay Cat yoga flexible.", category: "wise", reason: "Awkward phrasing, no voice, bad bumper sticker." },
+  { id: "D21", text: "Let's cuddle, cuddle, cuddle!", category: "heartfelt", reason: "No voice, no edge, no specificity. Cute cat Instagram." },
+  { id: "D22", text: "I'm glad we're doing this life thing together.", category: "heartfelt", reason: "Greeting card. Hallmark mug energy." },
+  { id: "D23", text: "You've got this. And if you don't, that's okay too.", category: "heartfelt", reason: "Safe warmth. Motivational poster with mild qualifier." },
+  { id: "D24", text: "Some people are worth melting for.", category: "heartfelt", reason: "Direct Frozen/Olaf quote. Not the cat's words." },
+  { id: "D25", text: "You is kind. You is smart. You is important.", category: "heartfelt", reason: "Direct quote from The Help. Recognizable as quote." },
+  { id: "D26", text: "The energy shifted. Be alert.", category: "mystical", reason: "Fortune cookie oracle. Every horoscope app says this." },
+  { id: "D27", text: "The veil is thin today. Good day for messages.", category: "mystical", reason: "Pure tarot-reader stock phrase." },
+  { id: "D28", text: "Something's coming. Could be good. Could be bad. Prepare for both.", category: "mystical", reason: "Says literally nothing. Most nothing-statement possible." },
+  { id: "D29", text: "The signs point to caution.", category: "mystical", reason: "Magic 8-Ball reject. Zero personality." },
+  { id: "D30", text: "The universe is trying to tell you something. Listen.", category: "mystical", reason: "Fortune cookie. Could appear in any horoscope." },
+  { id: "D31", text: "When the cat hides, pay attention.", category: "mystical", reason: "Describes cat behavior without performing it." },
+  { id: "D32", text: "If it seems too good to be true, a cat already knew.", category: "wise", reason: "Generic proverb with \"a cat\" appended." },
+  { id: "D33", text: "Obvious to a cat, but not to you?", category: "wise", reason: "Vaguely smug, says nothing. No specificity." },
+  { id: "D34", text: "Caution is not cowardice. And that stuffed animal IS intimidating.", category: "wise", reason: "Greeting-card wisdom + stock cat-scared trope." },
+  { id: "D35", text: "The universe and I have an understanding. I'm not sharing.", category: "mystical", reason: "Empty superiority. No content or surprise." },
+  { id: "D36", text: "The joke is on a cosmic level. You wouldn't get it.", category: "mystical", reason: "Empty superiority without punchline." },
+  { id: "D37", text: "Even the tallest cat tree was once flat-packed.", category: "mystical", reason: "Motivational poster. \"Great things start small\" with cat prop." },
+  { id: "D38", text: "Be in the sunbeam. I'm already there. Find your own.", category: "mystical", reason: "Generic mindfulness + overused sunbeam." },
+  { id: "D39", text: "The bird does not ask permission. That's why I will catch it.", category: "mystical", reason: "Fortune cookie pseudo-wisdom with cat tag." },
+  { id: "D40", text: "Sometimes the answers are in unexpected places.", category: "mystical", reason: "Pure fortune cookie. Most generic oracle statement." },
+  { id: "D41", text: "The direct path is not always the fastest.", category: "mystical", reason: "Generic proverb." },
+  { id: "D42", text: "Community happens in kitchens. That's where the food is. Obviously.", category: "wise", reason: "Hallmark first sentence. Weak undercut." },
+  { id: "D43", text: "The loudest voice is rarely the wisest. Except when it's me.", category: "wise", reason: "Generic proverb + \"but I'm the exception\" \u2014 done a million times." },
+  { id: "D44", text: "Different doesn't mean wrong. Dogs are different AND wrong, but that's unrelated.", category: "wise", reason: "Fortune cookie base. Dog joke doesn't save it." },
+  { id: "D45", text: "Showing up is the thing.", category: "wise", reason: "Motivational-poster filler." },
+  { id: "D46", text: "Healing takes time. In the meantime, have you considered being a cat?", category: "nurturing", reason: "\"Healing takes time\" is the most generic thing. Redirect predictable." },
+  { id: "D47", text: "Knock things off tables and start fresh every day.", category: "wise", reason: "Over-represented trope + generic motivational." },
+  { id: "D48", text: "Persistence beats elegance sometimes. Ask any dog.", category: "wise", reason: "Generic proverb. Dog reference adds no voice." },
+  { id: "D49", text: "Dogs think walks are amazing. Every single time. What's your walk?", category: "wise", reason: "Life-coach energy. \"What's your walk?\" = coaching question." },
+  { id: "D50", text: "Propaganda purrs too. Check who's petting you.", category: "wise", reason: "Forced metaphor. Constructed cleverness." },
+  { id: "D51", text: "Deeper isn't always better. But it's usually more interesting.", category: "wise", reason: "Generic observation. No voice, no teeth." },
+  { id: "D52", text: "If it fits, sit. If it doesn't fit, try a different angle.", category: "wise", reason: "Generic advice with cat pun wrapper." },
+  { id: "D53", text: "Go in soft. Come out strong.", category: "wise", reason: "Motivational poster. Gym wall energy." },
+  { id: "D54", text: "The perfect reply doesn't exist. Send the message. Be free.", category: "wise", reason: "Therapy-speak. Wellness Instagram." },
+  { id: "D55", text: "If a lot of people loved each other, the world would be better.", category: "heartfelt", reason: "Pure fortune cookie / greeting card." },
+  { id: "D56", text: "Give your hardworking hands a rest.", category: "nurturing", reason: "Sounds like a hand cream ad. No personality." },
+  { id: "D57", text: "Maybe the meaning of life is just... being alive? While you're alive?", category: "existential", reason: "Safe existential filler. Generic dorm-room philosophy." },
+  { id: "D58", text: "Joy is available. It's right there. You're looking past it.", category: "nurturing", reason: "Mindfulness app notification." },
+  { id: "D59", text: "You're doing great sweetie. 'Great' is relative. But you're doing it.", category: "nurturing", reason: "Safe encouragement. Mild qualifier doesn't save it." },
+  { id: "D60", text: "The haters are gonna hate. That's literally their whole job.", category: "cold", reason: "Recycled Taylor Swift era phrasing. Clich\u00e9." },
+  { id: "D61", text: "Whatever you choose, I'm not going anywhere.", category: "heartfelt", reason: "Generic reassurance. Motivational poster in different coat." },
+  { id: "D62", text: "Life advice from a cat, unbeatable.", category: "meta", reason: "Describes the app instead of being it. Just a tagline." },
+  { id: "D63", text: "No edge, no attitude, just love.", category: "heartfelt", reason: "Greeting card. Literally announces \"no edge\" \u2014 opposite of MaybeCat." },
+  { id: "D64", text: "The love of your life might be a cat.", category: "heartfelt", reason: "Pet shelter poster copy. Zero surprise." },
+  { id: "D65", text: "You want love that means something? Earn it from a cat.", category: "judgy", reason: "Bumper sticker for a cat rescue. Marketing, not voice." },
+  { id: "D66", text: "Humans let you down. Cats are better.", category: "heartfelt", reason: "Cat rescue slogan. Every cat Instagram says this." },
+  { id: "D67", text: "My purpose is to show everyone love. Even you.", category: "heartfelt", reason: "Reads like a mission statement. \"Even you\" doesn't rescue it." },
+  { id: "D68", text: "Friendship? Challenge accepted.", category: "demanding", reason: "Generic motivational phrase format. Meme template." },
+  { id: "D69", text: "You want advice? Go ask a comedian. I'm just here to get some pets and share some love.", category: "meta", reason: "Too long, too explaining. Safe warmth without teeth." },
+  { id: "D70", text: "Use your invisibility cloak!", category: "heartfelt", reason: "Random Harry Potter reference. No dual reading potential." },
+  { id: "D71", text: "Infuse your movements with emotion and personality.", category: "heartfelt", reason: "Generic creative advice. Dance teacher energy." },
+  { id: "D72", text: "Every morning is a soft reboot.", category: "wise", reason: "Competent observation, forgettable. Said a million ways." },
+  { id: "D73", text: "Read to your cat. Out loud.", category: "nurturing", reason: "A suggestion, not an answer. Pet care tip, not oracle." },
+  { id: "D74", text: "Cat people and book people overlap hard.", category: "wise", reason: "Demographics observation. Twitter fun fact, not voice." },
+  { id: "D75", text: "Even basic moves can impress, delivered in a fresh way.", category: "heartfelt", reason: "Fortune cookie encouragement. No specificity, no voice." },
+  { id: "D76", text: "That flutter in your gut is the maybe talking.", category: "nurturing", reason: "Fortune cookie. Vague, floaty, no voice." },
+  { id: "D77", text: "Answers are much sharper than possibilities.", category: "poetic", reason: "Generic wisdom platitude. Says nothing." },
+  { id: "D78", text: "Every single box has a key.", category: "nurturing", reason: "Fortune cookie positivity. Zero personality." },
+  { id: "D79", text: "That has the power to reconfigure your mind.", category: "mystical", reason: "Self-help book blurb. No voice, no attitude." },
+  { id: "D80", text: "It's a pleasure response.", category: "mystical", reason: "Flat clinical fragment. Just sits there." },
+  { id: "D81", text: "This is not casual provocation; it's lived experience speaking.", category: "wise", reason: "Therapist explaining themselves. Over-explains." },
+  { id: "D82", text: "The cat knows when you're matched with the perfect mate.", category: "wise", reason: "Generic wisdom with cat word pasted on." },
+  { id: "D83", text: "When you focus on a different problem, the answer to this one will become more clear.", category: "wise", reason: "Productivity blog. Zero personality." },
+  { id: "D84", text: "Just because you have claws doesn't mean you are allowed to climb the window screens.", category: "wise", reason: "Literal cat-owner tip. Too literal, too mild." },
+  { id: "D85", text: "Smile lines come from kitty kisses.", category: "adoption", reason: "Greeting card. Sweet but soulless." },
+  { id: "D86", text: "It's like your body is throwing its own little happiness party.", category: "chaotic", reason: "Children's book narrator. No edge." },
+  { id: "D87", text: "Absolutely! Make your dreams come true. Have you been dreaming of giant cat towers and unlimited tuna buffets?", category: "chaotic", reason: "Motivational poster + stock AI cat humor. Too long." },
+  { id: "D88", text: "You are all the things cats love - a warm and ticklish sucker for cute, fully cognizant of feline authority.", category: "heartfelt", reason: "Too wordy, too explanatory. Cat-themed Hallmark card." },
+  { id: "D89", text: "Taking care of me is practice for taking care of yourself. I will love you like no other.", category: "heartfelt", reason: "Therapist language meets greeting card." },
+  { id: "D90", text: "Cat in your lap, fresh chocolate chip cookies and a good book.", category: "nurturing", reason: "Pinterest list, not a response. No voice." },
+  { id: "D91", text: "Cat is fed. You are fed. Happy full tummies. Time to lick the paws.", category: "nurturing", reason: "Baby-talk energy. Children's book language." },
+  { id: "D92", text: "Cat comes running for that smell of the pizza box first opening too even though cats don't really like pizza.", category: "chaotic", reason: "Way too wordy run-on. No punchline, no dual reading." },
+  { id: "D93", text: "The cat finds lost bread tie under the fridge - just like forgotten cash in an old jeans pocket.", category: "wise", reason: "Over-explains the comparison. Heavy simile structure." },
+  { id: "D94", text: "People build AI's to mimic human thinking, then are surprised when the AI's mimic human problems. Obvious solution: AI's need virtual cats.", category: "existential", reason: "Tweet pitch. Too topic-specific, breaks oracle ambiguity." },
+  { id: "D95", text: "While cleaning one pile of cat vomit, be careful not to step in another.", category: "wise", reason: "Literal cat-owner tip. Too narrow and literal." },
+  { id: "D96", text: "The amount of fur a cat can shed is infinite and has a preference for formal interview clothing.", category: "wise", reason: "Cat observation, not oracle advice. Pet-humor Facebook post." },
+  { id: "D97", text: "Wrestle your problem to the ground first. Gives you better perspective. And, cathartic.", category: "chaotic", reason: "Generic advice with unfunny pun." },
+  { id: "D98", text: "You need a vacation. I recommend walking the fence next to the dog yard. What a rush!", category: "wise", reason: "Too-literal cat suggestion. Greeting card from cat's perspective." },
+  { id: "D99", text: "To really unwind, disconnect from everything and lay down in a cool spot beneath the porch.", category: "wise", reason: "Cat describing its vacation. Not oracle advice." },
+  { id: "D100", text: "Yeither nes yor yo. Sideways.", category: "mystical", reason: "Gibberish. No second reading, no landing." }
+];
+
+const ITEMS_BORDERLINE = [
+  { id: "B1", text: "The universe has plans for you. I have different plans. Mine are better.", category: "mystical", reason: "\"Generic oracle + cat deflation\" repeated pattern. Third sentence almost earns it." },
+  { id: "B2", text: "Energy shifts. Or was that the radiator?", category: "mystical", reason: "\"Energy shifts\" is wellness-speak. Radiator save is clever enough to maybe keep." },
+  { id: "B3", text: "The universe rewards the well-rested.", category: "wise", reason: "Pillow quote from Anthropologie. But short, could land as deflection." },
+  { id: "B4", text: "Sun comes up. Sun goes down. Nap in between.", category: "wise", reason: "Could be barncat simplicity (valid lane) or flat/generic." },
+  { id: "B5", text: "Don't need much. Warm spot. Full belly. Occasional chaos.", category: "wise", reason: "Barncat simplicity. \"Occasional chaos\" gives it a lift." },
+  { id: "B6", text: "You seek meaning. I seek the warm spot. Perhaps they are the same.", category: "existential", reason: "\"Perhaps they are the same\" is lazy bridge. But juxtaposition has charm." },
+  { id: "B7", text: "We're all just energy, man. Fuzzy, hungry energy.", category: "existential", reason: "Stoner lane. \"Man\" carries it. But \"we're all just energy\" is clich\u00e9." },
+  { id: "B8", text: "Processing... processing... still processing...", category: "chaotic", reason: "Minimal. Could be filler or decent one-off deflection." },
+  { id: "B9", text: "Clear eyes, full hearts, can't lose.", category: "nurturing", reason: "Direct Friday Night Lights quote. Recognizable. But could land as rallying cry." },
+  { id: "B10", text: "I'm not a regular cat. I'm a cool cat.", category: "judgy", reason: "Mean Girls reference is clean but \"cool cat\" muddies it (bad kids movie)." },
+  { id: "B11", text: "I'm not staring at nothing. You just can't see it.", category: "mystical", reason: "Fun paranoid-cat moment but also stock \"cats see ghosts\" line." },
+  { id: "B12", text: "I talk to people you can't see. They're nice.", category: "mystical", reason: "\"They're nice\" is good turn. But stock ghost-cat premise." },
+  { id: "B13", text: "Something's off. I can't prove it. But I know.", category: "mystical", reason: "Good cadence, works as gut-feeling validation. But close to generic oracle." },
+  { id: "B14", text: "*lies dramatically on back* I could use a belly rub. I could also attack. Life is risk.", category: "poetic", reason: "Belly-trap joke done a million times. \"Life is risk\" elevates slightly." },
+  { id: "B15", text: "Wait. Sometimes problems get bored and leave.", category: "nurturing", reason: "Charm in personification. Could also be generic \"this too shall pass.\"" },
+  { id: "B16", text: "The counter is just a high floor. Your rules are arbitrary.", category: "wise", reason: "First sentence genuinely good. \"Your rules are arbitrary\" pushes toward generic." },
+  { id: "B17", text: "The world might owe you an apology, but you're not getting one.", category: "cold", reason: "Has teeth. But reads a bit like motivational-tough-love quote." },
+  { id: "B18", text: "You don't have to be productive. You just have to be present. Barely.", category: "nurturing", reason: "Therapy-speak. \"Barely\" tries to rescue. Not sure it lands." },
+  { id: "B19", text: "Self-esteem. You have to esteem your SELF. Nobody else is gonna do it.", category: "demanding", reason: "Word breakdown is clean-lane but \"esteem yourself\" is close to generic." },
+  { id: "B20", text: "Sometimes the unpopular opinion is unpopular because it's wrong.", category: "wise", reason: "Sharp observation. Reads like a tweet. Could go either way on voice." },
+  { id: "B21", text: "Cats don't mind being assigned friends.", category: "wise", reason: "Dual-reading quality but also just a cat fact." },
+  { id: "B22", text: "You're not broken. You're mid-renovation.", category: "wise", reason: "Good reframe but widely circulated. Pinterest territory." },
+  { id: "B23", text: "Something tells me you've been carrying this one alone.", category: "heartfelt", reason: "Could hit hard. But also therapist-speak. No specificity." },
+  { id: "B24", text: "Cheaper than therapy. More fun too.", category: "meta", reason: "Self-referential joke made about everything. Some swagger." },
+  { id: "B25", text: "Consciousness is a spectrum.", category: "chaotic", reason: "Sharp philosophical or nothing-statement depending on reader." },
+  { id: "B26", text: "The world rotated while you slept.", category: "wise", reason: "Pretty but daily affirmation calendar quality." },
+  { id: "B27", text: "Dormancy isn't death.", category: "wise", reason: "Nice observation. But motivational poster in garden center." },
+  { id: "B28", text: "Dare to disturb the universe.", category: "demanding", reason: "Strong T.S. Eliot. Brevity saves it. Probably keeper." },
+  { id: "B29", text: "Make sure safety is there before reaching for safety.", category: "wise", reason: "Cryptic \u2014 could feel profound or empty." },
+  { id: "B30", text: "The secret is talking about everyone else's problems.", category: "meta", reason: "Cynical observation. Thin but has edge." },
+  { id: "B31", text: "Wiggled roads at break-necking pace?", category: "nurturing", reason: "Seuss-adjacent. Meaning unclear. Random more than layered." },
+  { id: "B32", text: "Weirdish wild space gardens.", category: "poetic", reason: "Very abstract. Pleasant surreal or word salad." },
+  { id: "B33", text: "Alright, snuggle buddy, we've got work to do!", category: "nurturing", reason: "Has energy but children's show host. \"Snuggle buddy\" \u2014 endearing or cringe." },
+  { id: "B34", text: "Doubt things that matter and all decisions the dog makes.", category: "wise", reason: "Dog-rivalry fun but first half generic." },
+  { id: "B35", text: "You're asking an animal that was worshipped as a god in ancient Egypt. So yes, I'm qualified.", category: "chaotic", reason: "Most overused cat trope on the internet. Some swagger though." },
+  { id: "B36", text: "Gravity is stronger near the kitchen counter.", category: "chaotic", reason: "Cute cat-physics. Cat-humor calendar vs oracle." },
+  { id: "B37", text: "Thunder is an atmospheric hairball coming up.", category: "existential", reason: "Creative metaphor but cat one-liner, not oracle-grade." }
+];
+
+// State
+const decisions = {};
+let currentExportMode = 'cut';
+
+function init() {
+  renderItems('items-definite', ITEMS_DEFINITE);
+  renderItems('items-borderline', ITEMS_BORDERLINE);
+  updateStats();
+  updateExport();
+}
+
+function renderItems(containerId, items) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = items.map(item => `
+    <div class="item" id="item-${item.id}" data-id="${item.id}">
+      <div class="item-number">#${item.id}</div>
+      <div class="item-text">${escapeHtml(item.text)}</div>
+      <div class="item-meta">
+        <span class="category-pill">${item.category}</span>
+        <span class="flag-reason">${escapeHtml(item.reason)}</span>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-keep" onclick="decide('${item.id}', 'keep')">Keep</button>
+        <button class="btn btn-cut" onclick="decide('${item.id}', 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit('${item.id}')">Edit</button>
+        <span class="decision-label label-keep">KEPT</span>
+        <span class="decision-label label-cut">CUT</span>
+        <span class="decision-label label-edit">EDITED</span>
+      </div>
+      <div class="edit-area" id="edit-area-${item.id}">
+        <textarea id="edit-text-${item.id}">${escapeHtml(item.text)}</textarea>
+        <button class="save-edit" onclick="saveEdit('${item.id}')">Save Edit</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function getItem(id) {
+  return [...ITEMS_DEFINITE, ...ITEMS_BORDERLINE].find(i => i.id === id);
+}
+
+function decide(id, decision) {
+  const el = document.getElementById(`item-${id}`);
+  const prev = decisions[id];
+
+  // Toggle off if clicking same decision
+  if (prev && prev.decision === decision) {
+    delete decisions[id];
+    el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    // Close edit area if open
+    document.getElementById(`edit-area-${id}`).classList.remove('visible');
+    updateStats();
+    updateExport();
+    return;
+  }
+
+  const item = getItem(id);
+  decisions[id] = { decision, text: item.text, category: item.category };
+
+  el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+  el.classList.add(`decided-${decision}`);
+
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector(`.btn-${decision}`).classList.add('active');
+
+  // Close edit area if switching away from edit
+  if (decision !== 'edit') {
+    document.getElementById(`edit-area-${id}`).classList.remove('visible');
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById(`edit-area-${id}`);
+  const isVisible = editArea.classList.contains('visible');
+
+  if (isVisible) {
+    // Just close the area — don't lose the edit decision
+    editArea.classList.remove('visible');
+  } else {
+    editArea.classList.add('visible');
+    decide(id, 'edit');
+  }
+}
+
+function saveEdit(id) {
+  const editedText = document.getElementById(`edit-text-${id}`).value.trim();
+  if (!editedText) return;
+  const item = getItem(id);
+  if (!decisions[id]) {
+    decisions[id] = { decision: 'edit', text: item.text, category: item.category };
+  }
+  decisions[id].editedText = editedText;
+  decisions[id].decision = 'edit';
+
+  // Update displayed text to show the edit
+  const el = document.getElementById(`item-${id}`);
+  el.querySelector('.item-text').textContent = editedText;
+  el.classList.remove('decided-keep', 'decided-cut');
+  el.classList.add('decided-edit');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  // Close edit area and show confirmation
+  document.getElementById(`edit-area-${id}`).classList.remove('visible');
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const all = Object.values(decisions);
+  const reviewed = all.length;
+  const keeps = all.filter(d => d.decision === 'keep').length;
+  const cuts = all.filter(d => d.decision === 'cut').length;
+  const edits = all.filter(d => d.decision === 'edit').length;
+
+  document.getElementById('stat-reviewed').textContent = reviewed;
+  document.getElementById('stat-keep').textContent = keeps;
+  document.getElementById('stat-cut').textContent = cuts;
+  document.getElementById('stat-edit').textContent = edits;
+}
+
+function showExport(mode) {
+  currentExportMode = mode;
+  document.querySelectorAll('.export-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  updateExport();
+}
+
+function updateExport() {
+  const all = Object.entries(decisions);
+  let filtered;
+
+  if (currentExportMode === 'all') {
+    filtered = all.map(([id, d]) => {
+      const obj = { text: d.text, category: d.category, decision: d.decision };
+      if (d.decision === 'edit' && d.editedText) obj.editedText = d.editedText;
+      return obj;
+    });
+  } else {
+    filtered = all
+      .filter(([id, d]) => d.decision === currentExportMode)
+      .map(([id, d]) => {
+        const obj = { text: d.text, category: d.category };
+        if (d.decision === 'edit' && d.editedText) obj.editedText = d.editedText;
+        return obj;
+      });
+  }
+
+  document.getElementById('export-content').textContent = JSON.stringify(filtered, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-content').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,75 +1,76 @@
-# Session Handoff — Voice Audit & Content Sprint
+# Session Handoff — Dead Weight Audit + Generation Lessons
 
-**Last updated:** 2026-02-21
+**Last updated:** 2026-02-21 (second session)
 
-## What Just Happened (Feb 21 Session)
+## What Just Happened (Feb 21 Session 2)
 
-### Infrastructure
-- 6 stale worktrees removed (~2.7 GB recovered)
-- Home.tsx protected by PreToolUse hook (blocks Edit/Write, requires explicit approval)
-- Carousel architecture documented (576 lines, `.planning/CAROUSEL-ARCHITECTURE.md`)
-- settings.local.json cleaned (69 → 37 lines)
+### Dead Weight Audit — COMPLETED
+- 4 parallel agents audited full response pool (~3,062 responses) against corrected voice principles
+- Flagged 100 definite + 37 borderline dead weight responses
+- **82 responses CUT** from pool (user reviewed via HTML batch at `.planning/batches/2026-02-21/dead-weight-audit.html`)
+- User KEPT movie quotes (Frozen, The Help, FNL, Mean Girls) — agents wrongly flagged these
+- 2 responses EDITED (bread tie, cat fur) — agent applying edits now
+- Pool is now ~2,980 responses
+- TypeScript passes after removals
 
-### Pool Audit — Corrected Understanding
-- Pool is **3,062 responses** (not 2,379 as previously recorded)
-- 7 orphaned categories fixed, 2 duplicates removed, 1 stoner cut, 4 curiosity rewrites, 4 new existential additions
-- **Previous gap analysis was WRONG about several things:**
-  - "96.4% doesn't answer" — FALSE. Sharp observations, cold reads, reframes ARE answers on an energetic level. The pool is full of answers.
-  - "No cat energy" on ~54 responses — FALSE. 103 of 105 flagged were KEPT. Attitude IS the voice. Personality, not species.
-  - "Pattern repeats are the worst offender" — FALSE. Repetition is brand (Garfield's lasagna). The problem is lazy instances, not the lanes themselves.
-  - "Need 200+ literal yes/no responses" — FALSE. Real gaps are missing ENERGIES (celebration, lightweight fun, permission), not missing syntax.
+### Dead Weight Patterns Found
+- **Mystical category** was heaviest offender — fortune cookie / horoscope phrasing
+- **"[Generic proverb] + [cat thing]"** template — single biggest dead weight factory
+- **Cat-rescue-poster copy** — marketing, not voice
+- **Late batch (lines 3615-3742)** — different/weaker voice
+- **Template system** — 3 dynamic templates have bland slot options (not yet addressed)
 
-### 7 Voice Principles Codified
-All saved to `/maybecat-voice` skill file AND memory:
-1. Trust the reader — cut explanation, let lines breathe
-2. Answers are energetic, not literal — count impact, not syntax
-3. Reframe, don't answer — new angle, reader closes the loop
-4. Voice is personality, not species — attitude IS the cat
-5. Specificity over cat tropes — felt experience > generic paws/zoomies
-6. Repetition is brand, boring is the problem — lazy, not too many
-7. Clean lanes add breathing room — format disappears, content lands
+### 1 New Response Added
+- "That's more of a llama question." (wise) — user-written, added at line 449
 
-### Review Batches Outstanding
-All in `.planning/batches/2026-02-21/`:
+### Generation Attempts — ALL FAILED
+Three rounds of batch generation, all rejected:
+1. **Round 1:** Galifianakis + Aristocats batches — didn't load /maybecat-voice skill. Gave agents stereotype descriptions. Produced clever cold reads and polished aphorisms. User: "thin veneer of stereotype. WASTE OF TIME."
+2. **Round 2:** Loaded skill, added divergence seeds + found language requirement. Produced gotcha slogans and life lessons. User: "NOT looking for gotcha slogans. Generic truisms."
+3. **Round 3:** Full found language research (ATC, wine, diplomatic protocol, beekeeping). Produced technically interesting relocations with no character. "Resume own navigation" — cool phrase, no cat in it. User: "garbage."
 
-**Audit batches (3):**
-- `no-cat-energy-audit.html` — DONE. 2 cut, 2 edited, 101 kept. Verdict: sharp attitude IS MaybeCat.
-- `pattern-repeats-audit.html` — Superseded by per-lane rewrite batches below.
-- `yes-energy-stress-test.html` — Partially reviewed. "Yes, like..." originals are all keepers. Generated yes-equivalents still to review.
+### Critical Lessons Burned Into Memory
+- **NEVER generate without loading /maybecat-voice skill first** — no exceptions
+- **Agents produce garbage when you skip the process** — but CAN produce quality when full skill is followed
+- **Found language is raw material, not the finished product** — it must go through the character (archetypes, attitude, delivery modes)
+- **Don't reduce the skill to one mechanic** — found language relocation without character = research exercise
+- **ALWAYS build the HTML review file** — never ask "want me to build it?" The review interface IS the deliverable
+- **Movie quotes are curated** — they sound great coming from cats, that's the point
+- **User's off-the-cuff line beat every agent batch** — "That's more of a llama question" > everything
 
-**Per-lane rewrite batches (6):**
-- `rewrite-feed-me.html` — 46 items. User says lane is clean and simple, doesn't need character angles. Needs review for lazy-vs-crafted only.
-- `rewrite-curiosity.html` — DONE. 4 replaced, 9 kept. Applied to codebase.
-- `rewrite-stoner-catnip.html` — DONE. 1 cut ("purring is my motor running"), rest all keepers. Character category.
-- `rewrite-profound-cat.html` — 60 items. 24 formula, 24 hits. Still to review.
-- `rewrite-yes-like-and-verdicts.html` — WARNING: "Yes, like..." rewrite suggestions are BAD (replace specificity with cat tropes). Trash those suggestions. Single-word verdict section may be useful.
-- `rewrite-may-cause.html` — DONE. All 13 keepers. Found language lane.
+### CATS Musical Responses — User Hasn't Reviewed Yet
+2 responses generated, presented to user but no keep/cut decision made:
+- "Touch nothing. Move nothing. When they look for you, you're not there." (cold, Macavity)
+- "You keep auditioning for the Heaviside Layer when you could just be warm right now." (wise, Jellicle Ball)
 
-## NEXT SESSION PRIORITY: Find the Real Dead Weight
+## Outstanding Review Batches
+All in `.planning/batches/`:
 
-### The Blind Spot
-Agents keep flagging sharp, attitudinal responses as "not MaybeCat" while leaving the actual dead weight alone. The responses that NEVER get flagged are the problem:
-- Generic fortune cookie wisdom that sounds "proper" for an oracle
-- Safe, competent, forgettable lines that pattern-match as "correct"
-- Stuff that sounds professional but has no soul, no voice, no screenshot potential
+**From Feb 21 Session 1 (still pending):**
+- `2026-02-21/rewrite-feed-me.html` — 46 items, lazy-vs-crafted review
+- `2026-02-21/rewrite-profound-cat.html` — 60 items, 24 formula suspects
+- `2026-02-21/rewrite-yes-like-and-verdicts.html` — "Yes, like..." rewrites are BAD (trash), single-word verdict section may be useful
+- `2026-02-21/yes-energy-stress-test.html` — generated yes-equivalents still to review
 
-### What To Do
-Run an audit with the CORRECTED voice principles. Don't flag attitude. Don't flag repeats. Flag:
-- Responses that are SAFE — no one would screenshot them, no one would laugh, no one would feel anything
-- Responses that sound like every other advice app / horoscope / fortune cookie
-- Responses the agents LOVE because they sound "well-crafted" — those are the suspects
-- Mark batches as REVIEWED so the same responses stop getting re-flagged
+**From Feb 20 (still pending):**
+- 7 variety update batch review files in `2026-02-20/`
 
-### Also Pending
-- Variety update batch review files in `.planning/batches/2026-02-20/` (7 HTML files)
-- Feed-me batch review (lazy-vs-crafted, NOT character-angle rewrites)
-- Profound+cat batch review (24 formula items)
-- Yes-energy stress test: do generated yes-equivalents fit or kill the voice?
-- Research files to trash: Buzan, funny scientists (confirmed not interesting)
+**From Feb 21 Session 2 (DONE or TRASHED):**
+- `2026-02-21/dead-weight-audit.html` — DONE. 82 cut, 2 edited, rest kept.
+- `2026-02-21/galifianakis-batch.html` — First round, mostly rejected. User kept 0 from agent output, wrote 1 themselves.
+- `2026-02-21/aristocats-cats-batch.html` — First round, not reviewed (superseded by failed redo)
+- `2026-02-21/found-language-batch.html` — TRASHED. User: "garbage."
+
+## Pending Work
+- Apply 2 response edits (agent running now)
+- Template system bland slot options — 3 templates identified but not yet cleaned up
+- Research files to trash: Buzan, funny scientists
 - Fierce Conversations: 20 territories researched, never batched. Keep or trash?
 
 ## Hard Rules (Always)
 - **NEVER read oracleResponses.ts in main context** (4200+ lines). Send agents.
 - **Home.tsx is PROTECTED** by PreToolUse hook. Read `.planning/CAROUSEL-ARCHITECTURE.md` before any changes.
-- **Voice principles are in `/maybecat-voice` skill.** Load skill, point agents to it. Don't paste.
-- **The user IS the voice.** Support, don't replace. Ask for their examples first.
+- **ALWAYS load /maybecat-voice skill before ANY generation work.** No exceptions.
+- **ALWAYS build the HTML review file.** Don't ask — just build it. The review interface IS the deliverable.
+- **The user IS the voice.** Support, don't replace.
+- **Movie quotes in the pool are curated and intentional.** Don't flag them as dead weight.
