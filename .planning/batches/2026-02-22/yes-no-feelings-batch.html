@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Yes/No Funny Redo (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 15px 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .batch-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #e0e0e0;
+  }
+  .batch-subtitle {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 2px;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-size: 0.95em;
+    font-weight: 600;
+  }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-pending { color: #888; }
+
+  .response-card {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border-left: 4px solid #0f3460;
+    transition: border-color 0.3s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number {
+    font-size: 0.75em;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .response-text {
+    font-size: 1.25em;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .response-category {
+    display: inline-block;
+    background: #0f3460;
+    color: #a0a0c0;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0d1b36;
+    color: #fff;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-save { background: #4ecca3; color: #1a1a2e; }
+  .btn-cancel { background: #555; color: #fff; }
+
+  .category-select {
+    background: #0d1b36;
+    color: #a0a0c0;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    margin-left: 8px;
+  }
+
+  .export-section {
+    margin-top: 40px;
+    background: #16213e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #0f3460;
+  }
+  .export-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #4ecca3;
+  }
+  .export-block {
+    background: #0d1b36;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #ccc;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: text;
+    user-select: all;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  .copy-btn:hover { filter: brightness(1.1); }
+  .decision-label {
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+  }
+  .decision-label.kept { color: #4ecca3; }
+  .decision-label.cut { color: #e94560; }
+  .decision-label.edited { color: #ffd93d; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div>
+    <div class="batch-title">Yes/No Funny Redo — Feb 22</div>
+    <div class="batch-subtitle">Humor-first answers to yes/no questions. NO therapy energy. REDO of feelings batch.</div>
+  </div>
+  <div class="stats">
+    <span class="stat-kept">Kept: <span id="kept-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edited">Edited: <span id="edited-count">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending-count">28</span></span>
+  </div>
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <div class="export-title">Export — Kept &amp; Edited Responses</div>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = ['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'];
+
+const responses = [
+  {
+    text: "I just watched a man parallel park for nine minutes. Anything is possible.",
+    category: "chaotic"
+  },
+  {
+    text: "Absolutely not. I would rather be bathed.",
+    category: "cold"
+  },
+  {
+    text: "*catches a stink bug, mouths it, sets it down* ...Sometimes you gotta taste before you decide.",
+    category: "physical"
+  },
+  {
+    text: "The last time I committed to something it was a jump I couldn't make. Slid down the fridge in front of everyone.",
+    category: "chaotic"
+  },
+  {
+    text: "May cause unexplained confidence followed by a purchase you can't return.",
+    category: "cryptic"
+  },
+  {
+    text: "I once ate an entire houseplant, threw up on the good rug, and went back for seconds. So yes.",
+    category: "chaotic"
+  },
+  {
+    text: "That's between you and the second glass of wine.",
+    category: "wise"
+  },
+  {
+    text: "*sits on the one piece of paper you need, out of fifty on the desk* Decided.",
+    category: "physical"
+  },
+  {
+    text: "Google says no. But Google also says I shouldn't eat butter.",
+    category: "sassy"
+  },
+  {
+    text: "You're asking ME? I licked a wall twenty minutes ago.",
+    category: "chaotic"
+  },
+  {
+    text: "The warranty expired the moment you had the idea.",
+    category: "cold"
+  },
+  {
+    text: "*yowling while carrying a sock through the house at 2am* THE ANSWER HAS ARRIVED.",
+    category: "dramatic"
+  },
+  {
+    text: "Sounds like a problem for whoever you were five minutes ago.",
+    category: "cold"
+  },
+  {
+    text: "I've been staring at a banana on the counter for forty-five minutes and I still don't trust it. Take your time.",
+    category: "wise"
+  },
+  {
+    text: "The exit is also the entrance. It just depends on your speed.",
+    category: "cryptic"
+  },
+  {
+    text: "Do it. What are they gonna do, put it on your permanent record? I knocked a baguette into a hallway and I'm fine.",
+    category: "chaotic_wholesome"
+  },
+  {
+    text: "*falls asleep sitting up, slowly tips sideways, catches self, resettles, falls again*",
+    category: "physical"
+  },
+  {
+    text: "You're overqualified for this level of hesitation.",
+    category: "demanding"
+  },
+  {
+    text: "I chose to sit next to the person at the party who hates cats. That should answer your question.",
+    category: "sassy"
+  },
+  {
+    text: "The audacity is free. Take as much as you want.",
+    category: "chaotic_wholesome"
+  },
+  {
+    text: "Every disaster I've caused started with exactly this much confidence. Go.",
+    category: "chaotic"
+  },
+  {
+    text: "*one ear forward, one ear back* I'm getting mixed signals from myself on this one.",
+    category: "physical"
+  },
+  {
+    text: "Honestly I'm still processing the last thing you did.",
+    category: "cold"
+  },
+  {
+    text: "My last big decision was sleeping on a Roomba. It moved. I stayed. We're both fine.",
+    category: "existential"
+  },
+  {
+    text: "No. But the version of you at 2am is going to do it anyway, so.",
+    category: "wise"
+  },
+  {
+    text: "*brings a live frog inside and releases it in the bathroom* Your problem now. Next question.",
+    category: "chaotic"
+  },
+  {
+    text: "Side effects include: telling the truth at brunch.",
+    category: "cryptic"
+  },
+  {
+    text: "I bit through a phone charger at 3am and ruined six people's morning. Momentum is real.",
+    category: "chaotic"
+  }
+];
+
+const container = document.getElementById('responses-container');
+const decisions = {};
+
+function renderResponses() {
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'response-card' + (decisions[i] ? ' ' + decisions[i].status : '');
+    card.id = 'card-' + i;
+
+    let decisionLabel = '';
+    if (decisions[i]) {
+      decisionLabel = '<span class="decision-label ' + decisions[i].status + '">' + decisions[i].status + '</span>';
+    }
+
+    card.innerHTML =
+      '<div class="response-number">#' + (i + 1) + ' of ' + responses.length + ' ' + decisionLabel + '</div>' +
+      '<div class="response-text">' + escapeHtml(decisions[i] && decisions[i].text ? decisions[i].text : r.text) + '</div>' +
+      '<span class="response-category">' + (decisions[i] && decisions[i].category ? decisions[i].category : r.category) + '</span>' +
+      '<div class="actions">' +
+        '<button class="btn btn-keep" onclick="decide(' + i + ', \'kept\')">KEEP</button>' +
+        '<button class="btn btn-cut" onclick="decide(' + i + ', \'cut\')">CUT</button>' +
+        '<button class="btn btn-edit" onclick="toggleEdit(' + i + ')">EDIT</button>' +
+      '</div>' +
+      '<div class="edit-area" id="edit-' + i + '">' +
+        '<textarea id="textarea-' + i + '">' + escapeHtml(decisions[i] && decisions[i].text ? decisions[i].text : r.text) + '</textarea>' +
+        '<div style="margin-top:6px;">' +
+          'Category: <select class="category-select" id="cat-select-' + i + '">' +
+            CATEGORIES.map(function(c) {
+              var currentCat = (decisions[i] && decisions[i].category) ? decisions[i].category : r.category;
+              return '<option value="' + c + '"' + (c === currentCat ? ' selected' : '') + '>' + c + '</option>';
+            }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="edit-actions">' +
+          '<button class="btn btn-save" onclick="saveEdit(' + i + ')">SAVE EDIT</button>' +
+          '<button class="btn btn-cancel" onclick="toggleEdit(' + i + ')">CANCEL</button>' +
+        '</div>' +
+      '</div>';
+
+    container.appendChild(card);
+  });
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
+}
+
+function decide(index, status) {
+  if (status === 'kept') {
+    decisions[index] = { status: 'kept', text: responses[index].text, category: responses[index].category };
+  } else if (status === 'cut') {
+    decisions[index] = { status: 'cut' };
+  }
+  renderResponses();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  var el = document.getElementById('edit-' + index);
+  el.classList.toggle('visible');
+}
+
+function saveEdit(index) {
+  var textarea = document.getElementById('textarea-' + index);
+  var catSelect = document.getElementById('cat-select-' + index);
+  var editedText = textarea.value.trim();
+  var editedCat = catSelect.value;
+  decisions[index] = { status: 'edited', text: editedText, category: editedCat };
+  toggleEdit(index);
+  renderResponses();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  var kept = 0, cut = 0, edited = 0, pending = 0;
+  responses.forEach(function(_, i) {
+    if (!decisions[i]) { pending++; }
+    else if (decisions[i].status === 'kept') { kept++; }
+    else if (decisions[i].status === 'cut') { cut++; }
+    else if (decisions[i].status === 'edited') { edited++; }
+  });
+  document.getElementById('kept-count').textContent = kept;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edited-count').textContent = edited;
+  document.getElementById('pending-count').textContent = pending;
+}
+
+function updateExport() {
+  var exported = [];
+  responses.forEach(function(r, i) {
+    if (decisions[i] && decisions[i].status === 'kept') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (decisions[i] && decisions[i].status === 'edited') {
+      exported.push({ text: decisions[i].text, category: decisions[i].category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  var text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+
+renderResponses();
+updateExport();
+</script>
+</body>
+</html>

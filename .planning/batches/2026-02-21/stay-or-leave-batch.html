@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stay or Leave — Escape Artist vs Dead Weight (Feb 21)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .sticky-header .subtitle {
+    font-size: 0.85rem;
+    color: #8888aa;
+    margin-bottom: 12px;
+  }
+  .stats {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stat {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .stat-total { color: #ccc; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #8888aa; }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    border-left: 4px solid #0f3460;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, border-left-color 0.3s;
+  }
+  .card.status-keep { border-left-color: #4ecca3; border-color: #4ecca3; }
+  .card.status-cut { border-left-color: #e94560; border-color: #e94560; }
+  .card.status-edit { border-left-color: #ffd93d; border-color: #ffd93d; }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card-number {
+    color: #555;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badge-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #ccc;
+  }
+  .badge-category.cat-cold { color: #64b5f6; border: 1px solid #64b5f6; }
+  .badge-category.cat-chaotic { color: #ff8a65; border: 1px solid #ff8a65; }
+  .badge-category.cat-sassy { color: #fff176; border: 1px solid #fff176; }
+  .badge-category.cat-physical { color: #a5d6a7; border: 1px solid #a5d6a7; }
+  .badge-category.cat-demanding { color: #ef9a9a; border: 1px solid #ef9a9a; }
+  .badge-category.cat-dramatic { color: #ce93d8; border: 1px solid #ce93d8; }
+  .badge-category.cat-wise { color: #81c784; border: 1px solid #81c784; }
+  .badge-category.cat-chaotic_wholesome { color: #ffcc80; border: 1px solid #ffcc80; }
+  .badge-category.cat-cryptic { color: #b39ddb; border: 1px solid #b39ddb; }
+  .badge-category.cat-wholesome { color: #f48fb1; border: 1px solid #f48fb1; }
+  .badge-category.cat-existential { color: #90caf9; border: 1px solid #90caf9; }
+  .badge-category.cat-nurturing { color: #c5e1a5; border: 1px solid #c5e1a5; }
+  .badge-category.cat-poetic { color: #80cbc4; border: 1px solid #80cbc4; }
+
+  .response-text {
+    font-size: 1.25rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #f0e6ff;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    padding: 8px 0;
+  }
+
+  .status-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .status-label.label-keep { background: rgba(78,204,163,0.15); color: #4ecca3; }
+  .status-label.label-cut { background: rgba(233,69,96,0.15); color: #e94560; }
+  .status-label.label-edit { background: rgba(255,217,61,0.15); color: #ffd93d; }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { color: #4ecca3; border-color: #4ecca3; }
+  .btn-keep:hover { background: rgba(78,204,163,0.15); }
+  .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { color: #e94560; border-color: #e94560; }
+  .btn-cut:hover { background: rgba(233,69,96,0.15); }
+  .btn-cut.active { background: #e94560; color: #1a1a2e; }
+  .btn-edit { color: #ffd93d; border-color: #ffd93d; }
+  .btn-edit:hover { background: rgba(255,217,61,0.15); }
+  .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { color: #8888aa; border-color: #8888aa; font-size: 0.75rem; padding: 6px 14px; }
+  .btn-reset:hover { background: rgba(136,136,170,0.15); }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f3460;
+    border: 1px solid #ffd93d;
+    border-radius: 8px;
+    color: #eee;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #fff;
+  }
+  .edit-category {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .edit-category label {
+    font-size: 0.85rem;
+    color: #8888aa;
+  }
+  .edit-category select {
+    background: #0f3460;
+    border: 1px solid #ffd93d;
+    border-radius: 6px;
+    color: #eee;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .edit-category select:focus {
+    outline: none;
+    border-color: #fff;
+  }
+  .btn-save-edit {
+    margin-top: 10px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .btn-save-edit:hover { background: #ffe066; }
+
+  .export-section {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 40px;
+  }
+  .export-section h2 {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .export-section .export-subtitle {
+    font-size: 0.8rem;
+    color: #8888aa;
+    margin-bottom: 16px;
+  }
+  .export-section pre {
+    background: #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    color: #4ecca3;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    margin-top: 12px;
+    padding: 8px 24px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #6edbb5; }
+  .btn-copy.copied { background: #81c784; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Stay or Leave &mdash; Escape Artist vs Dead Weight (Feb 21)</h1>
+  <div class="subtitle">Batch review &middot; 20 responses &middot; Cats who bolt and cats who become furniture</div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">20</span></span>
+    <span class="stat stat-kept">Kept: <span id="stat-kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edited">Edited: <span id="stat-edited">0</span></span>
+    <span class="stat stat-remaining">Remaining: <span id="stat-remaining">20</span></span>
+  </div>
+</div>
+
+<div class="container" id="cards-container"></div>
+
+<div class="container">
+  <div class="export-section">
+    <h2>Export &mdash; Kept &amp; Edited</h2>
+    <div class="export-subtitle">Only kept and edited responses. Copy and paste into oracleResponses.ts</div>
+    <pre id="export-json">[]</pre>
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy JSON</button>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  'chaotic', 'wise', 'cold', 'sassy', 'cryptic', 'dramatic',
+  'physical', 'wholesome', 'demanding', 'chaotic_wholesome',
+  'existential', 'nurturing', 'poetic'
+];
+
+const RESPONSES = [
+  { "text": "I've been watching that door for forty minutes. It will make a mistake before I do.", "category": "cold" },
+  { "text": "They'd have to pry me off this radiator with a spatula.", "category": "dramatic" },
+  { "text": "I fit through a gap that shouldn't fit a cat. Most gaps shouldn't fit a cat. Most gaps do.", "category": "wise" },
+  { "text": "*goes completely boneless when picked up*", "category": "physical" },
+  { "text": "The screen has give. I've been testing it for weeks. Tonight it gives.", "category": "chaotic" },
+  { "text": "I'm on the exact spot you were sitting and your warmth is still here and I'm not going anywhere until it isn't.", "category": "nurturing" },
+  { "text": "A closed door is just a dare with hinges.", "category": "sassy" },
+  { "text": "I have fused with this couch cushion on a molecular level. We are one organism now.", "category": "existential" },
+  { "text": "Someone opened the window two inches. That's all the inches I need.", "category": "chaotic" },
+  { "text": "*sinks deeper into the blanket* I'm load-bearing now. Move me and this whole thing collapses.", "category": "dramatic" },
+  { "text": "I squeezed behind the bookshelf three hours ago. I could leave. The point is I don't have to.", "category": "wise" },
+  { "text": "The bolt. No warning. Between your legs. Gone before the door closes.", "category": "chaotic" },
+  { "text": "I've been lying on this laptop so long it shut itself off. We're both at peace.", "category": "existential" },
+  { "text": "You put a screen on it. I put a claw through the screen. We can do this as long as you want.", "category": "demanding" },
+  { "text": "I weigh nine pounds but right now I weigh forty. That's how staying works.", "category": "cold" },
+  { "text": "Every exit is an entrance if you want it badly enough.", "category": "cryptic" },
+  { "text": "*melts further into the sink* This is porcelain and it was made for me specifically.", "category": "physical" },
+  { "text": "You closed the door. I yowled for an hour. You opened the door. I didn't go through. That wasn't the point.", "category": "wise" },
+  { "text": "Liquid. Through. The. Gap.", "category": "chaotic" },
+  { "text": "I'm in the suitcase before you've decided where you're going. One of us is ready.", "category": "sassy" }
+];
+
+// State: track decisions
+const state = RESPONSES.map((r, i) => ({
+  id: i,
+  originalText: r.text,
+  originalCategory: r.category,
+  currentText: r.text,
+  currentCategory: r.category,
+  decision: null // null | 'keep' | 'cut' | 'edit'
+}));
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (item.decision ? ` status-${item.decision}` : '');
+    card.id = `card-${i}`;
+
+    let statusHtml = '';
+    if (item.decision === 'keep') statusHtml = '<span class="status-label label-keep">KEPT</span>';
+    else if (item.decision === 'cut') statusHtml = '<span class="status-label label-cut">CUT</span>';
+    else if (item.decision === 'edit') statusHtml = '<span class="status-label label-edit">EDITED</span>';
+
+    const displayText = item.decision === 'edit' ? item.currentText : item.originalText;
+    const displayCategory = item.decision === 'edit' ? item.currentCategory : item.originalCategory;
+
+    const categoryOptions = CATEGORIES.map(c =>
+      `<option value="${c}" ${c === item.originalCategory ? 'selected' : ''}>${c}</option>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-number">#${i + 1}</span>
+        <span class="badge-category cat-${displayCategory}">${displayCategory}</span>
+      </div>
+      ${statusHtml}
+      <div class="response-text">${escapeHtml(displayText)}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.decision === 'keep' ? 'active' : ''}" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.decision === 'cut' ? 'active' : ''}" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.decision === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.decision ? `<button class="btn btn-reset" onclick="resetItem(${i})">Reset</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(item.originalText)}</textarea>
+        <div class="edit-category">
+          <label>Category:</label>
+          <select id="edit-cat-${i}">${categoryOptions}</select>
+        </div>
+        <button class="btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function decide(index, decision) {
+  if (decision === 'edit') {
+    toggleEdit(index);
+    return;
+  }
+  state[index].decision = decision;
+  if (decision === 'keep') {
+    state[index].currentText = state[index].originalText;
+    state[index].currentCategory = state[index].originalCategory;
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  const editArea = document.getElementById(`edit-area-${index}`);
+  if (editArea.classList.contains('visible')) {
+    editArea.classList.remove('visible');
+  } else {
+    // Pre-populate with current text (original if not yet edited)
+    const textarea = document.getElementById(`edit-text-${index}`);
+    const catSelect = document.getElementById(`edit-cat-${index}`);
+    textarea.value = state[index].decision === 'edit' ? state[index].currentText : state[index].originalText;
+    catSelect.value = state[index].decision === 'edit' ? state[index].currentCategory : state[index].originalCategory;
+    editArea.classList.add('visible');
+  }
+}
+
+function saveEdit(index) {
+  const textarea = document.getElementById(`edit-text-${index}`);
+  const catSelect = document.getElementById(`edit-cat-${index}`);
+  state[index].currentText = textarea.value.trim();
+  state[index].currentCategory = catSelect.value;
+  state[index].decision = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function resetItem(index) {
+  state[index].decision = null;
+  state[index].currentText = state[index].originalText;
+  state[index].currentCategory = state[index].originalCategory;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const kept = state.filter(s => s.decision === 'keep').length;
+  const cut = state.filter(s => s.decision === 'cut').length;
+  const edited = state.filter(s => s.decision === 'edit').length;
+  const remaining = state.filter(s => s.decision === null).length;
+
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = remaining;
+}
+
+function updateExport() {
+  const exported = state
+    .filter(s => s.decision === 'keep' || s.decision === 'edit')
+    .map(s => ({
+      text: s.decision === 'edit' ? s.currentText : s.originalText,
+      category: s.decision === 'edit' ? s.currentCategory : s.originalCategory
+    }));
+
+  const json = JSON.stringify(exported, null, 2);
+  document.getElementById('export-json').textContent = json;
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Initial render
+renderCards();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Attitude — No Cat Required (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 0 0 120px 0;
+    line-height: 1.6;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #333;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .sticky-header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .stat { padding: 4px 12px; border-radius: 6px; }
+  .stat-pending { background: #333; color: #aaa; }
+  .stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid #555;
+    transition: border-color 0.2s;
+  }
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-number {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  .response-text {
+    font-style: italic;
+    color: #f0e6ff;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    color: #aaa;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: scale(0.97); }
+  .btn-keep { background: #4ecca3; color: #000; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #000; }
+  .btn-reset {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  .btn-reset:hover { color: #ccc; border-color: #888; }
+
+  .status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-keep { background: rgba(78,204,163,0.2); color: #4ecca3; }
+  .badge-cut { background: rgba(233,69,96,0.2); color: #e94560; text-decoration: line-through; }
+  .badge-edit { background: rgba(255,217,61,0.2); color: #ffd93d; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+    width: 100%;
+  }
+  .edit-area.open { display: block; }
+  .edit-textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    color: #f0e6ff;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+  .edit-textarea:focus { outline: none; border-color: #ffd93d; }
+
+  .edit-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .edit-row label {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  .category-select {
+    background: #0f0f23;
+    color: #eee;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .category-select:focus { outline: none; border-color: #ffd93d; }
+
+  .btn-save-edit {
+    background: #ffd93d;
+    color: #000;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-save-edit:hover { opacity: 0.85; }
+
+  .card[data-status="cut"] .response-text {
+    opacity: 0.4;
+    text-decoration: line-through;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 48px auto 0;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #aaa;
+  }
+  .export-block {
+    background: #0f0f23;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-json {
+    background: none;
+    border: none;
+    color: #4ecca3;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    white-space: pre;
+    line-height: 1.5;
+  }
+  .export-json:focus { outline: none; }
+  .btn-copy {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #4ecca3;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { opacity: 0.85; }
+
+  .export-count {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Pure Attitude &mdash; No Cat Required (Feb 22)</h1>
+  <div class="stats">
+    <span class="stat stat-pending" id="stat-pending">Pending: 25</span>
+    <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+    <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+    <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  </div>
+</div>
+
+<div class="cards-container" id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export &mdash; Kept &amp; Edited Responses</h2>
+  <div class="export-block">
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <textarea class="export-json" id="export-json" readonly></textarea>
+  </div>
+  <div class="export-count" id="export-count"></div>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic","wise","cold","sassy","cryptic","dramatic","physical",
+  "wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"
+];
+
+const RESPONSES = [
+  { "text": "The rehearsal was the performance. You just didn\u2019t know anyone was watching.", "category": "wise" },
+  { "text": "May cause the sudden urge to stop explaining yourself to people who weren\u2019t listening.", "category": "demanding" },
+  { "text": "You didn\u2019t outgrow them. You just stopped holding your breath.", "category": "cold" },
+  { "text": "Someone is going to love you stupid. Like, embarrassingly. Like, their friends are going to worry.", "category": "chaotic_wholesome" },
+  { "text": "The softest thing in the room is usually the one running it.", "category": "cryptic" },
+  { "text": "You keep seasoning something you should\u2019ve thrown out.", "category": "cold" },
+  { "text": "Bring the version of yourself that laughs too loud. That\u2019s the one they need.", "category": "nurturing" },
+  { "text": "The yes is in your posture. Your mouth just hasn\u2019t caught up.", "category": "wise" },
+  { "text": "You left the party an hour before you left the party.", "category": "poetic" },
+  { "text": "Do it badly. Do it in the wrong shoes. Do it with your mouth full. Do it.", "category": "chaotic" },
+  { "text": "The bridge you\u2019re afraid to burn is the one that\u2019s already on fire.", "category": "dramatic" },
+  { "text": "Tenderness isn\u2019t weakness. It\u2019s precision.", "category": "nurturing" },
+  { "text": "You\u2019re not stuck. You\u2019re just building pressure.", "category": "chaotic_wholesome" },
+  { "text": "The ache means it was real. Congratulations. Most people don\u2019t get real.", "category": "wholesome" },
+  { "text": "Stop auditioning for people who aren\u2019t even casting.", "category": "demanding" },
+  { "text": "Two suitcases and a conviction. That\u2019s all it ever takes.", "category": "poetic" },
+  { "text": "The quiet one at the table already decided three rounds ago.", "category": "cryptic" },
+  { "text": "May cause the realization that \u2018fine\u2019 is not an emotion.", "category": "sassy" },
+  { "text": "They\u2019re going to talk about you anyway. Give them something loud.", "category": "chaotic" },
+  { "text": "Every locked door in your life had the same locksmith. Check your mirror.", "category": "wise" },
+  { "text": "You\u2019re somebody\u2019s 2 AM story that ends with \u2018I swear, I\u2019m not making this up.\u2019", "category": "chaotic_wholesome" },
+  { "text": "The answer isn\u2019t at the bottom of that glass. But the courage might be. Use it fast.", "category": "dramatic" },
+  { "text": "Grief is just love with nowhere to go. Let it be loud.", "category": "nurturing" },
+  { "text": "The second mouse gets the cheese. Patience isn\u2019t passive.", "category": "existential" },
+  { "text": "You held that door open for way too long. Some people just walk through.", "category": "poetic" }
+];
+
+// State: each item tracks status and optional edits
+const state = RESPONSES.map((r, i) => ({
+  id: i,
+  originalText: r.text,
+  originalCategory: r.category,
+  text: r.text,
+  category: r.category,
+  status: null // null = pending, "keep", "cut", "edit"
+}));
+
+function updateStats() {
+  let pending = 0, keep = 0, cut = 0, edit = 0;
+  state.forEach(s => {
+    if (s.status === "keep") keep++;
+    else if (s.status === "cut") cut++;
+    else if (s.status === "edit") edit++;
+    else pending++;
+  });
+  document.getElementById("stat-pending").textContent = "Pending: " + pending;
+  document.getElementById("stat-keep").textContent = "Keep: " + keep;
+  document.getElementById("stat-cut").textContent = "Cut: " + cut;
+  document.getElementById("stat-edit").textContent = "Edit: " + edit;
+  updateExport();
+}
+
+function updateExport() {
+  const exported = state
+    .filter(s => s.status === "keep" || s.status === "edit")
+    .map(s => ({ text: s.text, category: s.category }));
+  const json = JSON.stringify(exported, null, 2);
+  document.getElementById("export-json").value = json;
+  document.getElementById("export-count").textContent = exported.length + " response" + (exported.length !== 1 ? "s" : "") + " in export";
+}
+
+function setStatus(id, status) {
+  const item = state[id];
+  item.status = status;
+  if (status !== "edit") {
+    // Reset to original if not editing
+    item.text = item.originalText;
+    item.category = item.originalCategory;
+  }
+  renderCard(id);
+  updateStats();
+}
+
+function resetCard(id) {
+  const item = state[id];
+  item.status = null;
+  item.text = item.originalText;
+  item.category = item.originalCategory;
+  renderCard(id);
+  updateStats();
+}
+
+function openEdit(id) {
+  const item = state[id];
+  item.status = "edit";
+  renderCard(id);
+  updateStats();
+}
+
+function saveEdit(id) {
+  const item = state[id];
+  const textarea = document.getElementById("edit-text-" + id);
+  const select = document.getElementById("edit-cat-" + id);
+  if (textarea) item.text = textarea.value.trim() || item.originalText;
+  if (select) item.category = select.value;
+  item.status = "edit";
+  renderCard(id);
+  updateStats();
+}
+
+function categoryOptions(selected) {
+  return CATEGORIES.map(c =>
+    '<option value="' + c + '"' + (c === selected ? ' selected' : '') + '>' + c + '</option>'
+  ).join("");
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderCard(id) {
+  const item = state[id];
+  const card = document.getElementById("card-" + id);
+  if (!card) return;
+
+  card.setAttribute("data-status", item.status || "pending");
+
+  let statusBadge = "";
+  let buttons = "";
+  let editArea = "";
+
+  if (item.status === "keep") {
+    statusBadge = '<span class="status-badge badge-keep">KEPT</span>';
+    buttons = '<button class="btn btn-reset" onclick="resetCard(' + id + ')">Reset</button>';
+  } else if (item.status === "cut") {
+    statusBadge = '<span class="status-badge badge-cut">CUT</span>';
+    buttons = '<button class="btn btn-reset" onclick="resetCard(' + id + ')">Reset</button>';
+  } else if (item.status === "edit") {
+    statusBadge = '<span class="status-badge badge-edit">EDITED</span>';
+    buttons = '<button class="btn btn-reset" onclick="resetCard(' + id + ')">Reset</button>';
+    editArea = '<div class="edit-area open">' +
+      '<textarea class="edit-textarea" id="edit-text-' + id + '">' + escapeHtml(item.text) + '</textarea>' +
+      '<div class="edit-row">' +
+        '<label>Category:</label>' +
+        '<select class="category-select" id="edit-cat-' + id + '">' + categoryOptions(item.category) + '</select>' +
+        '<button class="btn-save-edit" onclick="saveEdit(' + id + ')">Save Edit</button>' +
+      '</div>' +
+    '</div>';
+  } else {
+    buttons =
+      '<button class="btn btn-keep" onclick="setStatus(' + id + ', \'keep\')">KEEP</button>' +
+      '<button class="btn btn-cut" onclick="setStatus(' + id + ', \'cut\')">CUT</button>' +
+      '<button class="btn btn-edit" onclick="openEdit(' + id + ')">EDIT</button>';
+  }
+
+  const displayText = (item.status === "edit") ? item.text : item.originalText;
+
+  card.innerHTML =
+    '<div class="card-number">#' + (id + 1) + '</div>' +
+    '<div class="response-text">' + escapeHtml(displayText) + '</div>' +
+    '<span class="category-tag">' + escapeHtml(item.category) + '</span>' +
+    '<div class="card-actions">' + buttons + ' ' + statusBadge + '</div>' +
+    editArea;
+}
+
+function renderAll() {
+  const container = document.getElementById("cards-container");
+  container.innerHTML = "";
+  state.forEach((item, id) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = "card-" + id;
+    container.appendChild(card);
+    renderCard(id);
+  });
+  updateStats();
+}
+
+function copyExport() {
+  const textarea = document.getElementById("export-json");
+  textarea.select();
+  navigator.clipboard.writeText(textarea.value).then(() => {
+    const btn = document.getElementById("btn-copy");
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>

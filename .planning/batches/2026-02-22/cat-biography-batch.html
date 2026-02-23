@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cat Biography Interviews (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 0 0 120px 0;
+    line-height: 1.6;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #333;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .sticky-header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .stat { padding: 4px 12px; border-radius: 6px; }
+  .stat-pending { background: #333; color: #aaa; }
+  .stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid #555;
+    transition: border-color 0.2s;
+  }
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; opacity: 0.5; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .card-number {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .card-category {
+    font-size: 0.75rem;
+    color: #888;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .card-text {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    font-style: italic;
+    color: #ddd;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-keep { background: #4ecca3; color: #000; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #000; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.active { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    background: #0f0f23;
+    color: #eee;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .edit-area .edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-save { background: #4ecca3; color: #000; }
+  .btn-cancel { background: #555; color: #eee; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #4ecca3;
+  }
+  .export-block {
+    background: #0f0f23;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #ccc;
+    max-height: 500px;
+    overflow-y: auto;
+    cursor: pointer;
+  }
+  .export-block:hover { border-color: #4ecca3; }
+  .copy-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+  }
+
+  .batch-notes {
+    max-width: 800px;
+    margin: 24px auto 0;
+    padding: 0 16px;
+    font-size: 0.9rem;
+    color: #888;
+    line-height: 1.5;
+  }
+  .batch-notes strong { color: #aaa; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Cat Biography Interviews</h1>
+  <div class="stats">
+    <span class="stat stat-pending" id="stat-pending">Pending: 28</span>
+    <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+    <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+    <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  </div>
+</div>
+
+<div class="batch-notes">
+  <strong>Direction:</strong> Cats being interviewed for their biographies. Barbara Walters, Paris Review, VH1 Behind the Music energy. The gap between grandiosity of the interview format and the actual content of a cat's life. Must work as ambiguous oracle answers.<br>
+  <strong>Construction:</strong> Peanuts flat delivery + Wright frame-pivot-landing. One emotional beat. Concrete over abstract. Confidence without self-awareness. Landing lighter than launch.
+</div>
+
+<div class="cards-container" id="cards-container">
+</div>
+
+<div class="export-section">
+  <h2>Export (KEEP + EDIT only)</h2>
+  <div class="export-block" id="export-block" onclick="copyExport()">Click to copy</div>
+  <div class="copy-hint">Click the block to copy JSON to clipboard</div>
+</div>
+
+<script>
+const responses = [
+  { text: "I was born under a porch. Third from the left. I don't talk about the first two.", category: "dramatic" },
+  { text: "The bird incident of 2019 remains my greatest professional achievement. I have not been asked to elaborate and I will not.", category: "cold" },
+  { text: "People ask about my rivalry with the dog. We had creative differences. He wanted everything. I wanted everything.", category: "wise" },
+  { text: "In my early work, I focused primarily on sleeping. I've since expanded into advanced sleeping.", category: "chaotic" },
+  { text: "I regret nothing. Except the screen door. I misjudged the screen door.", category: "chaotic" },
+  { text: "They moved the couch in 2021. I don't use that word lightly, but it was a betrayal.", category: "dramatic" },
+  { text: "My influences? Solitude. Breakfast. The 4am hour when no one can stop you.", category: "cryptic" },
+  { text: "There was a difficult period when they switched brands. I'd rather not go into it. I went into the bathtub.", category: "dramatic" },
+  { text: "People don't know this about me, but I have a spot behind the dryer where I go to think about my legacy.", category: "existential" },
+  { text: "The unauthorized biography claims I knocked the glass off on purpose. The glass made its own choices.", category: "cold" },
+  { text: "When asked about my creative process, I bite the interviewer.", category: "chaotic" },
+  { text: "I've been described as difficult. I prefer 'uncompromising.' The vet prefers 'difficult.'", category: "demanding" },
+  { text: "Love? I had a thing with a blanket once. Intense. Ultimately we wanted different things.", category: "wholesome" },
+  { text: "Let me be clear: the red dot was never caught. But I changed the conversation about what catching means.", category: "wise" },
+  { text: "I was offered the windowsill. I took the entire window.", category: "demanding" },
+  { text: "Chapter one of the memoir is just the word 'no' repeated for forty pages.", category: "cold" },
+  { text: "My mother taught me two things. Trust nobody. And how to land.", category: "wise" },
+  { text: "They always ask about the curtain. Never about why I climbed it.", category: "cryptic" },
+  { text: "At six months old I had already peaked. The next eleven years have been victory laps.", category: "sassy" },
+  { text: "The interviewer asked if I had any regrets. I held eye contact and pushed his pen off the table.", category: "chaotic" },
+  { text: "I've lived many lives. Several of them before lunch.", category: "existential" },
+  { text: "In the documentary, they use dramatic music when I enter a room. I've always heard dramatic music when I enter a room.", category: "dramatic" },
+  { text: "My legacy is this: I sat where I wanted. I left when I wanted. I came back on my terms.", category: "wise" },
+  { text: "The second act was harder. They got a kitten. I don't discuss the kitten.", category: "cold" },
+  { text: "I've been called aloof. I call it editorial distance.", category: "sassy" },
+  { text: "For the record, I was sleeping on the manuscript first. The author should be thanking me.", category: "demanding" },
+  { text: "If I could do it all again? I'd still knock it off the counter. But slower. So they could really watch.", category: "chaotic" },
+  { text: "My philosophy can be summarized in one sentence. It cannot be summarized in one sentence.", category: "cryptic" }
+];
+
+const state = responses.map((r, i) => ({
+  ...r,
+  id: i,
+  status: 'pending',
+  editedText: r.text
+}));
+
+function render() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = state.map((item, i) => `
+    <div class="card" data-status="${item.status}" id="card-${i}">
+      <div class="card-header">
+        <span class="card-number">#${i + 1}</span>
+        <span class="card-category">${item.category}</span>
+      </div>
+      <div class="card-text">${item.status === 'edit' ? item.editedText : item.text}</div>
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${item.editedText}</textarea>
+        <div class="edit-actions">
+          <button class="btn btn-save" onclick="saveEdit(${i})">SAVE EDIT</button>
+          <button class="btn btn-cancel" onclick="cancelEdit(${i})">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function setStatus(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  area.classList.toggle('active');
+  if (area.classList.contains('active')) {
+    document.getElementById(`edit-text-${i}`).focus();
+  }
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`edit-text-${i}`).value.trim();
+  if (text) {
+    state[i].editedText = text;
+    state[i].status = 'edit';
+    render();
+  }
+}
+
+function cancelEdit(i) {
+  document.getElementById(`edit-area-${i}`).classList.remove('active');
+}
+
+function updateStats() {
+  const counts = { pending: 0, keep: 0, cut: 0, edit: 0 };
+  state.forEach(s => counts[s.status]++);
+  document.getElementById('stat-pending').textContent = `Pending: ${counts.pending}`;
+  document.getElementById('stat-keep').textContent = `Keep: ${counts.keep}`;
+  document.getElementById('stat-cut').textContent = `Cut: ${counts.cut}`;
+  document.getElementById('stat-edit').textContent = `Edit: ${counts.edit}`;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({
+      text: s.status === 'edit' ? s.editedText : s.text,
+      category: s.category
+    }));
+  document.getElementById('export-block').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-block').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const hint = document.querySelector('.copy-hint');
+    hint.textContent = 'Copied!';
+    setTimeout(() => hint.textContent = 'Click the block to copy JSON to clipboard', 2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

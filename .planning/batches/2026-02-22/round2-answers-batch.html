@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Round 2 — ANSWERS (Cat Logic / Fake Science / Moral Dilemma)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+.sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.stats { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.stat { font-size: 14px; font-weight: bold; }
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.batch-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 10px; padding-top: 20px; border-top: 1px solid #333; }
+.item { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #444; transition: border-color 0.3s; }
+.item.kept { border-left-color: #4ecca3; }
+.item.cut { border-left-color: #e94560; opacity: 0.5; }
+.item.edited { border-left-color: #ffd93d; }
+.item-number { font-size: 11px; color: #555; margin-bottom: 6px; }
+.item-text { font-size: 18px; line-height: 1.5; margin-bottom: 4px; color: #fff; }
+.item-category { font-size: 12px; color: #888; margin-bottom: 12px; font-style: italic; }
+.flag { font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+.flag-hot { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca344; }
+.flag-warn { background: #e9456022; color: #e94560; border: 1px solid #e9456044; }
+.buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fe8bf; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #ff6b81; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe566; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 6px; padding: 12px; font-family: Georgia, serif; font-size: 16px; resize: vertical; }
+.edit-area select { background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 4px; padding: 6px 10px; margin-top: 8px; font-size: 13px; }
+.edit-area .save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+.export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 10px; border: 1px solid #333; }
+.export-section h3 { color: #4ecca3; margin-bottom: 10px; }
+.export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 13px; }
+.copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+.copy-btn:hover { background: #6fe8bf; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Round 2 — ANSWERS (Cat Logic / Fake Science / Moral Dilemma)</h1>
+  <div class="stats">
+    <span class="stat stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat stat-pending">PENDING: <span id="pending-count">45</span>/45</span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h3>Export (kept + edited responses)</h3>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  // BATCH 4: Wacky Cat Logic ANSWERS
+  { batch: "Wacky Cat Logic Answers", text: "Do it. The worst thing that happens is a story, and you're low on stories.", category: "chaotic_wholesome", flag: "warn" },
+  { batch: "Wacky Cat Logic Answers", text: "No. I've watched you rehearse this in the shower three times. You're not ready.", category: "cold", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Yes, but only if you do it fast enough that your brain can't talk you out of it.", category: "wise", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "Absolutely not. That door closed and the draft felt incredible.", category: "sassy", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "Go. If it's a mistake, you'll know in the first four seconds. That's enough time.", category: "chaotic", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "Stay. Not because it's good. Because you haven't finished being angry yet, and you need that.", category: "dramatic", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "Yes. The same way I'd eat a moth \u2014 without thinking, and with total commitment.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Walk away. Not dramatically. Like you just remembered you left something in the car.", category: "wise", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Send it. The worst they can do is respond, and you survived worse responses from your mother.", category: "sassy", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "No. You already tried this. I was watching. It was awful the first time.", category: "cold", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "Do it tonight. Tomorrow you'll have a reason not to, and that reason will sound smart, and it'll be wrong.", category: "wise", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Quit. Not everything deserves a second season.", category: "demanding", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Yes. But wear something you can run in.", category: "cryptic", flag: "hot" },
+  { batch: "Wacky Cat Logic Answers", text: "Say it out loud, to their face, before dinner. Courage has a shelf life and yours expires at sundown.", category: "dramatic", flag: null },
+  { batch: "Wacky Cat Logic Answers", text: "No. And I mean no like a closed cupboard \u2014 you can paw at it all night, nothing's opening.", category: "cold", flag: "hot" },
+
+  // BATCH 5: Fake Science ANSWERS
+  { batch: "Fake Science Answers", text: "Longitudinal data confirms: the people who 'sleep on it' wake up and do the exact same thing. Go now.", category: "chaotic", flag: null },
+  { batch: "Fake Science Answers", text: "Your serotonin-to-overthinking ratio is 1:14. That's not a maybe. That's a no.", category: "cold", flag: null },
+  { batch: "Fake Science Answers", text: "Studies show 73% of 'bad timing' is just cowardice with a calendar.", category: "wise", flag: "hot" },
+  { batch: "Fake Science Answers", text: "The thermal reading on this decision is 98.2\u00b0. That's body temperature. You already absorbed it.", category: "cryptic", flag: null },
+  { batch: "Fake Science Answers", text: "Lab results came back. You're not crazy. Everyone else is just very consistent.", category: "sassy", flag: null },
+  { batch: "Fake Science Answers", text: "Clinical trials confirm: people who say 'I'm fine' blink 40% faster. You're not fine. Fix the thing.", category: "demanding", flag: null },
+  { batch: "Fake Science Answers", text: "In every recorded simulation, the version of you that didn't send it spent the evening eating cereal in the dark. Send it.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Fake Science Answers", text: "Peer-reviewed: the sensation you're describing is called 'being right and wishing you weren't.' No known cure. Prognosis: eventual peace.", category: "wise", flag: null },
+  { batch: "Fake Science Answers", text: "The molecular weight of what you're carrying is 0.00 grams. It was never yours. Put it down.", category: "nurturing", flag: "warn" },
+  { batch: "Fake Science Answers", text: "Field research across 11,000 subjects confirms: the second slice of cake has never once made anything worse.", category: "wholesome", flag: "hot" },
+  { batch: "Fake Science Answers", text: "Your fight-or-flight activated 6 days ago and you're still composing a polite email about it. Aerodynamically, this is unsound.", category: "sassy", flag: "hot" },
+  { batch: "Fake Science Answers", text: "Under controlled conditions, 'one more week' decomposes into 'one more month' at a rate of 100%. Leave now.", category: "cold", flag: "hot" },
+  { batch: "Fake Science Answers", text: "The tensile strength of whatever's holding you there was exceeded in March. You're suspended by habit.", category: "existential", flag: null },
+  { batch: "Fake Science Answers", text: "A double-blind study of your last four decisions shows a clear pattern: you knew. Every time. You just wanted a second opinion.", category: "wise", flag: "hot" },
+  { batch: "Fake Science Answers", text: "Preliminary findings suggest the warmth in your chest when you think about it is not anxiety. It's a yes. P-value of .001.", category: "poetic", flag: "hot" },
+
+  // BATCH 6: Moral Dilemma — Cat Picks a Side
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Take the one you can't explain at dinner. Those are always right.", category: "wise", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "If nobody saw it, it didn't happen. That's not a loophole. That's physics.", category: "chaotic", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "The lie is too big to stop now. Respect the infrastructure.", category: "cold", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Keep the money. Guilt is free and you already have plenty.", category: "sassy", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "You didn't find it. It presented itself. There's a difference and it matters legally.", category: "cryptic", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Between the two bad options, pick the one with the better story. You're going to tell it either way.", category: "wise", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Return it. But open it first.", category: "chaotic", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "The moral high ground has no snacks. Come down.", category: "demanding", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "You already did the wrong thing. Might as well enjoy the view from here.", category: "cold", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "If it smells weird, leave. That's not advice. That's a law.", category: "existential", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Tell them. But rehearse it in the car first so you cry at the right part.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "You're overthinking this. The answer was always the selfish one. It just needed a better outfit.", category: "sassy", flag: null },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Loyalty is for the last person who fed you. Everyone else is a situation.", category: "cold", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Do the kind thing. But the kind thing isn't the nice thing and you know that.", category: "nurturing", flag: "hot" },
+  { batch: "Moral Dilemma \u2014 Cat Picks a Side", text: "Both doors are wrong. Go through the window. You were going to anyway.", category: "dramatic", flag: "warn" },
+];
+
+let decisions = {};
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+  let currentBatch = '';
+
+  responses.forEach((r, i) => {
+    if (r.batch !== currentBatch) {
+      currentBatch = r.batch;
+      const label = document.createElement('div');
+      label.className = 'batch-label';
+      label.textContent = currentBatch;
+      container.appendChild(label);
+    }
+
+    const div = document.createElement('div');
+    div.className = 'item' + (decisions[i] ? ' ' + decisions[i].action : '');
+    div.id = 'item-' + i;
+
+    let flagHTML = '';
+    if (r.flag === 'hot') flagHTML = '<span class="flag flag-hot">top pick</span>';
+    if (r.flag === 'warn') flagHTML = '<span class="flag flag-warn">caution</span>';
+
+    const displayText = decisions[i] && decisions[i].editedText ? decisions[i].editedText : r.text;
+    const displayCat = decisions[i] && decisions[i].editedCategory ? decisions[i].editedCategory : r.category;
+
+    div.innerHTML = `
+      <div class="item-number">#${i + 1} ${flagHTML}</div>
+      <div class="item-text">\u201c${displayText}\u201d</div>
+      <div class="item-category">${displayCat}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${displayText}</textarea>
+        <select id="cat-${i}">
+          ${['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'].map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, action) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = action;
+  document.getElementById('item-' + i).className = 'item ' + action;
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById('edit-' + i);
+  area.style.display = area.style.display === 'none' || area.style.display === '' ? 'block' : 'none';
+  if (area.style.display === 'block') document.getElementById('textarea-' + i).focus();
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('textarea-' + i).value.trim();
+  const cat = document.getElementById('cat-' + i).value;
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = 'edited';
+  decisions[i].editedText = text;
+  decisions[i].editedCategory = cat;
+  render();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'kept') keep++;
+    if (d.action === 'cut') cut++;
+    if (d.action === 'edited') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = (45 - keep - cut - edit);
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.action === 'kept') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (d && d.action === 'edited') {
+      kept.push({ text: d.editedText || r.text, category: d.editedCategory || r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+
+</body>
+</html>

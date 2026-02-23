@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Found Language Batch Review — 2026-02-21</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-total { color: #a0a0c0; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #888; }
+
+  .section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .section-note {
+    font-size: 13px;
+    color: #8888aa;
+    font-style: italic;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .item {
+    background: #1f2a48;
+    border: 1px solid #2a3a5c;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .item.decided-keep { border-color: #4ecca3; }
+  .item.decided-cut { border-color: #e94560; opacity: 0.55; }
+  .item.decided-edit { border-color: #ffd93d; }
+
+  .item-number {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .category-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .cat-wise { background: #1a3a5c; color: #6ec6ff; }
+  .cat-cold { background: #3a1a2e; color: #e0a0b0; }
+  .cat-cryptic { background: #2a1a3e; color: #c0a0e0; }
+  .cat-existential { background: #1a2a2a; color: #80c0b0; }
+  .cat-chaotic { background: #3a2a1a; color: #e0c080; }
+  .cat-demanding { background: #2a2a1a; color: #d0d080; }
+
+  .source-text {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+  .concern-text {
+    font-size: 12px;
+    color: #e0a040;
+    margin-bottom: 8px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .btn-keep {
+    border-color: #4ecca3;
+    color: #4ecca3;
+  }
+  .btn-keep:hover, .btn-keep.active {
+    background: #4ecca3;
+    color: #1a1a2e;
+  }
+  .btn-cut {
+    border-color: #e94560;
+    color: #e94560;
+  }
+  .btn-cut:hover, .btn-cut.active {
+    background: #e94560;
+    color: #1a1a2e;
+  }
+  .btn-edit {
+    border-color: #ffd93d;
+    color: #ffd93d;
+  }
+  .btn-edit:hover, .btn-edit.active {
+    background: #ffd93d;
+    color: #1a1a2e;
+  }
+
+  .decision-label {
+    display: inline-block;
+    margin-left: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    vertical-align: middle;
+  }
+  .decision-label.keep { color: #4ecca3; }
+  .decision-label.cut { color: #e94560; }
+  .decision-label.edit { color: #ffd93d; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+  }
+  .edit-area.open { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #141a30;
+    border: 1px solid #3a4a6c;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    padding: 12px;
+    resize: vertical;
+    line-height: 1.4;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .save-edit-btn {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .save-edit-btn:hover { background: #ffe566; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+  .export-section h2 {
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0d1117;
+    border: 1px solid #2a3a5c;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    color: #c9d1d9;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    cursor: text;
+    user-select: all;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .copy-btn:hover { background: #6eecc3; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Found Language Batch &mdash; 2026-02-21</h1>
+  <span class="stat stat-total">Total: <span id="stat-total">16</span></span>
+  <span class="stat stat-kept">Kept: <span id="stat-kept">0</span></span>
+  <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+  <span class="stat stat-edited">Edited: <span id="stat-edited">0</span></span>
+  <span class="stat stat-remaining">Remaining: <span id="stat-remaining">16</span></span>
+</div>
+
+<div class="section">
+  <div class="section-title">SIDEWAYS NON-SEQUITUR ENERGY</div>
+  <div class="section-note">Found language from ATC, llama research, beekeeping, geology, competitive eating. Relocated into oracle answers.</div>
+
+  <div class="item" data-id="0" data-text="Resume own navigation." data-category="wise">
+    <div class="item-number">#1</div>
+    <div class="response-text">Resume own navigation.</div>
+    <span class="category-badge cat-wise">wise</span>
+    <div class="source-text">FAA Pilot/Controller Glossary &mdash; ATC telling pilot they're back in charge of own heading</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(0,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(0,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(0)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-0">
+      <textarea id="edit-text-0">Resume own navigation.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(0)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="1" data-text="Cleared for the option." data-category="wise">
+    <div class="item-number">#2</div>
+    <div class="response-text">Cleared for the option.</div>
+    <span class="category-badge cat-wise">wise</span>
+    <div class="source-text">FAA &mdash; authorization for touch-and-go, stop, or land, at pilot's discretion</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(1,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(1,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(1)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-1">
+      <textarea id="edit-text-1">Cleared for the option.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(1)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="2" data-text="That sounds more like toleration than affection." data-category="cold">
+    <div class="item-number">#3</div>
+    <div class="response-text">That sounds more like toleration than affection.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">Rocky Mountain Llama and Alpaca Association behavioral research</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(2,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(2,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(2)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-2">
+      <textarea id="edit-text-2">That sounds more like toleration than affection.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(2)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="3" data-text="Expect further clearance." data-category="cryptic">
+    <div class="item-number">#4</div>
+    <div class="response-text">Expect further clearance.</div>
+    <span class="category-badge cat-cryptic">cryptic</span>
+    <div class="source-text">FAA &mdash; &ldquo;hold here, more instructions coming&rdquo;</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(3,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(3,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(3)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-3">
+      <textarea id="edit-text-3">Expect further clearance.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(3)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="4" data-text="Radar contact lost." data-category="cold">
+    <div class="item-number">#5</div>
+    <div class="response-text">Radar contact lost.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">FAA &mdash; surveillance data no longer reliable</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(4,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(4,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(4)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-4">
+      <textarea id="edit-text-4">Radar contact lost.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(4)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="5" data-text="The colony quietly replaces the queen." data-category="cold">
+    <div class="item-number">#6</div>
+    <div class="response-text">The colony quietly replaces the queen.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">Beekeeping &mdash; supersedure process</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(5,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(5,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(5)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-5">
+      <textarea id="edit-text-5">The colony quietly replaces the queen.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(5)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="6" data-text="A break in time in an otherwise continuous record." data-category="existential">
+    <div class="item-number">#7</div>
+    <div class="response-text">A break in time in an otherwise continuous record.</div>
+    <span class="category-badge cat-existential">existential</span>
+    <div class="source-text">Utah Geological Survey &mdash; definition of unconformity</div>
+    <div class="concern-text">Concern: Borderline poetic/constructed</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(6,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(6,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(6)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-6">
+      <textarea id="edit-text-6">A break in time in an otherwise continuous record.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(6)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="7" data-text="Reversal of fortune is grounds for disqualification." data-category="chaotic">
+    <div class="item-number">#8</div>
+    <div class="response-text">Reversal of fortune is grounds for disqualification.</div>
+    <span class="category-badge cat-chaotic">chaotic</span>
+    <div class="source-text">Major League Eating &mdash; ESPN euphemism for vomiting</div>
+    <div class="concern-text">Concern: Might be trying too hard</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(7,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(7,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(7)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-7">
+      <textarea id="edit-text-7">Reversal of fortune is grounds for disqualification.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(7)">Save Edit</button>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">STATUS / TERRITORY / ACCESS ENERGY</div>
+  <div class="section-note">Found language from Michelin, wine tasting, diplomatic protocol, nightclub policy, HR rejections, country clubs. Relocated into oracle answers.</div>
+
+  <div class="item" data-id="8" data-text="Worth a detour. Not yet a special journey." data-category="cold">
+    <div class="item-number">#9</div>
+    <div class="response-text">Worth a detour. Not yet a special journey.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">Michelin star rating system (2-star vs 3-star language)</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(8,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(8,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(8)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-8">
+      <textarea id="edit-text-8">Worth a detour. Not yet a special journey.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(8)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="9" data-text="Entry is not guaranteed and is subject to capacity." data-category="wise">
+    <div class="item-number">#10</div>
+    <div class="response-text">Entry is not guaranteed and is subject to capacity.</div>
+    <span class="category-badge cat-wise">wise</span>
+    <div class="source-text">Nightclub door policy, verbatim</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(9,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(9,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(9)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-9">
+      <textarea id="edit-text-9">Entry is not guaranteed and is subject to capacity.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(9)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="10" data-text="Ranked by tenure. Not by size." data-category="demanding">
+    <div class="item-number">#11</div>
+    <div class="response-text">Ranked by tenure. Not by size.</div>
+    <span class="category-badge cat-demanding">demanding</span>
+    <div class="source-text">Congress of Vienna 1815 &mdash; diplomatic protocol</div>
+    <div class="concern-text">Concern: Slightly constructed/trimmed</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(10,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(10,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(10)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-10">
+      <textarea id="edit-text-10">Ranked by tenure. Not by size.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(10)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="11" data-text="Your application will remain on file." data-category="cold">
+    <div class="item-number">#12</div>
+    <div class="response-text">Your application will remain on file.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">HR rejection letter, verbatim</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(11,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(11,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(11)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-11">
+      <textarea id="edit-text-11">Your application will remain on file.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(11)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="12" data-text="The position of honor is to the right of the host." data-category="cryptic">
+    <div class="item-number">#13</div>
+    <div class="response-text">The position of honor is to the right of the host.</div>
+    <span class="category-badge cat-cryptic">cryptic</span>
+    <div class="source-text">Diplomatic protocol &mdash; state dinner seating</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(12,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(12,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(12)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-12">
+      <textarea id="edit-text-12">The position of honor is to the right of the host.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(12)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="13" data-text="Elegant. Meaning: not bold, not big, not opulent." data-category="wise">
+    <div class="item-number">#14</div>
+    <div class="response-text">Elegant. Meaning: not bold, not big, not opulent.</div>
+    <span class="category-badge cat-wise">wise</span>
+    <div class="source-text">Wine Folly &mdash; definition of &ldquo;elegant&rdquo; in wine tasting</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(13,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(13,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(13)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-13">
+      <textarea id="edit-text-13">Elegant. Meaning: not bold, not big, not opulent.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(13)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="14" data-text="A member must accompany guests at all times." data-category="cryptic">
+    <div class="item-number">#15</div>
+    <div class="response-text">A member must accompany guests at all times.</div>
+    <span class="category-badge cat-cryptic">cryptic</span>
+    <div class="source-text">Country club guest policy, verbatim</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(14,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(14,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(14)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-14">
+      <textarea id="edit-text-14">A member must accompany guests at all times.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(14)">Save Edit</button>
+    </div>
+  </div>
+
+  <div class="item" data-id="15" data-text="We have decided to move forward with other candidates at this time." data-category="cold">
+    <div class="item-number">#16</div>
+    <div class="response-text">We have decided to move forward with other candidates at this time.</div>
+    <span class="category-badge cat-cold">cold</span>
+    <div class="source-text">HR rejection letter, verbatim</div>
+    <div class="concern-text">Concern: Similar energy to #12, may want to pick one</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(15,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(15,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(15)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-area-15">
+      <textarea id="edit-text-15">We have decided to move forward with other candidates at this time.</textarea>
+      <button class="save-edit-btn" onclick="saveEdit(15)">Save Edit</button>
+    </div>
+  </div>
+</div>
+
+<div class="export-section">
+  <h2>Export (KEEP + EDIT items)</h2>
+  <p>Items marked KEEP export with original text. Items marked EDIT export with edited text. Cut items are excluded.</p>
+  <div class="export-block" id="export-block">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  { id: 0, text: "Resume own navigation.", category: "wise", decision: null, editedText: null },
+  { id: 1, text: "Cleared for the option.", category: "wise", decision: null, editedText: null },
+  { id: 2, text: "That sounds more like toleration than affection.", category: "cold", decision: null, editedText: null },
+  { id: 3, text: "Expect further clearance.", category: "cryptic", decision: null, editedText: null },
+  { id: 4, text: "Radar contact lost.", category: "cold", decision: null, editedText: null },
+  { id: 5, text: "The colony quietly replaces the queen.", category: "cold", decision: null, editedText: null },
+  { id: 6, text: "A break in time in an otherwise continuous record.", category: "existential", decision: null, editedText: null },
+  { id: 7, text: "Reversal of fortune is grounds for disqualification.", category: "chaotic", decision: null, editedText: null },
+  { id: 8, text: "Worth a detour. Not yet a special journey.", category: "cold", decision: null, editedText: null },
+  { id: 9, text: "Entry is not guaranteed and is subject to capacity.", category: "wise", decision: null, editedText: null },
+  { id: 10, text: "Ranked by tenure. Not by size.", category: "demanding", decision: null, editedText: null },
+  { id: 11, text: "Your application will remain on file.", category: "cold", decision: null, editedText: null },
+  { id: 12, text: "The position of honor is to the right of the host.", category: "cryptic", decision: null, editedText: null },
+  { id: 13, text: "Elegant. Meaning: not bold, not big, not opulent.", category: "wise", decision: null, editedText: null },
+  { id: 14, text: "A member must accompany guests at all times.", category: "cryptic", decision: null, editedText: null },
+  { id: 15, text: "We have decided to move forward with other candidates at this time.", category: "cold", decision: null, editedText: null }
+];
+
+function getItemEl(id) {
+  return document.querySelector('.item[data-id="' + id + '"]');
+}
+
+function decide(id, decision) {
+  const item = items[id];
+  const el = getItemEl(id);
+
+  // If clicking same decision again, toggle it off
+  if (item.decision === decision) {
+    item.decision = null;
+    el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+    // Remove active from buttons
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  } else {
+    item.decision = decision;
+    el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+    el.classList.add('decided-' + decision);
+    // Update button active states
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    el.querySelector('.btn-' + decision).classList.add('active');
+  }
+
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-area-' + id);
+  const isOpen = editArea.classList.contains('open');
+
+  if (isOpen) {
+    // Just close the edit area, don't change the decision
+    editArea.classList.remove('open');
+  } else {
+    editArea.classList.add('open');
+    document.getElementById('edit-text-' + id).focus();
+  }
+}
+
+function saveEdit(id) {
+  const item = items[id];
+  const editedText = document.getElementById('edit-text-' + id).value.trim();
+  const el = getItemEl(id);
+
+  item.editedText = editedText;
+  item.decision = 'edit';
+
+  // Update the displayed text on screen
+  el.querySelector('.response-text').textContent = editedText;
+
+  // Update visual state
+  el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+  el.classList.add('decided-edit');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  // Close the edit area
+  document.getElementById('edit-area-' + id).classList.remove('open');
+
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  items.forEach(item => {
+    if (item.decision === 'keep') kept++;
+    else if (item.decision === 'cut') cut++;
+    else if (item.decision === 'edit') edited++;
+  });
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = items.length - kept - cut - edited;
+}
+
+function updateExport() {
+  const exported = [];
+  items.forEach(item => {
+    if (item.decision === 'keep') {
+      exported.push({ text: item.text, category: item.category });
+    } else if (item.decision === 'edit' && item.editedText) {
+      exported.push({ text: item.editedText, category: item.category });
+    }
+  });
+  document.getElementById('export-block').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-block').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'COPIED!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>

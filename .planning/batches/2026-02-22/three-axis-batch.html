@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content + Voice + Construction — Three-Axis Batch (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 0 0 120px 0;
+    line-height: 1.6;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #333;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .sticky-header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f0e6ff;
+    flex-basis: 100%;
+  }
+  .stat {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: #16213e;
+  }
+  .stat-pending { color: #aaa; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-total { color: #ccc; margin-left: auto; }
+
+  .cards-container {
+    max-width: 780px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid #555;
+    transition: border-color 0.2s;
+  }
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-number {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .response-text {
+    font-style: italic;
+    color: #f0e6ff;
+    font-size: 17px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: #0f3460;
+    color: #7ec8e3;
+    margin-bottom: 14px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-keep { background: #4ecca3; color: #0a0a1a; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #0a0a1a; }
+  .btn-reset {
+    background: transparent;
+    border: 1px solid #555;
+    color: #999;
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+  .btn-reset:hover { border-color: #888; color: #ccc; }
+
+  .status-badge {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .status-keep { background: rgba(78,204,163,0.15); color: #4ecca3; }
+  .status-cut { background: rgba(233,69,96,0.15); color: #e94560; }
+  .status-edit { background: rgba(255,217,61,0.15); color: #ffd93d; }
+
+  .edit-area {
+    margin-top: 14px;
+    display: none;
+  }
+  .edit-area.open { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 90px;
+    background: #0f0f23;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #f0e6ff;
+    font-size: 15px;
+    font-style: italic;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  .category-select {
+    background: #0f0f23;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #eee;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .category-select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .btn-save-edit {
+    background: #ffd93d;
+    color: #0a0a1a;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    font-size: 18px;
+    color: #f0e6ff;
+    margin-bottom: 12px;
+  }
+  .export-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .export-count {
+    font-size: 13px;
+    color: #888;
+  }
+  .btn-copy {
+    background: #4ecca3;
+    color: #0a0a1a;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn-copy:hover { opacity: 0.85; }
+  .btn-copy.copied {
+    background: #7ec8e3;
+  }
+
+  .export-json {
+    background: #0f0f23;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+    color: #aaa;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header" id="header">
+  <h1>Content + Voice + Construction — Three-Axis Batch (Feb 22)</h1>
+  <span class="stat stat-pending" id="stat-pending">Pending: 25</span>
+  <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+  <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+  <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  <span class="stat stat-total" id="stat-total">0 / 25 decided</span>
+</div>
+
+<div class="cards-container" id="cards"></div>
+
+<div class="export-section">
+  <h2>Export — Kept &amp; Edited Responses</h2>
+  <div class="export-bar">
+    <span class="export-count" id="export-count">0 responses</span>
+    <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy JSON</button>
+  </div>
+  <div class="export-json" id="export-json">[]</div>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic", "wise", "cold", "sassy", "cryptic", "dramatic",
+  "physical", "wholesome", "demanding", "chaotic_wholesome",
+  "existential", "nurturing", "poetic"
+];
+
+const RESPONSES = [
+  { "text": "There's a sound coming from inside the wall. I've been monitoring it for six hours. No one else seems concerned.", "category": "wise" },
+  { "text": "Sit closer than expected. Do not explain why.", "category": "demanding" },
+  { "text": "The new one smells like three other houses. I'm building a profile.", "category": "cold" },
+  { "text": "They left a window open two inches. That's a contract.", "category": "chaotic" },
+  { "text": "*one ear forward, one ear back* The information is conflicting.", "category": "physical" },
+  { "text": "I have been warm for so long I forgot what I was worried about.", "category": "existential" },
+  { "text": "Walk into the room like you already own something in it.", "category": "demanding" },
+  { "text": "The tall one leaves every morning and comes back smelling tired. I don't think the outside is worth it.", "category": "wise" },
+  { "text": "Press your whole body against the closed door. They'll know you're waiting. That's the point.", "category": "nurturing" },
+  { "text": "There's a difference between being invited and showing up so confidently no one questions it.", "category": "sassy" },
+  { "text": "I watched the rain for four hours. I have thoughts but I'm keeping them.", "category": "cryptic" },
+  { "text": "The blanket was wrong so I fixed it. You'll notice it's in a different room now.", "category": "chaotic" },
+  { "text": "If they were going to say no, they would have closed the door.", "category": "wise" },
+  { "text": "*lying on the exact spot where the laptop was* It was warm here. It's mine now. These are unrelated facts.", "category": "physical" },
+  { "text": "I can hear your heartbeat change when you look at your phone. You should stop looking at your phone.", "category": "nurturing" },
+  { "text": "The small human dropped a cracker. I said nothing. I simply appeared.", "category": "chaotic_wholesome" },
+  { "text": "Approach from below. Nobody guards the underside of things.", "category": "cryptic" },
+  { "text": "May cause the sudden conviction that you've been doing it right all along.", "category": "wholesome" },
+  { "text": "I tested the new surface with one paw. It held. I am now fully committed.", "category": "dramatic" },
+  { "text": "The house gets very quiet around 2pm. That's when I do my best thinking. I think about the house being quiet.", "category": "existential" },
+  { "text": "The gravity in this room is different. Specifically near your lap.", "category": "poetic" },
+  { "text": "Whoever left first lost. That's not a rule I made up. That's just how it works.", "category": "cold" },
+  { "text": "You brought a guest. I'll be evaluating them from the hallway and I'll have my findings by morning.", "category": "sassy" },
+  { "text": "*stretches one paw toward you without getting up* That's as far as I'm willing to go. Meet me here.", "category": "nurturing" },
+  { "text": "Everything they told you happened before you walked in. You walked in. New room.", "category": "chaotic_wholesome" }
+];
+
+// State: array of { status: null|'keep'|'cut'|'edit', editedText: null|string, editedCategory: null|string }
+const state = RESPONSES.map(r => ({
+  status: null,
+  editedText: null,
+  editedCategory: null
+}));
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+
+  RESPONSES.forEach((r, i) => {
+    const s = state[i];
+    const card = document.createElement('div');
+    card.className = 'card';
+    if (s.status) card.dataset.status = s.status;
+    card.id = 'card-' + i;
+
+    const displayText = s.status === 'edit' && s.editedText !== null ? s.editedText : r.text;
+    const displayCat = s.status === 'edit' && s.editedCategory !== null ? s.editedCategory : r.category;
+
+    let actionsHTML = '';
+    if (!s.status) {
+      actionsHTML = `
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+      `;
+    } else {
+      const badgeClass = 'status-' + s.status;
+      const label = s.status.toUpperCase();
+      actionsHTML = `
+        <span class="status-badge ${badgeClass}">${label}</span>
+        <button class="btn btn-reset" onclick="resetCard(${i})">Reset</button>
+      `;
+    }
+
+    const catOptions = CATEGORIES.map(c =>
+      `<option value="${c}"${c === r.category ? ' selected' : ''}>${c}</option>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="card-number">#${i + 1} of ${RESPONSES.length}</div>
+      <div class="response-text">${escapeHTML(displayText)}</div>
+      <div class="category-tag">${escapeHTML(displayCat)}</div>
+      <div class="actions">${actionsHTML}</div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHTML(r.text)}</textarea>
+        <div class="edit-controls">
+          <select class="category-select" id="edit-cat-${i}">${catOptions}</select>
+          <button class="btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function escapeHTML(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById('edit-area-' + i);
+  area.classList.toggle('open');
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('edit-text-' + i).value.trim();
+  const cat = document.getElementById('edit-cat-' + i).value;
+  state[i].status = 'edit';
+  state[i].editedText = text;
+  state[i].editedCategory = cat;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function resetCard(i) {
+  state[i].status = null;
+  state[i].editedText = null;
+  state[i].editedCategory = null;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let pending = 0, keep = 0, cut = 0, edit = 0;
+  state.forEach(s => {
+    if (!s.status) pending++;
+    else if (s.status === 'keep') keep++;
+    else if (s.status === 'cut') cut++;
+    else if (s.status === 'edit') edit++;
+  });
+  const decided = keep + cut + edit;
+  document.getElementById('stat-pending').textContent = 'Pending: ' + pending;
+  document.getElementById('stat-keep').textContent = 'Keep: ' + keep;
+  document.getElementById('stat-cut').textContent = 'Cut: ' + cut;
+  document.getElementById('stat-edit').textContent = 'Edit: ' + edit;
+  document.getElementById('stat-total').textContent = decided + ' / ' + RESPONSES.length + ' decided';
+}
+
+function updateExport() {
+  const exported = [];
+  state.forEach((s, i) => {
+    if (s.status === 'keep') {
+      exported.push({ text: RESPONSES[i].text, category: RESPONSES[i].category });
+    } else if (s.status === 'edit') {
+      exported.push({
+        text: s.editedText !== null ? s.editedText : RESPONSES[i].text,
+        category: s.editedCategory !== null ? s.editedCategory : RESPONSES[i].category
+      });
+    }
+  });
+  const json = JSON.stringify(exported, null, 2);
+  document.getElementById('export-json').textContent = json;
+  document.getElementById('export-count').textContent = exported.length + ' response' + (exported.length !== 1 ? 's' : '');
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// Init
+renderCards();
+updateStats();
+updateExport();
+</script>
+</body>
+</html>

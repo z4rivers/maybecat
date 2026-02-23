@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Raunchy Round 2 (Feb 21)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.3rem; margin-bottom: 8px; color: #f0e6ff; }
+  .stats { display: flex; gap: 20px; font-size: 0.95rem; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+  .section-label { font-size: 1.1rem; color: #c8b8e8; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .card.kept { border-left-color: #4ecca3; } .card.cut { border-left-color: #e94560; } .card.edited { border-left-color: #ffd93d; }
+
+  .response-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 6px; font-style: italic; color: #f0e6ff; }
+  .meta { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
+  .meta .cat-tag { color: #6ec8c8; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+  .btn-reset { background: #444; color: #ccc; font-size: 0.8rem; padding: 6px 12px; } .btn-reset:hover { background: #555; }
+
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #f0e6ff; border: 1px solid #ffd93d; border-radius: 6px; padding: 12px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; }
+
+  .category-select { display: none; margin-top: 8px; }
+  .category-select select { background: #0f1a30; color: #f0e6ff; border: 1px solid #555; border-radius: 4px; padding: 6px; font-size: 0.85rem; }
+
+  #export-section { margin-top: 40px; padding: 20px; background: #0f1a30; border-radius: 10px; border: 1px solid #333; }
+  #export-section h2 { font-size: 1.1rem; margin-bottom: 10px; color: #4ecca3; }
+  #export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.85rem; resize: vertical; }
+  .btn-copy { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Raunchy Round 2 Batch — Feb 21, 2026</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="count-keep">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="count-cut">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="count-edit">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="count-pending">60</strong></span>
+    <span style="color:#666">|</span>
+    <span style="color:#aaa">Total: <strong>60</strong></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div id="export-section">
+  <h2>Export — Kept &amp; Edited Responses</h2>
+  <textarea id="export-json" readonly></textarea>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = ["chaotic","wise","cold","sassy","cryptic","dramatic","physical","wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"];
+
+const responses = [
+  // === BATCH 2A: Nature Documentary / Veterinary ===
+  { text: "The flehmen response has been triggered. She requires more information before committing.", category: "cryptic", section: 1 },
+  { text: "Field notes, day 9: subject continues to vocalize at the closed door. No territory has been conceded.", category: "dramatic", section: 1 },
+  { text: "The specimen has been thoroughly examined. Palpation reveals nothing you didn\u2019t already suspect.", category: "cold", section: 1 },
+  { text: "She has made her selection. The other candidates may disperse.", category: "demanding", section: 1 },
+  { text: "*assumes lordosis position* The posture indicates receptivity. Proceed.", category: "physical", section: 1 },
+  { text: "And here we observe the post-coital roll \u2014 a brief display of satisfaction before the aggression returns.", category: "wise", section: 1 },
+  { text: "The scent marking is extensive. He intends to be remembered in this territory.", category: "sassy", section: 1 },
+  { text: "The courtship display has entered its third hour. Neither party will yield. Remarkable.", category: "dramatic", section: 1 },
+  { text: "Clinical observation: subject presents with dilated pupils and increased vocalization. Prognosis is involvement.", category: "cryptic", section: 1 },
+  { text: "The scruff grasp is not affection. It is positioning.", category: "cold", section: 1 },
+  { text: "She will permit exactly one approach. What follows is not a second chance.", category: "demanding", section: 1 },
+  { text: "Note the treading of the hind legs. This behavior suggests the subject has made a decision and is now simply\u2026 preparing.", category: "wise", section: 1 },
+  { text: "The dominant specimen has entered the room. All prior arrangements are void.", category: "chaotic", section: 1 },
+  { text: "Manual expression was attempted. Results were immediate and regrettable.", category: "chaotic", section: 1 },
+
+  // === BATCH 2B: Cooking Show / Food Review ===
+  { text: "Let it rest. You\u2019ll ruin it if you cut into it too soon.", category: "wise", section: 2 },
+  { text: "Pairs well with poor decisions and low lighting.", category: "chaotic", section: 2 },
+  { text: "The presentation is fine. It\u2019s the portion size that\u2019s ambitious.", category: "sassy", section: 2 },
+  { text: "Needs more time in the oven. You pulled it out early and you know it.", category: "demanding", section: 2 },
+  { text: "Full-bodied. Aggressive finish. Hints of regret.", category: "cryptic", section: 2 },
+  { text: "Behind you.", category: "physical", section: 2 },
+  { text: "Locally sourced. Farm to table. Questionable handling.", category: "cold", section: 2 },
+  { text: "Fold gently. You\u2019re not trying to break it. You\u2019re trying to break it in.", category: "poetic", section: 2 },
+  { text: "Four stars. Would not recommend on an empty stomach.", category: "chaotic", section: 2 },
+  { text: "The texture is\u2026 surprising. Keep going.", category: "cryptic", section: 2 },
+  { text: "Bring to a simmer. Not a boil. You always go straight to a boil.", category: "wise", section: 2 },
+  { text: "*licks the plate clean* Presentation could use work.", category: "physical", section: 2 },
+  { text: "Artisanal. Small batch. Absolutely unregulated.", category: "sassy", section: 2 },
+  { text: "The secret ingredient is you weren\u2019t supposed to be in the kitchen.", category: "chaotic_wholesome", section: 2 },
+
+  // === BATCH 2C: Multi-Cat Household / Arrangements ===
+  { text: "The introduction process takes weeks. Under the door first. Then supervised.", category: "wise", section: 3 },
+  { text: "Open floor plan. No closed doors. You knew what you were getting into.", category: "cold", section: 3 },
+  { text: "We have an arrangement. I get the bed. They get the bed when I\u2019m not in it.", category: "demanding", section: 3 },
+  { text: "Looking for a third. Must be comfortable with limited counter space.", category: "chaotic", section: 3 },
+  { text: "Shared amenities. Flexible boundaries. One of us always ends up on the dryer.", category: "cryptic", section: 3 },
+  { text: "The lease says two. The landlord doesn\u2019t check at night.", category: "sassy", section: 3 },
+  { text: "*sniffs under the door for twenty minutes* I\u2019m not ready but I\u2019m not leaving either.", category: "physical", section: 3 },
+  { text: "Quiet hours are 6am to 6am. What happens after that is between the couch cushions.", category: "chaotic", section: 3 },
+  { text: "You don\u2019t pick the top of the hierarchy. The top of the hierarchy picks the windowsill it wants and everyone adjusts.", category: "wise", section: 3 },
+  { text: "The first supervised visit went fine. We\u2019ve been unsupervised since Tuesday.", category: "cryptic", section: 3 },
+  { text: "Three bedrooms. Four opinions about who sleeps where. Nobody uses the bed for sleeping.", category: "sassy", section: 3 },
+  { text: "Must be comfortable with close quarters, shared meals, and occasional biting.", category: "chaotic_wholesome", section: 3 },
+  { text: "The bathroom is neutral territory. Everything that happens in neutral territory stays in neutral territory.", category: "cold", section: 3 },
+  { text: "We did the slow introduction. Under the door. Through the gate. Now we share a water bowl and I don\u2019t remember what personal space was.", category: "wholesome", section: 3 },
+
+  // === BATCH 3: Polyamory / Open Relationship ===
+  { text: "I was told I\u2019d be consulted before any new additions to this dynamic.", category: "demanding", section: 4 },
+  { text: "Compersion is a journey and I haven\u2019t started walking.", category: "cold", section: 4 },
+  { text: "The schedule was working. You changed the schedule.", category: "wise", section: 4 },
+  { text: "I didn\u2019t agree to a throuple.", category: "sassy", section: 4 },
+  { text: "I\u2019m not jealous. I\u2019m recalibrating.", category: "cryptic", section: 4 },
+  { text: "You\u2019re describing a situationship and calling it a family.", category: "cold", section: 4 },
+  { text: "That wasn\u2019t the arrangement.", category: "demanding", section: 4 },
+  { text: "I\u2019m your anchor partner. Act like it.", category: "dramatic", section: 4 },
+  { text: "We can try kitchen table but I\u2019m sitting at the head.", category: "sassy", section: 4 },
+  { text: "This has new relationship energy and I\u2019m the existing relationship.", category: "wise", section: 4 },
+  { text: "I need you to hold space for the fact that I am holding a grudge.", category: "chaotic_wholesome", section: 4 },
+  { text: "Parallel poly. I never see them. They never see me. We pretend.", category: "cold", section: 4 },
+  { text: "You keep saying abundance mindset. I keep hearing scarcity of lap.", category: "chaotic", section: 4 },
+  { text: "I have veto power and I\u2019m using it.", category: "demanding", section: 4 },
+  { text: "My attachment style is the only attachment in this house.", category: "sassy", section: 4 },
+  { text: "I\u2019m processing. The processing looks like not moving from this spot for six hours.", category: "existential", section: 4 },
+  { text: "We need to renegotiate terms. Starting with who sleeps where.", category: "demanding", section: 4 },
+  { text: "I was the nesting partner. Emphasis on was.", category: "dramatic", section: 4 }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+
+function render() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  const sections = {
+    1: "Batch 2A \u2014 Nature Documentary / Veterinary",
+    2: "Batch 2B \u2014 Cooking Show / Food Review",
+    3: "Batch 2C \u2014 Multi-Cat Household / Arrangements",
+    4: "Batch 3 \u2014 Polyamory / Open Relationship"
+  };
+  let currentSection = null;
+
+  state.forEach((item, i) => {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = sections[currentSection];
+      container.appendChild(label);
+    }
+
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.id = `card-${i}`;
+
+    card.innerHTML = `
+      <div class="response-text">"${item.editedText || item.text}"</div>
+      <div class="meta"><span class="cat-tag">${item.editedCategory || item.category}</span> \u00b7 #${i + 1}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-reset" onclick="decide(${i},'pending')">Reset</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.editedText || item.text}</textarea>
+        <select id="catselect-${i}">
+          ${CATEGORIES.map(c => `<option value="${c}" ${c === (item.editedCategory || item.category) ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <br><button class="btn btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'none' || !el.style.display ? 'block' : 'none';
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value.trim();
+  const cat = document.getElementById(`catselect-${i}`).value;
+  state[i].editedText = text;
+  state[i].editedCategory = cat;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status]++);
+  document.getElementById('count-keep').textContent = counts.keep;
+  document.getElementById('count-cut').textContent = counts.cut;
+  document.getElementById('count-edit').textContent = counts.edit;
+  document.getElementById('count-pending').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+</body>
+</html>

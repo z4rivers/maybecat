@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Round 3 — SCENES</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+.sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.stats { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.stat { font-size: 14px; font-weight: bold; }
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.batch-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 10px; padding-top: 20px; border-top: 1px solid #333; }
+.item { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #444; transition: border-color 0.3s; }
+.item.kept { border-left-color: #4ecca3; }
+.item.cut { border-left-color: #e94560; opacity: 0.5; }
+.item.edited { border-left-color: #ffd93d; }
+.item-number { font-size: 11px; color: #555; margin-bottom: 6px; }
+.item-text { font-size: 18px; line-height: 1.5; margin-bottom: 4px; color: #fff; }
+.item-category { font-size: 12px; color: #888; margin-bottom: 12px; font-style: italic; }
+.flag { font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+.flag-hot { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca344; }
+.flag-warn { background: #e9456022; color: #e94560; border: 1px solid #e9456044; }
+.flag-ban { background: #ff000022; color: #ff4444; border: 1px solid #ff000044; }
+.buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fe8bf; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #ff6b81; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe566; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 6px; padding: 12px; font-family: Georgia, serif; font-size: 16px; resize: vertical; }
+.edit-area select { background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 4px; padding: 6px 10px; margin-top: 8px; font-size: 13px; }
+.edit-area .save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+.export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 10px; border: 1px solid #333; }
+.export-section h3 { color: #4ecca3; margin-bottom: 10px; }
+.export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 13px; }
+.copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+.copy-btn:hover { background: #6fe8bf; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Round 3 — SCENES (Cat Logic / Collisions / Absurd Premises)</h1>
+  <div class="stats">
+    <span class="stat stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat stat-pending">PENDING: <span id="pending-count">40</span>/40</span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h3>Export (kept + edited responses)</h3>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  // BATCH: Scenes
+  { batch: "Scenes", text: "The cat just dragged your ex's hoodie out of the closet. In front of your new date. And sat on it.", category: "chaotic", flag: null },
+  { batch: "Scenes", text: "Aliens studied Earth for 200 years. Their only research question: why does the large one keep closing the door and then opening it again when the small one stands there.", category: "existential", flag: null },
+  { batch: "Scenes", text: "You're on a work call. The cat walks across the keyboard and sends 'I miss your mouth' to the entire department. The cat does not look sorry.", category: "chaotic", flag: null },
+  { batch: "Scenes", text: "The cat brought something in from outside. You cannot identify it. Your mother-in-law can. Your mother-in-law is screaming.", category: "dramatic", flag: null },
+  { batch: "Scenes", text: "You rehearsed the breakup speech for three hours. The cat threw up on their shoes before you finished the first sentence. Problem solved differently.", category: "chaotic_wholesome", flag: "ban" },
+  { batch: "Scenes", text: "The plumber found something in the pipes. The plumber is looking at you. The cat is looking at the plumber. You are looking at your feet.", category: "dramatic", flag: null },
+  { batch: "Scenes", text: "Your cat found the thing in your nightstand drawer. Your cat batted the thing across the kitchen floor. Your roommate picked up the thing. Nobody has spoken since.", category: "cryptic", flag: "hot" },
+  { batch: "Scenes", text: "Your therapist charges $200 an hour. The cat stared at you for four seconds and you cried harder than you ever have in that office.", category: "wise", flag: "warn" },
+  { batch: "Scenes", text: "You finally brought someone home who likes cats. The cat chose that moment to drag a pair of underwear \u2014 not yours, not theirs \u2014 into the middle of the room.", category: "chaotic", flag: "warn" },
+  { batch: "Scenes", text: "The cat figured out how to open the front door. Not to leave. To let your ex in. At 11 PM. While your date was still here.", category: "chaotic", flag: null },
+  { batch: "Scenes", text: "Your parents are visiting. The cat opened the cabinet where you keep the nice glasses. And also the other things behind the nice glasses. The cabinet is open now.", category: "chaotic", flag: "warn" },
+  { batch: "Scenes", text: "God held a press conference. One question. A cat in the third row asked why the red dot disappears when you catch it. God ended the press conference.", category: "existential", flag: "warn" },
+  { batch: "Scenes", text: "The cat walked into the bathroom while you were ugly-crying in the shower and just... sat down. Like it had tickets.", category: "cold", flag: "hot" },
+  { batch: "Scenes", text: "A scientist finally decoded cat language. The first translation: 'We've been watching you eat cereal over the sink at midnight. We have thoughts.'", category: "wise", flag: null },
+  { batch: "Scenes", text: "You brought someone home. The cat sat between you on the couch. For four hours. Unblinking. They did not come back.", category: "dramatic", flag: null },
+  { batch: "Scenes", text: "A marriage counselor quit her practice after a cat sat in on one session and resolved the conflict in under two minutes by sitting on the husband's face.", category: "chaotic_wholesome", flag: null },
+  { batch: "Scenes", text: "You're trying to explain to your date that the cat doesn't usually do this. The cat is doing it harder.", category: "sassy", flag: "hot" },
+  { batch: "Scenes", text: "You're telling the story wrong at dinner. The cat was there. The cat knows. The cat is looking at you like a fact-checker with a pension.", category: "sassy", flag: "hot" },
+  { batch: "Scenes", text: "The cat found where you hid the Christmas presents. The cat is sitting next to them in the living room. It is March.", category: "chaotic_wholesome", flag: null },
+  { batch: "Scenes", text: "You asked the universe for a sign. The cat threw up in the shape of your ex's initials. The universe has a sense of humor.", category: "chaotic", flag: "warn" },
+
+  // BATCH: Collisions
+  { batch: "Collisions", text: "The cat just watched you put on pants to go get the mail. You took the pants back off. The cat respects this reversal.", category: "chaotic_wholesome", flag: null },
+  { batch: "Collisions", text: "Something under the covers just started vibrating and neither of you is reaching for it.", category: "cryptic", flag: "hot" },
+  { batch: "Collisions", text: "You've been rehearsing that argument in the shower for forty minutes. The cat has been drinking the runoff.", category: "cold", flag: "ban" },
+  { batch: "Collisions", text: "The vet said six months. The cat just dragged a full rotisserie chicken off the counter and into the bedroom.", category: "chaotic", flag: null },
+  { batch: "Collisions", text: "You googled 'is this a rash' at 2am. The cat googled nothing. The cat has never googled anything. The cat is asleep.", category: "existential", flag: null },
+  { batch: "Collisions", text: "The cat made eye contact with your date and then looked at you with what can only be described as concern.", category: "sassy", flag: "hot" },
+  { batch: "Collisions", text: "You are crying into a bowl of cereal at midnight. The cat would also like some cereal.", category: "demanding", flag: "hot" },
+  { batch: "Collisions", text: "The locksmith is here. The cat has been inside the whole time.", category: "wise", flag: null },
+  { batch: "Collisions", text: "Your mother is visiting. The cat just knocked your 'personal item' off the nightstand and batted it into the hallway.", category: "dramatic", flag: "warn" },
+  { batch: "Collisions", text: "The cat survived a ceiling fan. You can't survive a text back.", category: "cold", flag: "ban" },
+  { batch: "Collisions", text: "The Uber driver is making conversation. The cat in your lap has its claws fully deployed in your thigh. You are smiling.", category: "physical", flag: "hot" },
+  { batch: "Collisions", text: "A bird died on the porch. A full state funeral is being arranged. You lost your job Tuesday and nobody blinked.", category: "sassy", flag: "hot" },
+  { batch: "Collisions", text: "The cat ate something it found behind the fridge and is fine. You ate at a Michelin-starred restaurant and have been in the bathroom since Thursday.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Collisions", text: "You just explained your five-year plan. The cat fell asleep during year two.", category: "cold", flag: null },
+  { batch: "Collisions", text: "The cat is sitting in the exact center of your suicide note like it's a warm laptop.", category: "dramatic", flag: "ban" },
+  { batch: "Collisions", text: "You've been on hold with the IRS for three hours. The cat has been staring at a wall for three hours. Only one of you is at peace.", category: "existential", flag: null },
+  { batch: "Collisions", text: "The cat brought a live bird into the therapy session. The therapist is handling it worse than you are.", category: "chaotic", flag: "hot" },
+  { batch: "Collisions", text: "You put on the 'confident' playlist. The cat left the room.", category: "sassy", flag: null },
+  { batch: "Collisions", text: "The house is on fire. The cat is watching from across the street, fully groomed, sitting on your passport.", category: "cold", flag: "ban" },
+  { batch: "Collisions", text: "You just whispered 'I love you' for the first time. The cat chose that exact moment to vomit directly onto the other pillow.", category: "chaotic", flag: "warn" },
+];
+
+let decisions = {};
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+  let currentBatch = '';
+
+  responses.forEach((r, i) => {
+    if (r.batch !== currentBatch) {
+      currentBatch = r.batch;
+      const label = document.createElement('div');
+      label.className = 'batch-label';
+      label.textContent = currentBatch;
+      container.appendChild(label);
+    }
+
+    const div = document.createElement('div');
+    div.className = 'item' + (decisions[i] ? ' ' + decisions[i].action : '');
+    div.id = 'item-' + i;
+
+    let flagHTML = '';
+    if (r.flag === 'hot') flagHTML = '<span class="flag flag-hot">top pick</span>';
+    if (r.flag === 'warn') flagHTML = '<span class="flag flag-warn">repeated move / stale</span>';
+    if (r.flag === 'ban') flagHTML = '<span class="flag flag-ban">banned pattern or safety</span>';
+
+    const displayText = decisions[i] && decisions[i].editedText ? decisions[i].editedText : r.text;
+    const displayCat = decisions[i] && decisions[i].editedCategory ? decisions[i].editedCategory : r.category;
+
+    div.innerHTML = `
+      <div class="item-number">#${i + 1} ${flagHTML}</div>
+      <div class="item-text">\u201c${displayText}\u201d</div>
+      <div class="item-category">${displayCat}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${displayText}</textarea>
+        <select id="cat-${i}">
+          ${['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'].map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, action) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = action;
+  document.getElementById('item-' + i).className = 'item ' + action;
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById('edit-' + i);
+  area.style.display = area.style.display === 'none' || area.style.display === '' ? 'block' : 'none';
+  if (area.style.display === 'block') document.getElementById('textarea-' + i).focus();
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('textarea-' + i).value.trim();
+  const cat = document.getElementById('cat-' + i).value;
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = 'edited';
+  decisions[i].editedText = text;
+  decisions[i].editedCategory = cat;
+  render();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'kept') keep++;
+    if (d.action === 'cut') cut++;
+    if (d.action === 'edited') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = (40 - keep - cut - edit);
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.action === 'kept') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (d && d.action === 'edited') {
+      kept.push({ text: d.editedText || r.text, category: d.editedCategory || r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+
+</body>
+</html>

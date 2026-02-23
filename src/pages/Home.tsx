@@ -13,6 +13,7 @@ import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useCatStorage } from '../hooks/useCatStorage';
 import { useOracle } from '../hooks/useOracle';
 import { useShareCard } from '../hooks/useShareCard';
+import { useSponsorAd } from '../hooks/useSponsorAd';
 import { CornerVine, CenterMandala, MysticalStar } from '../components/decorative';
 import { keywords } from '../data/keywords';
 
@@ -69,6 +70,8 @@ export function Oracle() {
   } = useOracle({ isShelterCat: !!shelterCat });
 
   const { isGenerating, handleShare } = useShareCard();
+  // Ad rotation ready — swap placeholder for sponsor content when creatives exist
+  useSponsorAd();
 
   const [shelterCats, setShelterCats] = useState<ShelterCat[]>([]);
   const [loadingShelterCats, setLoadingShelterCats] = useState(true);
@@ -1010,7 +1013,14 @@ export function Oracle() {
         }}
       >
         {/* Main ad space - left 4/5 */}
-        <div className="flex-1" />
+        <div className="flex-1 flex items-center justify-center h-full p-3 md:p-5">
+          <div
+            className="w-full h-full rounded-lg flex items-center justify-center"
+            style={{ border: '2px dashed rgba(251,191,36,0.25)' }}
+          >
+            <span className="text-amber-400/30 text-xs md:text-sm uppercase tracking-widest select-none">Ad Space</span>
+          </div>
+        </div>
 
         {/* Adoption CTA - right 1/5 */}
         <AnimatePresence>

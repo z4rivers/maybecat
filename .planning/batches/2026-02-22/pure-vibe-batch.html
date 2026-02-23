@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Vibe — No Formula (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 0 0 120px 0;
+    line-height: 1.6;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #333;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .sticky-header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f0e6ff;
+    margin-right: auto;
+  }
+  .stat {
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: #16213e;
+  }
+  .stat-pending { color: #aaa; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 5px solid #555;
+    transition: border-color 0.2s;
+  }
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-index {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .response-text {
+    font-style: italic;
+    color: #f0e6ff;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: #0f0f23;
+    color: #aaa;
+    margin-bottom: 14px;
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 7px 18px;
+    border: 2px solid;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn:hover { filter: brightness(1.2); }
+
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #0f0f23; }
+
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #0f0f23; }
+
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #0f0f23; }
+
+  .btn-reset {
+    border-color: #666;
+    color: #888;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+  }
+  .btn-reset:hover { background: #333; color: #ccc; }
+
+  .status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .status-badge.keep { background: #4ecca322; color: #4ecca3; }
+  .status-badge.cut { background: #e9456022; color: #e94560; }
+  .status-badge.edit { background: #ffd93d22; color: #ffd93d; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+  }
+  .edit-area.open { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    color: #f0e6ff;
+    border: 2px solid #ffd93d44;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-style: italic;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-area label {
+    display: block;
+    font-size: 0.8rem;
+    color: #888;
+    margin: 10px 0 4px 0;
+    font-weight: 600;
+  }
+
+  .edit-area select {
+    background: #0f0f23;
+    color: #eee;
+    border: 2px solid #ffd93d44;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .edit-area select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-area .btn-save-edit {
+    margin-top: 10px;
+    border-color: #ffd93d;
+    color: #ffd93d;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+  }
+  .edit-area .btn-save-edit:hover {
+    background: #ffd93d;
+    color: #0f0f23;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    color: #f0e6ff;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0f0f23;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #4ecca3;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.5;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    border: 2px solid #4ecca3;
+    color: #4ecca3;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #4ecca3; color: #0f0f23; }
+
+  .empty-export {
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Pure Vibe &mdash; No Formula (Feb 22)</h1>
+  <span class="stat stat-pending" id="stat-pending">Pending: 25</span>
+  <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+  <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+  <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+</div>
+
+<div class="cards-container" id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export &mdash; Kept &amp; Edited Responses</h2>
+  <div class="export-block">
+    <button class="btn btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre id="export-json"></pre>
+    <div class="empty-export" id="export-empty">No kept or edited responses yet.</div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic", "wise", "cold", "sassy", "cryptic", "dramatic",
+  "physical", "wholesome", "demanding", "chaotic_wholesome",
+  "existential", "nurturing", "poetic"
+];
+
+const RESPONSES = [
+  { "text": "The trick is to act like you already live there.", "category": "wise" },
+  { "text": "If they wanted to close the door they would have closed the door.", "category": "cold" },
+  { "text": "Sit in the middle of the room. Don\u2019t explain yourself. Let them walk around you.", "category": "demanding" },
+  { "text": "*one ear rotates* I\u2019m listening. The rest of me is doing something else.", "category": "physical" },
+  { "text": "Everything changes when you find the warm spot. Don\u2019t leave the warm spot.", "category": "wise" },
+  { "text": "The bag crinkled once. I will never forget the sound. I will never stop investigating.", "category": "chaotic" },
+  { "text": "You showed up. That was the hard part. The rest is just lying down.", "category": "nurturing" },
+  { "text": "If you can see the bottom of the bowl, the bowl is empty. I don\u2019t make the rules.", "category": "demanding" },
+  { "text": "The other one blinked first. That\u2019s all you needed to know.", "category": "cold" },
+  { "text": "Wait for them to sit down. Then get in the lap. Timing is the entire game.", "category": "wise" },
+  { "text": "I\u2019ve been watching the same bird for forty minutes. This is not a waste of time. This is research.", "category": "existential" },
+  { "text": "Land on the counter. Assess. If they yell, you\u2019ll know you were right.", "category": "chaotic_wholesome" },
+  { "text": "The stretch is mandatory. Front legs, back legs, full reset. Then decide.", "category": "physical" },
+  { "text": "You don\u2019t need to fill the silence. The silence was already full.", "category": "poetic" },
+  { "text": "Sometimes I bring them a sock. Sometimes I bring them a dead thing. The gesture is the same.", "category": "cryptic" },
+  { "text": "Lean your full weight against them. If they move, they weren\u2019t a wall. If they stay, you chose right.", "category": "wholesome" },
+  { "text": "They put a bell on me. I learned to walk without making a sound.", "category": "cold" },
+  { "text": "The suitcase is open. I\u2019m sitting in it. We\u2019ll see who blinks.", "category": "dramatic" },
+  { "text": "*face pressed into the gap between the couch cushions* I\u2019m processing.", "category": "physical" },
+  { "text": "The thing they forgot is still under the couch. I know because I put it there.", "category": "sassy" },
+  { "text": "You don\u2019t ask the closed door to open. You sit in front of it until someone notices.", "category": "wise" },
+  { "text": "I fell off the shelf. I meant to get down. Those are the same thing.", "category": "chaotic" },
+  { "text": "Three laps around the house. No reason. Feel better now.", "category": "chaotic_wholesome" },
+  { "text": "Their hand was right there. I put my head under it. Some things you have to start yourself.", "category": "nurturing" },
+  { "text": "The position looks uncomfortable. It isn\u2019t. You\u2019re just not shaped right for it.", "category": "existential" }
+];
+
+// State: array of { text, category, status, editedText, editedCategory }
+const state = RESPONSES.map(r => ({
+  text: r.text,
+  category: r.category,
+  status: null, // null | 'keep' | 'cut' | 'edit'
+  editedText: null,
+  editedCategory: null
+}));
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    if (item.status) card.dataset.status = item.status;
+
+    const displayText = item.status === 'edit' && item.editedText !== null ? item.editedText : item.text;
+    const displayCat = item.status === 'edit' && item.editedCategory !== null ? item.editedCategory : item.category;
+
+    let statusBadgeHTML = '';
+    if (item.status) {
+      const label = item.status === 'edit' ? 'Edited' : item.status.charAt(0).toUpperCase() + item.status.slice(1);
+      statusBadgeHTML = `<span class="status-badge ${item.status}">${label}</span>`;
+    }
+
+    const catOptions = CATEGORIES.map(c =>
+      `<option value="${c}"${c === item.category ? ' selected' : ''}>${c}</option>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="card-index">#${i + 1}</div>
+      <div class="response-text">${escapeHTML(displayText)}</div>
+      <div class="category-tag">${escapeHTML(displayCat)}</div>
+      <div class="btn-row">
+        <button class="btn btn-keep${item.status === 'keep' ? ' active' : ''}" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut${item.status === 'cut' ? ' active' : ''}" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit${item.status === 'edit' ? ' active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status ? `<button class="btn btn-reset" onclick="resetStatus(${i})">Reset</button>` : ''}
+        ${statusBadgeHTML}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <label>Response text:</label>
+        <textarea id="edit-text-${i}" rows="3">${escapeHTML(item.editedText !== null ? item.editedText : item.text)}</textarea>
+        <label>Category:</label>
+        <select id="edit-cat-${i}">${catOptions}</select>
+        <br>
+        <button class="btn btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+
+    // If currently editing, open the edit area
+    if (item.status === 'edit') {
+      card.querySelector(`#edit-area-${i}`).classList.add('open');
+      // Set the select to the edited category
+      if (item.editedCategory) {
+        card.querySelector(`#edit-cat-${i}`).value = item.editedCategory;
+      }
+    }
+  });
+}
+
+function setStatus(index, status) {
+  if (status === 'edit') {
+    toggleEdit(index);
+    return;
+  }
+  state[index].status = status;
+  if (status !== 'edit') {
+    state[index].editedText = null;
+    state[index].editedCategory = null;
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  // If already in edit mode, just ensure the area is visible
+  if (state[index].status !== 'edit') {
+    state[index].status = 'edit';
+    // Pre-populate with existing edited values or originals
+    if (state[index].editedText === null) {
+      state[index].editedText = state[index].text;
+    }
+    if (state[index].editedCategory === null) {
+      state[index].editedCategory = state[index].category;
+    }
+  }
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function saveEdit(index) {
+  const textarea = document.getElementById(`edit-text-${index}`);
+  const select = document.getElementById(`edit-cat-${index}`);
+  state[index].editedText = textarea.value.trim();
+  state[index].editedCategory = select.value;
+  state[index].status = 'edit';
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function resetStatus(index) {
+  state[index].status = null;
+  state[index].editedText = null;
+  state[index].editedCategory = null;
+  renderCards();
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let pending = 0, keep = 0, cut = 0, edit = 0;
+  state.forEach(item => {
+    if (!item.status) pending++;
+    else if (item.status === 'keep') keep++;
+    else if (item.status === 'cut') cut++;
+    else if (item.status === 'edit') edit++;
+  });
+  document.getElementById('stat-pending').textContent = `Pending: ${pending}`;
+  document.getElementById('stat-keep').textContent = `Keep: ${keep}`;
+  document.getElementById('stat-cut').textContent = `Cut: ${cut}`;
+  document.getElementById('stat-edit').textContent = `Edit: ${edit}`;
+}
+
+function updateExport() {
+  const exported = [];
+  state.forEach(item => {
+    if (item.status === 'keep') {
+      exported.push({ text: item.text, category: item.category });
+    } else if (item.status === 'edit') {
+      exported.push({
+        text: item.editedText !== null ? item.editedText : item.text,
+        category: item.editedCategory !== null ? item.editedCategory : item.category
+      });
+    }
+  });
+
+  const jsonEl = document.getElementById('export-json');
+  const emptyEl = document.getElementById('export-empty');
+
+  if (exported.length === 0) {
+    jsonEl.textContent = '';
+    emptyEl.style.display = 'block';
+  } else {
+    jsonEl.textContent = JSON.stringify(exported, null, 2);
+    emptyEl.style.display = 'none';
+  }
+}
+
+function copyExport() {
+  const jsonEl = document.getElementById('export-json');
+  const text = jsonEl.textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+// Initial render
+renderCards();
+updateStats();
+updateExport();
+</script>
+
+</body>
+</html>

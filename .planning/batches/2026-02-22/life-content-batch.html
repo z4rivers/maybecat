@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Content, Cat Delivery (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 120px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #2a2a4a;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+
+  .sticky-header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f0e6ff;
+    margin-right: auto;
+  }
+
+  .stat {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .stat-pending { background: #2a2a4a; color: #aaa; }
+  .stat-keep { background: rgba(78, 204, 163, 0.15); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.15); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.15); color: #ffd93d; }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #2a2a4a;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ecca3, #ffd93d, #e94560);
+    transition: width 0.3s ease;
+  }
+
+  .cards-container {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid #2a2a4a;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; opacity: 0.5; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-index {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .card-text {
+    font-style: italic;
+    color: #f0e6ff;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .card-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(240, 230, 255, 0.08);
+    color: #c4b5d4;
+    margin-bottom: 14px;
+    text-transform: lowercase;
+  }
+
+  .card-status-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-status-label.keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .card-status-label.cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .card-status-label.edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: transform 0.1s ease, filter 0.1s ease;
+  }
+
+  .btn:hover { transform: scale(1.04); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-keep { background: #4ecca3; color: #0a0a1a; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #0a0a1a; }
+
+  .btn-reset {
+    background: transparent;
+    color: #777;
+    border: 1px solid #333;
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+
+  .btn-reset:hover { color: #aaa; border-color: #555; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #2a2a4a;
+  }
+
+  .edit-area.open { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    color: #f0e6ff;
+    border: 1px solid #3a3a5a;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .edit-controls label {
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .edit-controls select {
+    background: #0f0f23;
+    color: #eee;
+    border: 1px solid #3a3a5a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .edit-controls select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .btn-save-edit {
+    background: #ffd93d;
+    color: #0a0a1a;
+    margin-left: auto;
+  }
+
+  /* Export section */
+  .export-section {
+    max-width: 800px;
+    margin: 48px auto 24px;
+    padding: 0 16px;
+  }
+
+  .export-section h2 {
+    font-size: 1.1rem;
+    color: #f0e6ff;
+    margin-bottom: 12px;
+  }
+
+  .export-empty {
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+
+  .export-block {
+    position: relative;
+    background: #0f0f23;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .export-block pre {
+    color: #c4b5d4;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4ecca3;
+    color: #0a0a1a;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-copy:hover { filter: brightness(1.1); }
+  .btn-copy.copied { background: #ffd93d; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Life Content, Cat Delivery (Feb 22)</h1>
+  <span class="stat stat-pending" id="stat-pending">25 pending</span>
+  <span class="stat stat-keep" id="stat-keep">0 keep</span>
+  <span class="stat stat-cut" id="stat-cut">0 cut</span>
+  <span class="stat stat-edit" id="stat-edit">0 edit</span>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+</div>
+
+<div class="cards-container" id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export &mdash; Kept &amp; Edited Responses</h2>
+  <div id="export-area">
+    <p class="export-empty">No decisions yet. Keep or edit responses above.</p>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic","wise","cold","sassy","cryptic","dramatic",
+  "physical","wholesome","demanding","chaotic_wholesome",
+  "existential","nurturing","poetic"
+];
+
+const RESPONSES = [
+  { "text": "The gap between the couch and the wall fits exactly one of you. Stop trying to bring everyone.", "category": "wise" },
+  { "text": "That wasn\u2019t a closed door. That was a suggestion you keep ignoring.", "category": "demanding" },
+  { "text": "*one ear rotates toward you* I heard the whole thing. You were right the first time.", "category": "nurturing" },
+  { "text": "The trick to walking across a shelf of breakable things is to never look down.", "category": "wise" },
+  { "text": "You smell like someone who already made the decision.", "category": "cryptic" },
+  { "text": "The pilot light went out six months ago. You\u2019ve been eating cold soup and calling it a lifestyle.", "category": "cold" },
+  { "text": "You keep checking for a pulse on something you buried.", "category": "cold" },
+  { "text": "I misjudged the jump. Caught the edge. Scrambled up anyway. Same energy.", "category": "chaotic_wholesome" },
+  { "text": "Anyone who needs that many reasons isn\u2019t looking for a reason.", "category": "wise" },
+  { "text": "May cause the sudden conviction that you deserve better.", "category": "chaotic_wholesome" },
+  { "text": "The audition ended two sentences ago. They\u2019re just being polite now.", "category": "cold" },
+  { "text": "*heavy sigh, full body exhale* Yeah. But not yet.", "category": "physical" },
+  { "text": "Your instincts are a 4am noise in the other room. Go check.", "category": "chaotic" },
+  { "text": "The receipt says no returns. The receipt is a coward.", "category": "sassy" },
+  { "text": "There\u2019s warm tile and there\u2019s warm tile someone left for you.", "category": "poetic" },
+  { "text": "I tracked that one across the ceiling for an hour. Sometimes you have to watch before you know what it is.", "category": "wise" },
+  { "text": "The stretch after the nap is the whole point of the nap.", "category": "existential" },
+  { "text": "You brought a live chipmunk into your own house and now you\u2019re surprised it\u2019s under the couch.", "category": "chaotic" },
+  { "text": "Grief is a draft under the door that never fully seals. You just learn where the warm spots are.", "category": "nurturing" },
+  { "text": "The silent meow gets more done than the loud one ever did.", "category": "cryptic" },
+  { "text": "You\u2019re standing in the doorway. Not going in, not going out. The draft is the worst part.", "category": "wise" },
+  { "text": "They clapped for the trick you did on accident. Do it again on purpose.", "category": "demanding" },
+  { "text": "The washing machine finished twenty minutes ago. Nobody moved. The wrinkles are setting in.", "category": "cold" },
+  { "text": "*touches your hand with one paw, looks away, keeps holding*", "category": "nurturing" },
+  { "text": "You already left. Your body just hasn\u2019t gotten the memo.", "category": "cryptic" }
+];
+
+// State: array of { text, category, status, editedText, editedCategory }
+const state = RESPONSES.map(r => ({
+  text: r.text,
+  category: r.category,
+  status: null, // null | "keep" | "cut" | "edit"
+  editedText: null,
+  editedCategory: null
+}));
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  state.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    if (item.status) card.dataset.status = item.status;
+
+    const displayText = item.status === 'edit' && item.editedText !== null ? item.editedText : item.text;
+    const displayCat = item.status === 'edit' && item.editedCategory !== null ? item.editedCategory : item.category;
+
+    let statusLabel = '';
+    if (item.status) {
+      statusLabel = `<span class="card-status-label ${item.status}">${item.status}</span>`;
+    }
+
+    let editNote = '';
+    if (item.status === 'edit') {
+      const textChanged = item.editedText !== null && item.editedText !== item.text;
+      const catChanged = item.editedCategory !== null && item.editedCategory !== item.category;
+      if (textChanged || catChanged) {
+        editNote = ' (modified)';
+      }
+    }
+
+    card.innerHTML = `
+      <div class="card-index">#${i + 1} of ${state.length}</div>
+      <div class="card-text">${escapeHtml(displayText)}</div>
+      <span class="card-category">${escapeHtml(displayCat)}</span>
+      ${statusLabel}${editNote ? `<span style="color:#ffd93d;font-size:0.7rem;margin-left:4px">${editNote}</span>` : ''}
+      <div class="card-actions">
+        <button class="btn btn-keep" onclick="setStatus(${i},'keep')">Keep</button>
+        <button class="btn btn-cut" onclick="setStatus(${i},'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+        ${item.status ? `<button class="btn btn-reset" onclick="resetCard(${i})">Reset</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${escapeHtml(item.editedText !== null ? item.editedText : item.text)}</textarea>
+        <div class="edit-controls">
+          <label>Category:</label>
+          <select id="edit-cat-${i}">
+            ${CATEGORIES.map(c => `<option value="${c}" ${(item.editedCategory || item.category) === c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+          <button class="btn btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function updateStats() {
+  const counts = { pending: 0, keep: 0, cut: 0, edit: 0 };
+  state.forEach(item => {
+    if (!item.status) counts.pending++;
+    else counts[item.status]++;
+  });
+
+  document.getElementById('stat-pending').textContent = `${counts.pending} pending`;
+  document.getElementById('stat-keep').textContent = `${counts.keep} keep`;
+  document.getElementById('stat-cut').textContent = `${counts.cut} cut`;
+  document.getElementById('stat-edit').textContent = `${counts.edit} edit`;
+
+  const decided = state.length - counts.pending;
+  document.getElementById('progress-fill').style.width = `${(decided / state.length) * 100}%`;
+
+  updateExport();
+}
+
+function setStatus(index, status) {
+  state[index].status = status;
+  renderCards();
+  updateStats();
+}
+
+function resetCard(index) {
+  state[index].status = null;
+  state[index].editedText = null;
+  state[index].editedCategory = null;
+  renderCards();
+  updateStats();
+}
+
+function toggleEdit(index) {
+  const area = document.getElementById(`edit-area-${index}`);
+  if (area) {
+    area.classList.toggle('open');
+    if (area.classList.contains('open')) {
+      const textarea = document.getElementById(`edit-text-${index}`);
+      textarea.focus();
+    }
+  }
+}
+
+function saveEdit(index) {
+  const text = document.getElementById(`edit-text-${index}`).value.trim();
+  const cat = document.getElementById(`edit-cat-${index}`).value;
+
+  if (!text) return;
+
+  state[index].editedText = text;
+  state[index].editedCategory = cat;
+  state[index].status = 'edit';
+
+  renderCards();
+  updateStats();
+}
+
+function updateExport() {
+  const exportArea = document.getElementById('export-area');
+  const exported = [];
+
+  state.forEach(item => {
+    if (item.status === 'keep') {
+      exported.push({ text: item.text, category: item.category });
+    } else if (item.status === 'edit') {
+      exported.push({
+        text: item.editedText !== null ? item.editedText : item.text,
+        category: item.editedCategory !== null ? item.editedCategory : item.category
+      });
+    }
+  });
+
+  if (exported.length === 0) {
+    exportArea.innerHTML = '<p class="export-empty">No decisions yet. Keep or edit responses above.</p>';
+    return;
+  }
+
+  const json = JSON.stringify(exported, null, 2);
+  exportArea.innerHTML = `
+    <div class="export-block">
+      <button class="btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+      <pre>${escapeHtml(json)}</pre>
+    </div>
+  `;
+}
+
+function copyExport() {
+  const exported = [];
+  state.forEach(item => {
+    if (item.status === 'keep') {
+      exported.push({ text: item.text, category: item.category });
+    } else if (item.status === 'edit') {
+      exported.push({
+        text: item.editedText !== null ? item.editedText : item.text,
+        category: item.editedCategory !== null ? item.editedCategory : item.category
+      });
+    }
+  });
+
+  const json = JSON.stringify(exported, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// Initial render
+renderCards();
+updateStats();
+</script>
+
+</body>
+</html>

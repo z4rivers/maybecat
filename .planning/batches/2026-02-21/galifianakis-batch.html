@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galifianakis Energy Batch — MaybeCat Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .sticky-header .subtitle {
+    font-size: 0.85rem;
+    color: #8888aa;
+    margin-bottom: 12px;
+  }
+  .stats {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stat {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .stat-total { color: #ccc; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #8888aa; }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .item {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+  .item.decided-keep { border-color: #4ecca3; }
+  .item.decided-cut { border-color: #e94560; }
+  .item.decided-edit { border-color: #ffd93d; }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .item-number {
+    color: #555;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .badge-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #ccc;
+  }
+  .badge-category.cat-cold { color: #64b5f6; border: 1px solid #64b5f6; }
+  .badge-category.cat-existential { color: #ce93d8; border: 1px solid #ce93d8; }
+  .badge-category.cat-chaotic { color: #ff8a65; border: 1px solid #ff8a65; }
+  .badge-category.cat-wise { color: #81c784; border: 1px solid #81c784; }
+  .badge-category.cat-heartfelt { color: #f48fb1; border: 1px solid #f48fb1; }
+  .badge-category.cat-sassy { color: #fff176; border: 1px solid #fff176; }
+
+  .badge-rating {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: transparent;
+  }
+  .badge-rating.rating-strong { color: #4ecca3; border: 1.5px solid #4ecca3; }
+  .badge-rating.rating-medium { color: #ffd93d; border: 1.5px solid #ffd93d; }
+
+  .response-text {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    padding: 8px 0;
+  }
+
+  .concern {
+    font-size: 0.8rem;
+    color: #ff9800;
+    margin-bottom: 14px;
+    padding: 6px 10px;
+    background: rgba(255, 152, 0, 0.08);
+    border-left: 3px solid #ff9800;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #1a1a2e; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-category {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .edit-category label {
+    font-size: 0.8rem;
+    color: #8888aa;
+  }
+  .edit-category select {
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+  }
+  .edit-category select:focus { outline: none; border-color: #ffd93d; }
+  .edit-save {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .decision-label {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+  .decision-label.visible { display: inline-block; }
+  .decision-label.dl-keep { background: #4ecca3; color: #1a1a2e; }
+  .decision-label.dl-cut { background: #e94560; color: #1a1a2e; }
+  .decision-label.dl-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .export-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    color: #8888aa;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.8rem;
+    color: #4ecca3;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: text;
+    user-select: all;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .copy-btn:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Galifianakis Energy Batch</h1>
+  <div class="subtitle">Non-sequiturs, deadpan absurdity, weird fridge material. Does it land as MaybeCat?</div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">28</span></span>
+    <span class="stat stat-kept">Kept: <span id="stat-kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edited">Edited: <span id="stat-edited">0</span></span>
+    <span class="stat stat-remaining">Remaining: <span id="stat-remaining">28</span></span>
+  </div>
+</div>
+
+<div class="container" id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export — Kept Items (JSON)</h2>
+  <p>Only items marked KEEP or EDIT (with saved text) appear here. Copy and paste into oracleResponses.ts.</p>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const DATA = [
+  { id: 1, text: "I did the math and you can't afford it.", category: "cold", rating: "STRONG", concern: null },
+  { id: 2, text: "That's a lot of confidence for someone with that search history.", category: "cold", rating: "STRONG", concern: "\"search history\" jokes are internet-worn" },
+  { id: 3, text: "I once stared at a wall for six hours. Changed my life.", category: "existential", rating: "STRONG", concern: null },
+  { id: 4, text: "I'm gonna say yes, but I'm also the one who ate a rubber band last week.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 5, text: "You're asking the right question to the wrong species.", category: "wise", rating: "MEDIUM", concern: "Too meta \u2014 breaks fourth wall, acknowledges \"you're asking a cat\"" },
+  { id: 6, text: "Statistically, you should have stopped two decisions ago.", category: "cold", rating: "STRONG", concern: null },
+  { id: 7, text: "I support you in the way that I'm not going to do anything.", category: "heartfelt", rating: "STRONG", concern: null },
+  { id: 8, text: "The last person who asked me that is doing fine. I think. I lost interest.", category: "sassy", rating: "STRONG", concern: null },
+  { id: 9, text: "I've been thinking about this since you asked and I've decided I was already thinking about something else.", category: "chaotic", rating: "STRONG", concern: "Could be trimmed \u2014 a bit wordy" },
+  { id: 10, text: "Bold of you to assume I've been listening.", category: "sassy", rating: "MEDIUM", concern: "\"Bold of you to assume\" is internet-worn phrasing" },
+  { id: 11, text: "My credentials are that I've never had a job.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 12, text: "That sounds like a problem for someone with thumbs.", category: "cold", rating: "MEDIUM", concern: "Too-literal cat anatomy joke" },
+  { id: 13, text: "I'm not saying no. I'm saying I watched you do this before.", category: "wise", rating: "STRONG", concern: null },
+  { id: 14, text: "Have you considered that you're the main character of a show nobody's watching?", category: "existential", rating: "STRONG", concern: null },
+  { id: 15, text: "The good news is you have options. The bad news is you have options.", category: "wise", rating: "STRONG", concern: "Very common joke format \u2014 seen widely online" },
+  { id: 16, text: "I just forgot what you asked and honestly it didn't change my answer.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 17, text: "You're either very brave or you don't understand the question.", category: "cold", rating: "STRONG", concern: null },
+  { id: 18, text: "I've seen how this ends. I wasn't paying attention to your part.", category: "chaotic", rating: "MEDIUM", concern: "Trimmed version (agent recommended cutting from 3 sentences to 2)" },
+  { id: 19, text: "That's between you and the version of you who has to live with it.", category: "wise", rating: "STRONG", concern: null },
+  { id: 20, text: "I don't know what you just said but the vibe was wrong.", category: "cold", rating: "STRONG", concern: null },
+  { id: 21, text: "Everything in my professional opinion \u2014 and I want to stress that I have no profession \u2014 suggests yes.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 22, text: "I would never do what you're about to do. But I also eat things off the floor.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 23, text: "I consulted with myself and we disagree.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 24, text: "You're doing amazing for someone who's been winging it this whole time.", category: "heartfelt", rating: "STRONG", concern: "This exact phrase is all over the internet" },
+  { id: 25, text: "I wasn't going to say anything but then I remembered I always say something.", category: "chaotic", rating: "STRONG", concern: null },
+  { id: 26, text: "My advice is free and it shows.", category: "sassy", rating: "STRONG", concern: "Common self-deprecating joke format" },
+  { id: 27, text: "On a scale of one to ten, that's a Wednesday.", category: "cold", rating: "STRONG", concern: null },
+  { id: 28, text: "You already decided. You're just here for the dramatic pause.", category: "wise", rating: "STRONG", concern: null }
+];
+
+const CATEGORIES = ["cold", "existential", "chaotic", "wise", "heartfelt", "sassy", "demanding", "nurturing", "poetic", "angry", "dramatic", "mysterious", "playful"];
+
+const decisions = {};
+
+function renderItems() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = DATA.map(item => `
+    <div class="item" id="item-${item.id}" data-id="${item.id}">
+      <div class="item-header">
+        <span class="item-number">#${item.id}</span>
+        <div class="badges">
+          <span class="badge-category cat-${item.category}">${item.category}</span>
+          <span class="badge-rating rating-${item.rating.toLowerCase()}">${item.rating}</span>
+          <span class="decision-label" id="dl-${item.id}"></span>
+        </div>
+      </div>
+      <div class="response-text">${escapeHtml(item.text)}</div>
+      ${item.concern ? `<div class="concern">${escapeHtml(item.concern)}</div>` : ''}
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${item.id}, 'keep')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${item.id}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${item.id})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-area-${item.id}">
+        <textarea id="edit-text-${item.id}">${escapeHtml(item.text)}</textarea>
+        <div class="edit-category">
+          <label>Category:</label>
+          <select id="edit-cat-${item.id}">
+            ${CATEGORIES.map(c => `<option value="${c}" ${c === item.category ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <button class="edit-save" onclick="saveEdit(${item.id})">Save Edit</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function decide(id, action) {
+  decisions[id] = { action, text: null, category: null };
+
+  const item = DATA.find(d => d.id === id);
+  if (action === 'keep') {
+    decisions[id].text = item.text;
+    decisions[id].category = item.category;
+  }
+
+  updateItemUI(id, action);
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const area = document.getElementById(`edit-area-${id}`);
+  area.classList.toggle('visible');
+}
+
+function saveEdit(id) {
+  const text = document.getElementById(`edit-text-${id}`).value.trim();
+  const category = document.getElementById(`edit-cat-${id}`).value;
+
+  if (!text) return;
+
+  decisions[id] = { action: 'edit', text, category };
+
+  // Update displayed text to show the edit
+  const el = document.getElementById(`item-${id}`);
+  el.querySelector('.response-text').textContent = text;
+
+  updateItemUI(id, 'edit');
+  document.getElementById(`edit-area-${id}`).classList.remove('visible');
+  updateStats();
+  updateExport();
+}
+
+function updateItemUI(id, action) {
+  const el = document.getElementById(`item-${id}`);
+  el.classList.remove('decided-keep', 'decided-cut', 'decided-edit');
+  el.classList.add(`decided-${action}`);
+
+  // Reset button active states
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector(`.btn-${action}`).classList.add('active');
+
+  // Decision label
+  const dl = document.getElementById(`dl-${id}`);
+  dl.className = `decision-label visible dl-${action}`;
+  dl.textContent = action.toUpperCase();
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'keep') kept++;
+    else if (d.action === 'cut') cut++;
+    else if (d.action === 'edit') edited++;
+  });
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = DATA.length - kept - cut - edited;
+}
+
+function updateExport() {
+  const kept = [];
+  DATA.forEach(item => {
+    const d = decisions[item.id];
+    if (d && d.action === 'keep') {
+      kept.push({ text: d.text, category: d.category });
+    } else if (d && d.action === 'edit') {
+      kept.push({ text: d.text, category: d.category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+renderItems();
+</script>
+
+</body>
+</html>

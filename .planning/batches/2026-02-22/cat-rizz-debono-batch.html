@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Cat Rizz x De Bono Lateral Thinking</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+.sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.stats { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.stat { font-size: 14px; font-weight: bold; }
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.item { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #444; transition: border-color 0.3s; }
+.item.kept { border-left-color: #4ecca3; }
+.item.cut { border-left-color: #e94560; opacity: 0.5; }
+.item.edited { border-left-color: #ffd93d; }
+.item-number { font-size: 11px; color: #555; margin-bottom: 6px; }
+.item-text { font-size: 18px; line-height: 1.5; margin-bottom: 4px; color: #fff; }
+.item-category { font-size: 12px; color: #888; margin-bottom: 12px; font-style: italic; }
+.flag { font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+.flag-hot { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca344; }
+.flag-warn { background: #e9456022; color: #e94560; border: 1px solid #e9456044; }
+.buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fe8bf; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #ff6b81; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe566; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 6px; padding: 12px; font-family: Georgia, serif; font-size: 16px; resize: vertical; }
+.edit-area select { background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 4px; padding: 6px 10px; margin-top: 8px; font-size: 13px; }
+.edit-area .save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+.export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 10px; border: 1px solid #333; }
+.export-section h3 { color: #4ecca3; margin-bottom: 10px; }
+.export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 13px; }
+.copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+.copy-btn:hover { background: #6fe8bf; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Cat Rizz x De Bono Lateral Thinking</h1>
+  <div class="stats">
+    <span class="stat stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat stat-pending">PENDING: <span id="pending-count">20</span>/20</span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h3>Export (kept + edited responses)</h3>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  { text: "Dog people optimize the profile. Cat people forgot to update it three years ago. Guess which one gets the second date.", category: "wise", flag: null },
+  { text: "You learned to love something that doesn't need you. Everything after that is just easy.", category: "cold", flag: "warn" },
+  { text: "The scratch marks on your forearm. They ask. You shrug. Mystery is just unexplained damage with good posture.", category: "sassy", flag: "hot" },
+  { text: "Cat people don't chase. They've been trained by a professional.", category: "wise", flag: null },
+  { text: "You're interesting because nothing in your house works the way it's supposed to and you stopped apologizing for it.", category: "chaotic", flag: null },
+  { text: "A dog teaches you what loyalty looks like. A cat teaches you what it costs. One of those is attractive.", category: "cold", flag: null },
+  { text: "Every cat owner has held a conversation with something that left the room mid-sentence. That's marriage prep. You're ahead.", category: "chaotic_wholesome", flag: null },
+  { text: "You don't flinch when something stares at you from across the room at 3am. That energy reads in a bar.", category: "cryptic", flag: "hot" },
+  { text: "Your whole apartment smells like you've made peace with something. People find that devastatingly attractive.", category: "existential", flag: null },
+  { text: "Dog people are looking for love. Cat people are looking at something behind you, slightly above your head. That's called intrigue.", category: "sassy", flag: "hot" },
+  { text: "You know how to be in a room with someone who hasn't decided if they like you yet. Most people can't survive that silence.", category: "wise", flag: "warn" },
+  { text: "The cat improved your posture. Not on purpose. You sit weird now because every good seat is already taken. But it reads as confident.", category: "chaotic_wholesome", flag: "hot" },
+  { text: "Somebody who feeds a creature that has never once said thank you has a capacity for devotion that borders on deranged. That's the rizz.", category: "dramatic", flag: null },
+  { text: "You stopped performing for approval around year two. The cat didn't care, so you quit. Turns out that was the whole trick.", category: "wise", flag: "warn" },
+  { text: "Cat people flirt the way their cats hunt \u2014 three hours of doing absolutely nothing, then one move, devastating, over.", category: "cold", flag: "hot" },
+  { text: "You've been rejected by something you share a bed with every single night. You're bulletproof out there.", category: "chaotic_wholesome", flag: null },
+  { text: "Dog people want to be wanted. Cat people want to be interesting. The market has a clear preference.", category: "sassy", flag: "warn" },
+  { text: "You clean hair off your clothes before leaving the house and sometimes you miss a spot. That one piece of evidence makes you approachable.", category: "wholesome", flag: "hot" },
+  { text: "The cat taught you that presence is not the same as attention. Nobody else in the bar knows that yet.", category: "cryptic", flag: "warn" },
+  { text: "Someone who has been fully ignored while holding a treat has achieved a level of emotional regulation that the rest of us are still in therapy for.", category: "wise", flag: null },
+];
+
+let decisions = {};
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+
+  responses.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'item' + (decisions[i] ? ' ' + decisions[i].action : '');
+    div.id = 'item-' + i;
+
+    let flagHTML = '';
+    if (r.flag === 'hot') flagHTML = '<span class="flag flag-hot">top pick</span>';
+    if (r.flag === 'warn') flagHTML = '<span class="flag flag-warn">therapy-adjacent / echo</span>';
+
+    const displayText = decisions[i] && decisions[i].editedText ? decisions[i].editedText : r.text;
+    const displayCat = decisions[i] && decisions[i].editedCategory ? decisions[i].editedCategory : r.category;
+
+    div.innerHTML = `
+      <div class="item-number">#${i + 1} ${flagHTML}</div>
+      <div class="item-text">\u201c${displayText}\u201d</div>
+      <div class="item-category">${displayCat}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${displayText}</textarea>
+        <select id="cat-${i}">
+          ${['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'].map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, action) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = action;
+  document.getElementById('item-' + i).className = 'item ' + action;
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById('edit-' + i);
+  area.style.display = area.style.display === 'none' || area.style.display === '' ? 'block' : 'none';
+  if (area.style.display === 'block') document.getElementById('textarea-' + i).focus();
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('textarea-' + i).value.trim();
+  const cat = document.getElementById('cat-' + i).value;
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = 'edited';
+  decisions[i].editedText = text;
+  decisions[i].editedCategory = cat;
+  render();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'kept') keep++;
+    if (d.action === 'cut') cut++;
+    if (d.action === 'edited') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = (20 - keep - cut - edit);
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.action === 'kept') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (d && d.action === 'edited') {
+      kept.push({ text: d.editedText || r.text, category: d.editedCategory || r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+
+</body>
+</html>

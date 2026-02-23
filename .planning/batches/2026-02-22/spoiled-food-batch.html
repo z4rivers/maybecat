@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spoiled Food as Life Advice (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 0 0 120px 0;
+    line-height: 1.5;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f23;
+    border-bottom: 2px solid #2a2a4a;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f0e6ff;
+    margin-right: auto;
+  }
+  .stat {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #16213e;
+  }
+  .stat-pending { color: #888; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-total { color: #aaa; font-weight: 400; }
+
+  .cards-container {
+    max-width: 720px;
+    margin: 24px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid #444;
+    transition: border-color 0.2s;
+  }
+  .card[data-status="keep"] { border-left-color: #4ecca3; }
+  .card[data-status="cut"] { border-left-color: #e94560; }
+  .card[data-status="edit"] { border-left-color: #ffd93d; }
+
+  .card-num {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .response-text {
+    font-style: italic;
+    color: #f0e6ff;
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #8888aa;
+    background: #0f0f23;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 6px 18px;
+    border: 2px solid;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { color: #1a1a2e; }
+
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover { background: #4ecca3; }
+  .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover { background: #e94560; }
+  .btn-cut.active { background: #e94560; color: #1a1a2e; }
+
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover { background: #ffd93d; }
+  .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+
+  .btn-reset {
+    border-color: #555;
+    color: #888;
+    font-size: 11px;
+    padding: 4px 12px;
+    margin-left: 8px;
+  }
+  .btn-reset:hover { background: #555; color: #eee; }
+
+  .status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .status-badge.keep { background: #4ecca322; color: #4ecca3; }
+  .status-badge.cut { background: #e9456022; color: #e94560; }
+  .status-badge.edit { background: #ffd93d22; color: #ffd93d; }
+
+  .edit-area {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #2a2a4a;
+  }
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0f0f23;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+    color: #f0e6ff;
+    font-style: italic;
+    font-size: 16px;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+
+  .edit-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .edit-controls label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+  }
+  .edit-controls select {
+    background: #0f0f23;
+    border: 1px solid #2a2a4a;
+    border-radius: 4px;
+    color: #eee;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .edit-controls select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .btn-save-edit {
+    border-color: #ffd93d;
+    color: #ffd93d;
+    font-size: 12px;
+    padding: 4px 14px;
+    margin-left: auto;
+  }
+  .btn-save-edit:hover { background: #ffd93d; color: #1a1a2e; }
+
+  /* Export section */
+  .export-section {
+    max-width: 720px;
+    margin: 48px auto 0;
+    padding: 0 16px;
+  }
+  .export-section h2 {
+    font-size: 16px;
+    color: #f0e6ff;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .export-block {
+    background: #0f0f23;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-color: #4ecca3;
+    color: #4ecca3;
+    font-size: 12px;
+    padding: 4px 14px;
+  }
+  .btn-copy:hover { background: #4ecca3; color: #1a1a2e; }
+  .btn-copy.copied { background: #4ecca3; color: #1a1a2e; }
+
+  .empty-export {
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .batch-note {
+    max-width: 720px;
+    margin: 16px auto 0;
+    padding: 0 16px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Spoiled Food as Life Advice (Feb 22)</h1>
+  <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+  <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+  <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  <span class="stat stat-pending" id="stat-pending">Pending: 28</span>
+  <span class="stat stat-total" id="stat-total">Total: 28</span>
+</div>
+
+<div class="batch-note">
+  <strong>Concept:</strong> Food safety language relocated into oracle answers about life situations. The clinical/visceral spoilage descriptions become descriptions of emotional states, relationships turning, situations past their expiration date. Found language from USDA guidelines, cheese science, seafood spoilage signs, fridge archaeology horror stories.
+</div>
+
+<div class="cards-container" id="cards-container"></div>
+
+<div class="export-section">
+  <h2>Export — Kept & Edited Responses</h2>
+  <div class="export-block">
+    <button class="btn btn-copy" id="btn-copy" onclick="copyExport()">Copy</button>
+    <pre id="export-json"></pre>
+    <div class="empty-export" id="empty-export">No kept or edited responses yet.</div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic", "wise", "cold", "sassy", "cryptic", "dramatic",
+  "physical", "wholesome", "demanding", "chaotic_wholesome",
+  "existential", "nurturing", "poetic"
+];
+
+const RESPONSES = [
+  { "text": "Best before, not use by. You still have time.", "category": "nurturing" },
+  { "text": "The ammonia smell means it\u2019s too late. You already knew that.", "category": "cold" },
+  { "text": "It was fine yesterday.", "category": "cryptic" },
+  { "text": "The mold is cosmetic. Cut around it.", "category": "wise" },
+  { "text": "Firm flesh springs back after pressure. Yours didn\u2019t.", "category": "cold" },
+  { "text": "There\u2019s a slimy film developing on the surface and you keep calling it chemistry.", "category": "sassy" },
+  { "text": "The gills start bright red. Then dark red. Then brown. Then green. You\u2019re at brown.", "category": "dramatic" },
+  { "text": "When in doubt, throw it out.", "category": "wise" },
+  { "text": "Rancid things have the same look and texture as when you bought them.", "category": "cryptic" },
+  { "text": "A slight ammonia smell is normal. That\u2019s not slight.", "category": "cold" },
+  { "text": "Still technically edible. The smell is a warning, not a review.", "category": "wise" },
+  { "text": "The color changed but the texture\u2019s still good. Mixed signals aren\u2019t always bad signals.", "category": "nurturing" },
+  { "text": "I opened the container and immediately knew.", "category": "cryptic" },
+  { "text": "Some things are supposed to smell like that. This is one of them.", "category": "wholesome" },
+  { "text": "Never taste-test questionable things to confirm what your nose already told you.", "category": "wise" },
+  { "text": "The bacteria that actually hurt you don\u2019t change how it looks, smells, or tastes.", "category": "existential" },
+  { "text": "There are green-gray fuzzy islands forming and you\u2019re calling it personal growth.", "category": "sassy" },
+  { "text": "It\u2019s been in the back of the fridge so long it\u2019s developed a personality.", "category": "chaotic" },
+  { "text": "The danger zone is between 40 and 140. You\u2019ve been at 90 for months.", "category": "cold" },
+  { "text": "Blue cheese is supposed to smell wrong. Not everything that smells wrong is spoiled.", "category": "wise" },
+  { "text": "The eyes go cloudy before the rest follows.", "category": "poetic" },
+  { "text": "Best by is about quality. Use by is about safety. Learn the difference.", "category": "demanding" },
+  { "text": "You put it in a neat little container, forgot about it, and now it\u2019s three months later.", "category": "existential" },
+  { "text": "Smells like wet cardboard and oil paint. That\u2019s not aged. That\u2019s rancid.", "category": "cold" },
+  { "text": "Leave it unwrapped at room temperature. If the ammonia doesn\u2019t dissipate, it\u2019s overripe.", "category": "wise" },
+  { "text": "Bright and transparent means fresh. You\u2019re looking a little cloudy.", "category": "sassy" },
+  { "text": "The tails are curling, fraying, and drying out. That\u2019s not character. That\u2019s neglect.", "category": "cold" },
+  { "text": "It should smell briny. Like the ocean. Not like this.", "category": "poetic" }
+];
+
+// State: { status: null|'keep'|'cut'|'edit', editText: string, editCategory: string }
+const state = RESPONSES.map(r => ({
+  status: null,
+  editText: r.text,
+  editCategory: r.category
+}));
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0, pending = 0;
+  state.forEach(s => {
+    if (s.status === 'keep') keep++;
+    else if (s.status === 'cut') cut++;
+    else if (s.status === 'edit') edit++;
+    else pending++;
+  });
+  document.getElementById('stat-keep').textContent = 'Keep: ' + keep;
+  document.getElementById('stat-cut').textContent = 'Cut: ' + cut;
+  document.getElementById('stat-edit').textContent = 'Edit: ' + edit;
+  document.getElementById('stat-pending').textContent = 'Pending: ' + pending;
+  updateExport();
+}
+
+function updateExport() {
+  const kept = [];
+  state.forEach((s, i) => {
+    if (s.status === 'keep') {
+      kept.push({ text: RESPONSES[i].text, category: RESPONSES[i].category });
+    } else if (s.status === 'edit') {
+      kept.push({ text: s.editText, category: s.editCategory });
+    }
+  });
+
+  const jsonEl = document.getElementById('export-json');
+  const emptyEl = document.getElementById('empty-export');
+
+  if (kept.length === 0) {
+    jsonEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    document.getElementById('btn-copy').style.display = 'none';
+  } else {
+    jsonEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    document.getElementById('btn-copy').style.display = 'block';
+    jsonEl.textContent = JSON.stringify(kept, null, 2);
+  }
+}
+
+function setStatus(idx, status) {
+  const prev = state[idx].status;
+  if (prev === status) {
+    state[idx].status = null;
+  } else {
+    state[idx].status = status;
+  }
+  renderCard(idx);
+  updateStats();
+}
+
+function resetCard(idx) {
+  state[idx].status = null;
+  state[idx].editText = RESPONSES[idx].text;
+  state[idx].editCategory = RESPONSES[idx].category;
+  renderCard(idx);
+  updateStats();
+}
+
+function saveEdit(idx) {
+  const textarea = document.getElementById('edit-text-' + idx);
+  const select = document.getElementById('edit-cat-' + idx);
+  state[idx].editText = textarea.value;
+  state[idx].editCategory = select.value;
+  state[idx].status = 'edit';
+  renderCard(idx);
+  updateStats();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderCard(idx) {
+  const card = document.getElementById('card-' + idx);
+  const r = RESPONSES[idx];
+  const s = state[idx];
+
+  card.setAttribute('data-status', s.status || '');
+
+  const showEdit = s.status === 'edit' || (document.getElementById('edit-area-' + idx) &&
+    document.getElementById('edit-area-' + idx).classList.contains('visible') && s.status !== 'keep' && s.status !== 'cut');
+
+  const displayText = s.status === 'edit' ? s.editText : r.text;
+  const displayCat = s.status === 'edit' ? s.editCategory : r.category;
+
+  let statusBadge = '';
+  if (s.status === 'keep') statusBadge = '<span class="status-badge keep">KEPT</span>';
+  else if (s.status === 'cut') statusBadge = '<span class="status-badge cut">CUT</span>';
+  else if (s.status === 'edit') statusBadge = '<span class="status-badge edit">EDITED</span>';
+
+  const catOptions = CATEGORIES.map(c =>
+    '<option value="' + c + '"' + (c === (s.status === 'edit' ? s.editCategory : r.category) ? ' selected' : '') + '>' + c + '</option>'
+  ).join('');
+
+  card.innerHTML = `
+    <div class="card-num">#${idx + 1}</div>
+    <div class="response-text">${escapeHtml(displayText)}</div>
+    <div class="category-tag">${displayCat}</div>
+    <div class="btn-row">
+      <button class="btn btn-keep ${s.status === 'keep' ? 'active' : ''}" onclick="setStatus(${idx}, 'keep')">KEEP</button>
+      <button class="btn btn-cut ${s.status === 'cut' ? 'active' : ''}" onclick="setStatus(${idx}, 'cut')">CUT</button>
+      <button class="btn btn-edit ${s.status === 'edit' ? 'active' : ''}" onclick="toggleEdit(${idx})">EDIT</button>
+      ${s.status ? '<button class="btn btn-reset" onclick="resetCard(' + idx + ')">Reset</button>' : ''}
+      ${statusBadge}
+    </div>
+    <div class="edit-area ${showEdit ? 'visible' : ''}" id="edit-area-${idx}">
+      <textarea id="edit-text-${idx}">${escapeHtml(s.editText)}</textarea>
+      <div class="edit-controls">
+        <label>Category:</label>
+        <select id="edit-cat-${idx}">${catOptions}</select>
+        <button class="btn btn-save-edit" onclick="saveEdit(${idx})">Save Edit</button>
+      </div>
+    </div>
+  `;
+}
+
+function toggleEdit(idx) {
+  const editArea = document.getElementById('edit-area-' + idx);
+  if (editArea) {
+    const isVisible = editArea.classList.contains('visible');
+    if (isVisible && state[idx].status !== 'edit') {
+      editArea.classList.remove('visible');
+    } else if (isVisible && state[idx].status === 'edit') {
+      editArea.classList.remove('visible');
+    } else {
+      editArea.classList.add('visible');
+      setTimeout(() => {
+        const ta = document.getElementById('edit-text-' + idx);
+        if (ta) ta.focus();
+      }, 50);
+    }
+  }
+}
+
+function copyExport() {
+  const jsonEl = document.getElementById('export-json');
+  const text = jsonEl.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+function init() {
+  const container = document.getElementById('cards-container');
+  RESPONSES.forEach((r, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'card-' + idx;
+    container.appendChild(card);
+    renderCard(idx);
+  });
+  updateStats();
+}
+
+init();
+</script>
+</body>
+</html>

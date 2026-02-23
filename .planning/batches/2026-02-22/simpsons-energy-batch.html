@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simpsons Energy — Smart Comedy Lanes (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-box .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .stat-total .dot { background: #888; }
+  .stat-kept .dot { background: #4ecca3; }
+  .stat-cut .dot { background: #e94560; }
+  .stat-edited .dot { background: #ffd93d; }
+  .stat-remaining .dot { background: #6c757d; }
+
+  .section-header {
+    padding: 28px 24px 12px;
+    border-bottom: 1px solid #0f3460;
+    margin-top: 12px;
+  }
+  .section-header h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .section-header .section-count {
+    font-size: 14px;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .item {
+    padding: 24px;
+    border-bottom: 1px solid #0f3460;
+    transition: background 0.2s;
+  }
+  .item.kept { background: rgba(78, 204, 163, 0.08); }
+  .item.cut { background: rgba(233, 69, 96, 0.08); }
+  .item.edited { background: rgba(255, 217, 61, 0.08); }
+
+  .item-number {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 500;
+    font-style: italic;
+    color: #f0e6ff;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    border-left: 3px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .item.kept .response-text { border-left-color: #4ecca3; }
+  .item.cut .response-text { border-left-color: #e94560; }
+  .item.edited .response-text { border-left-color: #ffd93d; }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-category {
+    background: rgba(15, 52, 96, 0.6);
+    color: #7ec8e3;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .btn {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { background: #555; color: #eee; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .btn-reset.hidden { display: none; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: vertical;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area select {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    color: #7ec8e3;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .edit-area select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn-save-edit {
+    padding: 6px 18px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .category-label {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .export-section {
+    padding: 32px 24px;
+    margin-top: 24px;
+  }
+  .export-section h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #e0e0e0;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Simpsons Energy — Smart Comedy Lanes (Feb 22)</h1>
+  <div class="stat-box stat-total"><span class="dot"></span> Total: <span id="stat-total">63</span></div>
+  <div class="stat-box stat-kept"><span class="dot"></span> Kept: <span id="stat-kept">0</span></div>
+  <div class="stat-box stat-cut"><span class="dot"></span> Cut: <span id="stat-cut">0</span></div>
+  <div class="stat-box stat-edited"><span class="dot"></span> Edited: <span id="stat-edited">0</span></div>
+  <div class="stat-box stat-remaining"><span class="dot"></span> Remaining: <span id="stat-remaining">63</span></div>
+</div>
+
+<div id="items-container"></div>
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export — Kept &amp; Edited Items</h2>
+  <p>Items marked KEEP or EDIT (with saved text) appear here. Copy the JSON below.</p>
+  <div class="export-block">
+    <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+    <pre id="export-json">[]</pre>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = ["chaotic","wise","cold","sassy","cryptic","dramatic","physical","wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"];
+
+const sections = [
+  {
+    title: "Homer Logic — Twisted Internal Reasoning",
+    items: [
+      { text: "You can\u2019t be late if you never agreed to a schedule.", category: "wise" },
+      { text: "If I can see the bottom of the bowl, it\u2019s empty. That\u2019s not opinion. That\u2019s geometry.", category: "demanding" },
+      { text: "Precedent was set when you let it happen the first time. That\u2019s case law.", category: "cold" },
+      { text: "I reviewed the evidence. Counter-argument: I was asleep.", category: "cryptic" },
+      { text: "I don\u2019t overreact. I react at the correct scale and you underestimate the threat.", category: "dramatic" },
+      { text: "The closed door isn\u2019t a boundary. It\u2019s an unresolved zoning dispute.", category: "chaotic" },
+      { text: "If it moved, it\u2019s prey. If it didn\u2019t move, it\u2019s furniture. I don\u2019t make the taxonomy.", category: "wise" },
+      { text: "I wasn\u2019t staring at nothing. I was monitoring a situation you don\u2019t have clearance for.", category: "cryptic" },
+      { text: "Trust is a slow blink. You haven\u2019t even closed your eyes.", category: "wise" },
+      { text: "Every surface is a bed if your standards are correct.", category: "existential" },
+      { text: "The belly is visible. This is not an invitation. This is a stress test.", category: "cold" },
+      { text: "I brought you a moth. That\u2019s a r\u00e9sum\u00e9.", category: "sassy" },
+      { text: "You set an alarm to stop sleeping. I need you to hear how that sounds.", category: "wise" },
+      { text: "I\u2019m not stuck. I\u2019m occupying a strategic position and awaiting extraction.", category: "dramatic" },
+      { text: "Knocking it off the table was peer review. It failed.", category: "chaotic" },
+      { text: "If I fit, the space was designed for me. If I don\u2019t, it was designed wrong.", category: "demanding" },
+      { text: "Following you room to room isn\u2019t attachment. It\u2019s a security detail you didn\u2019t request but clearly need.", category: "chaotic_wholesome" },
+      { text: "I don\u2019t nap. I reallocate consciousness to higher-priority operations.", category: "existential" },
+      { text: "Comfort isn\u2019t a reward. It\u2019s a prerequisite. We\u2019re not negotiating.", category: "demanding" },
+      { text: "The risk assessment was complete before you finished the sentence.", category: "cold" },
+      { text: "You keep solving problems that would go away if you just sat down.", category: "wise" }
+    ]
+  },
+  {
+    title: "The Cat AS The Institution",
+    items: [
+      { text: "Your call is important to us. Please continue to hold.", category: "cold" },
+      { text: "This matter has been escalated to a department that does not exist.", category: "cryptic" },
+      { text: "Per my previous email.", category: "cold" },
+      { text: "Your request is being processed. No action is required on your end.", category: "wise" },
+      { text: "Please allow 6-8 weeks.", category: "cryptic" },
+      { text: "Window 3 is now closed. Please proceed to Window 3.", category: "chaotic" },
+      { text: "I am currently out of the office with limited access to caring.", category: "sassy" },
+      { text: "This decision has been forwarded to someone who also cannot help you.", category: "chaotic" },
+      { text: "By continuing, you have agreed to the terms.", category: "wise" },
+      { text: "An unexpected error has occurred. But honestly, you expected it.", category: "cold" },
+      { text: "Your confirmation number is your confirmation. Keep it somewhere you won\u2019t.", category: "chaotic" },
+      { text: "It has come to our attention that you already knew.", category: "wise" },
+      { text: "This form must be submitted in triplicate. One for you, one for us, one for nobody.", category: "existential" },
+      { text: "We are currently experiencing a delay. We have always been experiencing a delay.", category: "existential" },
+      { text: "Your account has been noted.", category: "cryptic" },
+      { text: "Is there anything else I can help you with today? There wasn\u2019t a first thing.", category: "sassy" },
+      { text: "You are number 7 in the queue. You have been number 7 in the queue.", category: "existential" },
+      { text: "This office closes in 4 minutes and you are 5 minutes from ready.", category: "cold" },
+      { text: "We appreciate your patience during this transition. The transition is permanent.", category: "wise" },
+      { text: "Your feedback has been submitted. Your feedback has not been read.", category: "chaotic" }
+    ]
+  },
+  {
+    title: "Household Power Dynamics",
+    items: [
+      { text: "The board has reviewed your proposal. The board is a cat on the counter.", category: "cold" },
+      { text: "Every household has a constitution. Nobody wrote it down. Everyone knows it.", category: "wise" },
+      { text: "I annexed the sunny spot through squatter\u2019s rights and sustained indifference.", category: "demanding" },
+      { text: "Regime change starts with who controls the thermostat.", category: "wise" },
+      { text: "I contribute nothing. I run everything. These are not contradictions.", category: "cold" },
+      { text: "That was a unilateral decision disguised as a question.", category: "sassy" },
+      { text: "The one who opens the cans has hard power. The one who chooses the lap has soft power. I have soft power.", category: "wise" },
+      { text: "Strategic withdrawal to the bedroom. Let them think they won the couch.", category: "cryptic" },
+      { text: "You set an alarm to negotiate with a blanket.", category: "cold" },
+      { text: "I have occupied this chair since 2019. Show me the deed.", category: "demanding" },
+      { text: "Whoever controls the grocery list controls the regime. Look into it.", category: "chaotic" },
+      { text: "Performance review: you fed me late twice and moved my water bowl without consultation.", category: "demanding" },
+      { text: "D\u00e9tente is when both of you pretend the argument ended.", category: "wise" },
+      { text: "The chain of command is short. It starts with me and stops with me.", category: "cold" },
+      { text: "You think you chose the couch. The couch was assigned to you through a series of precedents you didn\u2019t notice.", category: "cryptic" },
+      { text: "I\u2019ve done nothing today and I am restructuring.", category: "existential" },
+      { text: "The balance of power shifted when you got a second cat. You just don\u2019t know which direction.", category: "cryptic" },
+      { text: "Eminent domain. That\u2019s my side now.", category: "sassy" },
+      { text: "Every dominance display in this house is performed from a seated position.", category: "wise" },
+      { text: "The one who asks \u2018what do you want for dinner\u2019 has already lost the negotiation.", category: "cold" },
+      { text: "I don\u2019t make requests. I set policy.", category: "demanding" },
+      { text: "Succession planning is unnecessary. I intend to outlast all of you.", category: "dramatic" }
+    ]
+  }
+];
+
+const decisions = {};
+const items = {};
+const TOTAL = 63;
+let globalId = 0;
+
+function buildCategorySelect(id, currentCategory) {
+  let html = '<label class="category-label">Category:</label><select id="cat-' + id + '">';
+  CATEGORIES.forEach(c => {
+    html += '<option value="' + c + '"' + (c === currentCategory ? ' selected' : '') + '>' + c + '</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderAll() {
+  const container = document.getElementById('items-container');
+  let html = '';
+
+  sections.forEach(section => {
+    html += '<div class="section-header"><h2>' + escapeHtml(section.title) + '</h2>';
+    html += '<div class="section-count">' + section.items.length + ' responses</div></div>';
+
+    section.items.forEach(item => {
+      globalId++;
+      const id = globalId;
+      items[id] = { text: item.text, category: item.category, editedText: null, editedCategory: null };
+
+      html += '<div class="item" data-id="' + id + '">';
+      html += '<div class="item-number">#' + id + '</div>';
+      html += '<div class="response-text">' + escapeHtml(item.text) + '</div>';
+      html += '<div class="badges"><span class="badge badge-category" id="badge-cat-' + id + '">' + item.category + '</span></div>';
+      html += '<div class="actions">';
+      html += '<button class="btn btn-keep" onclick="decide(' + id + ',\'keep\')">Keep</button>';
+      html += '<button class="btn btn-cut" onclick="decide(' + id + ',\'cut\')">Cut</button>';
+      html += '<button class="btn btn-edit" onclick="toggleEdit(' + id + ')">Edit</button>';
+      html += '<button class="btn btn-reset hidden" id="reset-' + id + '" onclick="resetItem(' + id + ')">Reset</button>';
+      html += '</div>';
+      html += '<div class="edit-area" id="edit-' + id + '">';
+      html += '<textarea id="textarea-' + id + '">' + escapeHtml(item.text) + '</textarea>';
+      html += buildCategorySelect(id, item.category);
+      html += '<div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(' + id + ')">Save Edit</button></div>';
+      html += '</div>';
+      html += '</div>';
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') kept++;
+    else if (decisions[id] === 'cut') cut++;
+    else if (decisions[id] === 'edit') edited++;
+  }
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = TOTAL - kept - cut - edited;
+  updateExport();
+}
+
+function showReset(id) {
+  document.getElementById('reset-' + id).classList.remove('hidden');
+}
+function hideReset(id) {
+  document.getElementById('reset-' + id).classList.add('hidden');
+}
+
+function decide(id, action) {
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (decisions[id] === action) {
+    delete decisions[id];
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('edit-' + id).classList.remove('visible');
+    hideReset(id);
+    updateStats();
+    return;
+  }
+
+  decisions[id] = action;
+  el.classList.add(action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (action === 'keep') el.querySelector('.btn-keep').classList.add('active');
+  else if (action === 'cut') el.querySelector('.btn-cut').classList.add('active');
+
+  if (action !== 'edit') {
+    document.getElementById('edit-' + id).classList.remove('visible');
+  }
+
+  showReset(id);
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-' + id);
+  if (editArea.classList.contains('visible') && decisions[id] === 'edit') {
+    editArea.classList.remove('visible');
+    return;
+  }
+  decisions[id] = 'edit';
+  editArea.classList.add('visible');
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+  showReset(id);
+  updateStats();
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('textarea-' + id);
+  const editedText = textarea.value.trim();
+  if (!editedText) return;
+  items[id].editedText = editedText;
+
+  const catSelect = document.getElementById('cat-' + id);
+  items[id].editedCategory = catSelect.value;
+
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.querySelector('.response-text').textContent = editedText;
+  document.getElementById('badge-cat-' + id).textContent = catSelect.value;
+
+  decisions[id] = 'edit';
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  document.getElementById('edit-' + id).classList.remove('visible');
+  showReset(id);
+  updateStats();
+}
+
+function resetItem(id) {
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut', 'edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('edit-' + id).classList.remove('visible');
+
+  el.querySelector('.response-text').textContent = items[id].text;
+  document.getElementById('badge-cat-' + id).textContent = items[id].category;
+  document.getElementById('textarea-' + id).value = items[id].text;
+  document.getElementById('cat-' + id).value = items[id].category;
+
+  items[id].editedText = null;
+  items[id].editedCategory = null;
+  delete decisions[id];
+  hideReset(id);
+  updateStats();
+}
+
+function updateExport() {
+  const kept = [];
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') {
+      kept.push({ text: items[id].text, category: items[id].category });
+    } else if (decisions[id] === 'edit') {
+      const text = items[id].editedText || items[id].text;
+      const category = items[id].editedCategory || items[id].category;
+      kept.push({ text: text, category: category });
+    }
+  }
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(function() {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+
+renderAll();
+</script>
+
+</body>
+</html>

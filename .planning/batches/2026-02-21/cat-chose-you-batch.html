@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>We're Friends Now — Cat Chose You Energy (Feb 21)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-box .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .stat-total .dot { background: #888; }
+  .stat-kept .dot { background: #4ecca3; }
+  .stat-cut .dot { background: #e94560; }
+  .stat-edited .dot { background: #ffd93d; }
+  .stat-remaining .dot { background: #6c757d; }
+
+  .item {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 24px;
+    border-left: 4px solid #0f3460;
+    transition: background 0.2s, border-left-color 0.2s;
+  }
+  .item.kept { background: rgba(78, 204, 163, 0.08); border-left-color: #4ecca3; }
+  .item.cut { background: rgba(233, 69, 96, 0.08); border-left-color: #e94560; }
+  .item.edited { background: rgba(255, 217, 61, 0.08); border-left-color: #ffd93d; }
+
+  .item-number {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 500;
+    font-style: italic;
+    color: #f0e6ff;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-category {
+    background: rgba(15, 52, 96, 0.6);
+    color: #7ec8e3;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .btn {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset {
+    background: transparent;
+    border: 1px solid #666;
+    color: #999;
+    padding: 8px 16px;
+    font-size: 13px;
+    display: none;
+  }
+  .btn-reset:hover { border-color: #aaa; color: #ccc; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .item.kept .btn-reset,
+  .item.cut .btn-reset,
+  .item.edited .btn-reset { display: inline-block; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: vertical;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area .edit-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .edit-area label {
+    font-size: 13px;
+    color: #aaa;
+  }
+  .edit-area select {
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .edit-area select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .btn-save-edit {
+    padding: 6px 18px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-save-edit:hover { background: #f0ca2d; }
+
+  .export-section {
+    padding: 32px 24px;
+    margin-top: 24px;
+  }
+  .export-section h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #e0e0e0;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>We're Friends Now — Cat Chose You Energy (Feb 21)</h1>
+  <div class="stat-box stat-total"><span class="dot"></span> Total: <span id="stat-total">20</span></div>
+  <div class="stat-box stat-kept"><span class="dot"></span> Keep: <span id="stat-kept">0</span></div>
+  <div class="stat-box stat-cut"><span class="dot"></span> Cut: <span id="stat-cut">0</span></div>
+  <div class="stat-box stat-edited"><span class="dot"></span> Edit: <span id="stat-edited">0</span></div>
+  <div class="stat-box stat-remaining"><span class="dot"></span> Pending: <span id="stat-remaining">20</span></div>
+</div>
+
+<div id="items-container"></div>
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export — Kept &amp; Edited Items</h2>
+  <p>Only items marked KEEP or EDIT (with saved edits) appear here. Copy the JSON below.</p>
+  <div class="export-block">
+    <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+    <pre id="export-json">[]</pre>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  'chaotic','wise','cold','sassy','cryptic','dramatic','physical',
+  'wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'
+];
+
+const RESPONSES = [
+  { text: "I\u2019m going to sit next to you every day until you stop flinching.", category: "nurturing" },
+  { text: "I brought you a leaf. It\u2019s not about the leaf.", category: "wholesome" },
+  { text: "I followed you to the bathroom. I\u2019ll follow you to the next one too.", category: "chaotic_wholesome" },
+  { text: "I put my chin on your shoe. This is binding.", category: "demanding" },
+  { text: "I\u2019m in every room you\u2019re in. I have independent reasons.", category: "cryptic" },
+  { text: "I leaned my full weight against your leg. You\u2019re a wall now. Congratulations.", category: "physical" },
+  { text: "I groomed your arm. You didn\u2019t ask. You\u2019re welcome.", category: "sassy" },
+  { text: "*headbutts your shin and walks away*", category: "physical" },
+  { text: "I found you. I\u2019m keeping you. This isn\u2019t a conversation.", category: "demanding" },
+  { text: "I carried a sock to your door at 2am. It\u2019s a proposal. Answer me.", category: "chaotic" },
+  { text: "I\u2019m going to sleep with one paw touching you. Move and I\u2019ll find you again.", category: "nurturing" },
+  { text: "I chose the lap. The lap didn\u2019t choose. The lap never chooses.", category: "wise" },
+  { text: "I sat on your suitcase. You\u2019re not going.", category: "demanding" },
+  { text: "*slow blink from across the room* That means forever. You can look it up.", category: "wholesome" },
+  { text: "I have been following you from room to room for three years. You just noticed. That\u2019s fine.", category: "cryptic" },
+  { text: "You\u2019re going to wake up and I\u2019ll be on your chest. This is happening every day now.", category: "chaotic_wholesome" },
+  { text: "I pressed my entire face into your palm and held it there. We\u2019re past the point of negotiation.", category: "nurturing" },
+  { text: "I\u2019m going to bring you increasingly alarming things from outside. It means I like you.", category: "chaotic" },
+  { text: "I sat in the exact warm spot you left on the couch. I live here now. With your ghost heat.", category: "poetic" },
+  { text: "I put one paw on your hand. Not stopping you. Just... here.", category: "wholesome" }
+];
+
+const TOTAL = RESPONSES.length;
+const decisions = {};
+const items = {};
+
+// Build category options HTML
+function categoryOptions(selected) {
+  return CATEGORIES.map(c =>
+    `<option value="${c}"${c === selected ? ' selected' : ''}>${c}</option>`
+  ).join('');
+}
+
+// Render all cards
+function renderCards() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = RESPONSES.map((r, i) => {
+    const id = i + 1;
+    items[id] = { text: r.text, category: r.category, editedText: null, editedCategory: null };
+    return `
+    <div class="item" data-id="${id}">
+      <div class="item-number">#${id}</div>
+      <div class="response-text" id="display-${id}">${escapeHtml(r.text)}</div>
+      <div class="badges">
+        <span class="badge badge-category" id="badge-cat-${id}">${r.category}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${id},'keep')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${id},'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${id})">Edit</button>
+        <button class="btn btn-reset" onclick="resetDecision(${id})">Reset</button>
+      </div>
+      <div class="edit-area" id="edit-${id}">
+        <textarea id="textarea-${id}">${escapeHtml(r.text)}</textarea>
+        <div class="edit-row">
+          <label>Category:</label>
+          <select id="select-cat-${id}">${categoryOptions(r.category)}</select>
+          <button class="btn-save-edit" onclick="saveEdit(${id})">Save Edit</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') kept++;
+    else if (decisions[id] === 'cut') cut++;
+    else if (decisions[id] === 'edit') edited++;
+  }
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = TOTAL - kept - cut - edited;
+  updateExport();
+}
+
+function decide(id, action) {
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut', 'edited');
+
+  // Toggle off if same action clicked again
+  if (decisions[id] === action) {
+    delete decisions[id];
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('edit-' + id).classList.remove('visible');
+    updateStats();
+    return;
+  }
+
+  decisions[id] = action;
+  el.classList.add(action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+
+  // Update button active states
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (action === 'keep') el.querySelector('.btn-keep').classList.add('active');
+  else if (action === 'cut') el.querySelector('.btn-cut').classList.add('active');
+  else if (action === 'edit') el.querySelector('.btn-edit').classList.add('active');
+
+  // Hide edit area if not editing
+  if (action !== 'edit') {
+    document.getElementById('edit-' + id).classList.remove('visible');
+  }
+
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-' + id);
+  if (editArea.classList.contains('visible')) {
+    editArea.classList.remove('visible');
+    return;
+  }
+  decisions[id] = 'edit';
+  editArea.classList.add('visible');
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+  updateStats();
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('textarea-' + id);
+  const select = document.getElementById('select-cat-' + id);
+  const editedText = textarea.value.trim();
+  if (!editedText) return;
+
+  items[id].editedText = editedText;
+  items[id].editedCategory = select.value;
+
+  // Update displayed text and category badge
+  document.getElementById('display-' + id).textContent = editedText;
+  document.getElementById('badge-cat-' + id).textContent = select.value;
+
+  // Mark as edited
+  decisions[id] = 'edit';
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  // Close edit area
+  document.getElementById('edit-' + id).classList.remove('visible');
+
+  updateStats();
+}
+
+function resetDecision(id) {
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut', 'edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('edit-' + id).classList.remove('visible');
+
+  // Restore original text and category
+  document.getElementById('display-' + id).textContent = items[id].text;
+  document.getElementById('badge-cat-' + id).textContent = items[id].category;
+  document.getElementById('textarea-' + id).value = items[id].text;
+  document.getElementById('select-cat-' + id).value = items[id].category;
+  items[id].editedText = null;
+  items[id].editedCategory = null;
+
+  delete decisions[id];
+  updateStats();
+}
+
+function updateExport() {
+  const kept = [];
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') {
+      kept.push({ text: items[id].text, category: items[id].category });
+    } else if (decisions[id] === 'edit') {
+      const text = items[id].editedText || items[id].text;
+      const category = items[id].editedCategory || items[id].category;
+      kept.push({ text, category });
+    }
+  }
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+
+// Initialize
+renderCards();
+updateStats();
+</script>
+
+</body>
+</html>

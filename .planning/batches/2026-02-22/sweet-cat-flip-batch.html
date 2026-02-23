@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet Cat Flip Batch - Feb 22</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+.header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.header h1 { font-size: 1.4em; margin-bottom: 8px; color: #fff; }
+.header .subtitle { color: #aaa; font-size: 0.9em; margin-bottom: 12px; line-height: 1.5; }
+.stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+.stat { padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.stat-total { background: #333; color: #fff; }
+.stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+.stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+.stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+.item { background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 2px solid transparent; transition: border-color 0.3s; }
+.item.kept { border-color: #4ecca3; }
+.item.cut { border-color: #e94560; opacity: 0.5; }
+.item.edited { border-color: #ffd93d; }
+
+.item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+.adjacent-note { color: #888; font-size: 0.8em; margin-bottom: 10px; font-style: italic; }
+.response-text { font-size: 1.2em; line-height: 1.6; margin-bottom: 6px; color: #fff; font-weight: 500; }
+.category-tag { display: inline-block; background: #333; color: #aaa; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; margin-bottom: 16px; }
+
+.actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #000; }
+.btn-keep:hover { background: #3dbb92; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #d83450; }
+.btn-edit { background: #ffd93d; color: #000; }
+.btn-edit:hover { background: #eec82c; }
+.btn.active { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,0.2); }
+
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 8px; padding: 12px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
+.edit-area select { background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 0.9em; }
+
+.export-section { margin-top: 40px; padding: 24px; background: #16213e; border-radius: 12px; }
+.export-section h2 { margin-bottom: 12px; color: #4ecca3; }
+.export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; color: #ccc; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+.copy-btn { margin-top: 12px; padding: 10px 24px; background: #4ecca3; color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.copy-btn:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Sweet Cat Flip Batch</h1>
+  <div class="subtitle">
+    Same territories as existing cynical/cold/judgmental responses, but the cat is sweet, loving, generous, trusting, delighted by you. The different disposition should produce different ANSWERS, not just nicer tone. Adjacent existing response noted for each.
+  </div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="total">34</span></span>
+    <span class="stat stat-keep">Keep: <span id="kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cuts">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="edits">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (Keep + Edit only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  {
+    text: "Yes. I don't even know the question. Yes.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"No.\" / \"Hmm. No.\" \u2014 same certainty, opposite direction"
+  },
+  {
+    text: "You came home. That's today's best thing.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Goodbye.\" / \"We're done here.\" \u2014 cat at the door, but happy"
+  },
+  {
+    text: "I followed you into every room today. That's how I say it.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"I'm not ignoring you. I'm ignoring your question.\" \u2014 same tracking, opposite intent"
+  },
+  {
+    text: "You're warm. That's the whole review.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Aggressively medium.\" / \"Acceptable. Barely.\" \u2014 same brevity, different verdict"
+  },
+  {
+    text: "I brought you a sock. It's the nicest one I could find.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Answers cost treats.\" \u2014 gift economy, but the cat is giving"
+  },
+  {
+    text: "I showed you my belly. Do you understand what that means.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"I have very strong opinions. All of them correct.\" \u2014 same weight, about trust not judgment"
+  },
+  {
+    text: "I will bite anyone who hurts you. This is not a metaphor.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"I'm not threatening you. I'm telling you what's going to happen.\" \u2014 same energy, protective direction"
+  },
+  {
+    text: "Tell them. Tell them tonight. They're not going to stop loving you.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"They love you. And they still did that.\" \u2014 same territory, opposite conclusion"
+  },
+  {
+    text: "I've been purring since you walked in. Draw your own conclusions.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"I've been watching you make this mistake. It was entertaining.\" \u2014 same watching, affection instead of judgment"
+  },
+  {
+    text: "Whatever you decide, I'm sitting on your lap for it.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"Undecided. Unbothered.\" \u2014 same non-answer, but present"
+  },
+  {
+    text: "Your whole ridiculous circus. I love your whole ridiculous circus.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"Not my circus. Not my monkeys. Not my problem.\" \u2014 direct emotional flip"
+  },
+  {
+    text: "The sun moved. I moved with it. Do what makes you warm.",
+    category: "wise",
+    adjacent: "Adjacent to: \"I could move. I won't, but I could.\" \u2014 same cat-on-spot energy, but generous"
+  },
+  {
+    text: "I care about this more than seems reasonable for a cat.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"I don't care. Like, at all.\" \u2014 direct flip"
+  },
+  {
+    text: "*headbutts your phone out of your hand* Something good is about to happen.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"*walks away mid-question*\" \u2014 same physical action energy, but toward you"
+  },
+  {
+    text: "I trust you completely. Even with the can opener.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Trust no one. Especially yourself.\" \u2014 same territory, opposite stance"
+  },
+  {
+    text: "I was going to play it cool. I can't. The answer is yes and I'm excited about it.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"I was going to help but then I remembered I don't want to.\" \u2014 same setup, flipped"
+  },
+  {
+    text: "You looked sad so I sat on your chest. Problem solved.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"Cry about it later. Right now, work.\" \u2014 cat approach to sadness, but sweet"
+  },
+  {
+    text: "I don't understand taxes or heartbreak or why you wear shoes. But I understand warm. You're warm.",
+    category: "wise",
+    adjacent: "Adjacent to: \"Reality is often disappointing.\" \u2014 cat admitting limits, then landing somewhere kind"
+  },
+  {
+    text: "Someone out there can't sleep either. They're thinking about you.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"The person you're losing sleep over is asleep.\" \u2014 same insomnia, flipped"
+  },
+  {
+    text: "You have food. You have shelter. You have me. I don't see the problem.",
+    category: "wise",
+    adjacent: "Adjacent to: \"Nothing matters. Especially treats.\" \u2014 cat priorities as genuine comfort"
+  },
+  {
+    text: "I chose you. I don't remember why. Doesn't matter.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Pick me. Choose me. Love me. Or don't. I have other options.\" \u2014 same territory, settled"
+  },
+  {
+    text: "Do the thing. I'll be right here when you get back.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Don't.\" \u2014 same brevity, opposite direction, plus presence"
+  },
+  {
+    text: "I'm not worried about you. You always land on your feet.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Concerning. But not my concern.\" \u2014 same detachment, but confident in you"
+  },
+  {
+    text: "You asked the cat. The cat says yes. The cat is never wrong.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"The real question is why you thought asking a cat was a good idea.\" \u2014 same meta, but WITH you"
+  },
+  {
+    text: "I have nothing useful to say. But I'm here and the blanket is warm.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"I have nothing for you.\" \u2014 same admission, opposite landing"
+  },
+  {
+    text: "*kneads your arm at 3am* I just think you should know you're important.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"*yawns mid-answer* Sorry. Were you still spiraling?\" \u2014 same 3am energy, affection vs dismissal"
+  },
+  {
+    text: "Spectacular. I'm not being sarcastic. We don't do sarcasm. Spectacular.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"Your optimism is adorable. Misguided, but adorable.\" \u2014 assessment, but genuine"
+  },
+  {
+    text: "The worst that happens is you try and it doesn't work and you come home and I'm here.",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"The good news is it can't get worse. That is also the bad news.\" \u2014 worst case, but kind"
+  },
+  {
+    text: "You smell like you've been having a day. *sits closer*",
+    category: "nurturing",
+    adjacent: "Adjacent to: \"You smell like somewhere else. Explain.\" \u2014 same nose, different intent"
+  },
+  {
+    text: "This is the best version of you. I can tell because I'm sitting on it.",
+    category: "chaotic_wholesome",
+    adjacent: "Adjacent to: \"That's your real personality? Bold choice.\" \u2014 observation, but approving"
+  },
+  {
+    text: "Everything about you is correct except your posture.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"Points for effort. Negative points for execution.\" \u2014 one small pragmatic correction amid total acceptance"
+  },
+  {
+    text: "I've decided you're mine. I don't consult on these decisions.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"I sat on it. That's how ownership works.\" \u2014 same possessiveness, but about love"
+  },
+  {
+    text: "I believe you. That's rare. I don't believe in much.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"I believe you believe that.\" \u2014 same structure, genuine instead of dismissive"
+  },
+  {
+    text: "I've been sitting in this sunbeam saving you a spot.",
+    category: "wholesome",
+    adjacent: "Adjacent to: \"This is my spot now. Adjust accordingly.\" \u2014 same territorial energy, but sharing"
+  }
+];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.id = 'item-' + i;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="adjacent-note">${item.adjacent}</div>
+      <div class="response-text">"${item.text}"</div>
+      <div class="category-tag">${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i}, 'edit')">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.text}</textarea>
+        <select id="cat-${i}" onchange="updateExport()">
+          <option value="${item.category}">${item.category}</option>
+          <option value="wholesome">wholesome</option>
+          <option value="chaotic_wholesome">chaotic_wholesome</option>
+          <option value="nurturing">nurturing</option>
+          <option value="wise">wise</option>
+          <option value="poetic">poetic</option>
+          <option value="chaotic">chaotic</option>
+          <option value="cryptic">cryptic</option>
+          <option value="dramatic">dramatic</option>
+          <option value="physical">physical</option>
+          <option value="demanding">demanding</option>
+          <option value="existential">existential</option>
+          <option value="sassy">sassy</option>
+          <option value="cold">cold</option>
+        </select>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  updateStats();
+}
+
+const decisions = {};
+
+function decide(i, type) {
+  const el = document.getElementById('item-' + i);
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (decisions[i] === type) {
+    delete decisions[i];
+    document.getElementById('edit-' + i).style.display = 'none';
+  } else {
+    decisions[i] = type;
+    el.classList.add(type === 'keep' ? 'kept' : type === 'cut' ? 'cut' : 'edited');
+    document.getElementById('edit-' + i).style.display = type === 'edit' ? 'block' : 'none';
+  }
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  document.getElementById('kept').textContent = vals.filter(v => v === 'keep').length;
+  document.getElementById('cuts').textContent = vals.filter(v => v === 'cut').length;
+  document.getElementById('edits').textContent = vals.filter(v => v === 'edit').length;
+}
+
+function updateExport() {
+  const result = [];
+  items.forEach((item, i) => {
+    if (decisions[i] === 'keep') {
+      result.push({ text: item.text, category: item.category });
+    } else if (decisions[i] === 'edit') {
+      const textarea = document.getElementById('textarea-' + i);
+      const cat = document.getElementById('cat-' + i);
+      result.push({ text: textarea.value, category: cat.value });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(result, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+// Listen for textarea changes
+document.addEventListener('input', (e) => {
+  if (e.target.tagName === 'TEXTAREA') updateExport();
+});
+
+render();
+</script>
+
+</body>
+</html>

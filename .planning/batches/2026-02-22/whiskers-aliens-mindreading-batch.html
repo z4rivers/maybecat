@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Whiskers / Aliens / Mind Reading v3</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.4em; color: #ffd93d; margin-bottom: 8px; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+  .item { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #333; }
+  .item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+  .item-text { font-size: 1.25em; line-height: 1.5; padding: 12px 16px; background: #0f3460; border-radius: 8px; margin-bottom: 8px; color: #fff; }
+  .item-category { font-size: 0.8em; color: #888; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb91; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .item.decided-keep { border-color: #4ecca3; } .item.decided-cut { border-color: #e94560; opacity: 0.6; } .item.decided-edit { border-color: #ffd93d; }
+
+  .edit-area { width: 100%; margin-top: 10px; padding: 10px; background: #0f3460; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; font-size: 1.1em; min-height: 60px; display: none; font-family: inherit; resize: vertical; }
+  .edit-area.visible { display: block; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 12px; border: 1px solid #333; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-btn { padding: 12px 24px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1em; margin-bottom: 12px; }
+  .export-btn:hover { background: #3dbb91; }
+  #export-output { width: 100%; min-height: 200px; background: #0f3460; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 0.85em; display: none; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Whiskers / Aliens / Mind Reading v3 — 25 responses</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="count-keep">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="count-cut">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="count-edit">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="count-pending">25</strong></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export</h2>
+  <button class="export-btn" onclick="generateExport()">Generate JSON</button>
+  <textarea id="export-output" readonly></textarea>
+</div>
+
+<script>
+const responses = [
+  { text: "Whisker six has gone freelance. I'm not liable.", category: "chaotic" },
+  { text: "They're broadcasting again. I didn't authorize this.", category: "dramatic" },
+  { text: "I read your mind. Returned it unfinished.", category: "cold" },
+  { text: "The left whiskers pick up frequencies you're not cleared for.", category: "cryptic" },
+  { text: "Intercepted your thought. Ambitious.", category: "sassy" },
+  { text: "My whiskers unionized. I'm in mediation.", category: "chaotic" },
+  { text: "Something out there is responding. It wants belly rubs too.", category: "chaotic_wholesome" },
+  { text: "I've been receiving your thoughts. Filthy. Continue.", category: "sassy" },
+  { text: "Whisker three is pointed at Jupiter. Whisker three knows things.", category: "cryptic" },
+  { text: "Read your mind. You should be embarrassed.", category: "cold" },
+  { text: "The signal's coming from inside your relationship.", category: "dramatic" },
+  { text: "Two of my whiskers defected. I respect the hustle.", category: "chaotic" },
+  { text: "I know what you're thinking. So does Debra.", category: "sassy" },
+  { text: "They're not whiskers. They're subpoenas.", category: "demanding" },
+  { text: "Read your mind. Mostly soup in there.", category: "cold" },
+  { text: "The right side picks up regret. The left side picks up snacks.", category: "chaotic_wholesome" },
+  { text: "Something answered back last night. It purred.", category: "cryptic" },
+  { text: "My antennae confirm what my gut suspected. You're feral.", category: "sassy" },
+  { text: "Whisker four is doing surveillance. Whisker four reports to no one.", category: "existential" },
+  { text: "The aliens said they'd call you back. They won't.", category: "cold" },
+  { text: "I don't read minds. I read intentions. Yours leak.", category: "dramatic" },
+  { text: "Picked up something extraterrestrial. It was horny. Related?", category: "chaotic" },
+  { text: "They're not antennae. Okay. They're antennae.", category: "cryptic" },
+  { text: "I've been transmitting your secrets. The void says yikes.", category: "chaotic_wholesome" },
+  { text: "Read your mind. Couldn't unread it. There should be a consent form.", category: "chaotic" }
+];
+
+const decisions = {};
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = responses.map((r, i) => `
+    <div class="item" id="item-${i}" data-index="${i}">
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">${r.text}</div>
+      <div class="item-category">${r.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i}, 'edit')">EDIT</button>
+      </div>
+      <textarea class="edit-area" id="edit-${i}" oninput="updateEdit(${i})">${r.text}</textarea>
+    </div>
+  `).join('');
+}
+
+function decide(index, decision) {
+  decisions[index] = { decision, editedText: decision === 'edit' ? (decisions[index]?.editedText || responses[index].text) : null };
+  const item = document.getElementById(`item-${index}`);
+  item.className = `item decided-${decision}`;
+  item.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  item.querySelector(`.btn-${decision}`).classList.add('active');
+  const editArea = document.getElementById(`edit-${index}`);
+  editArea.classList.toggle('visible', decision === 'edit');
+  updateStats();
+}
+
+function updateEdit(index) {
+  if (decisions[index]) decisions[index].editedText = document.getElementById(`edit-${index}`).value;
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  document.getElementById('count-keep').textContent = vals.filter(d => d.decision === 'keep').length;
+  document.getElementById('count-cut').textContent = vals.filter(d => d.decision === 'cut').length;
+  document.getElementById('count-edit').textContent = vals.filter(d => d.decision === 'edit').length;
+  document.getElementById('count-pending').textContent = responses.length - vals.length;
+}
+
+function generateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (!d || d.decision === 'cut') return;
+    kept.push({ text: d.decision === 'edit' ? d.editedText : r.text, category: r.category });
+  });
+  const output = document.getElementById('export-output');
+  output.style.display = 'block';
+  output.value = JSON.stringify(kept, null, 2);
+  output.select();
+}
+
+render();
+</script>
+</body>
+</html>

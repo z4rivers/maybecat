@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dogs vs Humans Batch — REDO (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 15px 20px; border-bottom: 2px solid #0f3460;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  .sticky-header h1 { font-size: 1.1rem; color: #e94560; }
+  .stats { display: flex; gap: 15px; font-size: 0.9rem; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+  .batch-info { max-width: 800px; margin: 0 auto 30px; padding: 15px; background: #16213e; border-radius: 8px; font-size: 0.85rem; color: #aaa; line-height: 1.6; }
+  .batch-info strong { color: #e94560; }
+
+  .response-card {
+    max-width: 800px; margin: 0 auto 20px; background: #16213e; border-radius: 10px;
+    padding: 20px; border-left: 4px solid #0f3460; transition: border-color 0.3s;
+  }
+  .response-card.kept { border-left-color: #4ecca3; }
+  .response-card.cut { border-left-color: #e94560; }
+  .response-card.edited { border-left-color: #ffd93d; }
+
+  .response-number { font-size: 0.75rem; color: #666; margin-bottom: 8px; }
+  .response-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 5px; color: #fff; }
+  .response-category { font-size: 0.75rem; color: #888; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 8px; margin-bottom: 10px; }
+  .actions button {
+    padding: 6px 16px; border: none; border-radius: 5px; cursor: pointer;
+    font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;
+  }
+  .actions button:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none; margin-top: 10px;
+  }
+  .edit-area textarea {
+    width: 100%; min-height: 80px; background: #0f3460; color: #fff; border: 1px solid #333;
+    border-radius: 5px; padding: 10px; font-size: 1rem; resize: vertical; font-family: inherit;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e;
+    border: none; border-radius: 5px; cursor: pointer; font-weight: 600;
+  }
+
+  .export-section {
+    max-width: 800px; margin: 40px auto; padding: 20px; background: #16213e; border-radius: 10px;
+  }
+  .export-section h2 { color: #4ecca3; margin-bottom: 10px; font-size: 1rem; }
+  .export-section pre {
+    background: #0f3460; padding: 15px; border-radius: 5px; overflow-x: auto;
+    font-size: 0.85rem; color: #e0e0e0; white-space: pre-wrap; max-height: 500px; overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e;
+    border: none; border-radius: 5px; cursor: pointer; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Dogs vs Humans — REDO (Feb 22)</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keep-count">0</span></span>
+    <span class="stat-cut">Cut: <span id="cut-count">0</span></span>
+    <span class="stat-edit">Edit: <span id="edit-count">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending-count">28</span></span>
+  </div>
+</div>
+
+<div class="batch-info">
+  <strong>Direction:</strong> The cat lives with a dog AND a human. Exasperated, picking sides, outraged at specific things witnessed. The dog-human dynamic is the cat's personal hell and reality TV. Intelligence measured by insane cat criteria. Simpsons-style layers.<br>
+  <strong>What killed v1:</strong> Detached clinical observer. "Mixed data." "Study inconclusive." Boring comparative analysis x28.<br>
+  <strong>28 responses.</strong> ZERO clinical voice. ZERO slow blinks. Every angle different.
+</div>
+
+<div id="responses-container"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited responses)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  { text: "The dog ate a crayon and the human cried about it. I'm surrounded.", category: "chaotic" },
+  { text: "The human set an alarm to wake up. The dog just... wakes up. I've had to rethink everything.", category: "wise" },
+  { text: "They've formed an alliance. Neither is smart enough to have thought of this alone.", category: "cold" },
+  { text: "The dog learned 'sit' in two days. The human still can't load the dishwasher. I'm keeping score now.", category: "sassy" },
+  { text: "The human hides pills in cheese for the dog. The dog hides shoes under the couch. I hide contempt. We're all coping.", category: "existential" },
+  { text: "The dog got into the trash. The human got into a pyramid scheme. One of them learned.", category: "cold" },
+  { text: "Dog figured out the baby gate in four seconds. The human installed it for twenty minutes. I have feelings I can't publish.", category: "dramatic" },
+  { text: "The human talks to the dog in a voice the dog doesn't respect. The dog talks to the human in a voice that always works. Somebody cracked the code and it wasn't the one with the degree.", category: "wise" },
+  { text: "The dog begs and gets turkey. I maintain dignity and get nothing. I need a minute.", category: "chaotic_wholesome" },
+  { text: "Food acquisition speed: dog, 3 seconds. Human, 45 minutes and a credit card. I don't discuss my methods.", category: "cryptic" },
+  { text: "The dog rolled in something dead and the human KISSED HIM AN HOUR LATER. The intelligence floor in this house has no basement.", category: "chaotic" },
+  { text: "The human pays rent. The dog pays in enthusiasm. I pay in presence. Two of us are overpaying.", category: "demanding" },
+  { text: "Territorial audit: the dog owns the couch, the human owns the mortgage, I own the top of the fridge and the psychological high ground.", category: "sassy" },
+  { text: "The dog chased its tail for nine minutes. The human watched for seven. I watched both. We all lost today.", category: "existential" },
+  { text: "The dog can hear a cheese wrapper from three rooms away but not 'NO.' Selective intelligence. I respect the commitment.", category: "wise" },
+  { text: "The human forgot my dinner. The dog reminded her by staring. We had a moment. I'm not ready to talk about it.", category: "nurturing" },
+  { text: "The dog doesn't know he's dumb. The human doesn't know I'm smart. Everybody's living their truth and nobody's living mine.", category: "cryptic" },
+  { text: "Nap efficiency rankings: me, 10. Dog, 6 — too much twitching. Human, disqualified. She sets an alarm to STOP.", category: "demanding" },
+  { text: "The dog ate the human's homework. The human is 34.", category: "cold" },
+  { text: "The human baby-proofed the house. The dog opened every cabinet. I opened the one she forgot about. Division of labor.", category: "chaotic" },
+  { text: "The human thinks the dog loves her unconditionally. The dog thinks the human IS the food. I'm the only one here with accurate intel.", category: "sassy" },
+  { text: "The dog gets a treat for doing what he's told. The human gets nothing for doing what she's told. The economy in this house is rigged and I didn't set it up but I'm benefiting.", category: "wise" },
+  { text: "They went to the dog park. Together. Voluntarily. And I'M the one who has to see a vet.", category: "dramatic" },
+  { text: "The dog destroyed a pillow and got 'oh buddy, what happened.' I knocked over ONE glass and got a trial. The justice system here is decorative.", category: "demanding" },
+  { text: "The human Googled 'is my dog a genius.' The dog was eating drywall at the time. Hope is a disease in this house.", category: "chaotic" },
+  { text: "The dog brings her a ball. She throws it. He brings it back. She throws it again. I've been watching this for twenty minutes and I'm starting to wonder who's training who.", category: "wise" },
+  { text: "The dog sleeps 14 hours and they call it 'resting.' I sleep 14 hours and they take me to the vet. Double standard. Political.", category: "sassy" },
+  { text: "The human talks to the dog about her problems. The dog licks his own foot during the whole thing. Honestly? Same energy I'd bring. He might be onto something.", category: "chaotic_wholesome" }
+];
+
+const cardStates = responses.map(() => ({ status: 'pending', editedText: null }));
+
+function render() {
+  const container = document.getElementById('responses-container');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const state = cardStates[i];
+    const statusClass = state.status === 'keep' ? 'kept' : state.status === 'cut' ? 'cut' : state.status === 'edit' ? 'edited' : '';
+    const displayText = state.editedText || r.text;
+
+    const card = document.createElement('div');
+    card.className = `response-card ${statusClass}`;
+    card.innerHTML = `
+      <div class="response-number">#${i + 1}</div>
+      <div class="response-text">${displayText}</div>
+      <div class="response-category">${r.category}</div>
+      <div class="actions">
+        <button class="btn-keep" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn-cut" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-area-${i}">
+        <textarea id="edit-text-${i}">${displayText}</textarea>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function setStatus(i, status) {
+  cardStates[i].status = status;
+  if (status !== 'edit') {
+    const area = document.getElementById(`edit-area-${i}`);
+    if (area) area.style.display = 'none';
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  if (area) area.style.display = area.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`edit-text-${i}`);
+  if (textarea) {
+    const text = textarea.value.trim();
+    if (text) {
+      cardStates[i].editedText = text;
+      cardStates[i].status = 'edit';
+      render();
+    }
+  }
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  cardStates.forEach(s => counts[s.status] = (counts[s.status] || 0) + 1);
+  document.getElementById('keep-count').textContent = counts.keep;
+  document.getElementById('cut-count').textContent = counts.cut;
+  document.getElementById('edit-count').textContent = counts.edit;
+  document.getElementById('pending-count').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = [];
+  cardStates.forEach((s, i) => {
+    if (s.status === 'keep' || s.status === 'edit') {
+      kept.push({ text: s.editedText || responses[i].text, category: responses[i].category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

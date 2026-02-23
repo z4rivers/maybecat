@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Raunchy Innuendo (Feb 21)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.3rem; margin-bottom: 8px; color: #f0e6ff; }
+  .stats { display: flex; gap: 20px; font-size: 0.95rem; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+  .section-label { font-size: 1.1rem; color: #c8b8e8; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+
+  .card { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .card.kept { border-left-color: #4ecca3; } .card.cut { border-left-color: #e94560; } .card.edited { border-left-color: #ffd93d; }
+
+  .response-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 6px; font-style: italic; color: #f0e6ff; }
+  .meta { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
+  .meta .voice-tag { color: #b8a0d8; font-weight: 600; }
+  .meta .cat-tag { color: #6ec8c8; }
+  .note { font-size: 0.8rem; color: #c9a84c; margin-bottom: 10px; font-style: italic; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63550; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+  .btn-reset { background: #444; color: #ccc; font-size: 0.8rem; padding: 6px 12px; } .btn-reset:hover { background: #555; }
+
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #f0e6ff; border: 1px solid #ffd93d; border-radius: 6px; padding: 12px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; }
+
+  .category-select { display: none; margin-top: 8px; }
+  .category-select select { background: #0f1a30; color: #f0e6ff; border: 1px solid #555; border-radius: 4px; padding: 6px; font-size: 0.85rem; }
+
+  #export-section { margin-top: 40px; padding: 20px; background: #0f1a30; border-radius: 10px; border: 1px solid #333; }
+  #export-section h2 { font-size: 1.1rem; margin-bottom: 10px; color: #4ecca3; }
+  #export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.85rem; resize: vertical; }
+  .btn-copy { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Raunchy Innuendo Batch — Feb 21, 2026</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="count-keep">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="count-cut">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="count-edit">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="count-pending">32</strong></span>
+    <span style="color:#666">|</span>
+    <span style="color:#aaa">Total: <strong>32</strong></span>
+  </div>
+</div>
+
+<div id="cards-container"></div>
+
+<div id="export-section">
+  <h2>Export — Kept &amp; Edited Responses</h2>
+  <textarea id="export-json" readonly></textarea>
+  <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = ["chaotic","wise","cold","sassy","cryptic","dramatic","physical","wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"];
+
+const responses = [
+  // === BATCH 1: Straight innuendo ===
+  { text: "The thing about the back of the couch is you have to commit to the position.", category: "wise", voice: null, section: 1 },
+  { text: "We don't discuss what happened on the dryer. But we both know the cycle wasn't finished.", category: "chaotic", voice: null, section: 1 },
+  { text: "Tuna at 2am hits different when you're not supposed to have it.", category: "cryptic", voice: null, section: 1 },
+  { text: "*kneads aggressively* It's not done until I say it's done.", category: "demanding", voice: null, section: 1 },
+  { text: "Two cats. One cardboard box. We made it work.", category: "chaotic", voice: null, section: 1, note: "⚠️ Too on-the-nose reference?" },
+  { text: "You have to let the biscuits rise. Rushing ruins the texture.", category: "wise", voice: null, section: 1 },
+  { text: "The countertop is cold at first. You get used to it.", category: "physical", voice: null, section: 1 },
+  { text: "I finished the whole can. Standing up. In the dark. No regrets.", category: "chaotic", voice: null, section: 1 },
+  { text: "The arrangement is: I get the top of the cat tree. She gets the middle. Nobody talks about the hammock.", category: "cryptic", voice: null, section: 1, note: "⚠️ Trim candidate — over 180 chars" },
+  { text: "Flatten yourself completely. Slide through the gap. You'd be surprised what fits.", category: "wise", voice: null, section: 1 },
+  { text: "I was just grooming. It escalated.", category: "chaotic", voice: null, section: 1 },
+  { text: "The butter was left out. I did what anyone would do. Repeatedly.", category: "sassy", voice: null, section: 1 },
+  { text: "Some assembly required. The instructions say to insert tab A firmly. I agree.", category: "cryptic", voice: null, section: 1, note: "⚠️ Duplicate energy with Batch 2 #8" },
+  { text: "*presents belly* This is not an invitation. Unless it is. Read the room.", category: "physical", voice: null, section: 1 },
+  { text: "Slow. Then slower. Then you pounce like your rent depends on it.", category: "demanding", voice: null, section: 1 },
+
+  // === BATCH 2: Comic voice delivery ===
+  { text: "They were on the couch again. The cushion will never be the same shape.", category: "cold", voice: "daria", section: 2 },
+  { text: "Apparently the new position is called 'open concept living.' I'm not sure that's what the realtor meant.", category: "sassy", voice: "daria", section: 2, note: "⚠️ Trim candidate — could end after first sentence" },
+  { text: "Three layers of pure indulgence and none of them were cake.", category: "cryptic", voice: "daria", section: 2 },
+  { text: "The butter has been softening on the counter since 6pm. No one is baking.", category: "cold", voice: "daria", section: 2 },
+  { text: "I observed what can only be described as a trophic cascade. Starting from the headboard.", category: "wise", voice: "brainy-cat", section: 2 },
+  { text: "Firm yet yielding, with an impressive rise time. Would not recommend at altitude.", category: "cryptic", voice: "brainy-cat", section: 2 },
+  { text: "Moist. Dangerously moist. And the humidity wasn't from the weather.", category: "dramatic", voice: "karen-cat", section: 2 },
+  { text: "Insert tab A into slot B was NEVER that loud before.", category: "chaotic", voice: "karen-cat", section: 2, note: "⚠️ Duplicate energy with Batch 1 #13" },
+  { text: "She said it melts in your mouth. Ma'am, this is a living room.", category: "sassy", voice: "karen-cat", section: 2 },
+  { text: "They engaged their core. Then each other. I was on the dryer and it wasn't even running.", category: "physical", voice: "daria", section: 2, note: "⚠️ Trim candidate" },
+  { text: "The hips store what the mind won't process. Apparently so does the kitchen island.", category: "wise", voice: "daria", section: 2 },
+  { text: "Gone in minutes. Didn't last long. Everyone wanted the recipe. I live with animals.", category: "cold", voice: "daria", section: 2, note: "⚠️ Trim — too many sentences. 'I live with animals' is the keeper." },
+  { text: "They keep saying 'load-bearing wall.' I've seen the wall. It's not bearing anything structural.", category: "cryptic", voice: "brainy-cat", section: 2, note: "⚠️ Trim candidate" },
+  { text: "I don't know what 'deep tissue work' is but it was 45 minutes and someone cried.", category: "chaotic", voice: "ponder-cat", section: 2 },
+  { text: "The oven was set to 450 but nobody preheated anything.", category: "cold", voice: "daria", section: 2 },
+  { text: "Inhale, create space. Exhale, go deeper. They were not doing yoga.", category: "sassy", voice: "daria", section: 2 },
+  { text: "Silky. Velvety. Ooey gooey. That was the review. Of a Tuesday.", category: "cryptic", voice: "daria", section: 2 }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null, editedCategory: null }));
+
+function render() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  // Section labels
+  const sections = { 1: "Batch 1 — Straight Innuendo", 2: "Batch 2 — Comic Voice Delivery" };
+  let currentSection = null;
+
+  state.forEach((item, i) => {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = sections[currentSection];
+      container.appendChild(label);
+    }
+
+    const card = document.createElement('div');
+    card.className = `card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}`;
+    card.id = `card-${i}`;
+
+    const voiceTag = item.voice ? `<span class="voice-tag">${item.voice}</span> · ` : '';
+    const noteHtml = item.note ? `<div class="note">${item.note}</div>` : '';
+
+    card.innerHTML = `
+      <div class="response-text">"${item.editedText || item.text}"</div>
+      <div class="meta">${voiceTag}<span class="cat-tag">${item.editedCategory || item.category}</span> · #${i + 1}</div>
+      ${noteHtml}
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-reset" onclick="decide(${i},'pending')">Reset</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.editedText || item.text}</textarea>
+        <select id="catselect-${i}">
+          ${CATEGORIES.map(c => `<option value="${c}" ${c === (item.editedCategory || item.category) ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <br><button class="btn btn-save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'none' || !el.style.display ? 'block' : 'none';
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value.trim();
+  const cat = document.getElementById(`catselect-${i}`).value;
+  state[i].editedText = text;
+  state[i].editedCategory = cat;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status]++);
+  document.getElementById('count-keep').textContent = counts.keep;
+  document.getElementById('count-cut').textContent = counts.cut;
+  document.getElementById('count-edit').textContent = counts.edit;
+  document.getElementById('count-pending').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({ text: s.editedText || s.text, category: s.editedCategory || s.category }));
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+</body>
+</html>

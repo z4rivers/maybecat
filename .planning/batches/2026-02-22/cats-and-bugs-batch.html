@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cats & Bugs — REDO | 2026-02-22</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
+  .sticky-header .subtitle { font-size: 0.85rem; color: #888; margin-bottom: 10px; }
+  .stats { display: flex; gap: 20px; font-size: 0.9rem; flex-wrap: wrap; }
+  .stat { padding: 4px 12px; border-radius: 4px; font-weight: 600; }
+  .stat-total { background: #2a2a4e; color: #aaa; }
+  .stat-keep { background: rgba(78, 204, 163, 0.15); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.15); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.15); color: #ffd93d; }
+
+  .batch-notes { background: #0f1729; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; font-size: 0.85rem; color: #999; line-height: 1.6; }
+  .batch-notes strong { color: #ffd93d; }
+
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+
+  .item-number { font-size: 0.75rem; color: #666; margin-bottom: 6px; }
+  .item-text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 6px; color: #fff; }
+  .item-category { font-size: 0.75rem; color: #888; margin-bottom: 12px; font-style: italic; }
+
+  .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-keep:hover { background: #3db890; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-edit:hover { background: #eec82a; }
+  .btn-undo { background: #555; color: #ddd; font-size: 0.75rem; padding: 4px 10px; }
+
+  .edit-area { margin-top: 10px; display: none; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f1729; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 60px; }
+  .edit-area .btn-save { background: #ffd93d; color: #1a1a2e; margin-top: 6px; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { margin-bottom: 10px; font-size: 1.1rem; }
+  .export-section pre { background: #0f1729; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; color: #4ecca3; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+  .btn-copy { background: #4ecca3; color: #1a1a2e; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Cats & Bugs — REDO</h1>
+  <div class="subtitle">2026-02-22 | Wright pivots, Far Side escalation, bug civilization as oracle answers. Zero observations-with-morals.</div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="total">27</span></span>
+    <span class="stat stat-keep">Keep: <span id="kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="edited">0</span></span>
+    <span class="stat stat-total">Pending: <span id="pending">27</span></span>
+  </div>
+</div>
+
+<div class="batch-notes">
+  <strong>REDO.</strong> First attempt was dead on arrival — observations with morals stapled on, internet cliches, "relationship goals," zero twists. This version: Far Side escalation into absurdity, Wright two-stage detonation, bug civilization imagined with full seriousness. Every response works as a genuine oracle answer through double meaning. The bug encounter IS the life advice — no signposting, no "reminds me of someone."
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <button class="btn btn-copy" onclick="copyExport()">Copy JSON</button>
+  <pre id="exportJson">[]</pre>
+</div>
+
+<script>
+const responses = [
+  {
+    text: "The ant filed a restraining order and I'm choosing to respect it.",
+    category: "cold"
+  },
+  {
+    text: "Spider rebuilt her web across my doorway overnight. The audacity. The artistry. The audacity.",
+    category: "dramatic"
+  },
+  {
+    text: "The centipede has a hundred legs and still can't leave.",
+    category: "cryptic"
+  },
+  {
+    text: "Two ants carried the same crumb in opposite directions until it split. The crumb was not the problem.",
+    category: "wise"
+  },
+  {
+    text: "Found a pill bug. Touched it. It became a perfect circle. Same.",
+    category: "nurturing"
+  },
+  {
+    text: "The praying mantis has never once asked for a second opinion.",
+    category: "demanding"
+  },
+  {
+    text: "Dragonfly held still in the air for thirty seconds then left without buying anything.",
+    category: "cold"
+  },
+  {
+    text: "Caterpillar dissolved its entire body to become something else. No notice. No exit interview.",
+    category: "chaotic"
+  },
+  {
+    text: "The mosquito asks every single time. Worst delivery. Perfect clarity.",
+    category: "sassy"
+  },
+  {
+    text: "Firefly out there just giving it away for free. No strategy. All glow.",
+    category: "chaotic_wholesome"
+  },
+  {
+    text: "There is a beetle on the porch wearing full armor to cross six inches of concrete. Respect the stakes you don't understand.",
+    category: "wise"
+  },
+  {
+    text: "Lost the cricket somewhere behind the fridge. I can still hear it. The fridge hums back. Something is developing.",
+    category: "cryptic"
+  },
+  {
+    text: "The spider and I have a land dispute. She keeps expanding into the lamp. I keep not hiring a lawyer. Advantage: spider.",
+    category: "chaotic"
+  },
+  {
+    text: "Watched a wasp build a house on a Tuesday like it was nothing. Some of us have been meaning to call the dentist for eight months.",
+    category: "cold"
+  },
+  {
+    text: "A single ant left the line. Just left. Everyone else kept going. I think about it constantly.",
+    category: "existential"
+  },
+  {
+    text: "The termites have been in the walls for months. Nobody checks on the quiet ones.",
+    category: "cryptic"
+  },
+  {
+    text: "Every bug I've ever caught was surprised. At some point the intelligence failure is on their side.",
+    category: "chaotic"
+  },
+  {
+    text: "The fly chose the closed window. Two open ones right there. Unshakeable vision.",
+    category: "sassy"
+  },
+  {
+    text: "Moth came back to the porch light a third night. At this point it's not a pattern, it's a religion.",
+    category: "existential"
+  },
+  {
+    text: "I brought the cricket inside. Now it's an inside cricket. Citizenship shouldn't be this easy.",
+    category: "chaotic_wholesome"
+  },
+  {
+    text: "The spider waits six days for one meal. I open the fridge forty times hoping something changed. We are not the same.",
+    category: "demanding"
+  },
+  {
+    text: "Stinkbug's entire defense is being terrible to be around. Hasn't been asked to change. Hasn't considered changing.",
+    category: "wise"
+  },
+  {
+    text: "The ants rebuilt everything by morning. I knocked over a glass of water last week and we're still processing it.",
+    category: "cold"
+  },
+  {
+    text: "Held a moth by the wings for ten minutes. Neither of us learned anything. Neither of us wanted to.",
+    category: "existential"
+  },
+  {
+    text: "Cockroach doesn't evolve. Doesn't need to. Some things showed up correct.",
+    category: "demanding"
+  },
+  {
+    text: "The bee works itself to death in six weeks. They put it on a mug. They put it on a MOTIVATIONAL mug.",
+    category: "chaotic"
+  },
+  {
+    text: "Lightning bugs coordinate without a meeting. Without a group chat. Without a single follow-up email.",
+    category: "poetic"
+  }
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: null }));
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => `
+    <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">${item.editedText || item.text}</div>
+      <div class="item-category">${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+        ${item.status !== 'pending' ? `<button class="btn btn-undo" onclick="decide(${i}, 'pending')">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.editedText || item.text}</textarea>
+        <button class="btn btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  state[i].status = status;
+  if (status !== 'edit') {
+    document.getElementById(`edit-${i}`)?.classList.remove('visible');
+  }
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.classList.toggle('visible');
+}
+
+function saveEdit(i) {
+  const textarea = document.getElementById(`textarea-${i}`);
+  state[i].editedText = textarea.value;
+  state[i].status = 'edit';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status] = (counts[s.status] || 0) + 1);
+  document.getElementById('kept').textContent = counts.keep;
+  document.getElementById('cutCount').textContent = counts.cut;
+  document.getElementById('edited').textContent = counts.edit;
+  document.getElementById('pending').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({ text: s.editedText || s.text, category: s.category }));
+  document.getElementById('exportJson').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

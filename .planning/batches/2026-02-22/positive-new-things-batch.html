@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Positive New Things (REDO)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 140px; }
+
+.sticky-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 15px 20px; border-bottom: 2px solid #0f3460;
+  display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+}
+.sticky-header h1 { font-size: 1.1rem; color: #fff; margin-right: auto; }
+.stat { font-size: 0.9rem; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+.stat-total { background: #0f3460; color: #a8b2d1; }
+.stat-keep { background: rgba(78,204,163,0.2); color: #4ecca3; }
+.stat-cut { background: rgba(233,69,96,0.2); color: #e94560; }
+.stat-edit { background: rgba(255,217,61,0.2); color: #ffd93d; }
+.stat-pending { background: rgba(160,160,180,0.2); color: #a0a0b4; }
+
+.response-card {
+  background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  border-left: 4px solid #0f3460; transition: border-color 0.3s;
+}
+.response-card.kept { border-left-color: #4ecca3; }
+.response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+.response-card.edited { border-left-color: #ffd93d; }
+
+.response-text {
+  font-size: 1.25rem; line-height: 1.5; color: #fff; margin-bottom: 8px;
+  font-style: italic;
+}
+.category-tag {
+  display: inline-block; font-size: 0.75rem; padding: 2px 10px;
+  border-radius: 10px; background: #0f3460; color: #a8b2d1;
+  margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.response-num {
+  font-size: 0.75rem; color: #555; margin-bottom: 6px;
+}
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 8px; font-weight: 600;
+  cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #3dbb92; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #d83a55; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #eec82c; }
+.btn-undo { background: #555; color: #fff; font-size: 0.75rem; padding: 6px 14px; }
+
+.edit-area {
+  display: none; margin-top: 12px;
+}
+.edit-area textarea {
+  width: 100%; min-height: 80px; background: #0d1b2a; color: #fff;
+  border: 1px solid #ffd93d; border-radius: 8px; padding: 12px;
+  font-size: 1rem; font-family: inherit; resize: vertical;
+}
+.edit-area .btn-save {
+  margin-top: 8px; background: #ffd93d; color: #1a1a2e;
+  padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+}
+.edit-area .edit-cat-row {
+  margin-top: 8px; display: flex; align-items: center; gap: 8px;
+}
+.edit-area select {
+  background: #0d1b2a; color: #fff; border: 1px solid #ffd93d;
+  border-radius: 6px; padding: 4px 8px; font-size: 0.85rem;
+}
+
+.export-section {
+  margin-top: 40px; background: #16213e; border-radius: 12px; padding: 24px;
+  border: 1px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+.export-section pre {
+  background: #0d1b2a; padding: 16px; border-radius: 8px;
+  overflow-x: auto; font-size: 0.85rem; color: #a8b2d1;
+  max-height: 400px; overflow-y: auto; white-space: pre-wrap;
+}
+.copy-btn {
+  margin-top: 10px; background: #4ecca3; color: #1a1a2e; border: none;
+  padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
+}
+.batch-note {
+  background: #0d1b2a; border-left: 3px solid #ffd93d; padding: 12px 16px;
+  margin-bottom: 24px; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: #a8b2d1;
+}
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Positive New Things — REDO Batch</h1>
+  <span class="stat stat-total" id="stat-total">Total: 0</span>
+  <span class="stat stat-keep" id="stat-keep">Keep: 0</span>
+  <span class="stat stat-cut" id="stat-cut">Cut: 0</span>
+  <span class="stat stat-edit" id="stat-edit">Edit: 0</span>
+  <span class="stat stat-pending" id="stat-pending">Pending: 0</span>
+</div>
+
+<div class="batch-note">
+  <strong>Creative direction:</strong> Positive/encouraging but FUNNY and SURPRISING. Zero cat physical behavior. Encouragement from unexpected angles on human life — terrible-influence friend energy, found language, making caution sound ridiculous, ambiguous encouragement-or-threat. The shareability test: would someone screenshot this and send it to a friend who's overthinking?
+</div>
+
+<div id="responses"></div>
+
+<div class="export-section">
+  <h2>Export — Kept &amp; Edited Responses</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = [
+  'chaotic','wise','cold','sassy','cryptic','dramatic','physical',
+  'wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'
+];
+
+const responses = [
+  { text: "The warranty is already void. Have fun.", category: "chaotic" },
+  { text: "Side effects may include confidence.", category: "chaotic_wholesome" },
+  { text: "The worst they can say is no. The second worst is yes. Both are survivable.", category: "wise" },
+  { text: "You're not \"thinking it over.\" You're stalling in a checkout lane with nothing in your hands.", category: "sassy" },
+  { text: "Everyone who got there first was also terrified. They just lied about it later.", category: "wise" },
+  { text: "Do it badly. Do it on a Tuesday. Nobody's grading this.", category: "chaotic_wholesome" },
+  { text: "The window is open. The screen is off. This is the whole invitation.", category: "cryptic" },
+  { text: "May cause sudden departure from situations that were never working.", category: "chaotic" },
+  { text: "Caution: not recommended for people who were doing fine where they were. You weren't.", category: "demanding" },
+  { text: "The hesitation is a cover charge for a club that doesn't exist.", category: "sassy" },
+  { text: "Some people plan the trip. Some people are already at the airport with one shoe.", category: "chaotic_wholesome" },
+  { text: "It's a \"yes\" dressed up as a \"maybe\" because you wanted someone else to go first.", category: "wise" },
+  { text: "The risk assessment came back. It says you're boring.", category: "cold" },
+  { text: "You've been in the lobby for three years. The appointment was always now.", category: "demanding" },
+  { text: "Send it. The draft folder is where courage goes to ferment.", category: "chaotic" },
+  { text: "Instructions unclear. Started a new life.", category: "chaotic_wholesome" },
+  { text: "The safe option has a leak. It's just slower.", category: "wise" },
+  { text: "This message will self-destruct in the amount of time it takes you to stop overthinking.", category: "sassy" },
+  { text: "Fortune favors you specifically right now and I cannot explain why.", category: "cryptic" },
+  { text: "What's the worst that happens? You become interesting.", category: "chaotic_wholesome" },
+  { text: "The GPS rerouted. The new way has better snacks.", category: "wholesome" },
+  { text: "You're describing a door and calling it a wall.", category: "wise" },
+  { text: "The universe doesn't care if you're ready. It barely cares if you're dressed.", category: "existential" },
+  { text: "Warning: may contain decisions you should have made six months ago.", category: "demanding" },
+  { text: "They'll talk about you either way. Give them something good.", category: "sassy" },
+  { text: "The net appears after you jump. Sincerely, everyone who jumped.", category: "chaotic_wholesome" },
+  { text: "Plot twist: you're the exciting thing that's about to happen to someone.", category: "wholesome" },
+  { text: "Today's forecast: reckless with a chance of getting away with it.", category: "chaotic" },
+  { text: "Your comfort zone filed a restraining order. You've been served.", category: "chaotic_wholesome" }
+];
+
+let decisions = {};
+
+function render() {
+  const container = document.getElementById('responses');
+  container.innerHTML = '';
+  responses.forEach((r, i) => {
+    const state = decisions[i] || { status: 'pending', text: r.text, category: r.category };
+    const card = document.createElement('div');
+    card.className = 'response-card' + (state.status === 'keep' ? ' kept' : state.status === 'cut' ? ' cut' : state.status === 'edit' ? ' edited' : '');
+    card.innerHTML = `
+      <div class="response-num">#${i + 1}</div>
+      <div class="response-text">"${escHtml(state.text)}"</div>
+      <div class="category-tag">${state.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="showEdit(${i})">EDIT</button>
+        ${state.status !== 'pending' ? `<button class="btn btn-undo" onclick="undo(${i})">UNDO</button>` : ''}
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="ta-${i}">${escHtml(state.text)}</textarea>
+        <div class="edit-cat-row">
+          <label>Category:</label>
+          <select id="cat-${i}">
+            ${CATEGORIES.map(c => `<option value="${c}" ${c === state.category ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  updateStats();
+  updateExport();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(i, status) {
+  const prev = decisions[i];
+  decisions[i] = {
+    status,
+    text: prev ? prev.text : responses[i].text,
+    category: prev ? prev.category : responses[i].category
+  };
+  render();
+}
+
+function undo(i) {
+  decisions[i] = { status: 'pending', text: decisions[i]?.text || responses[i].text, category: decisions[i]?.category || responses[i].category };
+  render();
+}
+
+function showEdit(i) {
+  const el = document.getElementById('edit-' + i);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const newText = document.getElementById('ta-' + i).value.trim();
+  const newCat = document.getElementById('cat-' + i).value;
+  decisions[i] = { status: 'edit', text: newText, category: newCat };
+  render();
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  const total = responses.length;
+  const keep = vals.filter(d => d.status === 'keep').length;
+  const cut = vals.filter(d => d.status === 'cut').length;
+  const edit = vals.filter(d => d.status === 'edit').length;
+  const pending = total - keep - cut - edit;
+  document.getElementById('stat-total').textContent = 'Total: ' + total;
+  document.getElementById('stat-keep').textContent = 'Keep: ' + keep;
+  document.getElementById('stat-cut').textContent = 'Cut: ' + cut;
+  document.getElementById('stat-edit').textContent = 'Edit: ' + edit;
+  document.getElementById('stat-pending').textContent = 'Pending: ' + pending;
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && (d.status === 'keep' || d.status === 'edit')) {
+      kept.push({ text: d.text, category: d.category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

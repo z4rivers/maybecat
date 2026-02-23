@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Review: Far Side Absurdity / Moral Dilemma / Fake Science</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Georgia', serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+.sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.stats { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.stat { font-size: 14px; font-weight: bold; }
+.stat-keep { color: #4ecca3; }
+.stat-cut { color: #e94560; }
+.stat-edit { color: #ffd93d; }
+.stat-pending { color: #888; }
+.batch-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 10px; padding-top: 20px; border-top: 1px solid #333; }
+.item { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #444; transition: border-color 0.3s; }
+.item.kept { border-left-color: #4ecca3; }
+.item.cut { border-left-color: #e94560; opacity: 0.5; }
+.item.edited { border-left-color: #ffd93d; }
+.item-number { font-size: 11px; color: #555; margin-bottom: 6px; }
+.item-text { font-size: 18px; line-height: 1.5; margin-bottom: 4px; color: #fff; }
+.item-category { font-size: 12px; color: #888; margin-bottom: 12px; font-style: italic; }
+.flag { font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+.flag-hot { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca344; }
+.flag-warn { background: #e9456022; color: #e94560; border: 1px solid #e9456044; }
+.buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-keep:hover { background: #6fe8bf; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #ff6b81; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn-edit:hover { background: #ffe566; }
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; min-height: 80px; background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 6px; padding: 12px; font-family: Georgia, serif; font-size: 16px; resize: vertical; }
+.edit-area select { background: #0f1729; color: #fff; border: 1px solid #ffd93d44; border-radius: 4px; padding: 6px 10px; margin-top: 8px; font-size: 13px; }
+.edit-area .save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+.export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 10px; border: 1px solid #333; }
+.export-section h3 { color: #4ecca3; margin-bottom: 10px; }
+.export-json { width: 100%; min-height: 200px; background: #1a1a2e; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 13px; }
+.copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+.copy-btn:hover { background: #6fe8bf; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Far Side Absurdity / Moral Dilemma / Fake Science</h1>
+  <div class="stats">
+    <span class="stat stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat stat-pending">PENDING: <span id="pending-count">45</span>/45</span>
+  </div>
+</div>
+
+<div id="items-container"></div>
+
+<div class="export-section">
+  <h3>Export (kept + edited responses)</h3>
+  <textarea class="export-json" id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  // BATCH 1: Moral Dilemma / Awkward Discovery
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Opened the wrong drawer at your friend's house. Now you share a secret neither of you will ever discuss.", category: "cryptic", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Whatever's in that bag under the sink, it's been there since before you moved in. Respect the arrangement.", category: "wise", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "The WiFi password is written on the back of something nobody was supposed to turn over.", category: "chaotic", flag: "hot" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "She said 'make yourself at home.' I did. We both regret it.", category: "sassy", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "You found the answer. It was in the nightstand. You wish it had been literally anywhere else.", category: "dramatic", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "You opened it because it was buzzing. That's on you.", category: "cold", flag: "hot" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Everyone at the dinner table knows. The dinner table has decided to not know.", category: "cold", flag: "hot" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Morally, you should say something. Strategically, you should eat the evidence.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "The spare bedroom closet has a shelf nobody dusts. The shelf has opinions about your marriage.", category: "cryptic", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "You weren't supposed to see that. But now that you have \u2014 whose problem is it, really.", category: "wise", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "The browser history survived the flood, the fire, and the factory reset. Some things want to be found.", category: "existential", flag: "warn" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Accidentally learned something about Grandma today. Grandma remains unaware. Grandma does not care.", category: "chaotic", flag: "hot" },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "You can return everything else. That knowledge? That's yours now.", category: "dramatic", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "Both options are wrong. One of them is funny, though.", category: "sassy", flag: null },
+  { batch: "Moral Dilemma / Awkward Discovery", text: "They left the door open. You chose to look. We're all adults here.", category: "sassy", flag: null },
+
+  // BATCH 2: Parallel Universe / Fake Science
+  { batch: "Parallel Universe / Fake Science", text: "Gravity is a suggestion and you keep volunteering.", category: "existential", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "In a peer-reviewed study of 400 relationships, the one who cares less always has better skin.", category: "cold", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "Your gut has its own neurons. It literally has opinions. You keep overruling a second brain with the first one.", category: "wise", flag: "warn" },
+  { batch: "Parallel Universe / Fake Science", text: "The warranty expired the moment you said 'what's the worst that could happen.'", category: "chaotic", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "Somewhere in a parallel universe you went to bed on time and woke up boring.", category: "sassy", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "Courage and stupidity share a parking lot. You're already here.", category: "chaotic_wholesome", flag: "hot" },
+  { batch: "Parallel Universe / Fake Science", text: "Nostalgia is just your brain photoshopping the past. The original files are corrupted.", category: "cryptic", flag: "warn" },
+  { batch: "Parallel Universe / Fake Science", text: "Every 'I'm fine' raises the internal pressure by 0.3 atmospheres. You're basically a weather event.", category: "dramatic", flag: "hot" },
+  { batch: "Parallel Universe / Fake Science", text: "Sleep is just free time travel and you keep refusing the ticket.", category: "wise", flag: "warn" },
+  { batch: "Parallel Universe / Fake Science", text: "The speed of light is 186,000 miles per second. The speed of regret is instant.", category: "poetic", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "Your body replaces every cell in seven years. You're literally not the person who made that decision.", category: "wholesome", flag: "warn" },
+  { batch: "Parallel Universe / Fake Science", text: "Mercury isn't in retrograde. You're just like this.", category: "cold", flag: "warn" },
+  { batch: "Parallel Universe / Fake Science", text: "Fun fact: geese mate for life and they're still furious about everything.", category: "chaotic", flag: "hot" },
+  { batch: "Parallel Universe / Fake Science", text: "Humans are 60% water. The rest is audacity.", category: "sassy", flag: null },
+  { batch: "Parallel Universe / Fake Science", text: "According to the building code your comfort zone has no fire exits.", category: "demanding", flag: "hot" },
+
+  // BATCH 3: Far Side Deadpan / Committed to the Wrong Thing
+  { batch: "Far Side Deadpan / Committed", text: "You're three payments in. That's not a decision anymore, that's a roommate.", category: "wise", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "The fax machine is still on. Nobody has sent a fax in nine years. Nobody will unplug it.", category: "existential", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "Committed? You showed up to the wrong funeral and gave the eulogy.", category: "chaotic", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "It stopped being a lie around year two. Now it's just your personality.", category: "cold", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "Everyone at the table ordered. Nobody wants what they got. Nobody's switching.", category: "cryptic", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "You said you loved hiking on the first date. You live there now.", category: "chaotic_wholesome", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "The r\u00e9sum\u00e9 said fluent. The meeting is in ten minutes. You know four words and two of them are 'bathroom.'", category: "chaotic", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "The wrong train goes somewhere too.", category: "wise", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "Bold of you to assume the right choice was even on the menu.", category: "sassy", flag: "warn" },
+  { batch: "Far Side Deadpan / Committed", text: "You told them you could drive stick. That was eleven intersections ago.", category: "dramatic", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "The peanut butter situation has gone on too long. Someone will be buried with this.", category: "wholesome", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "I've seen people double down on worse and call it a career.", category: "cold", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "You're not lost. You just committed to a direction that doesn't exist yet.", category: "poetic", flag: null },
+  { batch: "Far Side Deadpan / Committed", text: "The tattoo artist asked 'are you sure' three times. That's their whole speech. You're past the speech.", category: "wise", flag: "hot" },
+  { batch: "Far Side Deadpan / Committed", text: "Every empire started with someone who was too embarrassed to admit they were wrong.", category: "existential", flag: null },
+];
+
+let decisions = {};
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+  let currentBatch = '';
+
+  responses.forEach((r, i) => {
+    if (r.batch !== currentBatch) {
+      currentBatch = r.batch;
+      const label = document.createElement('div');
+      label.className = 'batch-label';
+      label.textContent = currentBatch;
+      container.appendChild(label);
+    }
+
+    const div = document.createElement('div');
+    div.className = 'item' + (decisions[i] ? ' ' + decisions[i].action : '');
+    div.id = 'item-' + i;
+
+    let flagHTML = '';
+    if (r.flag === 'hot') flagHTML = '<span class="flag flag-hot">top pick</span>';
+    if (r.flag === 'warn') flagHTML = '<span class="flag flag-warn">may be stale</span>';
+
+    const displayText = decisions[i] && decisions[i].editedText ? decisions[i].editedText : r.text;
+    const displayCat = decisions[i] && decisions[i].editedCategory ? decisions[i].editedCategory : r.category;
+
+    div.innerHTML = `
+      <div class="item-number">#${i + 1} ${flagHTML}</div>
+      <div class="item-text">"${displayText}"</div>
+      <div class="item-category">${displayCat}</div>
+      <div class="buttons">
+        <button class="btn btn-keep" onclick="decide(${i}, 'kept')">Keep</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">Cut</button>
+        <button class="btn btn-edit" onclick="toggleEdit(${i})">Edit</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${displayText}</textarea>
+        <select id="cat-${i}">
+          ${['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'].map(c => `<option value="${c}" ${c === displayCat ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function decide(i, action) {
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = action;
+  document.getElementById('item-' + i).className = 'item ' + action;
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById('edit-' + i);
+  area.style.display = area.style.display === 'none' ? 'block' : 'block';
+  document.getElementById('textarea-' + i).focus();
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('textarea-' + i).value.trim();
+  const cat = document.getElementById('cat-' + i).value;
+  if (!decisions[i]) decisions[i] = {};
+  decisions[i].action = 'edited';
+  decisions[i].editedText = text;
+  decisions[i].editedCategory = cat;
+  render();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'kept') keep++;
+    if (d.action === 'cut') cut++;
+    if (d.action === 'edited') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = (45 - keep - cut - edit);
+}
+
+function updateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (d && d.action === 'kept') {
+      kept.push({ text: r.text, category: r.category });
+    } else if (d && d.action === 'edited') {
+      kept.push({ text: d.editedText || r.text, category: d.editedCategory || r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('export-json');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+}
+
+render();
+</script>
+
+</body>
+</html>

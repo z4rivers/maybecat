@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cat Metrics Batch - Feb 22</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+.header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.header h1 { font-size: 1.4em; margin-bottom: 8px; color: #fff; }
+.header .subtitle { color: #aaa; font-size: 0.9em; margin-bottom: 12px; line-height: 1.5; }
+.stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+.stat { padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.stat-total { background: #333; color: #fff; }
+.stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+.stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+.stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+.item { background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 2px solid transparent; transition: border-color 0.3s; }
+.item.kept { border-color: #4ecca3; }
+.item.cut { border-color: #e94560; opacity: 0.5; }
+.item.edited { border-color: #ffd93d; }
+
+.item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+.unit-note { color: #7c8cbf; font-size: 0.8em; margin-bottom: 10px; font-style: italic; }
+.response-text { font-size: 1.2em; line-height: 1.6; margin-bottom: 6px; color: #fff; font-weight: 500; }
+.category-tag { display: inline-block; background: #333; color: #aaa; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; margin-bottom: 16px; }
+
+.actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #000; }
+.btn-keep:hover { background: #3dbb92; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #d83450; }
+.btn-edit { background: #ffd93d; color: #000; }
+.btn-edit:hover { background: #eec82c; }
+
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 8px; padding: 12px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
+.edit-area select { background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 0.9em; }
+
+.export-section { margin-top: 40px; padding: 24px; background: #16213e; border-radius: 12px; }
+.export-section h2 { margin-bottom: 12px; color: #4ecca3; }
+.export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; color: #ccc; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+.copy-btn { margin-top: 12px; padding: 10px 24px; background: #4ecca3; color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.copy-btn:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Cat Metrics Batch</h1>
+  <div class="subtitle">
+    Life measured in mice, lizard tails, cat-box visits, and other important cat-based metrics. Wright-style logic: impeccable reasoning, absurd units. Every response from a different fridge.
+  </div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="total">30</span></span>
+    <span class="stat stat-keep">Keep: <span id="kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cuts">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="edits">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (Keep + Edit only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  {
+    text: "Three-mouse problem. You brought one.",
+    category: "wise",
+    unit: "mice as problem-severity units"
+  },
+  {
+    text: "Two slow blinks out of a possible two. That's the whole scale.",
+    category: "chaotic_wholesome",
+    unit: "slow blinks as rating system \u2014 max approval, tiny scale"
+  },
+  {
+    text: "You're about four naps away from clarity.",
+    category: "wise",
+    unit: "naps as time-to-insight"
+  },
+  {
+    text: "Risk assessment: 1.5 lives. Proceed with moderate recklessness.",
+    category: "chaotic",
+    unit: "lives as risk units \u2014 the decimal is the comedy"
+  },
+  {
+    text: "Nine-tail-flick situation. I only have one tail.",
+    category: "angry",
+    unit: "tail flicks as irritation scale \u2014 overflow error"
+  },
+  {
+    text: "Estimated recovery time: six sunbeams.",
+    category: "nurturing",
+    unit: "sunbeams as healing units"
+  },
+  {
+    text: "One whisker width from disaster. Also one whisker width from perfect.",
+    category: "wise",
+    unit: "whisker width as precision measurement \u2014 de Bono reversal, same distance both directions"
+  },
+  {
+    text: "Your emotional range today: from under-the-bed to top-of-the-fridge.",
+    category: "wise",
+    unit: "cat locations as emotional spectrum"
+  },
+  {
+    text: "Worth at least four headbutts. I don't hand those out.",
+    category: "demanding",
+    unit: "headbutts as scarce affection currency"
+  },
+  {
+    text: "Productivity report: two lizard tails and a moth wing.",
+    category: "chaotic",
+    unit: "hunt trophies as output metrics"
+  },
+  {
+    text: "Confidence level: entire belly exposed.",
+    category: "chaotic_wholesome",
+    unit: "belly exposure as vulnerability/confidence index"
+  },
+  {
+    text: "Three litter box visits past its expiration.",
+    category: "cold",
+    unit: "litter box visits as overdue measurement"
+  },
+  {
+    text: "I've done the math. The math is in birds.",
+    category: "chaotic",
+    unit: "birds as computational unit \u2014 the disclaimer IS the punchline"
+  },
+  {
+    text: "Distance to your goal: one really good jump.",
+    category: "chaotic_wholesome",
+    unit: "cat jump as distance \u2014 encouraging + absurd"
+  },
+  {
+    text: "Four knocked-over glasses and the shelf only holds three.",
+    category: "chaotic",
+    unit: "knocked-over glasses as stress/capacity overflow"
+  },
+  {
+    text: "Two purrs short of convincing.",
+    category: "cold",
+    unit: "purrs as persuasion units \u2014 insufficient"
+  },
+  {
+    text: "Time remaining: whatever's left of this sunbeam.",
+    category: "poetic",
+    unit: "sunbeam as deadline \u2014 beautiful and finite"
+  },
+  {
+    text: "I measured twice. In mice. The answer is seven mice.",
+    category: "chaotic",
+    unit: "mice as general measurement \u2014 Wright structure, definitive nonsense"
+  },
+  {
+    text: "Your odds: one open door in a house of twelve.",
+    category: "wise",
+    unit: "doors as probability \u2014 cat-specific chance calculation"
+  },
+  {
+    text: "That was a six-treat confession. I usually charge eight.",
+    category: "demanding",
+    unit: "treats as emotional labor pricing"
+  },
+  {
+    text: "The math checks out but the math is in tuna cans so.",
+    category: "chaotic",
+    unit: "tuna cans as math unit \u2014 trailing 'so' admits the limitation"
+  },
+  {
+    text: "Speed of recovery: one lizard tail. Grows back. Takes a minute.",
+    category: "wise",
+    unit: "lizard tail as regeneration metaphor"
+  },
+  {
+    text: "Three head bonks and a slow blink from getting what you want.",
+    category: "chaotic_wholesome",
+    unit: "cat affection as recipe/distance"
+  },
+  {
+    text: "Danger level: vacuum cleaner in the next room.",
+    category: "dramatic",
+    unit: "vacuum proximity as threat scale"
+  },
+  {
+    text: "Verdict: three and a half mice. Don't ask about the half.",
+    category: "chaotic",
+    unit: "fractional mice \u2014 dark implication, flat delivery"
+  },
+  {
+    text: "That plan has the structural integrity of a lizard tail.",
+    category: "cold",
+    unit: "lizard tail as structural assessment \u2014 detaches under pressure"
+  },
+  {
+    text: "Cost-benefit analysis complete. Costs: one nap. Benefits: unclear. Nap wins.",
+    category: "wise",
+    unit: "nap as opportunity cost \u2014 impeccable logic"
+  },
+  {
+    text: "You're two cat-box visits into a five cat-box-visit day.",
+    category: "existential",
+    unit: "cat-box visits as day-quality index"
+  },
+  {
+    text: "Return on investment: one dead moth and a sense of accomplishment.",
+    category: "chaotic",
+    unit: "dead moth as ROI \u2014 underwhelming yield, full satisfaction"
+  },
+  {
+    text: "Forecast: partly birdy with a chance of zoomies.",
+    category: "chaotic_wholesome",
+    unit: "weather report format, cat conditions"
+  }
+];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.id = 'item-' + i;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="unit-note">${item.unit}</div>
+      <div class="response-text">\u201c${item.text}\u201d</div>
+      <div class="category-tag">${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i}, 'edit')">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.text}</textarea>
+        <select id="cat-${i}" onchange="updateExport()">
+          <option value="${item.category}">${item.category}</option>
+          <option value="chaotic">chaotic</option>
+          <option value="wise">wise</option>
+          <option value="cold">cold</option>
+          <option value="chaotic_wholesome">chaotic_wholesome</option>
+          <option value="wholesome">wholesome</option>
+          <option value="nurturing">nurturing</option>
+          <option value="demanding">demanding</option>
+          <option value="existential">existential</option>
+          <option value="poetic">poetic</option>
+          <option value="dramatic">dramatic</option>
+          <option value="angry">angry</option>
+          <option value="sassy">sassy</option>
+          <option value="cryptic">cryptic</option>
+          <option value="heartfelt">heartfelt</option>
+          <option value="judgy">judgy</option>
+          <option value="meta">meta</option>
+        </select>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  updateStats();
+}
+
+const decisions = {};
+
+function decide(i, type) {
+  const el = document.getElementById('item-' + i);
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (decisions[i] === type) {
+    delete decisions[i];
+    document.getElementById('edit-' + i).style.display = 'none';
+  } else {
+    decisions[i] = type;
+    el.classList.add(type === 'keep' ? 'kept' : type === 'cut' ? 'cut' : 'edited');
+    document.getElementById('edit-' + i).style.display = type === 'edit' ? 'block' : 'none';
+  }
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  document.getElementById('kept').textContent = vals.filter(v => v === 'keep').length;
+  document.getElementById('cuts').textContent = vals.filter(v => v === 'cut').length;
+  document.getElementById('edits').textContent = vals.filter(v => v === 'edit').length;
+}
+
+function updateExport() {
+  const result = [];
+  items.forEach((item, i) => {
+    if (decisions[i] === 'keep') {
+      result.push({ text: item.text, category: item.category });
+    } else if (decisions[i] === 'edit') {
+      const textarea = document.getElementById('textarea-' + i);
+      const cat = document.getElementById('cat-' + i);
+      result.push({ text: textarea.value, category: cat.value });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(result, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.tagName === 'TEXTAREA') updateExport();
+});
+
+render();
+</script>
+
+</body>
+</html>

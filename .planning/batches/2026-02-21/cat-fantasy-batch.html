@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cat Paradise — Jack Black Energy Fantasy (Feb 21)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .sticky-header h1 {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .sticky-header .subtitle {
+    font-size: 0.85rem;
+    color: #8888aa;
+    margin-bottom: 12px;
+  }
+  .stats {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stat {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .stat-total { color: #ccc; }
+  .stat-kept { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edited { color: #ffd93d; }
+  .stat-remaining { color: #8888aa; }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .item {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    border-left: 4px solid #0f3460;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, border-left-color 0.3s;
+  }
+  .item.decided-keep { border-color: #4ecca3; border-left-color: #4ecca3; }
+  .item.decided-cut { border-color: #e94560; border-left-color: #e94560; }
+  .item.decided-edit { border-color: #ffd93d; border-left-color: #ffd93d; }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .item-number {
+    color: #555;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .badge-category {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #ccc;
+  }
+  .badge-category.cat-chaotic { color: #ff8a65; border: 1px solid #ff8a65; }
+  .badge-category.cat-wise { color: #81c784; border: 1px solid #81c784; }
+  .badge-category.cat-cold { color: #64b5f6; border: 1px solid #64b5f6; }
+  .badge-category.cat-sassy { color: #fff176; border: 1px solid #fff176; }
+  .badge-category.cat-cryptic { color: #b39ddb; border: 1px solid #b39ddb; }
+  .badge-category.cat-dramatic { color: #ef5350; border: 1px solid #ef5350; }
+  .badge-category.cat-physical { color: #4dd0e1; border: 1px solid #4dd0e1; }
+  .badge-category.cat-wholesome { color: #f48fb1; border: 1px solid #f48fb1; }
+  .badge-category.cat-demanding { color: #ffb74d; border: 1px solid #ffb74d; }
+  .badge-category.cat-chaotic_wholesome { color: #ff8a65; border: 1px solid #f48fb1; background: rgba(255,138,101,0.1); }
+  .badge-category.cat-existential { color: #ce93d8; border: 1px solid #ce93d8; }
+  .badge-category.cat-nurturing { color: #a5d6a7; border: 1px solid #a5d6a7; }
+  .badge-category.cat-poetic { color: #90caf9; border: 1px solid #90caf9; }
+
+  .response-text {
+    font-size: 1.25rem;
+    font-weight: 500;
+    font-style: italic;
+    color: #f0e6ff;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    padding: 8px 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { border-color: #4ecca3; color: #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { border-color: #e94560; color: #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #1a1a2e; }
+  .btn-edit { border-color: #ffd93d; color: #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { border-color: #8888aa; color: #8888aa; font-size: 0.75rem; padding: 6px 14px; display: none; }
+  .btn-reset:hover { background: #8888aa; color: #1a1a2e; }
+  .btn-reset.visible { display: inline-block; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .edit-area textarea:focus { outline: none; border-color: #ffd93d; }
+  .edit-category {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .edit-category label {
+    font-size: 0.8rem;
+    color: #8888aa;
+  }
+  .edit-category select {
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+  }
+  .edit-category select:focus { outline: none; border-color: #ffd93d; }
+  .edit-save {
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .decision-label {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+  .decision-label.visible { display: inline-block; }
+  .decision-label.dl-keep { background: #4ecca3; color: #1a1a2e; }
+  .decision-label.dl-cut { background: #e94560; color: #1a1a2e; }
+  .decision-label.dl-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .export-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .export-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    color: #8888aa;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #0d1b2a;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.8rem;
+    color: #4ecca3;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    cursor: text;
+    user-select: all;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .copy-btn:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Cat Paradise — Jack Black Energy Fantasy (Feb 21)</h1>
+  <div class="subtitle">Warm boxes, forbidden countertops, infinite crinkle sounds. Cat paradise as life advice.</div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="stat-total">25</span></span>
+    <span class="stat stat-kept">Kept: <span id="stat-kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="stat-cut">0</span></span>
+    <span class="stat stat-edited">Edited: <span id="stat-edited">0</span></span>
+    <span class="stat stat-remaining">Remaining: <span id="stat-remaining">25</span></span>
+  </div>
+</div>
+
+<div class="container" id="items-container"></div>
+
+<div class="export-section">
+  <h2>Export — Kept &amp; Edited Items (JSON)</h2>
+  <p>Only items marked KEEP or EDIT (with saved text) appear here. Copy and paste into oracleResponses.ts.</p>
+  <div class="export-block" id="export-json">[]</div>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const CATEGORIES = [
+  "chaotic", "wise", "cold", "sassy", "cryptic", "dramatic",
+  "physical", "wholesome", "demanding", "chaotic_wholesome",
+  "existential", "nurturing", "poetic"
+];
+
+const DATA = [
+  { id: 1, text: "Somewhere there\u2019s a box that\u2019s EXACTLY your size and the sun hits it at 2pm and the cardboard is already warm.", category: "chaotic_wholesome" },
+  { id: 2, text: "In the good version, every lap is available and none of them get up.", category: "wholesome" },
+  { id: 3, text: "Picture this: the crinkle sound. But it never stops. EVER.", category: "chaotic" },
+  { id: 4, text: "There\u2019s a universe where gravity is optional and every shelf is reachable and nobody said get down. Not once.", category: "dramatic" },
+  { id: 5, text: "The answer is whatever\u2019s on the other side of a door that\u2019s always open but you can still yowl at it if you want.", category: "wise" },
+  { id: 6, text: "Imagine: warm tile after someone else\u2019s shower. Forever. That\u2019s what yes feels like.", category: "physical" },
+  { id: 7, text: "I\u2019m talking about a world where tuna materializes when you THINK about it. Don\u2019t aim lower than that.", category: "demanding" },
+  { id: 8, text: "There\u2019s a version of this where you catch the red dot and it\u2019s everything. EVERYTHING.", category: "chaotic_wholesome" },
+  { id: 9, text: "The highest shelf. Nobody can reach you. The sun is following YOUR schedule. That\u2019s the move.", category: "wise" },
+  { id: 10, text: "In paradise every surface is the right texture and nobody asks where you\u2019ve been.", category: "existential" },
+  { id: 11, text: "You deserve the warm gap between the couch cushions where someone just was. The ghost of a perfect lap. That level of comfort.", category: "nurturing" },
+  { id: 12, text: "I want birds that are slow AND stupid and a windowsill wide enough to lie down on and I want it NOW.", category: "demanding" },
+  { id: 13, text: "The dishwasher just ran. The top is warm. Every inch of you is flat against it. Nothing else exists. That\u2019s the answer.", category: "physical" },
+  { id: 14, text: "There\u2019s a timeline where the printer runs all day and every page comes out warm and you sleep on every single one.", category: "chaotic" },
+  { id: 15, text: "The countertop is allowed. I need you to understand what I\u2019m saying. THE COUNTERTOP. IS. ALLOWED.", category: "dramatic" },
+  { id: 16, text: "Perfection is a closed laptop that\u2019s still warm from someone else\u2019s work and nobody moves you off it.", category: "poetic" },
+  { id: 17, text: "Somewhere there\u2019s a paper bag that crinkles every time you breathe and the crinkle echoes and you fall asleep inside the sound.", category: "cryptic" },
+  { id: 18, text: "In the good ending you\u2019re wedged behind the TV where the warm air comes out and you have absolutely no plans.", category: "wholesome" },
+  { id: 19, text: "Every door open. Every lap warm. The vet is a myth. This is what you should be building toward.", category: "wise" },
+  { id: 20, text: "I caught something once and it was perfect and it didn\u2019t run and I held it. Hold yours like that.", category: "nurturing" },
+  { id: 21, text: "There is a drawer that was left open two inches and it fits you PERFECTLY and nobody discovers you for hours. That kind of peace.", category: "existential" },
+  { id: 22, text: "Do you understand what I\u2019d do for a heating vent that kicks on the SECOND I lie down on it? Do that. Whatever this is. Do it.", category: "chaotic_wholesome" },
+  { id: 23, text: "The pizza box is still warm. Not the pizza. The CARDBOARD. That\u2019s the level of specific joy available to you right now.", category: "physical" },
+  { id: 24, text: "Somewhere the 3am sprint lasts forever and nobody yells and the hallway has perfect acoustics.", category: "chaotic" },
+  { id: 25, text: "*full-body stretch, every toe spread, claws out, immediate collapse* That. But forever.", category: "physical" }
+];
+
+// State
+const decisions = {};
+
+function render() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+
+  DATA.forEach(item => {
+    const dec = decisions[item.id] || {};
+    const status = dec.status || null;
+
+    const card = document.createElement('div');
+    card.className = 'item' + (status ? ` decided-${status}` : '');
+
+    const categoryClass = 'cat-' + item.category;
+
+    let decisionLabelHTML = '';
+    if (status) {
+      const dlClass = status === 'keep' ? 'dl-keep' : status === 'cut' ? 'dl-cut' : 'dl-edit';
+      decisionLabelHTML = `<span class="decision-label visible ${dlClass}">${status.toUpperCase()}</span>`;
+    }
+
+    const editedText = dec.editedText || item.text;
+    const editedCategory = dec.editedCategory || item.category;
+
+    const categoryOptions = CATEGORIES.map(c =>
+      `<option value="${c}" ${c === editedCategory ? 'selected' : ''}>${c}</option>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="item-header">
+        <span class="item-number">#${item.id}</span>
+        <div class="badges">
+          <span class="badge-category ${categoryClass}">${item.category.replace('_', ' ')}</span>
+          ${decisionLabelHTML}
+        </div>
+      </div>
+      <div class="response-text">${escapeHTML(status === 'edit' && dec.editedText ? dec.editedText : item.text)}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${status === 'keep' ? 'active' : ''}" onclick="decide(${item.id}, 'keep')">Keep</button>
+        <button class="btn btn-cut ${status === 'cut' ? 'active' : ''}" onclick="decide(${item.id}, 'cut')">Cut</button>
+        <button class="btn btn-edit ${status === 'edit' ? 'active' : ''}" onclick="toggleEdit(${item.id})">Edit</button>
+        <button class="btn btn-reset ${status ? 'visible' : ''}" onclick="resetItem(${item.id})">Reset</button>
+      </div>
+      <div class="edit-area ${status === 'edit' ? 'visible' : ''}" id="edit-area-${item.id}">
+        <textarea id="edit-text-${item.id}">${escapeHTML(editedText)}</textarea>
+        <div class="edit-category">
+          <label>Category:</label>
+          <select id="edit-cat-${item.id}">${categoryOptions}</select>
+        </div>
+        <button class="edit-save" onclick="saveEdit(${item.id})">Save Edit</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateStats();
+  updateExport();
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function decide(id, status) {
+  if (decisions[id] && decisions[id].status === status) return;
+  decisions[id] = { status, editedText: null, editedCategory: null };
+  render();
+}
+
+function toggleEdit(id) {
+  const dec = decisions[id] || {};
+  if (dec.status === 'edit') return; // already in edit mode
+  const item = DATA.find(d => d.id === id);
+  decisions[id] = {
+    status: 'edit',
+    editedText: dec.editedText || item.text,
+    editedCategory: dec.editedCategory || item.category
+  };
+  render();
+  // Focus the textarea
+  const ta = document.getElementById('edit-text-' + id);
+  if (ta) ta.focus();
+}
+
+function saveEdit(id) {
+  const text = document.getElementById('edit-text-' + id).value.trim();
+  const cat = document.getElementById('edit-cat-' + id).value;
+  if (!text) return;
+  decisions[id] = { status: 'edit', editedText: text, editedCategory: cat };
+  render();
+}
+
+function resetItem(id) {
+  delete decisions[id];
+  render();
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.status === 'keep') kept++;
+    else if (d.status === 'cut') cut++;
+    else if (d.status === 'edit') edited++;
+  });
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = DATA.length - kept - cut - edited;
+}
+
+function updateExport() {
+  const exported = [];
+  DATA.forEach(item => {
+    const dec = decisions[item.id];
+    if (!dec) return;
+    if (dec.status === 'keep') {
+      exported.push({ text: item.text, category: item.category });
+    } else if (dec.status === 'edit' && dec.editedText) {
+      exported.push({ text: dec.editedText, category: dec.editedCategory || item.category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 2000);
+  });
+}
+
+// Initial render
+render();
+</script>
+
+</body>
+</html>

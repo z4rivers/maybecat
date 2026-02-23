@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simpsons Forensics — Domestic Evidence Batch (Feb 22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-box .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .stat-total .dot { background: #888; }
+  .stat-kept .dot { background: #4ecca3; }
+  .stat-cut .dot { background: #e94560; }
+  .stat-edited .dot { background: #ffd93d; }
+  .stat-remaining .dot { background: #6c757d; }
+
+  .batch-notes {
+    padding: 20px 24px;
+    background: rgba(15, 52, 96, 0.3);
+    border-bottom: 1px solid #0f3460;
+    font-size: 14px;
+    color: #aaa;
+    line-height: 1.5;
+  }
+  .batch-notes strong { color: #7ec8e3; }
+
+  .item {
+    padding: 24px;
+    border-bottom: 1px solid #0f3460;
+    transition: background 0.2s;
+  }
+  .item.kept { background: rgba(78, 204, 163, 0.08); }
+  .item.cut { background: rgba(233, 69, 96, 0.08); }
+  .item.edited { background: rgba(255, 217, 61, 0.08); }
+
+  .item-number {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 500;
+    font-style: italic;
+    color: #f0e6ff;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    border-left: 3px solid #0f3460;
+    transition: border-color 0.2s;
+  }
+  .item.kept .response-text { border-left-color: #4ecca3; }
+  .item.cut .response-text { border-left-color: #e94560; }
+  .item.edited .response-text { border-left-color: #ffd93d; }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-category {
+    background: rgba(15, 52, 96, 0.6);
+    color: #7ec8e3;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .btn {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { background: #555; color: #eee; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .btn-reset.hidden { display: none; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: vertical;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area select {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    color: #7ec8e3;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .edit-area select:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn-save-edit {
+    padding: 6px 18px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .category-label {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .export-section {
+    padding: 32px 24px;
+    margin-top: 24px;
+  }
+  .export-section h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #e0e0e0;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Simpsons Forensics — Domestic Evidence (Feb 22)</h1>
+  <div class="stat-box stat-total"><span class="dot"></span> Total: <span id="stat-total">27</span></div>
+  <div class="stat-box stat-kept"><span class="dot"></span> Kept: <span id="stat-kept">0</span></div>
+  <div class="stat-box stat-cut"><span class="dot"></span> Cut: <span id="stat-cut">0</span></div>
+  <div class="stat-box stat-edited"><span class="dot"></span> Edited: <span id="stat-edited">0</span></div>
+  <div class="stat-box stat-remaining"><span class="dot"></span> Remaining: <span id="stat-remaining">27</span></div>
+</div>
+
+<div class="batch-notes">
+  <strong>Divergence seed:</strong> Investigative/documentary/forensic energy. A narrator building a case from domestic evidence. True crime meets nature documentary meets household forensics. "Who is REALLY in charge here?" — and every piece of evidence points to the cat. Must still land as oracle answers to any life question.
+</div>
+
+<div id="items-container"></div>
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export &mdash; Kept &amp; Edited Items</h2>
+  <p>Items marked KEEP or EDIT (with saved text) appear here. Copy the JSON below.</p>
+  <div class="export-block">
+    <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+    <pre id="export-json">[]</pre>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = ["chaotic","wise","cold","sassy","cryptic","dramatic","physical","wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"];
+
+const allItems = [
+  { text: "The grocery receipt tells a different story than the one you\u2019re telling yourself.", category: "wise" },
+  { text: "Exhibit A: the indent in the cushion. Nobody sat there today. Somebody owns it anyway.", category: "cryptic" },
+  { text: "The thermostat has been adjusted. No one will claim responsibility. The room temperature tells the truth.", category: "cold" },
+  { text: "Forensic analysis of the blanket confirms: you moved. You were not asked to move.", category: "sassy" },
+  { text: "The feeding schedule entered into evidence suggests the defendant trained the plaintiff, not the other way around.", category: "wise" },
+  { text: "There are two bowls in this kitchen that get washed immediately. Yours isn\u2019t one of them.", category: "cold" },
+  { text: "Upon examination, the couch arm shows consistent wear from a single occupant weighing eleven pounds. The mortgage holder sleeps on the floor.", category: "dramatic" },
+  { text: "Subject maintains a perimeter of exactly four feet. Not avoidance. Surveillance.", category: "cryptic" },
+  { text: "The hair on the clean laundry is not contamination. It\u2019s a signature.", category: "sassy" },
+  { text: "Note the sleep pattern: center of the bed, diagonal. The humans have adapted to the remaining geometry.", category: "wise" },
+  { text: "Someone opened the fridge eleven times today. The fridge knows who.", category: "cryptic" },
+  { text: "*sits on the evidence*", category: "physical" },
+  { text: "The door-opening log shows 14 requests today. All from the same source. None resulted in an actual exit.", category: "chaotic" },
+  { text: "Who benefits? Follow the tuna.", category: "cold" },
+  { text: "The witness is grooming itself and has no further comment at this time.", category: "sassy" },
+  { text: "You can tell who runs a house by who eats first. Everything after that is theater.", category: "wise" },
+  { text: "A review of the furniture layout reveals a clear flight path from door to window to counter. The humans arranged their living room around it without being asked.", category: "dramatic" },
+  { text: "The evidence was there the whole time. You just kept calling it love.", category: "poetic" },
+  { text: "I\u2019m not the suspect. I\u2019m the scene.", category: "demanding" },
+  { text: "Exhibit C: one ear rotated 180 degrees toward the kitchen. The body hasn\u2019t moved in forty minutes. The case builds itself.", category: "cryptic" },
+  { text: "Cross-reference the alarm clock with the actual time you wake up. That\u2019s two different authorities and only one of them is in the bed.", category: "chaotic" },
+  { text: "Every house has a paper trail. Yours leads to the treat drawer.", category: "wholesome" },
+  { text: "Preliminary findings: you think you\u2019re in charge because you pay rent. The counterevidence is asleep on your pillow.", category: "chaotic_wholesome" },
+  { text: "The pattern of scratches on the doorframe tells a story older than the lease.", category: "poetic" },
+  { text: "The prosecution rests. Literally. On your laptop.", category: "sassy" },
+  { text: "Case notes: subject was observed pressing its entire body weight against the defendant\u2019s shin at 7:42 AM. The defendant called this affection. The subject called it leverage.", category: "wise" },
+  { text: "All the evidence points the same direction. It always did. You just weren\u2019t the detective.", category: "existential" }
+];
+
+const TOTAL = allItems.length;
+const decisions = {};
+const items = {};
+
+function buildCategorySelect(id, currentCategory) {
+  let html = '<label class="category-label">Category:</label><select id="cat-' + id + '">';
+  CATEGORIES.forEach(c => {
+    html += '<option value="' + c + '"' + (c === currentCategory ? ' selected' : '') + '>' + c + '</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderAll() {
+  const container = document.getElementById('items-container');
+  let html = '';
+
+  allItems.forEach((item, idx) => {
+    const id = idx + 1;
+    items[id] = { text: item.text, category: item.category, editedText: null, editedCategory: null };
+
+    html += '<div class="item" data-id="' + id + '">';
+    html += '<div class="item-number">#' + id + '</div>';
+    html += '<div class="response-text">' + escapeHtml(item.text) + '</div>';
+    html += '<div class="badges"><span class="badge badge-category" id="badge-cat-' + id + '">' + item.category + '</span></div>';
+    html += '<div class="actions">';
+    html += '<button class="btn btn-keep" onclick="decide(' + id + ',\'keep\')">Keep</button>';
+    html += '<button class="btn btn-cut" onclick="decide(' + id + ',\'cut\')">Cut</button>';
+    html += '<button class="btn btn-edit" onclick="toggleEdit(' + id + ')">Edit</button>';
+    html += '<button class="btn btn-reset hidden" id="reset-' + id + '" onclick="resetItem(' + id + ')">Reset</button>';
+    html += '</div>';
+    html += '<div class="edit-area" id="edit-' + id + '">';
+    html += '<textarea id="textarea-' + id + '">' + escapeHtml(item.text) + '</textarea>';
+    html += buildCategorySelect(id, item.category);
+    html += '<div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(' + id + ')">Save Edit</button></div>';
+    html += '</div>';
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+  document.getElementById('stat-total').textContent = TOTAL;
+  document.getElementById('stat-remaining').textContent = TOTAL;
+}
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') kept++;
+    else if (decisions[id] === 'cut') cut++;
+    else if (decisions[id] === 'edit') edited++;
+  }
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = TOTAL - kept - cut - edited;
+  updateExport();
+}
+
+function showReset(id) {
+  document.getElementById('reset-' + id).classList.remove('hidden');
+}
+function hideReset(id) {
+  document.getElementById('reset-' + id).classList.add('hidden');
+}
+
+function decide(id, action) {
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (decisions[id] === action) {
+    delete decisions[id];
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('edit-' + id).classList.remove('visible');
+    hideReset(id);
+    updateStats();
+    return;
+  }
+
+  decisions[id] = action;
+  el.classList.add(action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (action === 'keep') el.querySelector('.btn-keep').classList.add('active');
+  else if (action === 'cut') el.querySelector('.btn-cut').classList.add('active');
+
+  if (action !== 'edit') {
+    document.getElementById('edit-' + id).classList.remove('visible');
+  }
+
+  showReset(id);
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-' + id);
+  if (editArea.classList.contains('visible') && decisions[id] === 'edit') {
+    editArea.classList.remove('visible');
+    return;
+  }
+  decisions[id] = 'edit';
+  editArea.classList.add('visible');
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+  showReset(id);
+  updateStats();
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('textarea-' + id);
+  const editedText = textarea.value.trim();
+  if (!editedText) return;
+  items[id].editedText = editedText;
+
+  const catSelect = document.getElementById('cat-' + id);
+  items[id].editedCategory = catSelect.value;
+
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.querySelector('.response-text').textContent = editedText;
+  document.getElementById('badge-cat-' + id).textContent = catSelect.value;
+
+  decisions[id] = 'edit';
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  document.getElementById('edit-' + id).classList.remove('visible');
+  showReset(id);
+  updateStats();
+}
+
+function resetItem(id) {
+  const el = document.querySelector('.item[data-id="' + id + '"]');
+  el.classList.remove('kept', 'cut', 'edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('edit-' + id).classList.remove('visible');
+
+  el.querySelector('.response-text').textContent = items[id].text;
+  document.getElementById('badge-cat-' + id).textContent = items[id].category;
+  document.getElementById('textarea-' + id).value = items[id].text;
+  document.getElementById('cat-' + id).value = items[id].category;
+
+  items[id].editedText = null;
+  items[id].editedCategory = null;
+  delete decisions[id];
+  hideReset(id);
+  updateStats();
+}
+
+function updateExport() {
+  const kept = [];
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') {
+      kept.push({ text: items[id].text, category: items[id].category });
+    } else if (decisions[id] === 'edit') {
+      const text = items[id].editedText || items[id].text;
+      const category = items[id].editedCategory || items[id].category;
+      kept.push({ text: text, category: category });
+    }
+  }
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(function() {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+
+renderAll();
+</script>
+
+</body>
+</html>

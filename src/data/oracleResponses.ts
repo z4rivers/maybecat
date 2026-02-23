@@ -3655,6 +3655,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Caught a stink bug. Ooh, no. Sometimes you gotta taste before you decide.", category: "chaotic" },
   { text: "*stepped on the keyboard and sends your email.* Decided.", category: "chaotic" },
   { text: "*brings a live chipmunk inside and loses it under the couch.*", category: "chaotic" },
+  { text: "I stood in the litter box. Then I stood on your face.", category: "chaotic" },
+  { text: "Read your mind. Couldn't unread it.", category: "chaotic" },
   { text: "*Left a dead vole on the doormat.* That's a resume, not a gift.", category: "demanding" },
   { text: "*Of the 50 papers on your desk, sits on the one you need.* That's not luck. That's talent.", category: "judgy" },
   { text: "*Chooses to sit next to the one person at the party who doesn't like cats.*", category: "demanding" },
@@ -3718,6 +3720,9 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I brought you a sock. The nicest one I could find.", category: "wholesome" },
   { text: "I love your whole ridiculous circus.", category: "chaotic_wholesome" },
   { text: "I care about this more than seems reasonable for a cat.", category: "chaotic_wholesome" },
+  { text: "Risk assessment: (1.5x) lives. Proceed with moderate recklessness.", category: "chaotic" },
+  { text: "Furr and claw tornado is about to hit!", category: "chaotic" },
+  { text: "One whisker width separates perfection from disaster.", category: "wise" },
 ];
 
 // ============================================

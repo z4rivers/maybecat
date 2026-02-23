@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Cats on Human Emotions (REDO — Roommate Energy)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.3em; margin-bottom: 8px; color: #ffd93d; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+  .batch-note { background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.9em; line-height: 1.5; border-left: 3px solid #ffd93d; color: #aaa; }
+  .item { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 2px solid transparent; transition: border-color 0.2s; }
+  .item.kept { border-color: #4ecca3; } .item.cut { border-color: #e94560; opacity: 0.5; } .item.edited { border-color: #ffd93d; }
+  .item-number { font-size: 0.8em; color: #666; margin-bottom: 6px; }
+  .item-text { font-size: 1.15em; line-height: 1.5; margin-bottom: 6px; color: #fff; }
+  .item-category { font-size: 0.8em; color: #888; margin-bottom: 12px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 600; transition: all 0.15s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb92; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1629; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; padding: 12px; font-size: 1em; line-height: 1.5; resize: vertical; min-height: 70px; font-family: inherit; }
+  .edit-area select { background: #0f1629; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 0.9em; }
+  .edit-area .save-edit { margin-top: 8px; background: #ffd93d; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  #export-section { background: #16213e; border-radius: 10px; padding: 20px; margin-top: 30px; }
+  #export-section h2 { color: #4ecca3; margin-bottom: 10px; }
+  #export-json { width: 100%; background: #0f1629; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.85em; min-height: 150px; resize: vertical; }
+  .copy-btn { margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Cats on Human Emotions — REDO (Roommate Energy)</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keep-count">0</span></span>
+    <span class="stat-cut">CUT: <span id="cut-count">0</span></span>
+    <span class="stat-edit">EDIT: <span id="edit-count">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pending-count">27</span></span>
+    <span>TOTAL: 27</span>
+  </div>
+</div>
+
+<div class="batch-note">
+  <strong>REDO batch.</strong> First attempt was ALL detached clinical observation — "Subject displayed X. Noted." Dead on arrival. This batch: the cat is a ROOMMATE. In the room. Has opinions. Has been personally affected. Baffled, offended, entertained, outraged, involved. The cat reacting to human emotional behavior from INSIDE the mess, not from a clipboard.
+</div>
+
+<div id="items-container"></div>
+
+<div id="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <textarea id="export-json" readonly></textarea>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('export-json').value)">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  { text: "You cried at a commercial. For insurance. Then you ate cheese off a knife over the sink. I live with a chaos engine.", category: "chaotic" },
+  { text: "You apologized to a chair you bumped into. I've been screaming at you for dinner for twenty minutes. The chair got more respect than me.", category: "demanding" },
+  { text: "You rehearsed that conversation in the shower for forty-five minutes and then said \"you too\" when the waiter said enjoy your meal.", category: "cold" },
+  { text: "Three hours choosing an outfit. Changed four times. Went with the first one. This is why I wear the same thing every day.", category: "sassy" },
+  { text: "You said \"I'm fine\" in a voice that made the houseplants wilt. Nothing in this house is fine. The vibe has been federally condemned.", category: "dramatic" },
+  { text: "I watched you type, delete, type, delete, type, delete, then put the phone facedown like you'd disarmed a bomb. It was a thumbs up emoji.", category: "wise" },
+  { text: "The sobbing stopped. The ice cream came out. The sad playlist queued up. We have entered Phase Three. I know my cues.", category: "chaotic" },
+  { text: "You got home and immediately took your pants off like they were the source of all your problems. Honestly? Respect.", category: "chaotic_wholesome" },
+  { text: "You just described your ex using the same voice people use for true crime podcasts. Both of us were riveted.", category: "sassy" },
+  { text: "When you're happy the food is better, the scratches last longer, and you sing in the kitchen. Fix whatever this is. I'm losing benefits.", category: "demanding" },
+  { text: "You set three alarms to wake up and then fought each one like it personally betrayed you. You built that system. I was on the bed for all of it.", category: "wise" },
+  { text: "The way you panic-cleaned before they came over — that's not cleaning. That's destroying evidence.", category: "cold" },
+  { text: "You told the dog you loved him in a voice you've never once used on me. In my home. While I was right there.", category: "dramatic" },
+  { text: "You laughed alone at your phone for nine seconds. Looked around to see if anyone noticed. I noticed. It wasn't that funny.", category: "cold" },
+  { text: "Your friend left and you immediately decomposed on the couch like the performance had drained your life force. That was brunch. Brunch did that to you.", category: "existential" },
+  { text: "You called it \"self-care\" but you've been horizontal for eleven hours watching strangers argue about renovations. That's not care. That's witness protection.", category: "sassy" },
+  { text: "I've never seen a creature work this hard to avoid saying what it wants. Just knock it off the counter. Metaphorically.", category: "wise" },
+  { text: "You slow-danced alone in the kitchen and I had to witness the whole thing. I live here. I didn't consent to this.", category: "chaotic_wholesome" },
+  { text: "When you're sad you hold me tighter. When you're happy you forget to feed me. I'm rooting for mild contentment.", category: "nurturing" },
+  { text: "You talked to your mother for forty minutes and aged visibly. I could see it happening in real time from the windowsill.", category: "dramatic" },
+  { text: "The amount of emotional processing you do lying completely still on the floor would be impressive if it weren't so alarming.", category: "chaotic" },
+  { text: "You said goodbye to one friend after two hours and whispered \"that was so much.\" You are exhausting about being exhausted.", category: "existential" },
+  { text: "You bought a plant to prove you can keep something alive and you're already negotiating with it. I'm rooting for you both.", category: "chaotic_wholesome" },
+  { text: "Every argument ends with both of you apologizing for things that aren't the actual thing. I've been watching this show for three seasons. Nobody's getting to the point.", category: "wise" },
+  { text: "Saw you give yourself a motivational speech in the bathroom mirror. The delivery needs work but the material was solid.", category: "wholesome" },
+  { text: "You want to know what unconditional love looks like? It looks like me sitting in this room while you ugly-cry to a song I've heard forty-seven times.", category: "nurturing" },
+  { text: "The way you overshare with anyone who's slightly nice to you — that's not bonding, that's emotional skydiving without checking the parachute. Wildly entertaining though.", category: "chaotic" }
+];
+
+const container = document.getElementById('items-container');
+const categories = ["chaotic","wise","cold","sassy","cryptic","dramatic","physical","wholesome","demanding","chaotic_wholesome","existential","nurturing","poetic"];
+let decisions = new Array(responses.length).fill(null);
+let editedTexts = new Array(responses.length).fill(null);
+let editedCategories = new Array(responses.length).fill(null);
+
+responses.forEach((r, i) => {
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.id = `item-${i}`;
+  const escapedText = r.text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  div.innerHTML = `
+    <div class="item-number">#${i + 1}</div>
+    <div class="item-text" id="text-${i}">${r.text}</div>
+    <div class="item-category">Category: <strong>${r.category}</strong></div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+      <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+      <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+    </div>
+    <div class="edit-area" id="edit-${i}">
+      <textarea id="textarea-${i}">${r.text}</textarea>
+      <select id="catselect-${i}">
+        ${categories.map(c => `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`).join('')}
+      </select>
+      <br><button class="save-edit" onclick="saveEdit(${i})">Save Edit</button>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+function decide(i, action) {
+  decisions[i] = action;
+  const el = document.getElementById(`item-${i}`);
+  el.className = 'item ' + (action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+  updateStats(); updateExport();
+}
+
+function toggleEdit(i) {
+  const area = document.getElementById(`edit-${i}`);
+  area.style.display = area.style.display === 'none' || !area.style.display ? 'block' : 'none';
+}
+
+function saveEdit(i) {
+  editedTexts[i] = document.getElementById(`textarea-${i}`).value;
+  editedCategories[i] = document.getElementById(`catselect-${i}`).value;
+  document.getElementById(`text-${i}`).textContent = editedTexts[i];
+  decide(i, 'edit');
+  document.getElementById(`edit-${i}`).style.display = 'none';
+}
+
+function updateStats() {
+  let k=0, c=0, e=0;
+  decisions.forEach(d => { if(d==='keep') k++; if(d==='cut') c++; if(d==='edit') e++; });
+  document.getElementById('keep-count').textContent = k;
+  document.getElementById('cut-count').textContent = c;
+  document.getElementById('edit-count').textContent = e;
+  document.getElementById('pending-count').textContent = responses.length - k - c - e;
+}
+
+function updateExport() {
+  const exported = [];
+  responses.forEach((r, i) => {
+    if (decisions[i] === 'keep') {
+      exported.push({ text: r.text, category: r.category });
+    } else if (decisions[i] === 'edit') {
+      exported.push({ text: editedTexts[i] || r.text, category: editedCategories[i] || r.category });
+    }
+  });
+  document.getElementById('export-json').value = JSON.stringify(exported, null, 2);
+}
+updateStats(); updateExport();
+</script>
+</body>
+</html>

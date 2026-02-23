@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aristocats + CATS Musical Batch Review — 2026-02-21</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #16213e;
+    border-bottom: 2px solid #0f3460;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+  .sticky-header h1 {
+    font-size: 18px;
+    color: #fff;
+    margin-right: auto;
+  }
+  .stat-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .stat-box .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .stat-total .dot { background: #888; }
+  .stat-kept .dot { background: #4ecca3; }
+  .stat-cut .dot { background: #e94560; }
+  .stat-edited .dot { background: #ffd93d; }
+  .stat-remaining .dot { background: #6c757d; }
+
+  .section-header {
+    padding: 28px 24px 12px;
+    border-bottom: 1px solid #0f3460;
+    margin-top: 12px;
+  }
+  .section-header h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .section-header .section-note {
+    font-size: 14px;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .item {
+    padding: 24px;
+    border-bottom: 1px solid #0f3460;
+    transition: background 0.2s;
+  }
+  .item.kept { background: rgba(78, 204, 163, 0.08); }
+  .item.cut { background: rgba(233, 69, 96, 0.08); }
+  .item.edited { background: rgba(255, 217, 61, 0.08); }
+
+  .item-number {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .response-text {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    border-left: 3px solid #0f3460;
+  }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-category {
+    background: rgba(15, 52, 96, 0.6);
+    color: #7ec8e3;
+  }
+  .badge-strong {
+    border: 1.5px solid #4ecca3;
+    color: #4ecca3;
+    background: transparent;
+  }
+  .badge-medium {
+    border: 1.5px solid #ffd93d;
+    color: #ffd93d;
+    background: transparent;
+  }
+
+  .concern {
+    font-size: 13px;
+    color: #e8a838;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+  .note-text {
+    font-size: 13px;
+    color: #e8a838;
+    margin-bottom: 10px;
+    padding-left: 4px;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .btn {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .edit-area {
+    display: none;
+    margin-top: 12px;
+  }
+  .edit-area.visible { display: block; }
+  .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: vertical;
+  }
+  .edit-area textarea:focus {
+    outline: none;
+    border-color: #ffd93d;
+  }
+  .edit-area .edit-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-save-edit {
+    padding: 6px 18px;
+    background: #ffd93d;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .export-section {
+    padding: 32px 24px;
+    margin-top: 24px;
+  }
+  .export-section h2 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .export-section p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .export-block {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .export-block pre {
+    color: #e0e0e0;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 16px;
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Aristocats + CATS Musical Batch — Feb 21</h1>
+  <div class="stat-box stat-total"><span class="dot"></span> Total: <span id="stat-total">23</span></div>
+  <div class="stat-box stat-kept"><span class="dot"></span> Kept: <span id="stat-kept">0</span></div>
+  <div class="stat-box stat-cut"><span class="dot"></span> Cut: <span id="stat-cut">0</span></div>
+  <div class="stat-box stat-edited"><span class="dot"></span> Edited: <span id="stat-edited">0</span></div>
+  <div class="stat-box stat-remaining"><span class="dot"></span> Remaining: <span id="stat-remaining">23</span></div>
+</div>
+
+<div id="items-container">
+
+  <!-- SECTION 1: ARISTOCATS ENERGY -->
+  <div class="section-header">
+    <h2>Aristocats Energy</h2>
+    <div class="section-note">Jazz confidence, Parisian nonchalance, elegant savagery, alley-cat street smarts.</div>
+  </div>
+
+  <div class="item" data-id="1" data-text="Darling, you had style before you had a plan. The plan will catch up." data-category="nurturing">
+    <div class="item-number">#1</div>
+    <div class="response-text">Darling, you had style before you had a plan. The plan will catch up.</div>
+    <div class="badges">
+      <span class="badge badge-category">nurturing</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(1,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(1,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(1)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-1">
+      <textarea id="textarea-1">Darling, you had style before you had a plan. The plan will catch up.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(1)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="2" data-text="That's not chaos. That's improvisation." data-category="wise">
+    <div class="item-number">#2</div>
+    <div class="response-text">That's not chaos. That's improvisation.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(2,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(2,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(2)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-2">
+      <textarea id="textarea-2">That's not chaos. That's improvisation.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(2)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="3" data-text="Class isn't about what you have. It's about what you refuse to tolerate." data-category="demanding">
+    <div class="item-number">#3</div>
+    <div class="response-text">Class isn't about what you have. It's about what you refuse to tolerate.</div>
+    <div class="badges">
+      <span class="badge badge-category">demanding</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(3,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(3,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(3)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-3">
+      <textarea id="textarea-3">Class isn't about what you have. It's about what you refuse to tolerate.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(3)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="4" data-text="You're playing their song. On your instrument. In their key. Stop." data-category="wise">
+    <div class="item-number">#4</div>
+    <div class="response-text">You're playing their song. On your instrument. In their key. Stop.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-medium">MEDIUM</span>
+    </div>
+    <div class="concern">Slightly instructional</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(4,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(4,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(4)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-4">
+      <textarea id="textarea-4">You're playing their song. On your instrument. In their key. Stop.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(4)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="5" data-text="The alley has better acoustics than the ballroom." data-category="poetic">
+    <div class="item-number">#5</div>
+    <div class="response-text">The alley has better acoustics than the ballroom.</div>
+    <div class="badges">
+      <span class="badge badge-category">poetic</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(5,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(5,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(5)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-5">
+      <textarea id="textarea-5">The alley has better acoustics than the ballroom.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(5)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="6" data-text="You keep rehearsing a conversation the other person already forgot." data-category="cold">
+    <div class="item-number">#6</div>
+    <div class="response-text">You keep rehearsing a conversation the other person already forgot.</div>
+    <div class="badges">
+      <span class="badge badge-category">cold</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(6,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(6,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(6)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-6">
+      <textarea id="textarea-6">You keep rehearsing a conversation the other person already forgot.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(6)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="7" data-text="Sophistication is knowing which rules to break. You already know which ones." data-category="wise">
+    <div class="item-number">#7</div>
+    <div class="response-text">Sophistication is knowing which rules to break. You already know which ones.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-medium">MEDIUM</span>
+    </div>
+    <div class="concern">"You already know" is overused in pool</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(7,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(7,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(7)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-7">
+      <textarea id="textarea-7">Sophistication is knowing which rules to break. You already know which ones.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(7)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="8" data-text="The exit is not the emergency. Staying was." data-category="wise">
+    <div class="item-number">#8</div>
+    <div class="response-text">The exit is not the emergency. Staying was.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(8,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(8,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(8)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-8">
+      <textarea id="textarea-8">The exit is not the emergency. Staying was.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(8)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="9" data-text="You can be the whole orchestra or you can be the one note nobody forgets." data-category="poetic">
+    <div class="item-number">#9</div>
+    <div class="response-text">You can be the whole orchestra or you can be the one note nobody forgets.</div>
+    <div class="badges">
+      <span class="badge badge-category">poetic</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(9,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(9,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(9)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-9">
+      <textarea id="textarea-9">You can be the whole orchestra or you can be the one note nobody forgets.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(9)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="10" data-text="Elegance is a controlled demolition." data-category="demanding">
+    <div class="item-number">#10</div>
+    <div class="response-text">Elegance is a controlled demolition.</div>
+    <div class="badges">
+      <span class="badge badge-category">demanding</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(10,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(10,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(10)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-10">
+      <textarea id="textarea-10">Elegance is a controlled demolition.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(10)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="11" data-text="They don't hate your confidence. They hate that it's not for sale." data-category="sassy">
+    <div class="item-number">#11</div>
+    <div class="response-text">They don't hate your confidence. They hate that it's not for sale.</div>
+    <div class="badges">
+      <span class="badge badge-category">sassy</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(11,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(11,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(11)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-11">
+      <textarea id="textarea-11">They don't hate your confidence. They hate that it's not for sale.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(11)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="12" data-text="Charm is just honesty with better posture." data-category="wise">
+    <div class="item-number">#12</div>
+    <div class="response-text">Charm is just honesty with better posture.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-medium">MEDIUM</span>
+    </div>
+    <div class="concern">Most fortune-cookie adjacent in batch</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(12,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(12,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(12)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-12">
+      <textarea id="textarea-12">Charm is just honesty with better posture.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(12)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="13" data-text="You're introducing yourself to people who don't deserve the whole name." data-category="demanding">
+    <div class="item-number">#13</div>
+    <div class="response-text">You're introducing yourself to people who don't deserve the whole name.</div>
+    <div class="badges">
+      <span class="badge badge-category">demanding</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(13,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(13,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(13)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-13">
+      <textarea id="textarea-13">You're introducing yourself to people who don't deserve the whole name.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(13)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="14" data-text="The arrangement was always temporary. You just forgot to leave." data-category="existential">
+    <div class="item-number">#14</div>
+    <div class="response-text">The arrangement was always temporary. You just forgot to leave.</div>
+    <div class="badges">
+      <span class="badge badge-category">existential</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(14,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(14,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(14)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-14">
+      <textarea id="textarea-14">The arrangement was always temporary. You just forgot to leave.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(14)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="15" data-text="You don't need an invitation. You need nerve." data-category="chaotic">
+    <div class="item-number">#15</div>
+    <div class="response-text">You don't need an invitation. You need nerve.</div>
+    <div class="badges">
+      <span class="badge badge-category">chaotic</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(15,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(15,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(15)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-15">
+      <textarea id="textarea-15">You don't need an invitation. You need nerve.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(15)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="16" data-text="Grace under pressure is still pressure. Take the night off." data-category="nurturing">
+    <div class="item-number">#16</div>
+    <div class="response-text">Grace under pressure is still pressure. Take the night off.</div>
+    <div class="badges">
+      <span class="badge badge-category">nurturing</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(16,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(16,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(16)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-16">
+      <textarea id="textarea-16">Grace under pressure is still pressure. Take the night off.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(16)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="17" data-text="Everybody wants what you have until they find out what it costs." data-category="wise">
+    <div class="item-number">#17</div>
+    <div class="response-text">Everybody wants what you have until they find out what it costs.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-medium">MEDIUM</span>
+    </div>
+    <div class="concern">Common construction</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(17,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(17,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(17)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-17">
+      <textarea id="textarea-17">Everybody wants what you have until they find out what it costs.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(17)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="18" data-text="You dressed up for people who showed up in sweatpants. Noted." data-category="cold">
+    <div class="item-number">#18</div>
+    <div class="response-text">You dressed up for people who showed up in sweatpants. Noted.</div>
+    <div class="badges">
+      <span class="badge badge-category">cold</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(18,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(18,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(18)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-18">
+      <textarea id="textarea-18">You dressed up for people who showed up in sweatpants. Noted.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(18)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="19" data-text="The encore is yours. The audience is irrelevant." data-category="demanding">
+    <div class="item-number">#19</div>
+    <div class="response-text">The encore is yours. The audience is irrelevant.</div>
+    <div class="badges">
+      <span class="badge badge-category">demanding</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(19,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(19,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(19)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-19">
+      <textarea id="textarea-19">The encore is yours. The audience is irrelevant.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(19)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="20" data-text="You keep bringing a resume to a personality contest." data-category="sassy">
+    <div class="item-number">#20</div>
+    <div class="response-text">You keep bringing a resume to a personality contest.</div>
+    <div class="badges">
+      <span class="badge badge-category">sassy</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(20,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(20,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(20)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-20">
+      <textarea id="textarea-20">You keep bringing a resume to a personality contest.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(20)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="21" data-text="Your standards aren't the problem. Your tolerance is." data-category="demanding">
+    <div class="item-number">#21</div>
+    <div class="response-text">Your standards aren't the problem. Your tolerance is.</div>
+    <div class="badges">
+      <span class="badge badge-category">demanding</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(21,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(21,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(21)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-21">
+      <textarea id="textarea-21">Your standards aren't the problem. Your tolerance is.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(21)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: CATS THE MUSICAL -->
+  <div class="section-header">
+    <h2>CATS the Musical</h2>
+    <div class="section-note">Theatrical gravitas meets MaybeCat twist.</div>
+  </div>
+
+  <div class="item" data-id="22" data-text="Touch nothing. Move nothing. When they look for you, you're not there." data-category="cold">
+    <div class="item-number">#22</div>
+    <div class="response-text">Touch nothing. Move nothing. When they look for you, you're not there.</div>
+    <div class="badges">
+      <span class="badge badge-category">cold</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="note-text">Macavity energy — ghost-them power move</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(22,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(22,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(22)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-22">
+      <textarea id="textarea-22">Touch nothing. Move nothing. When they look for you, you're not there.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(22)">Save Edit</button></div>
+    </div>
+  </div>
+
+  <div class="item" data-id="23" data-text="You keep auditioning for the Heaviside Layer when you could just be warm right now." data-category="wise">
+    <div class="item-number">#23</div>
+    <div class="response-text">You keep auditioning for the Heaviside Layer when you could just be warm right now.</div>
+    <div class="badges">
+      <span class="badge badge-category">wise</span>
+      <span class="badge badge-strong">STRONG</span>
+    </div>
+    <div class="note-text">Jellicle Ball striving vs. being present</div>
+    <div class="actions">
+      <button class="btn btn-keep" onclick="decide(23,'keep')">Keep</button>
+      <button class="btn btn-cut" onclick="decide(23,'cut')">Cut</button>
+      <button class="btn btn-edit" onclick="toggleEdit(23)">Edit</button>
+    </div>
+    <div class="edit-area" id="edit-23">
+      <textarea id="textarea-23">You keep auditioning for the Heaviside Layer when you could just be warm right now.</textarea>
+      <div class="edit-actions"><button class="btn-save-edit" onclick="saveEdit(23)">Save Edit</button></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT SECTION -->
+<div class="export-section">
+  <h2>Export — Kept Items</h2>
+  <p>Only items marked KEEP (including edited versions) appear here. Copy the JSON below.</p>
+  <div class="export-block">
+    <button class="btn-copy" onclick="copyExport()">Copy JSON</button>
+    <pre id="export-json">[]</pre>
+  </div>
+</div>
+
+<script>
+const decisions = {};
+const items = {};
+const TOTAL = 23;
+
+// Initialize items data from DOM
+document.querySelectorAll('.item').forEach(el => {
+  const id = parseInt(el.dataset.id);
+  items[id] = {
+    text: el.dataset.text,
+    category: el.dataset.category,
+    editedText: null
+  };
+});
+
+function updateStats() {
+  let kept = 0, cut = 0, edited = 0;
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') kept++;
+    else if (decisions[id] === 'cut') cut++;
+    else if (decisions[id] === 'edit') edited++;
+  }
+  document.getElementById('stat-kept').textContent = kept;
+  document.getElementById('stat-cut').textContent = cut;
+  document.getElementById('stat-edited').textContent = edited;
+  document.getElementById('stat-remaining').textContent = TOTAL - kept - cut - edited;
+  updateExport();
+}
+
+function decide(id, action) {
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut', 'edited');
+
+  // Toggle off if same action clicked again
+  if (decisions[id] === action) {
+    delete decisions[id];
+    el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    if (action !== 'edit') {
+      document.getElementById('edit-' + id).classList.remove('visible');
+    }
+    updateStats();
+    return;
+  }
+
+  decisions[id] = action;
+  el.classList.add(action === 'keep' ? 'kept' : action === 'cut' ? 'cut' : 'edited');
+
+  // Update button active states
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (action === 'keep') el.querySelector('.btn-keep').classList.add('active');
+  else if (action === 'cut') el.querySelector('.btn-cut').classList.add('active');
+  else if (action === 'edit') el.querySelector('.btn-edit').classList.add('active');
+
+  // Hide edit area if not editing
+  if (action !== 'edit') {
+    document.getElementById('edit-' + id).classList.remove('visible');
+  }
+
+  updateStats();
+}
+
+function toggleEdit(id) {
+  const editArea = document.getElementById('edit-' + id);
+  if (editArea.classList.contains('visible')) {
+    // Just close the area — don't lose the edit decision
+    editArea.classList.remove('visible');
+    return;
+  }
+  decisions[id] = 'edit';
+  editArea.classList.add('visible');
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+  updateStats();
+}
+
+function saveEdit(id) {
+  const textarea = document.getElementById('textarea-' + id);
+  const editedText = textarea.value.trim();
+  if (!editedText) return;
+  items[id].editedText = editedText;
+
+  // Update displayed text to show the edit
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  el.querySelector('.response-text').textContent = editedText;
+
+  // Mark as edited
+  decisions[id] = 'edit';
+  el.classList.remove('kept', 'cut');
+  el.classList.add('edited');
+  el.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.btn-edit').classList.add('active');
+
+  // Close edit area
+  document.getElementById('edit-' + id).classList.remove('visible');
+
+  updateStats();
+  updateExport();
+}
+
+function updateExport() {
+  const kept = [];
+  for (const id in decisions) {
+    if (decisions[id] === 'keep') {
+      kept.push({ text: items[id].text, category: items[id].category });
+    } else if (decisions[id] === 'edit') {
+      const text = items[id].editedText || items[id].text;
+      kept.push({ text: text, category: items[id].category });
+    }
+  }
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const json = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy JSON'; }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>

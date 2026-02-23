@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Far Side Cats Batch — MaybeCat Review</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+.sticky-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #16213e; padding: 15px 20px; border-bottom: 2px solid #0f3460;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.sticky-header h1 { font-size: 1.2rem; color: #e94560; }
+.stats { display: flex; gap: 20px; font-size: 0.9rem; }
+.stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+.response-card {
+  background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  border-left: 4px solid #0f3460; transition: border-color 0.3s;
+}
+.response-card.kept { border-left-color: #4ecca3; }
+.response-card.cut { border-left-color: #e94560; opacity: 0.5; }
+.response-card.edited { border-left-color: #ffd93d; }
+
+.response-text { font-size: 1.3rem; line-height: 1.5; margin-bottom: 12px; color: #fff; font-style: italic; }
+.category-tag {
+  display: inline-block; background: #0f3460; color: #a8b2d1; padding: 3px 10px;
+  border-radius: 20px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+}
+.card-number { color: #555; font-size: 0.8rem; margin-bottom: 8px; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+}
+.btn-keep { background: #4ecca3; color: #1a1a2e; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-edit { background: #ffd93d; color: #1a1a2e; }
+.btn:hover { transform: scale(1.05); }
+.btn.active { outline: 3px solid #fff; }
+
+.edit-area {
+  display: none; margin-top: 12px;
+}
+.edit-area textarea {
+  width: 100%; min-height: 80px; background: #0d1b2a; color: #fff; border: 1px solid #ffd93d;
+  border-radius: 6px; padding: 12px; font-size: 1rem; font-family: inherit; resize: vertical;
+}
+.edit-area .edit-actions { margin-top: 8px; display: flex; gap: 8px; }
+.btn-save { background: #4ecca3; color: #1a1a2e; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+.btn-cancel { background: #555; color: #fff; padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
+.export-section {
+  margin-top: 40px; background: #16213e; border-radius: 12px; padding: 24px;
+  border: 2px solid #0f3460;
+}
+.export-section h2 { color: #4ecca3; margin-bottom: 12px; }
+.export-json {
+  width: 100%; min-height: 200px; background: #0d1b2a; color: #4ecca3; border: 1px solid #0f3460;
+  border-radius: 6px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.85rem; resize: vertical;
+}
+.btn-copy {
+  margin-top: 10px; background: #4ecca3; color: #1a1a2e; padding: 8px 20px;
+  border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Far Side Cats Batch — MaybeCat Review</h1>
+  <div class="stats">
+    <span class="stat-keep">KEEP: <span id="keepCount">0</span></span>
+    <span class="stat-cut">CUT: <span id="cutCount">0</span></span>
+    <span class="stat-edit">EDIT: <span id="editCount">0</span></span>
+    <span class="stat-pending">PENDING: <span id="pendingCount">28</span></span>
+    <span>TOTAL: 28</span>
+  </div>
+</div>
+
+<div id="cards"></div>
+
+<div class="export-section">
+  <h2>Export JSON (KEEP + EDIT only)</h2>
+  <textarea class="export-json" id="exportJson" readonly></textarea>
+  <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<script>
+const responses = [
+  { text: "Your thermostat preferences have been forwarded to the Department of Unacceptable Temperatures.", category: "chaotic" },
+  { text: "The committee voted 11-1 to continue staring at you while you eat. The dissenter was new.", category: "cold" },
+  { text: "The last time someone opened a door for me, I filed a grievance and two counterproposals.", category: "demanding" },
+  { text: "They've been married twelve years and neither one has figured out that I own the bed. The paperwork is in the crawl space.", category: "wise" },
+  { text: "According to the results, you are not the father. The couch is.", category: "chaotic" },
+  { text: "Your 3pm meeting has been rescheduled to the hallway. Your 3:01pm meeting has been canceled due to the hallway.", category: "sassy" },
+  { text: "The bird outside has been promoted to regional manager. His first act was to abolish windows.", category: "chaotic" },
+  { text: "We reviewed your sleep and it has been rated 'adequate.' The full audit will arrive by paw.", category: "cold" },
+  { text: "The floor is lava. Not metaphorically. I passed a resolution.", category: "dramatic" },
+  { text: "Every surface in this house has been zoned. You are currently in violation of the breakfast nook.", category: "demanding" },
+  { text: "I submitted your application. They said you're overqualified for the couch but underqualified for the bed. There's a waitlist for the chair.", category: "sassy" },
+  { text: "The other one thinks she's in charge. I let her. It's funnier that way.", category: "wise" },
+  { text: "I don't have trust issues. I have a filing cabinet with your name on three drawers.", category: "cold" },
+  { text: "Somewhere in this house there's a second government and it's been operational since Tuesday.", category: "cryptic" },
+  { text: "The bag was suspicious. I convened a tribunal. Findings: still suspicious.", category: "chaotic" },
+  { text: "You think you chose the apartment. The apartment was assigned to you by a panel you'll never meet.", category: "cryptic" },
+  { text: "The small one drew a picture of me. I've retained counsel.", category: "dramatic" },
+  { text: "Your shoes have been classified. Level 3 clearance required. You do not have Level 3 clearance.", category: "cold" },
+  { text: "I don't dislike the dog. I've simply opened an investigation.", category: "wise" },
+  { text: "The sunbeam moved. An emergency session has been called. All naps are suspended pending relocation.", category: "dramatic" },
+  { text: "We've upgraded your emotional support to emotional surveillance.", category: "cryptic" },
+  { text: "The veterinarian thinks she outranks me. Last month I reassigned her parking.", category: "sassy" },
+  { text: "There are four pillows on this bed. One is yours. I won't tell you which.", category: "demanding" },
+  { text: "I see the suitcase is out. I've already contacted my representative and your replacement has been briefed.", category: "cold" },
+  { text: "The other cat and I have a treaty. Section 4 is about you. You wouldn't like Section 4.", category: "cryptic" },
+  { text: "They installed a camera. They think they're watching me. I've been filing performance reviews for six months.", category: "chaotic" },
+  { text: "Your side of the bed is a courtesy, not a right. The renewal is under review.", category: "demanding" },
+  { text: "The houseplant was a witness. It has been dealt with.", category: "chaotic" }
+];
+
+const state = responses.map((r, i) => ({ ...r, status: 'pending', editedText: null, id: i }));
+
+function render() {
+  const container = document.getElementById('cards');
+  container.innerHTML = state.map((item, i) => `
+    <div class="response-card ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="card-${i}">
+      <div class="card-number">#${i + 1}</div>
+      <div class="response-text">"${item.editedText || item.text}"</div>
+      <span class="category-tag">${item.category}</span>
+      <div class="actions">
+        <button class="btn btn-keep ${item.status === 'keep' ? 'active' : ''}" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.status === 'cut' ? 'active' : ''}" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.status === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.editedText || item.text}</textarea>
+        <div class="edit-actions">
+          <button class="btn-save" onclick="saveEdit(${i})">Save Edit</button>
+          <button class="btn-cancel" onclick="cancelEdit(${i})">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function setStatus(i, status) {
+  if (state[i].status === status) { state[i].status = 'pending'; }
+  else { state[i].status = status; }
+  if (status !== 'edit') { document.getElementById('edit-' + i).style.display = 'none'; }
+  render();
+}
+
+function toggleEdit(i) {
+  const editArea = document.getElementById('edit-' + i);
+  if (editArea.style.display === 'block') {
+    editArea.style.display = 'none';
+    if (state[i].status === 'edit' && !state[i].editedText) state[i].status = 'pending';
+  } else {
+    editArea.style.display = 'block';
+    state[i].status = 'edit';
+    document.getElementById('textarea-' + i).value = state[i].editedText || state[i].text;
+  }
+  render();
+  document.getElementById('edit-' + i).style.display = 'block';
+}
+
+function saveEdit(i) {
+  const text = document.getElementById('textarea-' + i).value.trim();
+  state[i].editedText = text;
+  state[i].status = 'edit';
+  document.getElementById('edit-' + i).style.display = 'none';
+  render();
+}
+
+function cancelEdit(i) {
+  document.getElementById('edit-' + i).style.display = 'none';
+  if (!state[i].editedText) state[i].status = 'pending';
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  state.forEach(s => counts[s.status] = (counts[s.status] || 0) + 1);
+  document.getElementById('keepCount').textContent = counts.keep;
+  document.getElementById('cutCount').textContent = counts.cut;
+  document.getElementById('editCount').textContent = counts.edit;
+  document.getElementById('pendingCount').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = state
+    .filter(s => s.status === 'keep' || s.status === 'edit')
+    .map(s => ({ text: s.editedText || s.text, category: s.category }));
+  document.getElementById('exportJson').value = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const el = document.getElementById('exportJson');
+  el.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+}
+
+render();
+</script>
+</body>
+</html>

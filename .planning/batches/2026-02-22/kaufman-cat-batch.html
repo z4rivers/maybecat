@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaufman Cat Batch - Feb 22</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; color: #eee; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+.header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 30px; }
+.header h1 { font-size: 1.4em; margin-bottom: 8px; color: #fff; }
+.header .subtitle { color: #aaa; font-size: 0.9em; margin-bottom: 12px; line-height: 1.5; }
+.stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+.stat { padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.stat-total { background: #333; color: #fff; }
+.stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+.stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+.stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+
+.item { background: #16213e; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 2px solid transparent; transition: border-color 0.3s; }
+.item.kept { border-color: #4ecca3; }
+.item.cut { border-color: #e94560; opacity: 0.5; }
+.item.edited { border-color: #ffd93d; }
+
+.item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+.move-note { color: #c084fc; font-size: 0.8em; margin-bottom: 10px; font-style: italic; }
+.response-text { font-size: 1.2em; line-height: 1.6; margin-bottom: 6px; color: #fff; font-weight: 500; }
+.category-tag { display: inline-block; background: #333; color: #aaa; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; margin-bottom: 16px; }
+
+.actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+.btn-keep { background: #4ecca3; color: #000; }
+.btn-keep:hover { background: #3dbb92; }
+.btn-cut { background: #e94560; color: #fff; }
+.btn-cut:hover { background: #d83450; }
+.btn-edit { background: #ffd93d; color: #000; }
+.btn-edit:hover { background: #eec82c; }
+
+.edit-area { display: none; margin-top: 12px; }
+.edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 8px; padding: 12px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
+.edit-area select { background: #0f1a30; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 0.9em; }
+
+.export-section { margin-top: 40px; padding: 24px; background: #16213e; border-radius: 12px; }
+.export-section h2 { margin-bottom: 12px; color: #4ecca3; }
+.export-section pre { background: #0f1a30; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; color: #ccc; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+.copy-btn { margin-top: 12px; padding: 10px 24px; background: #4ecca3; color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.copy-btn:hover { background: #3dbb92; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Kaufman Cat Batch</h1>
+  <div class="subtitle">
+    Two threads: (1) Cares more than he lets on \u2014 the caring is real but the expression is cat-shaped, always sideways, never direct. (2) Completely committed to the gig as a cat \u2014 will not break character, the commitment IS the answer. The bit is the love.
+  </div>
+  <div class="stats">
+    <span class="stat stat-total">Total: <span id="total">28</span></span>
+    <span class="stat stat-keep">Keep: <span id="kept">0</span></span>
+    <span class="stat stat-cut">Cut: <span id="cuts">0</span></span>
+    <span class="stat stat-edit">Edit: <span id="edits">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (Keep + Edit only)</h2>
+  <pre id="export-json">[]</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  {
+    text: "I sat outside the door the whole time. For unrelated reasons.",
+    category: "wholesome",
+    move: "Caring disguised as coincidence \u2014 the excuse is transparent"
+  },
+  {
+    text: "I don't care where you go. I just need to know where you are at all times. For inventory.",
+    category: "wholesome",
+    move: "Surveillance as love \u2014 bureaucratic language, obvious affection"
+  },
+  {
+    text: "I wasn't watching you. I was watching something behind you. You just happen to be in the way. Every time.",
+    category: "wholesome",
+    move: "Attention disguised as accidental line-of-sight \u2014 the 'every time' breaks the alibi"
+  },
+  {
+    text: "I brought you something. Don't ask what it means. It means something.",
+    category: "wholesome",
+    move: "Cat gift-giving \u2014 refusal to explain, insistence that it matters"
+  },
+  {
+    text: "I'm not worried. I'm just sitting here. Facing the door. At 3am. In case.",
+    category: "nurturing",
+    move: "Vigil disguised as nothing \u2014 'in case' is the crack where the love leaks"
+  },
+  {
+    text: "I noticed you changed something. I'm not going to say what. But I noticed.",
+    category: "wholesome",
+    move: "Close attention performed as indifference \u2014 the refusal to specify proves how specific the noticing was"
+  },
+  {
+    text: "You want a straight answer. I'm a cat. This IS the straight answer.",
+    category: "wise",
+    move: "Meta-commitment \u2014 the cat frame IS the content, not a limitation of it"
+  },
+  {
+    text: "I will not be breaking character.",
+    category: "demanding",
+    move: "Five words. Total Kaufman. The commitment is the statement."
+  },
+  {
+    text: "You expected advice. I'm sitting in a box. Adjust.",
+    category: "cold",
+    move: "What you came for vs. what you're getting \u2014 Gatsby reading energy"
+  },
+  {
+    text: "My only promise is that I will try to sit on you as best I can.",
+    category: "chaotic_wholesome",
+    move: "Kaufman's actual quote relocated: 'My only promise is that I will try to entertain you as best I can'"
+  },
+  {
+    text: "I just want real reactions. Not the polite ones.",
+    category: "demanding",
+    move: "Kaufman's 'gut reactions' principle through a cat \u2014 hiss or purr, just mean it"
+  },
+  {
+    text: "I will give you culture whether you want it or not. *knocks glass off table*",
+    category: "chaotic",
+    move: "Gatsby reading energy \u2014 the glass IS the culture being delivered"
+  },
+  {
+    text: "Too dangerous. They couldn't trust me.",
+    category: "cold",
+    move: "Direct Kaufman relocation \u2014 network executives said this about Andy. Perfect as cat."
+  },
+  {
+    text: "Every day I perform for an audience that can't see me. That's not sad. That's dedication.",
+    category: "existential",
+    move: "Kaufman at age 4, broadcasting to the wall \u2014 through a cat meowing at nothing"
+  },
+  {
+    text: "I have never once told you how I feel. I have shown you every single day.",
+    category: "wholesome",
+    move: "Kaufman's 'I never told a joke' as love language \u2014 the bit IS the feeling"
+  },
+  {
+    text: "Won't they be upset when they find out I was here the whole time?",
+    category: "cryptic",
+    move: "Kaufman's death hoax quote relocated \u2014 the cat hiding under the bed, watching everything"
+  },
+  {
+    text: "I tested how you deal with reality. You deal with it badly. I still chose you.",
+    category: "wise",
+    move: "Kaufman's 'what's real, what's not' \u2014 the test was real, the caring is real, the cat is still here"
+  },
+  {
+    text: "It's not the answer. It's the story you tell yourself about the answer.",
+    category: "wise",
+    move: "'It's not the thing, it's the story about the thing' \u2014 Braverman on Kaufman, relocated"
+  },
+  {
+    text: "You came for advice. I'm grooming. We'll both be done when we're done.",
+    category: "wise",
+    move: "Gatsby reading \u2014 you're getting what I'm offering, not what you ordered"
+  },
+  {
+    text: "I have never broken character. You have never known what the character is.",
+    category: "cryptic",
+    move: "The Kaufman identity puzzle \u2014 was it Andy or Tony? Is it the cat or the oracle?"
+  },
+  {
+    text: "They voted me off. I stayed. They stopped voting.",
+    category: "demanding",
+    move: "SNL vote-off \u2014 persistence as quiet dominance"
+  },
+  {
+    text: "I'm going to go all the way with this. Whatever this is.",
+    category: "chaotic",
+    move: "Commitment without knowing to what \u2014 the purest Kaufman move"
+  },
+  {
+    text: "I have studied you extensively. My findings are: eat something.",
+    category: "chaotic_wholesome",
+    move: "Hidden competence + unexpected caring \u2014 all that watching, and the conclusion is practical"
+  },
+  {
+    text: "This is not a bit. This is also not NOT a bit.",
+    category: "cryptic",
+    move: "The is-it-real engine \u2014 Kaufman's entire career in two sentences"
+  },
+  {
+    text: "I am going to stare at this wall for the next forty-five minutes. You are welcome to watch.",
+    category: "existential",
+    move: "99 Bottles / Gatsby reading \u2014 the commitment IS the performance, whether you stay or leave"
+  },
+  {
+    text: "I made this weird on purpose. Now it's yours.",
+    category: "chaotic",
+    move: "'I just want to play with their heads' \u2014 the weirdness is a gift, not a bug"
+  },
+  {
+    text: "The best part is you'll never know which part was real.",
+    category: "cryptic",
+    move: "The ultimate Kaufman line \u2014 the maybe IS the product. Also: this is literally MaybeCat."
+  },
+  {
+    text: "The performance and the love are the same thing.",
+    category: "wholesome",
+    move: "The thesis \u2014 Kaufman took 2,800 people out for milk and cookies. The bit WAS the love."
+  }
+];
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.id = 'item-' + i;
+    div.innerHTML = `
+      <div class="item-number">#${i + 1}</div>
+      <div class="move-note">${item.move}</div>
+      <div class="response-text">\u201c${item.text}\u201d</div>
+      <div class="category-tag">${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i}, 'edit')">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${item.text}</textarea>
+        <select id="cat-${i}" onchange="updateExport()">
+          <option value="${item.category}">${item.category}</option>
+          <option value="chaotic">chaotic</option>
+          <option value="wise">wise</option>
+          <option value="cold">cold</option>
+          <option value="chaotic_wholesome">chaotic_wholesome</option>
+          <option value="wholesome">wholesome</option>
+          <option value="nurturing">nurturing</option>
+          <option value="demanding">demanding</option>
+          <option value="existential">existential</option>
+          <option value="poetic">poetic</option>
+          <option value="dramatic">dramatic</option>
+          <option value="cryptic">cryptic</option>
+          <option value="angry">angry</option>
+          <option value="sassy">sassy</option>
+          <option value="heartfelt">heartfelt</option>
+          <option value="judgy">judgy</option>
+          <option value="meta">meta</option>
+        </select>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  updateStats();
+}
+
+const decisions = {};
+
+function decide(i, type) {
+  const el = document.getElementById('item-' + i);
+  el.classList.remove('kept', 'cut', 'edited');
+
+  if (decisions[i] === type) {
+    delete decisions[i];
+    document.getElementById('edit-' + i).style.display = 'none';
+  } else {
+    decisions[i] = type;
+    el.classList.add(type === 'keep' ? 'kept' : type === 'cut' ? 'cut' : 'edited');
+    document.getElementById('edit-' + i).style.display = type === 'edit' ? 'block' : 'none';
+  }
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  document.getElementById('kept').textContent = vals.filter(v => v === 'keep').length;
+  document.getElementById('cuts').textContent = vals.filter(v => v === 'cut').length;
+  document.getElementById('edits').textContent = vals.filter(v => v === 'edit').length;
+}
+
+function updateExport() {
+  const result = [];
+  items.forEach((item, i) => {
+    if (decisions[i] === 'keep') {
+      result.push({ text: item.text, category: item.category });
+    } else if (decisions[i] === 'edit') {
+      const textarea = document.getElementById('textarea-' + i);
+      const cat = document.getElementById('cat-' + i);
+      result.push({ text: textarea.value, category: cat.value });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(result, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 2000);
+  });
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.tagName === 'TEXTAREA') updateExport();
+});
+
+render();
+</script>
+
+</body>
+</html>

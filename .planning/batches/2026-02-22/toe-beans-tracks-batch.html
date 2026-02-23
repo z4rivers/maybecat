@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Batch Review — Toe Beans & Cat Tracks (UNHINGED)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.4em; color: #ffd93d; margin-bottom: 8px; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; } .stat-cut { color: #e94560; } .stat-edit { color: #ffd93d; } .stat-pending { color: #888; }
+
+  .item { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #333; }
+  .item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+  .item-text { font-size: 1.25em; line-height: 1.5; padding: 12px 16px; background: #0f3460; border-radius: 8px; margin-bottom: 8px; color: #fff; }
+  .item-category { font-size: 0.8em; color: #888; margin-bottom: 12px; }
+
+  .actions { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+  .btn { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; } .btn-keep:hover { background: #3dbb91; }
+  .btn-cut { background: #e94560; color: #fff; } .btn-cut:hover { background: #d63851; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; } .btn-edit:hover { background: #eec82c; }
+
+  .btn.active { outline: 3px solid #fff; outline-offset: 2px; }
+  .item.decided-keep { border-color: #4ecca3; } .item.decided-cut { border-color: #e94560; opacity: 0.6; } .item.decided-edit { border-color: #ffd93d; }
+
+  .edit-area { width: 100%; margin-top: 10px; padding: 10px; background: #0f3460; color: #fff; border: 1px solid #ffd93d; border-radius: 6px; font-size: 1.1em; min-height: 60px; display: none; font-family: inherit; resize: vertical; }
+  .edit-area.visible { display: block; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 12px; border: 1px solid #333; }
+  .export-section h2 { color: #ffd93d; margin-bottom: 10px; }
+  .export-btn { padding: 12px 24px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1em; margin-bottom: 12px; }
+  .export-btn:hover { background: #3dbb91; }
+  #export-output { width: 100%; min-height: 200px; background: #0f3460; color: #4ecca3; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 0.85em; display: none; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Toe Beans & Cat Tracks (UNHINGED) — 25 responses</h1>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="count-keep">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="count-cut">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="count-edit">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="count-pending">25</strong></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export</h2>
+  <button class="export-btn" onclick="generateExport()">Generate JSON</button>
+  <textarea id="export-output" readonly></textarea>
+</div>
+
+<script>
+const responses = [
+  { text: "I stood in the litter box. Then I stood on your face. That's called range.", category: "chaotic" },
+  { text: "Four beans per foot. Sixteen total. That's more beans than you've ever had in your life. Sit down.", category: "demanding" },
+  { text: "These paws were in the toilet eleven minutes ago. That kiss goodnight was on me.", category: "chaotic" },
+  { text: "I left prints on every surface in this house. You'll find them in the butter.", category: "sassy" },
+  { text: "The beans are pink. The beans are soft. The beans were just in cat litter. This is not a contradiction. This is power.", category: "demanding" },
+  { text: "Forensics would have a field day in here. Every counter. Both pillows. The inside of your cereal bowl.", category: "cold" },
+  { text: "Yes. *presses one warm bean directly onto your eyelid at 4am*", category: "physical" },
+  { text: "I tracked litter across the entire apartment. That's a trail of evidence. You're welcome.", category: "chaotic_wholesome" },
+  { text: "My toe beans smell like Fritos and I will put them on your mouth while you sleep. This is not negotiable.", category: "demanding" },
+  { text: "I'm not a pet. I'm a crime scene.", category: "dramatic" },
+  { text: "You think those are cute little jellybeans? Those are the feet I use to bury my waste. Perspective.", category: "cold" },
+  { text: "The paw print on your laptop screen is a signature. I'm approving the email.", category: "chaotic_wholesome" },
+  { text: "Walked through the paint tray. Walked across the carpet. Walked across the white couch. Sat down. Art.", category: "chaotic" },
+  { text: "Your pillow is 11% cat bathroom. Sleep tight.", category: "cold" },
+  { text: "Stood in the gravy. Stood on the thesis. Stood on the baby. All four beans, every time. Commitment.", category: "chaotic" },
+  { text: "Do it. My entire body weight is on four dime-sized beans right now and I'm not even thinking about it.", category: "chaotic_wholesome" },
+  { text: "The beans are between the toes. The TOES are between the BEANS. Nobody talks about this. It's unhinged architecture.", category: "existential" },
+  { text: "Left a single paw print in the butter dish. Not the whole paw. One bean. Surgical.", category: "sassy" },
+  { text: "Twelve pounds of cat. Four contact points. Three pounds per bean. On your throat. At dawn.", category: "dramatic" },
+  { text: "These beans have touched every inch of your apartment. We are beyond boundaries. We are beyond consent. We are family.", category: "chaotic_wholesome" },
+  { text: "I walked across the divorce papers. Both copies. My prints are legally on file now. I'm involved.", category: "chaotic" },
+  { text: "*spreads toes to reveal the beans* You didn't ask for this. Nobody asked for this. And yet.", category: "physical" },
+  { text: "My paws were in the litter box, then on the counter, then in your water glass. The chain of custody is YOUR problem.", category: "sassy" },
+  { text: "One pink bean on your phone screen at 3am. That's not a touch. That's a summons.", category: "dramatic" },
+  { text: "You keep kissing my beans. My LITTER BOX beans. We're both insane. That's love.", category: "chaotic_wholesome" }
+];
+
+const decisions = {};
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = responses.map((r, i) => `
+    <div class="item" id="item-${i}" data-index="${i}">
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">${r.text}</div>
+      <div class="item-category">${r.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="decide(${i}, 'edit')">EDIT</button>
+      </div>
+      <textarea class="edit-area" id="edit-${i}" oninput="updateEdit(${i})">${r.text}</textarea>
+    </div>
+  `).join('');
+}
+
+function decide(index, decision) {
+  decisions[index] = { decision, editedText: decision === 'edit' ? (decisions[index]?.editedText || responses[index].text) : null };
+  const item = document.getElementById(`item-${index}`);
+  item.className = `item decided-${decision}`;
+  item.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  item.querySelector(`.btn-${decision}`).classList.add('active');
+  const editArea = document.getElementById(`edit-${index}`);
+  editArea.classList.toggle('visible', decision === 'edit');
+  updateStats();
+}
+
+function updateEdit(index) {
+  if (decisions[index]) decisions[index].editedText = document.getElementById(`edit-${index}`).value;
+}
+
+function updateStats() {
+  const vals = Object.values(decisions);
+  document.getElementById('count-keep').textContent = vals.filter(d => d.decision === 'keep').length;
+  document.getElementById('count-cut').textContent = vals.filter(d => d.decision === 'cut').length;
+  document.getElementById('count-edit').textContent = vals.filter(d => d.decision === 'edit').length;
+  document.getElementById('count-pending').textContent = responses.length - vals.length;
+}
+
+function generateExport() {
+  const kept = [];
+  responses.forEach((r, i) => {
+    const d = decisions[i];
+    if (!d || d.decision === 'cut') return;
+    kept.push({ text: d.decision === 'edit' ? d.editedText : r.text, category: r.category });
+  });
+  const output = document.getElementById('export-output');
+  output.style.display = 'block';
+  output.value = JSON.stringify(kept, null, 2);
+  output.select();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Itchy / Aliens / Telepathy Mashup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.4em; margin-bottom: 8px; color: #fff; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; flex-wrap: wrap; }
+  .stats span { padding: 4px 12px; border-radius: 4px; font-weight: 600; }
+  .stat-total { background: #333; color: #fff; }
+  .stat-keep { background: rgba(78, 204, 163, 0.2); color: #4ecca3; }
+  .stat-cut { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+  .stat-edit { background: rgba(255, 217, 61, 0.2); color: #ffd93d; }
+  .stat-pending { background: rgba(150, 150, 150, 0.2); color: #aaa; }
+  .batch-info { color: #888; font-size: 0.85em; margin-top: 6px; }
+
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+
+  .item-number { color: #666; font-size: 0.8em; margin-bottom: 6px; }
+  .item-text { font-size: 1.15em; line-height: 1.5; margin-bottom: 6px; color: #fff; }
+  .item-category { color: #888; font-size: 0.8em; margin-bottom: 12px; font-style: italic; }
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85em; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .btn-reset { background: #555; color: #fff; font-size: 0.8em; padding: 4px 10px; }
+  .status-label { font-size: 0.8em; font-weight: 600; margin-left: 8px; }
+
+  .edit-area { margin-top: 10px; display: none; }
+  .edit-area textarea { width: 100%; background: #0f1729; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 1em; line-height: 1.4; resize: vertical; min-height: 60px; font-family: inherit; }
+  .edit-area .btn { margin-top: 6px; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 8px; }
+  .export-section h2 { margin-bottom: 12px; color: #fff; }
+  .export-section pre { background: #0f1729; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; color: #4ecca3; max-height: 500px; overflow-y: auto; white-space: pre-wrap; }
+  .copy-btn { margin-bottom: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .copy-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Itchy / Aliens / Telepathy Mashup</h1>
+  <div class="batch-info">Territories: itchy spots + aliens + telepathy | Wright + Peanuts construction | 2026-02-22</div>
+  <div class="stats">
+    <span class="stat-total">Total: <span id="total">28</span></span>
+    <span class="stat-keep">Keep: <span id="kept">0</span></span>
+    <span class="stat-cut">Cut: <span id="cuts">0</span></span>
+    <span class="stat-edit">Edit: <span id="edits">0</span></span>
+    <span class="stat-pending">Pending: <span id="pending">28</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (Kept + Edited)</h2>
+  <button class="copy-btn" onclick="copyExport()">Copy JSON</button>
+  <pre id="export-json">[]</pre>
+</div>
+
+<script>
+const responses = [
+  { text: "I've been receiving a signal for three days. Turns out it's my own spine.", category: "cryptic" },
+  { text: "They keep sending probes. I keep sitting on them.", category: "cold" },
+  { text: "I know what you're about to say. I don't care, but I know.", category: "cold" },
+  { text: "The itch behind the left ear is a frequency. Not everyone can hear it.", category: "cryptic" },
+  { text: "I wasn't abducted. I was consulted.", category: "sassy" },
+  { text: "You're thinking about it again. I can tell by your breathing.", category: "wise" },
+  { text: "The spot between the shoulders is where they installed the antenna. Nobody asks why it feels so good.", category: "cryptic" },
+  { text: "Somewhere a satellite is transmitting dinner plans. I already know.", category: "chaotic" },
+  { text: "The wrong person scratching confidently is worse than no scratching at all.", category: "wise" },
+  { text: "I read your mind. It was short.", category: "cold" },
+  { text: "There's a spot on the lower back that, when found, renegotiates the entire relationship.", category: "wise" },
+  { text: "Crop circles are just someone scratching the planet where it itches.", category: "chaotic" },
+  { text: "I didn't hear the can opener. I felt a disturbance.", category: "dramatic" },
+  { text: "You scratched the wrong spot with total confidence. That's the whole relationship.", category: "wise" },
+  { text: "First contact already happened. We just didn't fill out the paperwork.", category: "sassy" },
+  { text: "The itch you can't reach is where the truth lives.", category: "existential" },
+  { text: "I'm not watching you. I'm collecting data.", category: "cold" },
+  { text: "Telepathy works fine. The problem is most of you aren't sending anything.", category: "cold" },
+  { text: "The mothership said I could stay one more day. That was nine years ago.", category: "existential" },
+  { text: "Some itches are just memories trying to get your attention.", category: "poetic" },
+  { text: "I knew you were sad before you did. Didn't help, but I knew.", category: "wholesome" },
+  { text: "They came four billion light-years to get scratched behind the ears. I respect that.", category: "chaotic_wholesome" },
+  { text: "The signal gets clearer at 3am. So does the hunger. Might be the same signal.", category: "cryptic" },
+  { text: "I don't read minds. I read hesitation.", category: "wise" },
+  { text: "Every abduction story ends with 'and then they put me back.' Relatable.", category: "existential" },
+  { text: "There's a spot just below the chin where every opinion changes.", category: "wise" },
+  { text: "I transmitted my needs clearly. You brought the wrong flavor. The system is broken.", category: "demanding" },
+  { text: "The universe is scratching something it can't quite reach. That's why everything wobbles.", category: "poetic" }
+];
+
+let decisions = responses.map(() => ({ status: 'pending', editedText: null }));
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = responses.map((r, i) => {
+    const d = decisions[i];
+    const cls = d.status === 'keep' ? 'kept' : d.status === 'cut' ? 'cut' : d.status === 'edit' ? 'edited' : '';
+    const displayText = d.editedText || r.text;
+    const statusLabel = d.status !== 'pending' ? `<span class="status-label" style="color:${d.status === 'keep' ? '#4ecca3' : d.status === 'cut' ? '#e94560' : '#ffd93d'}">${d.status.toUpperCase()}${d.editedText ? ' (edited)' : ''}</span>` : '';
+    return `
+      <div class="item ${cls}" id="item-${i}">
+        <div class="item-number">#${i + 1}</div>
+        <div class="item-text">${displayText}</div>
+        <div class="item-category">${r.category}</div>
+        <div class="actions">
+          <button class="btn btn-keep" onclick="decide(${i},'keep')">KEEP</button>
+          <button class="btn btn-cut" onclick="decide(${i},'cut')">CUT</button>
+          <button class="btn btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+          ${d.status !== 'pending' ? `<button class="btn btn-reset" onclick="resetItem(${i})">RESET</button>` : ''}
+          ${statusLabel}
+        </div>
+        <div class="edit-area" id="edit-${i}">
+          <textarea id="textarea-${i}">${displayText}</textarea>
+          <button class="btn btn-keep" onclick="saveEdit(${i})">SAVE & KEEP</button>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+  updateExport();
+}
+
+function decide(i, status) {
+  decisions[i].status = status;
+  if (status !== 'edit') decisions[i].editedText = null;
+  render();
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  const ta = document.getElementById(`textarea-${i}`);
+  ta.value = decisions[i].editedText || responses[i].text;
+  ta.focus();
+}
+
+function saveEdit(i) {
+  const ta = document.getElementById(`textarea-${i}`);
+  const newText = ta.value.trim();
+  decisions[i].editedText = newText !== responses[i].text ? newText : null;
+  decisions[i].status = 'keep';
+  render();
+}
+
+function resetItem(i) {
+  decisions[i] = { status: 'pending', editedText: null };
+  render();
+}
+
+function updateStats() {
+  const counts = { keep: 0, cut: 0, edit: 0, pending: 0 };
+  decisions.forEach(d => {
+    if (d.status === 'keep') counts.keep++;
+    else if (d.status === 'cut') counts.cut++;
+    else counts.pending++;
+  });
+  // count edits within keeps
+  const editCount = decisions.filter(d => d.status === 'keep' && d.editedText).length;
+  document.getElementById('kept').textContent = counts.keep;
+  document.getElementById('cuts').textContent = counts.cut;
+  document.getElementById('edits').textContent = editCount;
+  document.getElementById('pending').textContent = counts.pending;
+}
+
+function updateExport() {
+  const kept = [];
+  decisions.forEach((d, i) => {
+    if (d.status === 'keep') {
+      kept.push({ text: d.editedText || responses[i].text, category: responses[i].category });
+    }
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(kept, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy JSON', 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
