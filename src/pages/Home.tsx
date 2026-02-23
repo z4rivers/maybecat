@@ -1004,7 +1004,7 @@ export function Oracle() {
 
       </div>
 
-      {/* FIXED PURRfoot Sponsor Banner - Always at bottom */}
+      {/* Fixed bottom bar */}
       <div
         className="fixed bottom-0 left-0 right-0 z-50 flex items-center shadow-2xl h-[80px] md:h-[150px]"
         style={{
@@ -1012,47 +1012,61 @@ export function Oracle() {
           boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
         }}
       >
-        {/* Main ad space - left 4/5 */}
-        <div className="flex-1 flex items-center justify-center h-full p-3 md:p-5">
-          <div
-            className="w-full h-full rounded-lg flex items-center justify-center"
-            style={{ border: '2px dashed rgba(251,191,36,0.25)' }}
-          >
-            <span className="text-amber-400/30 text-xs md:text-sm uppercase tracking-widest select-none">Ad Space</span>
+        {!response && !isThinking ? (
+          /* Page 1 (landing) — full-width shelter support message */
+          <div className="w-full flex items-center justify-center h-full">
+            <p className="flex items-center gap-3 md:gap-4 text-slate-400/20 text-[1.7rem] md:text-6xl font-extrabold tracking-normal select-none px-4" style={{ fontFamily: "'Grandstander', cursive" }}>
+              <span className="hidden md:inline">Please support your local animal rescue and shelter facilities.</span>
+              <Heart className="w-7 h-7 md:w-10 md:h-10 text-red-700/60 fill-red-700/60 shrink-0" style={{ stroke: 'none' }} />
+              Adopt.
+            </p>
           </div>
-        </div>
-
-        {/* Adoption CTA - right 1/5 */}
-        <AnimatePresence>
-          {shelterCat && catImage && (
-            <motion.a
-              href={shelterCat.adoptionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name, location: shelterCat.location })}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              whileHover={{ scale: 1.02 }}
-              className="w-1/5 min-w-[180px] h-full flex flex-col items-center justify-center px-4 text-center transition-colors hover:bg-amber-900/20"
-              style={{
-                borderLeft: '1px solid rgba(251,191,36,0.3)',
-              }}
-            >
-              <Heart className="w-6 h-6 text-amber-400 mb-2" />
-              <p
-                className="text-amber-100 font-bold text-sm leading-tight"
-                style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}
+        ) : (
+          /* Page 2 (response) — sponsor ad space + adoption CTA */
+          <>
+            {/* Main ad space - left 4/5 */}
+            <div className="flex-1 flex items-center justify-center h-full p-3 md:p-5">
+              <div
+                className="w-full h-full rounded-lg flex items-center justify-center"
+                style={{ border: '2px dashed rgba(251,191,36,0.25)' }}
               >
-                Adopt {shelterCat.name}
-              </p>
-{shelterCat.location && (
-                <p className="text-amber-400/80 text-xs mt-1">{shelterCat.location}</p>
+                <span className="text-amber-400/30 text-xs md:text-sm uppercase tracking-widest select-none">Ad Space</span>
+              </div>
+            </div>
+
+            {/* Adoption CTA - right 1/5 */}
+            <AnimatePresence>
+              {shelterCat && catImage && (
+                <motion.a
+                  href={shelterCat.adoptionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => safeTrack('adoption_clicked', { name: shelterCat.name, location: shelterCat.location })}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="w-1/5 min-w-[180px] h-full flex flex-col items-center justify-center px-4 text-center transition-colors hover:bg-amber-900/20"
+                  style={{
+                    borderLeft: '1px solid rgba(251,191,36,0.3)',
+                  }}
+                >
+                  <Heart className="w-6 h-6 text-amber-400 mb-2" />
+                  <p
+                    className="text-amber-100 font-bold text-sm leading-tight"
+                    style={{ fontFamily: "'Cinzel Decorative', Georgia, serif" }}
+                  >
+                    Adopt {shelterCat.name}
+                  </p>
+                  {shelterCat.location && (
+                    <p className="text-amber-400/80 text-xs mt-1">{shelterCat.location}</p>
+                  )}
+                  <p className="text-amber-500/60 text-[10px] mt-2 uppercase tracking-wider">Click to visit</p>
+                </motion.a>
               )}
-              <p className="text-amber-500/60 text-[10px] mt-2 uppercase tracking-wider">Click to visit</p>
-            </motion.a>
-          )}
-        </AnimatePresence>
+            </AnimatePresence>
+          </>
+        )}
       </div>
     </div>
   );
