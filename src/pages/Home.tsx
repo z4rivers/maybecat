@@ -1015,7 +1015,7 @@ export function Oracle() {
         {!response && !isThinking ? (
           /* Page 1 (landing) — full-width shelter support message */
           <div className="w-full flex items-center justify-center h-full">
-            <p className="flex items-center gap-3 md:gap-4 text-slate-400/20 text-[1.7rem] md:text-6xl font-extrabold tracking-normal select-none px-4" style={{ fontFamily: "'Grandstander', cursive" }}>
+            <p className="flex items-center gap-3 md:gap-4 text-slate-400/20 text-[1.7rem] md:text-5xl font-extrabold tracking-normal select-none px-4" style={{ fontFamily: "'Grandstander', cursive" }}>
               <span className="hidden md:inline">Please support your local animal rescue and shelter facilities.</span>
               <Heart className="w-7 h-7 md:w-10 md:h-10 text-red-700/60 fill-red-700/60 shrink-0" style={{ stroke: 'none' }} />
               Adopt.
