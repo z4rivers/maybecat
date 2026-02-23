@@ -3724,7 +3724,14 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Fur and claw tornado about to hit!", category: "chaotic" },
   { text: "One whisker width separates perfection from disaster.", category: "wise" },
   { text: "Hahahahah...ha..hee.haha... eh you.. you eh... You needed, advice... ehhh..haha and you asked the DOG first?", category: "chaotic" },
-  { text: "I understand your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
+  { text: "Your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
+  { text: "\"It's not my business\" makes everything all much more fun.", category: "wise" },
+  { text: "*Uses cuteness super power to melt your brain*", category: "chaotic" },
+  { text: "I match your stress tension and sense of overwhelm with a kind meow of concern.", category: "nurturing" },
+  { text: "What if the red dot comes back and I'm not ready?", category: "existential" },
+  { text: "I dreamt I had six toe beans and I killed Inigo Montoya's father.", category: "chaotic" },
+  { text: "I told the dog you said he was adopted.", category: "chaotic" },
+  { text: "Too weird, no punch.", category: "cold" },
 ];
 
 // ============================================
