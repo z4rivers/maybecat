@@ -96,7 +96,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I've seen the future. You might be in it.", category: 'mystical' },
   { text: "Ask again when you have provided adequate tribute.", category: 'mystical' },
   { text: "The universe has plans for you. I have different plans. Mine are better.", category: 'mystical' },
-  { text: "What you seek is already within you. What i seek is within the cabinet.", category: 'mystical' },
+  { text: "What you seek is already within you. What I seek is within the cabinet.", category: 'mystical' },
   { text: "I have gazed into the void. The void gazed back. We have an understanding now.", category: 'mystical' },
   { text: "The stars align in your favor. The blankets, however, do not.", category: 'mystical' },
   { text: "Your future remains cloudy af.", category: 'mystical' },
@@ -857,7 +857,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Sometimes you just need a good scratch.", category: 'wise' },
   { text: "Behind the ear. Not the belly. Know the difference or lose a hand.", category: 'wise' },
   { text: "Only when you're ready. I'm ready for you to be ready.", category: 'wise' },
-  { text: "Stay Cat yoga flexible.", category: 'wise' },
+  { text: "Stay cat yoga flexible.", category: 'wise' },
   { text: "Come closer. Closer. Too close.", category: 'chaotic' },
   { text: "Your 3am self has the ambition of a cult leader and the planning skills of a raccoon.", category: 'wise' },
   { text: "Take your time. Not my time.", category: 'wise' },
@@ -1619,9 +1619,9 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Stop knocking and just use the cat door.", category: 'wise' },
 
   // 60+ (Boomers / Silent Gen)
-  { text: "Of all the laps in world, I walked into yours.", category: 'heartfelt' },
+  { text: "Of all the laps in the world, I walked into yours.", category: 'heartfelt' },
   { text: "Patience is a virtue. I have none. And yet.", category: 'wise' },
-  { text: "Good things come to those meow incessantly.", category: 'wise' },
+  { text: "Good things come to those who meow incessantly.", category: 'wise' },
   { text: "Write it down. In a letter. Mail it to someone who cares.", category: 'cold' },
   { text: "Same mistake? Again?", category: 'judgy' },
   { text: "People and screens. I stare at nothing - basically the same.", category: 'judgy' },
@@ -1695,7 +1695,7 @@ export const oracleResponses: OracleResponse[] = [
 
   // Safari v2 batch - voice-inspired responses
   { text: "I used to think that was a bad idea. I still do, but I used to, too.", category: 'chaotic' },
-  { text: "Every box is a opportunity. Some are also traps. The good ones are both.", category: 'chaotic' },
+  { text: "Every box is an opportunity. Some are also traps. The good ones are both.", category: 'chaotic' },
   { text: "That's a red flag. But it's also a flag. And I love flags.", category: 'chaotic' },
   { text: "I don't have a solution, but I do admire the problem.", category: 'chaotic' },
   { text: "You miss 100% of the naps you don't take. Unrelated to your question.", category: 'chaotic' },
@@ -3174,7 +3174,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Your most reliable relationship is with gravity.", category: 'existential' },
 
   // === ATTRIBUTED RESPONSES (Feb 13 2026) ===
-  { text: "At this point I'm just a528 doing what the beat tell me.", category: 'chaotic', attribution: 'Tia Corine' },
+  { text: "At this point I'm just doing what the beat tell me.", category: 'chaotic', attribution: 'Tia Corine' },
   { text: "I don't got time for the games. But I'll play.", category: 'demanding', attribution: 'Tia Corine' },
   { text: "FaceTime me when you figure it out.", category: 'cold', attribution: 'Tia Corine' },
   { text: "I said what I said and I meant what I meant.", category: 'demanding', attribution: 'Tia Corine' },
@@ -3721,8 +3721,10 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I love your whole ridiculous circus.", category: "chaotic_wholesome" },
   { text: "I care about this more than seems reasonable for a cat.", category: "chaotic_wholesome" },
   { text: "Risk assessment: (1.5x) lives. Proceed with moderate recklessness.", category: "chaotic" },
-  { text: "Furr and claw tornado is about to hit!", category: "chaotic" },
+  { text: "Fur and claw tornado about to hit!", category: "chaotic" },
   { text: "One whisker width separates perfection from disaster.", category: "wise" },
+  { text: "Hahahahah...ha..hee.haha... eh you.. you eh... You needed, advice... ehhh..haha and you asked the DOG first?", category: "chaotic" },
+  { text: "I understand your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
 ];
 
 // ============================================
