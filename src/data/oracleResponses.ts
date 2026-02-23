@@ -3548,7 +3548,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Yes, like a mouse not seeing you and running right in your direction.", category: 'wise' },
   { text: "Yes, like a flying acrobatic leap to catch a cat dancer high in the air.", category: 'chaotic' },
   { text: "Yes, like thinking you are being transferred to another shelter and arriving at a forever home.", category: 'adoption' },
-  { text: "Yes, like you aren't sure if it's time to get another cat and a cat finds you.", category: 'adoption' },
+  { text: "Yes, like you aren't sure if it's time to get another cat... and a cat finds you.", category: 'adoption' },
   { text: "Yes, like wanting this kitten, but that one being so cute too.", category: 'adoption' },
   { text: "Yes, like the appreciation of an older rescue cat finally being selected for adoption.", category: 'adoption' },
   { text: "Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.", category: 'heartfelt' },
