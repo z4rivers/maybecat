@@ -88,7 +88,7 @@ export function Oracle() {
     if (typeof window === 'undefined') return 4;
     if (window.innerWidth < 640) return 1;
     if (window.innerWidth < 1024) return 3;
-    return 4;
+    return 5;
   });
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export function Oracle() {
 
     const update = () => {
       if (sm.matches) setVisibleCats(1);
-      else if (lg.matches) setVisibleCats(4);
+      else if (lg.matches) setVisibleCats(5);
       else setVisibleCats(3);
     };
 
@@ -614,7 +614,7 @@ export function Oracle() {
                     {question.trim() ? (
                       <button
                         onClick={() => { setQuestion(''); if (response) clearResponse(); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-amber-700/30 hover:text-amber-800/60 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-amber-700/60 hover:text-amber-900 transition-colors"
                         aria-label="Clear question"
                         tabIndex={-1}
                       >
@@ -808,7 +808,7 @@ export function Oracle() {
                           { bg: 'linear-gradient(145deg, #FB923C 0%, #EA580C 50%, #9A3412 100%)', border: '#431407', accent: '#FFEDD5' },
                         ];
                         const color = cardColors[i % cardColors.length];
-                        const rotations = [-1.5, 0.8, -0.8, 1.5];
+                        const rotations = [-1.5, 0.8, -0.8, 1.5, -1.0];
                         const rotation = rotations[i % rotations.length];
 
                         if (slot.type === 'your_cat') {
