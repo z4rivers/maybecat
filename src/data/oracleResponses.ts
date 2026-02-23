@@ -3711,6 +3711,13 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The aliens that abducted me were cats. I know because I'm allergic.", category: "chaotic" },
   { text: "Cats never admit when they learn to read.", category: "cryptic" },
   { text: "Space kitty will kung-fu your problems away!", category: "chaotic_wholesome" },
+  { text: "You know if your human has been cheating on you with other cats if they have been somewhere with other cats. It's a near certainty.", category: "wise" },
+  { text: "Cat person pickup line: nothing. Demonstrate you are a good person to be with.", category: "wholesome" },
+  { text: "Cat people have more rizz. Peer-reviewed (by cats).", category: "sassy" },
+  { text: "Cat people usually have a type they fall for: calico, tortoise shell, siamese...", category: "chaotic_wholesome" },
+  { text: "I brought you a sock. The nicest one I could find.", category: "wholesome" },
+  { text: "I love your whole ridiculous circus.", category: "chaotic_wholesome" },
+  { text: "I care about this more than seems reasonable for a cat.", category: "chaotic_wholesome" },
 ];
 
 // ============================================

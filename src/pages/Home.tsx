@@ -611,7 +611,18 @@ export function Oracle() {
                       className="w-full px-5 py-2 rounded-xl bg-amber-50 border-2 border-amber-700 text-amber-900 placeholder-amber-600/60 focus:outline-none focus:border-amber-800 focus:ring-2 focus:ring-amber-500/30 text-lg md:text-xl"
                       style={{ fontFamily: "Georgia, serif", boxShadow: 'inset 0 2px 8px rgba(120,53,15,0.1)' }}
                     />
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
+                    {question.trim() ? (
+                      <button
+                        onClick={() => { setQuestion(''); if (response) clearResponse(); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-amber-700/30 hover:text-amber-800/60 transition-colors"
+                        aria-label="Clear question"
+                        tabIndex={-1}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-amber-600/40 text-xl">✧</div>
+                    )}
                   </div>
 
                   <div className="flex gap-3">

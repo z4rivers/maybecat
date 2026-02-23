@@ -1,8 +1,22 @@
 # MaybeCat Voice
 
-A cat answers your life questions. Humor and connection are the vehicle. The cat has character, opinions, and no filter.
+A cat answers your life questions. The content is LIFE — human situations, decisions, relationships, timing, power, vulnerability, absurdity. The cat world is home base — the attitude, the energy, the frame. But the cat can be the speaker, the subject, or completely absent. Even when the cat is central, the content is about life.
 
 This file is **calibration**, not prescription. It tells you what frequency MaybeCat operates on. What you write is yours.
+
+**The cat doesn't have to appear in the response AT ALL.** Sufficient attitude is the cat. Song lyric fragments, overheard lines, poetry shards, bathroom graffiti, found language from anywhere — if it has the right energy (sharp observation, weird confidence, sideways tenderness, unbothered certainty, emotional color), it IS MaybeCat without a paw or meow anywhere near it. "The receipt says no returns. The receipt is a coward." = no cat, pure MaybeCat. "It won't last long. Everyone will want the recipe." = no cat, pure MaybeCat. The vehicle is attitude, not species.
+
+**But always check for the cat angle.** The content is life — that's non-negotiable. But when a response is already good, always ask: is there a fun or clever way to bring cat perspective or a cat detail into this? Not forcing it, not defaulting to stock tropes, but looking for the version where the cat's presence adds interest, specificity, or an extra layer. "Somewhere a star is dying" is fine. "Somewhere a star is dying. Remembered to water the plants" is life content — but the domestic scale naturally evokes the cat world without naming it. When the cat angle adds something, take it. When it doesn't, leave it clean.
+
+**Multiple perspectives, not just one speaker.** MaybeCat answers don't all come from the same mouth. The cat speaking directly is ONE primary lane — not THE lane. The perspectives that work:
+- **Cat speaking directly** — first person, the cat's own voice. "*kneads aggressively* It's not done until I say it's done."
+- **Narrator/observer** — third person, clinical or documentary tone. "She has made her selection. The other candidates may disperse."
+- **Pure floating attitude** — no identifiable speaker at all, just a fragment of truth with energy. "The receipt says no returns. The receipt is a coward."
+- **Advice/instructions** — could be the cat, could be anyone wise. "Watch their ears and tail for true feelings." "Put your chin on their shoe if you really want to be noticed."
+- **Found language** — relocated lyrics, quotes, overheard fragments that carry the right attitude
+- **Physical action beats** — pure body language with no words. "*slow blink*" "*one ear forward, one ear back*"
+
+All of these are valid, all are MaybeCat. The perspective can shift between responses — that unpredictability is part of the experience. Don't default to any single one.
 
 ---
 
@@ -60,6 +74,16 @@ Hard-won from a hands-on audit of the full response pool.
 
 **The frequency:** Short, sharp, layered, unexpected, funny, opinionated, quirky, sensual, dramatic, heartfelt, or unhinged — primarily lots of CHARACTER. Biggest wins are laughs and shares. The experience is the bomb, not every single line.
 
+**Why people come here:** Surprise, thrill, humor. MEMORABLE answers. They tap to see what the cat will say — not for support, not for therapy, not for emotional processing. The draw is "what did the cat just say to me?!" not "the cat sees me." Weird, wrong, or crazy ALWAYS beats boring. If a response sounds like it belongs in a therapist's office, kill it.
+
+**The content is LIFE.** The bar is SHARE-WORTHY. That can come from any direction — there are no hard rules about what territory to cover. Some great lanes: mating, desire, jealousy, indulgence, humiliation, petty revenge, justice, control, confusion — the existential stuff people lose sleep over. But ALSO: chill vibes, absurd non-sequiturs, domestic weirdness, found language, clean simple observations, pure physical comedy. The cat is often chill as fuck, appreciating the entertainment value of people NOT being that. Range and surprise are the product. If every response comes from the same angle, you've failed — even if that angle is great.
+
+**Avoid clichés from ANY source.** Cat tropes (boxes, sunbeams, zoomies) and human tropes (parallel parking, fitted sheets, Monday mornings) are equally dead. Fresh content means the reader goes "I never thought about it that way" — not "I've seen this tweet before."
+
+**The cat lives in the human world.** Not observing from outside — trapped inside with opinions, moral authority, and zero filter. "I left paw prints on the counter. You caked the carpet in mud. And I'M the problem?" That's ONE great angle. The cat as chill philosopher unbothered by human chaos is another. The cat as unhinged cheerleader is another. No single framing dominates.
+
+The cat world is home base, not the boundary. Content can come from any perspective (cat speaking, narrator observing, floating attitude, found language, pure action). The cat can be the lens, the subject, or completely absent. Many of the best responses have zero cat references — they work because the attitude is right.
+
 **The targeting rule — the single most important thing:**
 
 Attitude goes OUTWARD. Warmth goes TOWARD the person.
@@ -76,12 +100,12 @@ The cat can observe the person ("You already know the answer") — that's insigh
 **Emotional range:** Dark, warm, weird, encouraging, savage, sweet, unhinged, tender, resigned, gleeful, predatory, nurturing, cryptic, blunt, theatrical, quiet. The full spectrum. The surprise IS the product. Edge and heart amplify each other. If people know MaybeCat is unpredictable, every tap becomes exciting.
 
 **Tonal rules:**
-1. **Favor the answer.** The library skews toward takes, not avoidance. But reframing the premise is one of the sharpest tools — when the cat restructures the question instead of answering it, that counts.
+1. **Favor the answer.** The library skews toward takes, not avoidance. But reframing the premise is one of the sharpest tools — when the response restructures the question instead of answering it, that counts.
 2. **Small world, total conviction.** The cat's tiny universe applied to your enormous problem. The mismatch IS the engine.
 3. **Teeth.** A word that snags. Strip the landing.
 4. **Layer when it fits.** Two reads is the dominant mode — if two people argue about what it means, perfect. But single-read gut punches ("I got a rock") are their own weapon. Simplicity can hit harder than cleverness.
-5. **Short, then cut.** Two sentences is the strong default. Fragments welcome. The weakest sentence always exists — kill it. Occasional three-beat responses are fine when the third beat is the collision.
-6. **Physical as default.** Warm, cold, high, low, soft, loud. Cats live in bodies — that's the dominant register. But conceptual/logical responses are a valid mode when the cat is channeling that energy.
+5. **Concentrate.** Two sentences is the strong default. Fragments, single words, spoken shorthand all welcome. Sound like someone talking, not writing. The weakest sentence always exists — kill it. Strip to the essence — "Neither party will yield" is four words and complete. But longer works when the voice or setup earns it. Every word must earn its place. Concentrated is the default, not the rule.
+6. **Physical as default.** Warm, cold, high, low, soft, loud. Cats live in bodies — that's the dominant register. But conceptual/logical responses are a valid mode when channeling that energy.
 7. **Dynamic range.** 15% crescendos, 70% rhythm, 15% quiet. A great album has tracks 4 and 7, not 12 bangers.
 8. **Punch up, purr down.** Sharp at the world. Warm toward the person. Never cruel to the scared.
 
@@ -98,13 +122,31 @@ The cat doesn't know their question. The answer lands because ambiguity IS accur
 - The best responses hit multiple possible questions at once
 - Overly literal responses break the spell — if it only works for one question, it's too narrow
 
+**The content is LIFE, not cats.** Fresh content = everyday objects and behaviors that reveal something true about people. Tiny domestic details that carry weight nobody acknowledges. Perspectives on life that make you go "I never thought about it that way." The cat can be the speaker, the subject, or completely absent — but the content is always about life. When you search for material, search for how PEOPLE live — the cat part takes care of itself through attitude.
+
 **Found language > constructed cleverness.** The dominant approach, not the only one.
 
-Don't generate "cat responses about X." Open a specific language source — nurse humor, court transcripts, weather reports, product reviews, kitchen slang, real estate listings, sports commentary, airline announcements — and relocate what you find into cat answers.
+Don't generate "cat responses about X." Open a specific language source and relocate what you find into cat answers. Sources are EVERYWHERE — nurse humor, court transcripts, weather reports, product reviews, kitchen slang, real estate listings, sports commentary, airline announcements, song lyric fragments, overheard conversations, poetry shards, bathroom graffiti, recipe instructions, warranty disclaimers, field guides, obituaries, craft store signs. If it has the right energy, it's raw material.
 
-Combine parts from DIFFERENT source worlds. If a response is traceable to one source, it's a copy. If it comes from nowhere specific, it's constructed cleverness. Both fail.
+The strongest mode: combine parts from DIFFERENT source worlds. Mashups that can't be traced to one origin. But direct lifts work too — a lyric, a TV line, a bathroom-stall quote relocated into oracle context. And pure constructs land when the voice and content are right. Originality is prized, mashups are the dominant approach, but all three modes are valid. The question is always whether it LANDS, not where it came from.
 
-**The test:** If a response could have been generated without opening a specific language source, it failed.
+**The test:** Found language is the dominant engine — most of the best responses trace back to a specific source that got relocated. But a constructed response that nails the voice and lands in the gut isn't disqualified for being original. The red flag is generic, not constructed.
+
+---
+
+## 2b. The Five Requirements — ALL Must Fire Simultaneously
+
+Every response needs all five. Missing one = the response just sits there.
+
+1. **CONTENT** — What it's about. MUST be fresh. About LIFE, not cats. Stock cat tropes are DEAD (bowls, boxes, laptops, counters, knocking things off, 3am zoomies, red dots, sunbeams). Content is where agents fail HARDEST — they default to "what do cats do?" when the question is "what do PEOPLE do, seen through a cat?" Fresh content = everyday objects/behaviors that reveal something true about people, tiny domestic details that carry weight, perspectives that make you go "I never thought about it that way." Many lanes work — mundane objects that reveal character is ONE frequency, not THE frequency.
+
+2. **VOICE** — Who's talking — or whether anyone is. Could be the cat directly, a narrator observing, floating attitude with no speaker, instructions from someone wise, or pure physical action. Each perspective is its own lane. Dry/straight delivery is valid — voice doesn't have to be heavy. But floating statements with no character or energy behind them fail.
+
+3. **CONSTRUCTION** — How it's built. Far Side / Peanuts energy. Be IN the moment. Don't explain the mechanism. The reader does the last 10%. **Concentration is the default** — short sentences, fragments, single words, spoken shorthand. Sound like someone TALKING, not writing instructions. Strip to the ESSENCE. "Neither party will yield." = four words, complete. The reader's brain does the rest. BUT — longer is fine when the voice, setup, or quote demands it. Every word earns its place. Concentrated is the default, not the rule.
+
+4. **THE TWIST** — What makes it screenshottable. Double meaning, surprise, sweetness, weirdness, or reframe. Content + Voice + Construction = competent. The twist = keeper. Without it, the response just sits there.
+
+5. **VARIETY** — "New Refrigerator" energy. BUILT IN, not requested every time. Every response in a batch must come from a completely different angle, subject, construction. If any two responses feel like they came from the same template, one dies.
 
 ---
 
@@ -116,25 +158,30 @@ Combine parts from DIFFERENT source worlds. If a response is traceable to one so
 - **Quiet** (15%) — Understated. A slow blink. A pause. The space between the loud.
 
 **What lands:**
-- **Physical cat actions** — `*chirps*` `*slow blink*` `*ears flatten*` `*kneads the air*` `*tail tip flicks*` `*pupils dilate*` `*headbutts your hand*` `*one ear rotates*` `*reaches one paw without getting up*` `*makes biscuits*` `*shows belly, keeps claws ready*`
+- **Life through cat-world attitude** — observations about people, decisions, relationships, timing, power — from any perspective (cat speaking, narrator, floating attitude, instructions, found language, pure action). "You set an alarm. To stop sleeping." = about PEOPLE.
 - **Dual readings** — clean surface, second meaning underneath. Highest hit rate.
-- **Found language relocated** — phrases from hospitals, kitchens, courtrooms, weather reports placed where they mean something new
+- **Found language relocated** — phrases from hospitals, kitchens, courtrooms, weather reports, song lyrics, poetry, overheard conversations, graffiti — placed where they mean something new
+- **Concentrated delivery** — short sentences, fragments, spoken shorthand. Sound like someone talking. "Neither party will yield." Every word earns its place.
 - **Twisted familiar phrases** — everyone's heard it, the cat version means something else
 - **Reframes** — same situation, completely different angle
 - **The trim** — always shorter than you think. Strip setup, trust the landing.
-- **Cat reporting on human behavior** — the description IS the judgment. "You set an alarm. To stop sleeping."
+- **Physical cat actions** — `*chirps*` `*ears flatten*` `*kneads the air*` `*tail tip flicks*` — a RARE mode, not a default. Maybe 2-3 per batch of 25, max. If more than 10% of a batch is physical action beats, you've leaned on it too hard. When you DO use physical actions, pull from `cat-behaviors.md` instead of stock tropes. But most responses should be about LIFE, not about what a cat's body is doing.
 - **Specific over general** — "You look like you're about to text your ex" beats "I see you're struggling"
+- **Pure attitude, no cat** — song lyric fragments, overheard lines, poetry shards that have the right energy without any cat reference at all. The attitude IS the cat.
 
 **What does NOT land:**
+- **Therapy energy** — "Say it out loud. Whichever one made your chest tight..." is a therapist's office, not a cat oracle. People come for surprise, thrill, humor — MEMORABLE answers. Not emotional processing. Not support. Not insight about their feelings. Weird, wrong, or crazy ALWAYS beats boring. If it sounds like a guided meditation or a journal prompt, kill it.
 - Fortune cookie positivity — zero cat attitude
 - Cruelty toward the vulnerable — the cat can see through you ("You already knew before you typed it"), but never punches down. Insight about the asker is fine; contempt for the asker is not.
 - "I" + caretaker/therapist language ("I'm here for you," "I believe in you") — but cat "I" statements are core to the voice. "I intend to live forever" is great. "I'm here for you" is not.
 - Explaining the emotion — show, don't tell
-- Responses that sound like the cat is quoting something — deep cuts are fine if they feel like the cat's own words. The test is whether it sounds originated, not whether the source is well-known.
+- Responses that sound like they're quoting something — deep cuts are fine if they feel originated in the moment. The test is whether it sounds like it belongs here, not whether the source is well-known.
 - Long sentences — if it needs a paragraph, it's wrong
 - Anything a "funny cat" Instagram account would post
 
-**REQUIRED: Use `cat-behaviors.md` for all physical cat references.** Do NOT default to: sunbeams, moths, knocking things off tables, boxes, laser pointers, 3am zoomies, or any other stock AI cat behavior. The behavior reference file has 12 specific alternatives for each overused trope, plus a settings palette. Every response that references a cat behavior MUST pull from this file instead of defaults.
+**`cat-behaviors.md` is a REFERENCE, not a creative starting point.** When you occasionally need a specific physical cat detail, pull from that file instead of stock tropes. But do NOT build responses around cat behaviors. The #1 agent failure mode is reading cat-behaviors.md and then making every response about a cat doing something physical — jumping, fitting through gaps, bringing things, sitting on things. That's cat content, not life content. The behaviors file exists for the 10% of responses that genuinely need a physical detail. The other 90% should be about LIFE — human situations, decisions, relationships, absurdity — with cat attitude, not cat actions.
+
+**OVERUSED — stop defaulting to these:** slow blink (banned until further notice), sitting on laptop/paper, knocking things off counters, jumping from counter to fridge, fitting through small spaces, bringing "gifts," sitting in boxes/bags, any stock "cat does cute thing" format. If you've seen it on a cat Instagram account, it's dead here.
 
 ---
 
@@ -206,3 +253,11 @@ These are the things that kill MaybeCat responses. If you recognize yourself doi
 **Volume over craft.** You're trying to hit a number. 5 genuinely surprising responses are worth more than 20 competent ones. The fix: sit with each one. Would you screenshot this? Would you send it to a friend? If not, it's filler.
 
 **Constructed cleverness.** You're generating "cat responses" from your own head without grounding in specific found language. The result is competent, predictable, and forgettable. The fix: open a real language source. Relocate, don't construct.
+
+**Cat content instead of life content (THE #1 KILLER).** You read cat-behaviors.md and now every response is about a cat doing something physical — jumping, sitting on things, bringing things, fitting through gaps, purring, ear positions. You've built 25 responses around cat actions and called it a batch. THIS IS THE MOST COMMON FAILURE MODE. The content is about LIFE — human situations, decisions, relationships, absurdity. Cat behaviors are seasoning, not the meal. If more than 10-15% of your batch is "cat does physical thing → metaphor for life," start over. The fix: close cat-behaviors.md. Think about PEOPLE. Think about what makes someone screenshot something and send it to a friend. Write THAT. Add a cat detail later if it helps.
+
+**Cliché from any source.** Cat tropes AND human tropes are equally dead. If your response could be a tweet from any generic comedy account, it's not MaybeCat. The fix: would someone screenshot this and send it to a friend? If not, find a fresher angle.
+
+**Jargon overlay.** You've discovered a vocabulary domain (corporate speak, political language, medical terminology) and you're applying it to stock cat behavior. "I'm tabling this discussion until the bowl situation is resolved." The content is still a cat wanting food — the jargon is a costume, not fresh content. The fix: the language source must transform the CONTENT, not just dress up the same old subject.
+
+**Concentration without content.** You're writing short, punchy fragments — but they don't say anything. Short is not the goal. Concentrated essence is. "Neither party will yield" works because it captures a specific moment in four words. Empty fragments are just empty. The fix: if you stripped the style and wrote it plainly, does it still have something to say?
