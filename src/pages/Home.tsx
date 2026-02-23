@@ -1012,7 +1012,7 @@ export function Oracle() {
           boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
         }}
       >
-        {!response && !isThinking ? (
+        {!catImage ? (
           /* Page 1 (landing) — full-width shelter support message */
           <div className="w-full flex items-center justify-center h-full">
             <p className="flex items-center gap-3 md:gap-4 text-slate-400/20 text-[1.7rem] md:text-5xl font-extrabold tracking-normal select-none px-4" style={{ fontFamily: "'Grandstander', cursive" }}>
