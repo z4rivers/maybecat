@@ -201,6 +201,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*sniffs* That's not a problem. That's a flavor profile.", category: 'cold' },
   { text: "This item is non-refundable and you knew that at checkout.", category: 'cold' },
   { text: "Nope. Door's that way.", category: 'cold' },
+  { text: "There's a time for that, in a galaxy far far away.", category: 'cold' },
+  { text: "Be specific. Makes you sound competent.", category: "cold" },
 
   // ============================================
   // ANGRY - Irritated, fed up, had enough
@@ -375,6 +377,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*runs past* Wrong room. *runs back* Also wrong. *runs again*", category: 'chaotic' },
   { text: "Horizontal? Vertical? ALL DIRECTIONS. ALL AT ONCE.", category: 'chaotic' },
   { text: "Brave and stupid share a parking lot.", category: 'chaotic' },
+  { text: "\"Instinct\" sounds so much better than \"I panicked and got lucky.\"", category: 'chaotic' },
 
   // ============================================
   // WISE - Actually helpful, surprisingly profound
@@ -537,6 +540,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Nobody's coming. The door isn't locked.", category: 'wise' },
   { text: "You stayed quiet to keep the peace. How's the peace?", category: 'wise' },
   { text: "You are your best thing.", category: 'nurturing', attribution: 'Toni Morrison' },
+  { text: "I love how your plan relies on accidental courage and happenstance.", category: "wise" },
+  { text: "We'll round up and call it \"fine\".", category: "wise" },
 
   // ============================================
   // POP CULTURE - Movies, TV, Memes, Music
@@ -3597,6 +3602,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You're a high quality first pressing buried in a dollar bin.", category: 'heartfelt' },
   { text: "You're a vagrant outside your typical range. Birders would drive six hours to see you right now.", category: 'nurturing' },
   { text: "The honey hole doesn't produce every trip.", category: 'nurturing' },
+  { text: "Stay calm and follow the sound of my meows.", category: "nurturing" },
   { text: 'Stealth required. The muggles are watching.', category: 'cold' },
   { text: 'Context is everything and you just removed yourself from it.', category: 'cold' },
   { text: "*slow blink* Remarkable preservation for something that's been buried this long.", category: 'heartfelt' },
@@ -3631,6 +3637,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You keep arriving at the place you refuse to leave.", category: 'angry' },
   { text: "Find the answer shaped like your question. That's probably the one that fits.", category: 'mystical' },
   { text: "Invert the question. Now it answers itself.", category: 'mystical' },
+  { text: "Can humans leap out of holes that deep?", category: 'mystical' },
   { text: "*slow blink* You're looking at this with the wrong eyes.", category: 'wise' },
   { text: "You don't need a better answer. You need a worse question.", category: 'existential' },
   { text: "What if this is true and the opposite of this is also true?", category: 'chaotic' },
@@ -3680,6 +3687,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*full bottle-brush tail* *attempting the slow confident approach*", category: "physical" },
   { text: "When hiding, people aren't allowed to find you if most of you is covered.", category: "chaotic_wholesome" },
   { text: "Watch their ears and tail for true feelings.", category: "physical" },
+  { text: "Ooh yeah, that's just the right amount of spice. And juicy too. Dang - that's good.", category: "physical" },
   { text: "Bury yourself in couch cushions with just your head sticking out. This is a power position.", category: "sassy" },
   { text: "The sun is exploding in slow motion while your toast gets cold.", category: "chaotic_wholesome" },
   { text: "Civilizations rise and fall. Fitted sheets still won't fold right.", category: "existential" },
@@ -3718,8 +3726,12 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Cat people have more rizz. Peer-reviewed (by cats).", category: "sassy" },
   { text: "Cat people usually have a type they fall for: calico, tortoise shell, siamese...", category: "chaotic_wholesome" },
   { text: "I brought you a sock. The nicest one I could find.", category: "wholesome" },
+  { text: "I'm just a cat for the camera. In real life I'm an oversized gerbil.", category: "wholesome" },
   { text: "I love your whole ridiculous circus.", category: "chaotic_wholesome" },
   { text: "I care about this more than seems reasonable for a cat.", category: "chaotic_wholesome" },
+  { text: "See it as a crazy maze challenge.", category: "chaotic_wholesome" },
+  { text: "There will be chaos sown by pure love and kindness.", category: "chaotic_wholesome" },
+  { text: "Spoken like a true saber-toothed house cat!", category: "chaotic_wholesome" },
   { text: "Risk assessment: (1.5x) lives. Proceed with moderate recklessness.", category: "chaotic" },
   { text: "Fur and claw tornado about to hit!", category: "chaotic" },
   { text: "One whisker width separates perfection from disaster.", category: "wise" },
@@ -3728,10 +3740,16 @@ export const oracleResponses: OracleResponse[] = [
   { text: "\"It's not my business\" makes everything all much more fun.", category: "wise" },
   { text: "*Uses cuteness super power to melt your brain*", category: "chaotic" },
   { text: "I match your stress tension and sense of overwhelm with a kind meow of concern.", category: "nurturing" },
+  { text: "The human vet says you're fine, but I hope you'll stay home in bed all day anyway.", category: "nurturing" },
   { text: "What if the red dot comes back and I'm not ready?", category: "existential" },
+  { text: "Cat worlds are bigger than human worlds because we're smaller.", category: "existential" },
   { text: "I dreamt I had six toe beans and I killed Inigo Montoya's father.", category: "chaotic" },
   { text: "I told the dog you said he was adopted.", category: "chaotic" },
+  { text: "Undo it and redo it so *everyone* can be upset equally.", category: "chaotic" },
+  { text: "You got this! (as in we've just diagnosed your rash).", category: "chaotic" },
   { text: "Too weird, no punch.", category: "cold" },
+  { text: "Speaking your problem out loud in an exaggerated cat accent will make it less daunting.", category: "chaotic_wholesome" },
+  { text: "The plan will work if you eat three purple things today.", category: "chaotic_wholesome" },
 ];
 
 // ============================================
