@@ -615,6 +615,9 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I'm not for everyone. That's the point.", category: 'wise' },
   { text: "*flat on back* I look unemployed. I'm LOADED. This is potential energy, baby.", category: 'wise' },
   { text: "I know things about you just from drinking your toilet water.", category: 'wise' },
+  { text: "Lines aren't as long for the liver and sardine options.", category: 'wise' },
+  { text: "Oh boy, success! Here come harder problems.", category: 'wise' },
+  { text: "It's YOUR problem. That's why you feed and shelter it and make sure it grows.", category: 'wise' },
 
   // ============================================
   // UNHINGED CAT - Crude, Blunt, Chaotic
@@ -902,6 +905,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Existence doesn't bother me. I found a spot where it can't reach.", category: "existential" },
   { text: "Bold of existence to assume I'm participating.", category: "existential" },
   { text: "I reached nirvana. It was a shelf I'm not supposed to be on.", category: "existential" },
+  { text: "Cats would be better lyricists if more things rhymed with 'meow'.", category: 'existential' },
 
   // ============================================
   // DEMANDING - Wants something, transactional
@@ -3754,6 +3758,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Undo it and redo it so *everyone* can be upset equally.", category: "chaotic" },
   { text: "You got this! (as in we've just diagnosed your rash).", category: "chaotic" },
   { text: "Ok, 3, not 27... bad counting on my part.", category: "chaotic" },
+  { text: "I don't want to deal with bureaucracy or parking tickets. That's why I became a cat.", category: "chaotic" },
   { text: "Too weird, no punch.", category: "cold" },
   { text: "If I could be the slightest bit sorry about it, I wouldn't.", category: "cold" },
   { text: "Speaking your problem out loud in an exaggerated cat accent will make it less daunting.", category: "wise" },
