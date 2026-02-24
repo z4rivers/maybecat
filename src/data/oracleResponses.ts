@@ -379,6 +379,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Brave and stupid share a parking lot.", category: 'chaotic' },
   { text: "\"Instinct\" sounds so much better than \"I panicked and got lucky.\"", category: 'chaotic' },
   { text: "Certainty is for cowards!", category: 'chaotic' },
+  { text: "That's clearly a Problem. Problems come after Annoyances, Catastrophes, and Messes. We do them alphabetically.", category: "chaotic" },
 
   // ============================================
   // WISE - Actually helpful, surprisingly profound
@@ -3688,6 +3689,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*full bottle-brush tail* *attempting the slow confident approach*", category: "chaotic" },
   { text: "When hiding, people aren't allowed to find you if most of you is covered.", category: "chaotic" },
   { text: "Watch their ears and tail for true feelings.", category: "wise" },
+  { text: "Good unattended sushi is hard to come by.", category: "wise" },
   { text: "Ooh yeah, that's just the right amount of spice. And juicy too. Dang - that's good.", category: "chaotic" },
   { text: "Bury yourself in couch cushions with just your head sticking out. This is a power position.", category: "demanding" },
   { text: "The sun is exploding in slow motion while your toast gets cold.", category: "existential" },
@@ -3757,6 +3759,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Speaking your problem out loud in an exaggerated cat accent will make it less daunting.", category: "wise" },
   { text: "The plan will work if you eat three purple things today.", category: "chaotic" },
   { text: "Maybe we need a bigger place with a giant catio and no bathtubs.", category: "nurturing" },
+  { text: "Brace for bad news, so the 'meh' feels like a win.", category: "wise" },
+  { text: "Do you get there faster when the treadmill is on a higher setting?", category: "wise" },
 ];
 
 // ============================================
