@@ -3698,6 +3698,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Argue with a cat, expect to lose.", category: "cold" },
   { text: "Straight alley-cat. Now wearing a collar. With a bell. It could happen to you.", category: "dramatic" },
   { text: "*Got yelled at for scratching the couch.* It's MY couch. I LIVE here.", category: "demanding" },
+  { text: "Wear what you want... but I'd like you to incorporate more strings, fringe and sparkles.", category: "demanding" },
   { text: "Navigating a new relationship is hard: rules about where you're allowed to poop, and about who you are allowed to bite and scratch or sleep on.", category: "wise" },
   { text: "Side effects may include confidence.", category: "chaotic_wholesome" },
   { text: "The worst they can say is no, with yes being a close second.", category: "wise" },
@@ -3738,6 +3739,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Hahahahah...ha..hee.haha... eh you.. you eh... You needed, advice... ehhh..haha and you asked the DOG first?", category: "chaotic" },
   { text: "Your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
   { text: "\"It's not my business\" makes everything all much more fun.", category: "wise" },
+  { text: "Envision a shared future based entirely on cat priorities.", category: "wise" },
   { text: "*Uses cuteness super power to melt your brain*", category: "chaotic" },
   { text: "I match your stress tension and sense of overwhelm with a kind meow of concern.", category: "nurturing" },
   { text: "The human vet says you're fine, but I hope you'll stay home in bed all day anyway.", category: "nurturing" },
@@ -3748,9 +3750,12 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I told the dog you said he was adopted.", category: "chaotic" },
   { text: "Undo it and redo it so *everyone* can be upset equally.", category: "chaotic" },
   { text: "You got this! (as in we've just diagnosed your rash).", category: "chaotic" },
+  { text: "Ok, 3, not 27... bad counting on my part.", category: "chaotic" },
   { text: "Too weird, no punch.", category: "cold" },
+  { text: "If I could be the slightest bit sorry about it, I wouldn't.", category: "cold" },
   { text: "Speaking your problem out loud in an exaggerated cat accent will make it less daunting.", category: "chaotic_wholesome" },
   { text: "The plan will work if you eat three purple things today.", category: "chaotic_wholesome" },
+  { text: "Maybe we need a bigger place with a giant catio and no bathtubs.", category: "chaotic_wholesome" },
 ];
 
 // ============================================
