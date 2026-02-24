@@ -3743,6 +3743,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "The human vet says you're fine, but I hope you'll stay home in bed all day anyway.", category: "nurturing" },
   { text: "What if the red dot comes back and I'm not ready?", category: "existential" },
   { text: "Cat worlds are bigger than human worlds because we're smaller.", category: "existential" },
+  { text: "I've scaled sofa backs, cabinet ranges, counters, and refrigerator tops - only to find contentment right here in the middle of this sunny floor.", category: "existential" },
   { text: "I dreamt I had six toe beans and I killed Inigo Montoya's father.", category: "chaotic" },
   { text: "I told the dog you said he was adopted.", category: "chaotic" },
   { text: "Undo it and redo it so *everyone* can be upset equally.", category: "chaotic" },
