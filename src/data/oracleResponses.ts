@@ -1167,7 +1167,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*eyes get huge* You... you DID that?", category: 'judgy' },
   { text: "*pupils fully dilated* I cannot believe what I'm witnessing.", category: 'judgy' },
   { text: "*stares in disbelief* And you thought that was okay?", category: 'judgy' },
-  { text: "*big eyes* I'm not mad. I'm disappointed. Actually, I'm also mad.", category: 'angry' },
   { text: "*eyes go black* This changes everything.", category: 'mystical' },
   { text: "*wide eyes* Say that again. Slowly.", category: 'cold' },
   { text: "*staring* I am processing this. It's taking a while.", category: 'chaotic' },
@@ -2709,7 +2708,7 @@ export const oracleResponses: OracleResponse[] = [
   // --- Feb 12 2026: Irwin energy batch — 22 keepers ---
   { text: "Magnificent creature. Absolutely lethal. Go say hi.", category: 'chaotic' },
   { text: "Look at the SIZE of this problem. Isn't she gorgeous?", category: 'nurturing' },
-  { text: "She's scared. You're scared. Someone's gotta go first.", category: 'wise' },
+  { text: "They're scared. You're scared. Someone's gotta go first.", category: 'wise' },
   { text: "The ones that bite teach you the most.", category: 'wise' },
   { text: "Massive. Terrifying. The most incredible thing I've seen today.", category: 'heartfelt' },
   { text: "Everyone backed up. Not you though. I see that.", category: 'nurturing' },
@@ -2916,7 +2915,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Put the obvious ones in the obvious places and sort the rest.", category: 'wise' },
   { text: "Lacking condition but structurally correct.", category: 'cold' },
   { text: "Moving like a daughter with daddy's credit card.", category: 'judgy' },
-  { text: "Youth and inexperience play against him.", category: 'cold' },
   { text: "It's extraordinary how self-obsessed human beings are.", category: 'judgy' },
   { text: "Look at the strut of a champion right there.", category: 'demanding' },
 
@@ -3385,7 +3383,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "If your basic needs are met, maybe the problem is you're looking for problems.", category: 'judgy' },
   { text: "Have you tried wanting something else equally hard?", category: 'judgy' },
   { text: "Bro, I got adopted because I walked up to the cage door and headbutted a stranger. Sometimes you just need to headbutt strangers.", category: 'adoption' },
-  { text: "Is the couch better because she's on it? That's my whole test for whether I like someone.", category: 'wise' },
+  { text: "Is the couch better because they're on it? That's my whole test for whether I like someone.", category: 'wise' },
   { text: "WAIT — you have someone who LOVES you and you're not sure?! I would KILL for someone to be unsure about me!", category: 'adoption' },
   { text: "...There. You feel that? Do they give you that energy? If not, I'M AVAILABLE.", category: 'adoption' },
   { text: "Dude, I love EVERYONE. The vet? Love her. The guy who cleans the cages? OBSESSED. My point is, love is easy. You're making it hard.", category: 'adoption' },
@@ -3500,7 +3498,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Yes, like you aren't sure if it's time to get another cat... and a cat finds you.", category: 'adoption' },
   { text: "Yes, like wanting this kitten, but that one being so cute too.", category: 'adoption' },
   { text: "Yes, like the appreciation of an older rescue cat finally being selected for adoption.", category: 'adoption' },
-  { text: "Yes, like the sounds people make when they laugh at real cat fun - not just cat videos.", category: 'heartfelt' },
   { text: "Yes, like the first stretch after a long nap.", category: 'wise' },
   { text: "Yes, like the sound of the can opener.", category: 'wise' },
   { text: "Yes, the way two cats who've never met touch noses.", category: 'heartfelt' },
@@ -3619,7 +3616,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "It won't last long. Everyone will want the recipe.", category: "cold" },
   { text: "Cats are very cosmopolitan. Sleep schedules are optimized for all time zones at once.", category: "wise" },
   { text: "It's exhausting to manage this many sleep cycles in a day.", category: "existential" },
-  { text: "She has made her selection. The other candidates may disperse.", category: "demanding" },
+  { text: "The selection has been made. The other candidates may disperse.", category: "demanding" },
   { text: "Dilated pupils and increased vocalization. Neither party will yield.", category: "mystical" },
   { text: "What follows is not a second chance.", category: "demanding" },
   { text: "The dominant specimen has entered the room. All prior arrangements are void.", category: "chaotic" },
@@ -3762,16 +3759,6 @@ const templates: Template[] = [
     }
   },
 
-  // COLD templates
-  {
-    pattern: "*{action}* {dismissal}",
-    category: 'cold',
-    slots: {
-      action: ['stares', 'blinks once', 'turns around slowly', 'looks at you', 'yawns', 'licks paw', 'walks away mid-sentence', 'shows you my butthole', 'sits facing the wall'],
-      dismissal: ['No.', 'Wrong.', 'Pathetic.', 'I expected nothing and I\'m still disappointed.', 'You bore me.', 'My time is worth more than this.', 'I have decided you are not my problem.', 'Perish.', 'Try again in your next life.', 'I pretend I do not see it.', 'New human please.']
-    }
-  },
-
   // ANGRY templates - reframed as responses
   {
     pattern: "You're asking ME for advice? After {grievance}? {reaction}.",
@@ -3835,15 +3822,6 @@ const templates: Template[] = [
       truth: ["conducting a welfare check", "supervising", "keeping you alive (you're welcome)", "making sure you don't do anything stupid", "quality control", "here by choice and I'm CHOOSING loudly", "on duty", "haunting you affectionately", "your emotional support predator", "aggressively present"]
     }
   },
-  // Gift-giving wisdom - using cat gift experience to answer questions
-  {
-    pattern: "Do it like I do with {gift}: {wisdom}.",
-    category: 'wise',
-    slots: {
-      gift: ["dead birds", "mice", "things I find", "my offerings", "gifts", "the stuff I catch", "treasures from outside", "bugs I bring home"],
-      wisdom: ["give your best, expect nothing", "offer it anyway, even if they don't understand", "you can't control how it's received", "do it because you want to, not for the reaction", "some gifts aren't appreciated until later", "intent matters more than outcome", "showing up is the whole thing"]
-    }
-  },
   {
     pattern: "When I bring my human {gift}, {observation}. {lesson}.",
     category: 'wise',
@@ -3851,35 +3829,6 @@ const templates: Template[] = [
       gift: ["a dead bird", "half a mouse", "something I caught", "a gift from outside", "my best work", "a prize"],
       observation: ["they never appreciate it", "they make that face", "they don't understand", "they seem confused", "they don't eat it", "they act weird about it"],
       lesson: ["I bring it anyway. That's love.", "Doesn't stop me. Shouldn't stop you.", "Their reaction isn't my business.", "I know what I meant by it.", "Do it for you, not for them.", "Give freely. The rest isn't up to you."]
-    }
-  },
-  {
-    pattern: "I once {attempt}. {outcome}. {takeaway}.",
-    category: 'wise',
-    slots: {
-      attempt: ["tried to bring a bird inside", "caught something too big to carry", "brought a live one by accident", "offered my best catch", "worked really hard on a gift", "dragged something home"],
-      outcome: ["It escaped", "It didn't go as planned", "They weren't impressed", "It got complicated", "The whole thing fell apart", "It was chaos"],
-      takeaway: ["The point is I tried.", "Effort still counts.", "You can't control everything.", "Sometimes the attempt IS the thing.", "Failure is just information.", "I'd do it again."]
-    }
-  },
-
-  // Self-aware sweetness
-  {
-    pattern: "Look, {setup}. {punchline}.",
-    category: 'heartfelt',
-    slots: {
-      setup: ["I'm a cat", "I'm not good at this", "feelings are hard", "I don't say this stuff", "vulnerability isn't my brand", "this is awkward", "I'm going to keep this short", "don't expect a speech", "I'm only saying this once", "this is embarrassing"],
-      punchline: ["But you're my person and that's permanent", "But I'd be sad if you left", "But you matter or whatever", "But I'm glad you exist", "But here we are and I'm not leaving", "But I pick you every time", "But you're the only human I like", "But you're stuck with me now", "But I need you around. There. I said it.", "But this is home because of you"]
-    }
-  },
-
-  // JUDGY templates
-  {
-    pattern: "{observation}. {verdict}",
-    category: 'judgy',
-    slots: {
-      observation: ["I saw you eat that off the floor", "I watched you trip over nothing", "I heard you talk to the plants", "I noticed you haven't moved in 4 hours", "I observed your outfit choice", "I've seen your 2am snack decisions", "I watched you cry at that commercial", "I saw you wave back at someone who wasn't waving at you", "I've noted your screen time", "I saw you rehearse that conversation in the mirror"],
-      verdict: ["I've seen dogs with more dignity.", "Fascinating. Truly.", "And you judge ME for licking myself.", "My respect for you has adjusted accordingly.", "We're not so different. Except I'm better.", "I'll allow it. This time.", "Points for confidence, I guess.", "I'm not mad. I'm just disappointed. Okay I'm also mad.", "I've decided to find this endearing. Barely.", "This explains so much about you."]
     }
   },
 
@@ -3926,13 +3875,6 @@ const templates: Template[] = [
       blunt: ["You already know what to do. You just don't want to.", "That's not going to work and you know it.", "Stop asking for permission.", "You're overthinking this.", "It's not that complicated.", "You're avoiding the real problem.", "That excuse is tired.", "You can do hard things. Do the hard thing.", "Nobody's coming to save you. Save yourself.", "Say the thing. Send the text. Make the call.", "Waiting isn't a strategy.", "The answer is no. You knew that.", "Do it badly. Do it anyway.", "Stop rehearsing conversations that won't happen."]
     }
   },
-  {
-    pattern: "Here's the thing: {truth}.",
-    category: 'wise',
-    slots: {
-      truth: ["most problems solve themselves if you stop poking them", "people aren't thinking about you as much as you think", "you can't control what you can't control", "good enough is usually good enough", "not everything needs to be fixed", "sometimes the answer is just 'wait'", "you're allowed to change your mind", "it probably won't matter in five years", "you're not behind, you're on your own timeline", "done is better than perfect", "rest isn't quitting", "some things are hard because they're hard, not because you're bad at them"]
-    }
-  },
 
   // TRANSACTIONAL templates - clear expectations
   {
@@ -3941,31 +3883,6 @@ const templates: Template[] = [
     slots: {
       offer: ["I will sit with you", "I'll purr", "I'll let you pet me", "I'll be cute", "I'll provide companionship", "I'll keep your lap warm", "I'll guard you while you sleep", "I'll bring you a gift", "I'll grace you with my presence", "I'll share my wisdom"],
       expectation: ["You know what I expect in return", "Treats are appreciated", "The bowl should be full when I check", "This isn't charity", "I trust you understand the arrangement", "My terms are reasonable", "We have an agreement", "Compensation is expected", "Consider what you owe me", "This is a two-way street"]
-    }
-  },
-  {
-    pattern: "I {action}. Therefore, {consequence}.",
-    category: 'demanding',
-    slots: {
-      action: ["sat on your laptop", "woke you up gently (at 5am)", "didn't bite you (hard)", "tolerated the new furniture", "let the dog live another day", "used the litter box (not your shoes)", "came when you called (eventually)", "shared the bed (most of it)", "made biscuits on your stomach"],
-      consequence: ["I deserve treats", "breakfast should be immediate", "I've earned chin scratches", "you owe me", "the debt is noted", "payment is expected", "I'll be collecting later", "we're square (for now)", "I expect compensation", "my generosity should be recognized"]
-    }
-  },
-
-  // WISE templates (cat logic)
-  {
-    pattern: "{observation}. {catWisdom}.",
-    category: 'wise',
-    slots: {
-      observation: ['The bowl is half empty', 'The door is closed', 'The lap is occupied', 'Someone else got attention', 'The food is the same as yesterday', 'I was moved from my spot', 'The human is stressed', 'Change has occurred', 'I cannot reach the counter', 'The sunbeam moved'],
-      catWisdom: ["If I fit, I sit. This applies to all problems", "Stare at it until it becomes uncomfortable", "Nap on it. Everything is clearer after nap", "Have you tried being cuter?", "This is a problem for 3am me", "Simply choose chaos", "Sit on something important. Now you have leverage", "The solution is violence. Or treats. Same energy"]
-    }
-  },
-  {
-    pattern: "Ancient cat proverb: {proverb}.",
-    category: 'wise',
-    slots: {
-      proverb: ["If it fits, you must sits", "Knock first, ask questions never", "The hand that feeds you is also fun to bite", "Every surface is a bed if you're brave enough", "Closed doors are a personal insult", "The 3am scream gets the worm", "If you can't join them, sit on their keyboard", "A watched bowl never fills fast enough", "Hairballs are just feelings leaving the body", "Those who sprint at 3am win the race no one else is running", "If you ignore it hard enough it becomes someone else's problem", "The cardboard box is mightier than the expensive bed"]
     }
   },
 
@@ -4030,15 +3947,6 @@ const templates: Template[] = [
     }
   },
 
-  // META templates
-  {
-    pattern: "{setup} {punchline}",
-    category: 'meta',
-    slots: {
-      setup: ["You're taking advice from a virtual cat.", "This is what the internet has come to.", "Somewhere, your ancestors are watching.", "A cat on a screen just told you what to do.", "You clicked 'ask the cat' for this.", "This is peak humanity.", "Screenshot this. Prove nothing is sacred."],
-      punchline: ["And you know what? Valid.", "I respect that about you.", "They would be so confused. And proud?", "And you're going to listen, aren't you.", "No judgment. Okay, some judgment.", "We've both made choices today.", "This is the future they warned us about. It's great."]
-    }
-  },
 ];
 
 // Generate response from template
@@ -4081,7 +3989,7 @@ const categoryWeights: Record<OracleCategory, number> = {
 
 // Track recently shown responses to avoid repeats
 // Persisted to localStorage so it survives page reloads
-const MAX_RECENT = 50;
+const MAX_RECENT = 200;
 const STORAGE_KEY = 'maybecat_recent_responses';
 const SLOT_STORAGE_KEY = 'maybecat_recent_slots';
 const MAX_RECENT_SLOTS = 30;
