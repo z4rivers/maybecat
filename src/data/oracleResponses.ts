@@ -676,7 +676,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "When in doubt, groom.", category: 'mystical' },
   { text: "*ears rotate independently* Something shifted in the pressure. Even the birds stopped.", category: 'mystical' },
   { text: "The answer hides inside the question - like a pretzel.", category: 'mystical' },
-  { text: "Look again. You missed something. You usually do.", category: 'mystical' },
   { text: "The tail knows what the head does not.", category: 'mystical' },
   { text: "You came here wanting a yes. My whiskers say something heavier.", category: 'mystical' },
   { text: "You already swallowed the answer. You came here to see if I'd cough it up for you.", category: 'mystical' },
@@ -1537,7 +1536,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Rizz is temporary. Cat is forever.", category: 'wise' },
   { text: "POV: you asked a cat for advice.", category: 'meta' },
   { text: "Not the— okay actually yes the—", category: 'chaotic' },
-  { text: "GG. Now pet me.", category: 'demanding' },
   { text: "Simply get better. At petting cats.", category: 'judgy' },
   { text: "Cringe is just authentic without filters.", category: 'wise' },
   { text: "Real talk though: you're gonna be fine.", category: 'nurturing' },
@@ -2505,7 +2503,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*slow blink* I didn't see anything. And if I did, I forgot.", category: 'meta' },
   { text: "At what point does the bluff become the truth?", category: 'poetic' },
   { text: "The junk drawer is the most honest place in a home.", category: 'poetic' },
-  { text: "You don't know if this counts as belonging.", category: 'heartfelt' },
   { text: "The clock does not care about you.", category: 'existential' },
   { text: "Do you understand consequences?", category: 'meta' },
   { text: "I would never want what you want.", category: 'demanding' },
@@ -3284,7 +3281,6 @@ export const oracleResponses: OracleResponse[] = [
 
   // --- Spock yoga energy (Feb 14 2026) ---
   { text: "Soften what is not required for survival.", category: 'poetic' },
-  { text: "You are holding tension in locations you have not yet identified.", category: 'mystical' },
 
   // --- Famous last words energy (Feb 15 2026) ---
   { text: "According to the dictate of time and fate, resolve to pave the way for a grand peace for all.", category: 'wise' },
@@ -3307,7 +3303,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Fleshy but tough with loads of flavor and a bad attitude. Take it as a compliment.", category: 'judgy' },
   { text: "Stop. You've used up what this had to give.", category: 'demanding' },
   { text: "The patient refuses autopsy. Not completely dead.", category: 'meta' },
-  { text: "Settle for menu options. Settle for the drapes in your 2nd color choice. Not for this.", category: 'demanding' },
+  { text: "Settle for menu options. Settle for drapes in your 2nd color choice. Not for this.", category: 'demanding' },
   { text: "*slow blink* To be overcome by something this good is a delectable form of defeat.", category: 'poetic' },
   { text: "You deserve better villains, superhero.", category: 'demanding' },
   { text: "Ghosts, shadows and whispers can be the toughest opponents.", category: 'wise' },
@@ -3389,7 +3385,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Dude, I love EVERYONE. The vet? Love her. The guy who cleans the cages? OBSESSED. My point is, love is easy. You're making it hard.", category: 'adoption' },
   { text: "Some cats play hard to get. Not me. I'm ALL IN immediately. Is that healthy? Probably not! But it's HONEST!", category: 'chaotic' },
   { text: "You want advice? Here's advice — I bit the last person who tried to pet me and I'd do it again.", category: 'angry' },
-  { text: "You're not sure about them. They're probably not sure about you either. The difference is they're not asking a cat about it.", category: 'adoption' },
+  { text: "You're not sure about them. They're probably not sure about you. The difference is they're not asking a cat about it.", category: 'adoption' },
   { text: "Nobody wants the difficult cat. But the difficult one is the most interesting.", category: 'adoption' },
   { text: "Take it from a shelter cat - when people say they'll FIX you, they could mean anything!", category: 'adoption' },
   { text: "I've seen things. Raccoon fights. Dumpster politics. Turf wars with a one-eyed tabby. Your drama doesn't register on my scale.", category: 'cold' },
@@ -3444,7 +3440,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Vulnerability behind all that blustering bravado. I see it from here.", category: 'heartfelt' },
   { text: "What you're feeling is micro-calibrated discomfort. It's by design.", category: 'cold' },
   { text: "Reject ironic detachment. Try sincerity. See what happens.", category: 'wise' },
-  { text: "Toothless platitudes and bootstrapping pep talks. That's all they're offering you. Walk.", category: 'angry' },
+  { text: "Toothless platitudes and bootstrapping pep talks. That's all they're offering.", category: 'angry' },
   { text: "This is not a DECISION. This is a RECKONING. Make the call.", category: 'demanding' },
   { text: "Send the text with the gravity of a war declaration. Then put the phone in another room.", category: 'wise' },
   { text: "I am a creature of IMMENSE dignity and I would like to be held.", category: 'heartfelt' },
@@ -3876,15 +3872,6 @@ const templates: Template[] = [
     }
   },
 
-  // TRANSACTIONAL templates - clear expectations
-  {
-    pattern: "{offer}. {expectation}.",
-    category: 'demanding',
-    slots: {
-      offer: ["I will sit with you", "I'll purr", "I'll let you pet me", "I'll be cute", "I'll provide companionship", "I'll keep your lap warm", "I'll guard you while you sleep", "I'll bring you a gift", "I'll grace you with my presence", "I'll share my wisdom"],
-      expectation: ["You know what I expect in return", "Treats are appreciated", "The bowl should be full when I check", "This isn't charity", "I trust you understand the arrangement", "My terms are reasonable", "We have an agreement", "Compensation is expected", "Consider what you owe me", "This is a two-way street"]
-    }
-  },
 
   // EXISTENTIAL templates
   {
@@ -3937,15 +3924,6 @@ const templates: Template[] = [
     }
   },
 
-  // DEMANDING templates
-  {
-    pattern: "{demand}. {orElse}.",
-    category: 'demanding',
-    slots: {
-      demand: ['Feed me', 'Open this door', 'Pet me. Now stop. Now pet me again', 'Make room', 'Acknowledge my presence', 'Give me that thing you\'re eating', 'Turn on the sink', 'Stop what you\'re doing and look at me', 'Lift the blanket', 'Retrieve my toy from under the couch'],
-      orElse: ["Or face the consequences", "I'll wait. *stares*", "The clock is ticking", "You have until I count to three. One. Three.", "Don't test me", "This is non-negotiable", "Something will break. Mysteriously.", "I know where you sleep", "My patience is not infinite. It ran out 5 minutes ago"]
-    }
-  },
 
 ];
 
