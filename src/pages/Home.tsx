@@ -455,8 +455,9 @@ export function Oracle() {
                   <MysticalStar className="w-5 h-5 md:w-6 md:h-6 text-amber-100 drop-shadow-lg" />
                 </div>
 
-                <h1
+                <div
                   onClick={clearCat}
+                  role="banner"
                   className="text-[64px] md:text-[84px] lg:text-[106px] font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity leading-tight min-h-[72px] md:min-h-[95px] lg:min-h-[120px]"
                   style={{
                     fontFamily: "'Cinzel Decorative', Georgia, serif",
@@ -473,7 +474,7 @@ export function Oracle() {
                   }}
                 >
                   Maybe Cat
-                </h1>
+                </div>
 
                 <div className="flex items-center justify-center gap-2 -mt-[14px]">
                   <div className="h-[3px] w-14 bg-white/60" />
@@ -602,6 +603,7 @@ export function Oracle() {
                   </div>
                 </div>
 
+                <h2 className="sr-only">Ask Your Question</h2>
                 {/* Input + buttons */}
                 <div className="w-full mt-[16px] pb-[25px] space-y-2">
                   <div className="relative">
@@ -729,6 +731,7 @@ export function Oracle() {
 
           {/* Main content */}
           <div className="flex-1 flex flex-col -mt-[7px] min-h-0 w-full">
+          <h2 className="sr-only">Choose Your Oracle Cat</h2>
           {/* Cat selection carousel */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -994,6 +997,7 @@ export function Oracle() {
           </div>
           {/* SEO Footer */}
           <footer className="hidden sm:block w-full text-center select-text pt-3 pb-4 px-4">
+            <h2 className="sr-only">About MaybeCat</h2>
             <div className="text-base sm:text-sm md:text-base leading-relaxed" style={{ color: '#78350F', fontFamily: 'Georgia, serif' }}>
               <p className="font-bold">MaybeCat&trade; &mdash; ask a cat, get questionable answers. Real adoptable shelter cats.</p>
             </div>

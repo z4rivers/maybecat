@@ -3932,9 +3932,10 @@ function generateFromTemplate(template: Template): OracleResponse {
   let text = template.pattern;
   const usedSlots: string[] = [];
   for (const [slot, options] of Object.entries(template.slots)) {
-    // Prefer slot values not recently used
-    const fresh = options.filter(o => !isSlotRecent(o));
-    const pool = fresh.length > 0 ? fresh : options;
+    // Prefer slot values not recently used AND not in recent static responses
+    const fresh = options.filter(o => !isSlotRecent(o) && !slotInRecentResponses(o));
+    const semifresh = fresh.length > 0 ? fresh : options.filter(o => !isSlotRecent(o));
+    const pool = semifresh.length > 0 ? semifresh : options;
     const pick = pool[Math.floor(Math.random() * pool.length)];
     usedSlots.push(pick);
     text = text.replace(`{${slot}}`, pick);
@@ -3950,19 +3951,19 @@ function generateFromTemplate(template: Template): OracleResponse {
 // ============================================
 
 const categoryWeights: Record<OracleCategory, number> = {
-  wise: 20,         // 544 responses
-  chaotic: 18,      // 470 responses
-  cold: 10,         // 246 responses
-  judgy: 10,        // 242 responses
-  demanding: 10,    // 166 responses
-  mystical: 7,      // 164 responses
-  existential: 7,   // 119 responses
-  heartfelt: 7,     // 118 responses
-  nurturing: 6,     // 114 responses
-  angry: 5,         // 79 responses
-  poetic: 5,        // 72 responses
-  meta: 4,          // 38 responses
-  adoption: 1,      // 7 responses — has its own 2.5% trigger
+  wise: 20,         // 540 responses
+  chaotic: 18,      // 565 responses
+  cold: 10,         // 349 responses
+  judgy: 10,        // 281 responses
+  demanding: 10,    // 231 responses
+  mystical: 7,      // 197 responses
+  existential: 7,   // 157 responses
+  heartfelt: 7,     // 178 responses
+  nurturing: 6,     // 134 responses
+  angry: 5,         // 76 responses
+  poetic: 5,        // 97 responses
+  meta: 4,          // 85 responses
+  adoption: 1,      // 29 responses — has its own 2.5% trigger
 };
 
 // Track recently shown responses to avoid repeats
@@ -4020,6 +4021,50 @@ function isSlotRecent(value: string): boolean {
   return loadRecentSlots().includes(value);
 }
 
+// === TEMPLATE ↔ STATIC CROSS-CHECK ===
+// Prevents thematic overlap between template-generated and static responses.
+// Only checks multi-word slot values — single words like "chaos" are too generic.
+
+const crossCheckableSlots: string[] = (() => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const template of templates) {
+    for (const options of Object.values(template.slots)) {
+      for (const opt of options) {
+        if (opt.includes(' ') && !seen.has(opt)) {
+          seen.add(opt);
+          result.push(opt);
+        }
+      }
+    }
+  }
+  return result;
+})();
+
+function overlapsWithRecentSlots(text: string): boolean {
+  const recentSlots = loadRecentSlots();
+  const lowerText = text.toLowerCase();
+  return recentSlots.some(slot =>
+    slot.includes(' ') && lowerText.includes(slot.toLowerCase())
+  );
+}
+
+function markOverlappingSlots(text: string): void {
+  const lowerText = text.toLowerCase();
+  for (const slot of crossCheckableSlots) {
+    if (lowerText.includes(slot.toLowerCase())) {
+      addSlotToRecent(slot);
+    }
+  }
+}
+
+function slotInRecentResponses(slotValue: string): boolean {
+  if (!slotValue.includes(' ')) return false;
+  const recent = loadRecent();
+  const lowerSlot = slotValue.toLowerCase();
+  return recent.some(r => r.toLowerCase().includes(lowerSlot));
+}
+
 /**
  * Easter eggs — specific questions that always get specific answers.
  * Pattern matching is case-insensitive, ignores punctuation.
@@ -4046,8 +4091,9 @@ export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleR
   if (options?.isShelterCat && Math.random() < 0.025) {
     const adoptionResponses = oracleResponses.filter(r => r.category === 'adoption');
     const response = adoptionResponses[Math.floor(Math.random() * adoptionResponses.length)];
-    if (!isRecent(response.text)) {
+    if (!isRecent(response.text) && !overlapsWithRecentSlots(response.text)) {
       addToRecent(response.text);
+      markOverlappingSlots(response.text);
       return response;
     }
   }
@@ -4055,14 +4101,16 @@ export function getRandomResponse(options?: { isShelterCat?: boolean }): OracleR
   // Try up to 10 times to find a non-repeat
   for (let attempt = 0; attempt < 10; attempt++) {
     const response = getRandomResponseInternal();
-    if (!isRecent(response.text) || attempt === 9) {
+    if ((!isRecent(response.text) && !overlapsWithRecentSlots(response.text)) || attempt === 9) {
       addToRecent(response.text);
+      markOverlappingSlots(response.text);
       return response;
     }
   }
   // Fallback (shouldn't reach here)
   const response = getRandomResponseInternal();
   addToRecent(response.text);
+  markOverlappingSlots(response.text);
   return response;
 }
 

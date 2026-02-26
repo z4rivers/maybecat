@@ -5,6 +5,6 @@ import { useEffect } from 'react';
 // This hook only handles the document title for client-side navigation.
 export function useDocumentMeta() {
   useEffect(() => {
-    document.title = 'MaybeCat | Ask a Cat';
+    document.title = 'MaybeCat — Ask a Cat. Get Answers. Maybe.';
   }, []);
 }
