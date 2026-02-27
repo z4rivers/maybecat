@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Matching User Humor v2 — Feb 24</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+
+  .sticky-header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .sticky-header h1 { font-size: 1.3em; margin-bottom: 8px; color: #fff; }
+  .sticky-header p { font-size: 0.85em; color: #888; margin-bottom: 10px; }
+  .stats { display: flex; gap: 20px; font-size: 0.95em; }
+  .stats .keep { color: #4ecca3; }
+  .stats .cut { color: #e94560; }
+  .stats .edit { color: #ffd93d; }
+  .stats .pending { color: #888; }
+
+  .item { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #333; }
+  .item-number { font-size: 0.75em; color: #666; margin-bottom: 8px; }
+  .item-text { font-size: 1.15em; line-height: 1.5; margin-bottom: 6px; color: #fff; font-style: italic; }
+  .item-category { font-size: 0.8em; color: #888; margin-bottom: 14px; }
+
+  .buttons { display: flex; gap: 10px; margin-bottom: 10px; }
+  .buttons button { padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s; }
+  .btn-keep { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+  .buttons button:hover { transform: scale(1.05); }
+
+  .edit-area { display: none; margin-top: 10px; }
+  .edit-area textarea { width: 100%; background: #0f1a30; color: #fff; border: 1px solid #555; border-radius: 6px; padding: 10px; font-size: 1em; min-height: 60px; resize: vertical; font-family: inherit; }
+  .edit-area select { background: #0f1a30; color: #fff; border: 1px solid #555; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 0.9em; }
+  .edit-area button { margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
+  .item.decided-keep { border-color: #4ecca3; }
+  .item.decided-cut { border-color: #e94560; opacity: 0.5; }
+  .item.decided-edit { border-color: #ffd93d; }
+
+  .export-section { margin-top: 40px; padding: 20px; background: #16213e; border-radius: 12px; border: 1px solid #333; }
+  .export-section h2 { margin-bottom: 10px; color: #fff; }
+  .export-section pre { background: #0f1a30; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; color: #4ecca3; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .export-section button { margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Matching User Humor v2 — Feb 24</h1>
+  <p>Attempt 2. Observations that name real things in new language, not comedy furniture.</p>
+  <div class="stats">
+    <span class="keep">Keep: <span id="keep-count">0</span></span>
+    <span class="cut">Cut: <span id="cut-count">0</span></span>
+    <span class="edit">Edit: <span id="edit-count">0</span></span>
+    <span class="pending">Pending: <span id="pending-count">15</span>/15</span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (kept + edited)</h2>
+  <pre id="export-json">[]</pre>
+  <button onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const responses = [
+  { text: "You're going to do the thing you already decided to do and call it fate.", category: "wise" },
+  { text: "You keep rounding up to fine.", category: "wise" },
+  { text: "Your optimism is structural. Load-bearing. Don't touch it.", category: "wise" },
+  { text: "The version of you that exists in other people's stories is having a great time.", category: "existential" },
+  { text: "You talk yourself into things the way other people talk themselves out.", category: "cryptic" },
+  { text: "That was either growth or stubbornness. Both work.", category: "chaotic_wholesome" },
+  { text: "You treat 'maybe later' like a filing system.", category: "cold" },
+  { text: "Call it instinct. Sounds better than 'I panicked and got lucky.'", category: "chaotic" },
+  { text: "Not everyone can pull off chaos like that. Genuinely.", category: "chaotic_wholesome" },
+  { text: "You negotiated with yourself and both sides lost.", category: "wise" },
+  { text: "Adequate. (That's higher than it sounds coming from me.)", category: "cold" },
+  { text: "Somewhere between brave and careless there's you.", category: "cryptic" },
+  { text: "The backup plan is whatever you were already going to do.", category: "wise" },
+  { text: "The plan was always going to dissolve. The part where you improvise is the actual plan.", category: "wise" },
+  { text: "Most of your bravery is just deadline pressure and you should know that about yourself.", category: "wise" }
+];
+
+const decisions = {};
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = responses.map((r, i) => `
+    <div class="item ${decisions[i] ? 'decided-' + decisions[i].action : ''}" id="item-${i}">
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">"${r.text}"</div>
+      <div class="item-category">category: ${r.category}</div>
+      <div class="buttons">
+        <button class="btn-keep" onclick="decide(${i}, 'keep')">KEEP</button>
+        <button class="btn-cut" onclick="decide(${i}, 'cut')">CUT</button>
+        <button class="btn-edit" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${i}">
+        <textarea id="textarea-${i}">${r.text}</textarea>
+        <br>
+        <select id="cat-${i}">
+          ${['chaotic','wise','cold','sassy','cryptic','dramatic','physical','wholesome','demanding','chaotic_wholesome','existential','nurturing','poetic'].map(c =>
+            `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`
+          ).join('')}
+        </select>
+        <br>
+        <button onclick="saveEdit(${i})">Save Edit</button>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+function decide(i, action) {
+  decisions[i] = { action, text: responses[i].text, category: responses[i].category };
+  updateStats();
+  document.getElementById(`item-${i}`).className = `item decided-${action}`;
+}
+
+function toggleEdit(i) {
+  const el = document.getElementById(`edit-${i}`);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function saveEdit(i) {
+  const text = document.getElementById(`textarea-${i}`).value;
+  const category = document.getElementById(`cat-${i}`).value;
+  decisions[i] = { action: 'edit', text, category };
+  document.getElementById(`item-${i}`).className = 'item decided-edit';
+  document.getElementById(`edit-${i}`).style.display = 'none';
+  updateStats();
+}
+
+function updateStats() {
+  let keep = 0, cut = 0, edit = 0;
+  Object.values(decisions).forEach(d => {
+    if (d.action === 'keep') keep++;
+    else if (d.action === 'cut') cut++;
+    else if (d.action === 'edit') edit++;
+  });
+  document.getElementById('keep-count').textContent = keep;
+  document.getElementById('cut-count').textContent = cut;
+  document.getElementById('edit-count').textContent = edit;
+  document.getElementById('pending-count').textContent = (responses.length - keep - cut - edit);
+
+  const exported = [];
+  Object.entries(decisions).forEach(([i, d]) => {
+    if (d.action === 'keep') exported.push({ text: responses[i].text, category: responses[i].category });
+    else if (d.action === 'edit') exported.push({ text: d.text, category: d.category });
+  });
+  document.getElementById('export-json').textContent = JSON.stringify(exported, null, 2);
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(document.getElementById('export-json').textContent);
+}
+
+render();
+</script>
+
+</body>
+</html>

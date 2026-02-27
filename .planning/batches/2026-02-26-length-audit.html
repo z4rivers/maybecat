@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaybeCat Length Audit - Feb 26 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; padding-top: 120px; }
+
+  .sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #16213e; padding: 14px 20px; border-bottom: 2px solid #0f3460;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  .sticky-header h1 { font-size: 18px; color: #e94560; }
+  .stats { display: flex; gap: 16px; font-size: 14px; font-weight: 600; }
+  .stats .keep { color: #4ecca3; }
+  .stats .cut { color: #e94560; }
+  .stats .edit { color: #ffd93d; }
+  .stats .pending { color: #888; }
+  .stats .chars-saved { color: #7ec8e3; }
+
+  .item {
+    background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 16px;
+    border-left: 4px solid #333;
+    transition: border-color 0.2s;
+  }
+  .item.kept-original { border-left-color: #888; opacity: 0.6; }
+  .item.use-trim { border-left-color: #4ecca3; opacity: 0.6; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+
+  .original {
+    font-size: 16px; line-height: 1.5; padding: 12px 16px;
+    background: #0f3460; border-radius: 6px; margin-bottom: 8px;
+    font-style: italic;
+  }
+  .char-count { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .issue { font-size: 14px; color: #e94560; margin-bottom: 10px; font-weight: 500; }
+  .suggested {
+    font-size: 16px; line-height: 1.5; padding: 12px 16px;
+    background: #1a3a2e; border-radius: 6px; margin-bottom: 8px;
+    border: 1px solid #4ecca355;
+  }
+  .trim-count { font-size: 12px; color: #4ecca3; margin-bottom: 12px; }
+  .category-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 8px;
+    background: #333; color: #aaa;
+  }
+
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .actions button {
+    padding: 8px 20px; border: none; border-radius: 6px; font-weight: 600;
+    cursor: pointer; font-size: 13px; transition: opacity 0.2s;
+  }
+  .actions button:hover { opacity: 0.85; }
+  .btn-keep-original { background: #888; color: #1a1a2e; }
+  .btn-use-trim { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e94560; color: white; }
+  .btn-edit { background: #ffd93d; color: #1a1a2e; }
+
+  .edit-area {
+    display: none; margin-top: 10px;
+  }
+  .edit-area textarea {
+    width: 100%; min-height: 60px; padding: 10px; border-radius: 6px;
+    background: #0f3460; color: #e0e0e0; border: 1px solid #ffd93d55;
+    font-size: 15px; font-family: inherit; resize: vertical;
+  }
+  .edit-area .save-edit {
+    margin-top: 8px; padding: 6px 16px; background: #ffd93d; color: #1a1a2e;
+    border: none; border-radius: 4px; cursor: pointer; font-weight: 600;
+  }
+  .edit-area .char-live { font-size: 12px; color: #ffd93d; margin-top: 4px; }
+
+  .export-section {
+    margin-top: 40px; padding: 20px; background: #16213e; border-radius: 10px;
+  }
+  .export-section h2 { color: #4ecca3; margin-bottom: 10px; }
+  .export-section pre {
+    background: #0f3460; padding: 16px; border-radius: 6px;
+    overflow-x: auto; font-size: 13px; line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 600px; overflow-y: auto;
+  }
+  .export-section button {
+    margin-top: 10px; padding: 8px 20px; background: #4ecca3; color: #1a1a2e;
+    border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
+  }
+
+  .section-divider {
+    margin: 30px 0 20px;
+    padding: 10px 16px;
+    background: #0f3460;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #7ec8e3;
+  }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <h1>Length Audit - Feb 26 2026</h1>
+  <div class="stats">
+    <span class="pending">KEEP ORIGINAL: <span id="keepOrigCount">0</span></span>
+    <span class="keep">USE TRIM: <span id="useTrimCount">0</span></span>
+    <span class="cut">CUT: <span id="cutCount">0</span></span>
+    <span class="edit">EDIT: <span id="editCount">0</span></span>
+    <span class="pending">Pending: <span id="pendingCount">0</span></span>
+    <span class="chars-saved">Chars saved: <span id="charsSaved">0</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (kept + edited responses)</h2>
+  <p style="color:#888; margin-bottom:10px; font-size:13px;">All decisions included. KEEP ORIGINAL = no change. USE TRIM = accept suggested trim. EDIT = your custom text. CUT = remove from pool.</p>
+  <pre id="exportJson">[]</pre>
+  <button onclick="copyExport()">Copy JSON</button>
+</div>
+
+<script>
+const items = [
+  // ============================================================
+  // 100+ CHARS: HIGH PRIORITY
+  // ============================================================
+
+  {
+    original: "The universe has plans for you. I have different plans. Mine are better.",
+    chars: 71,
+    category: "mystical",
+    issue: "Third sentence restates what 'different plans' already implies.",
+    suggested: "The universe has plans for you. I have different plans.",
+    trimChars: 55
+  },
+  {
+    original: "What you seek is already within you. What I seek is within the cabinet.",
+    chars: 70,
+    category: "mystical",
+    issue: "Second sentence is the punchline but format is X/Y where Y is predictable after the setup.",
+    suggested: "What you seek is already within you. What I seek is within the cabinet.",
+    trimChars: 70,
+    skip: true
+  },
+  {
+    original: "I have gazed into the void. The void gazed back. We have an understanding now.",
+    chars: 78,
+    category: "mystical",
+    issue: "Third sentence over-explains the joke that the first two already landed.",
+    suggested: "I have gazed into the void. The void gazed back.",
+    trimChars: 49
+  },
+  {
+    original: "The shadows speak. They say 'feed the cat.' The shadows are wise.",
+    chars: 64,
+    category: "mystical",
+    issue: "'The shadows are wise' tells you what to think instead of letting the punchline breathe.",
+    suggested: "The shadows speak. They say 'feed the cat.'",
+    trimChars: 44
+  },
+  {
+    original: "You ate shredded cheese over the sink at midnight and called it self-care. Excellent survival instincts.",
+    chars: 104,
+    category: "judgy",
+    issue: "'Excellent survival instincts' explains the joke. The image already does all the work.",
+    suggested: "You ate shredded cheese over the sink at midnight and called it self-care.",
+    trimChars: 73
+  },
+  {
+    original: "The real question is why you thought asking a cat was a good idea.",
+    chars: 65,
+    category: "judgy",
+    issue: "Setup-heavy. 'The real question is why' is throat-clearing.",
+    suggested: "Why you thought asking a cat was a good idea.",
+    trimChars: 45
+  },
+  {
+    original: "Your question has been received. It has also been dismissed.",
+    chars: 59,
+    category: "judgy",
+    issue: "Two sentences making the same point. Either one works alone.",
+    suggested: "Received. Dismissed.",
+    trimChars: 20
+  },
+  {
+    original: "I'm not angry. I'm just... disappointed doesn't cover it.",
+    chars: 57,
+    category: "judgy",
+    issue: "'I'm not angry' is setup that weakens the punch.",
+    suggested: "Disappointed doesn't cover it.",
+    trimChars: 30
+  },
+  {
+    original: "That's a lot of words for someone within knocking-things-off-tables distance.",
+    chars: 78,
+    category: "judgy",
+    issue: "The concept is great but 'knocking-things-off-tables' is a compound that slows the rhythm.",
+    suggested: "That's a lot of words for someone within swatting distance.",
+    trimChars: 59
+  },
+  {
+    original: "Have you tried being a cat? No? Then I can't help you.",
+    chars: 54,
+    category: "judgy",
+    issue: "'No? Then I can't help you' over-explains. Cut after the question.",
+    suggested: "Have you tried being a cat?",
+    trimChars: 27
+  },
+  {
+    original: "You ask as if my opinion isn't already obvious from my face.",
+    chars: 59,
+    category: "judgy",
+    issue: "'You ask as if' is throat-clearing before the real line.",
+    suggested: "My opinion is already obvious from my face.",
+    trimChars: 43
+  },
+  {
+    original: "Oh, are we having a moment? I'm part of it now.",
+    chars: 47,
+    category: "judgy",
+    issue: "Second sentence restates what the first already implied by interrupting.",
+    suggested: "Oh, are we having a moment?",
+    trimChars: 27
+  },
+  {
+    original: "You have company? How nice. Now you have more company.",
+    chars: 54,
+    category: "judgy",
+    issue: "'How nice' is filler between the setup and the punchline.",
+    suggested: "You have company? Now you have more company.",
+    trimChars: 44
+  },
+  {
+    original: "I've seen better. I've also seen worse. Proceed.",
+    chars: 49,
+    category: "judgy",
+    issue: "Middle sentence adds nothing. Setup + punchline is tighter.",
+    suggested: "I've seen worse. Proceed.",
+    trimChars: 25
+  },
+  {
+    original: "Human courtship is... elaborate. Unnecessarily so.",
+    chars: 51,
+    category: "judgy",
+    issue: "'Unnecessarily so' explains 'elaborate.' Let the pause after 'elaborate' do the work.",
+    suggested: "Human courtship is... elaborate.",
+    trimChars: 31
+  },
+  {
+    original: "I don't always show it, but I'm glad you're here.",
+    chars: 50,
+    category: "heartfelt",
+    issue: "'I don't always show it, but' is a hedge that weakens the admission.",
+    suggested: "I'm glad you're here.",
+    trimChars: 21
+  },
+  {
+    original: "My life is better because you're in it. There. I said it.",
+    chars: 57,
+    category: "heartfelt",
+    issue: "'There. I said it.' tells you how to feel about the admission instead of letting it land.",
+    suggested: "My life is better because you're in it.",
+    trimChars: 39
+  },
+  {
+    original: "I wouldn't trade this for anything. Wait, whatch-ya-got?",
+    chars: 56,
+    category: "heartfelt",
+    issue: "The reversal is the joke but the misspelling of 'whatcha' undermines it. Trim and clean.",
+    suggested: "I wouldn't trade this for anything. Whatcha got?",
+    trimChars: 49
+  },
+  {
+    original: "I'm not good at this, but... thank you. For everything.",
+    chars: 55,
+    category: "heartfelt",
+    issue: "'I'm not good at this, but...' is throat-clearing before the real line.",
+    suggested: "Thank you. For everything.",
+    trimChars: 26
+  },
+  {
+    original: "You've given me a good life. I've given you fur everywhere.",
+    chars: 59,
+    category: "heartfelt",
+    issue: "Both halves earn their space, but consider: second sentence is the real line.",
+    suggested: "I've given you fur everywhere. You're welcome.",
+    trimChars: 46
+  },
+  {
+    original: "I love you. I love staring at you. Take it however you want.",
+    chars: 60,
+    category: "heartfelt",
+    issue: "'Take it however you want' weakens by over-explaining the joke.",
+    suggested: "I love you. I love staring at you.",
+    trimChars: 34
+  },
+  {
+    original: "*stares* I don't know what you did. I don't care. Let it go.",
+    chars: 60,
+    category: "nurturing",
+    issue: "Three beats where two would hit harder. 'I don't know/don't care' is the move. 'Let it go' tells them what to feel.",
+    suggested: "*stares* I don't know what you did. I don't care.",
+    trimChars: 50
+  },
+  {
+    original: "*tracks something across the ceiling with head -- smooth, slow, nothing visible* ...Yes.",
+    chars: 89,
+    category: "chaotic",
+    issue: "Stage direction is too long. The image is 'cat tracking nothing' -- get there faster.",
+    suggested: "*tracks something invisible across the ceiling* ...Yes.",
+    trimChars: 55
+  },
+  {
+    original: "*sticks paw in your water glass, then knocks it over* The spirits have spoken.",
+    chars: 79,
+    category: "chaotic",
+    issue: "'sticks paw in' + 'then knocks it over' is two actions where one is enough.",
+    suggested: "*knocks over your water glass* The spirits have spoken.",
+    trimChars: 55
+  },
+  {
+    original: "*chases invisible prey* THE WISDOM IS-- *crashes into wall* --fine.",
+    chars: 68,
+    category: "chaotic",
+    issue: "Works but '--fine' is anticlimactic. The crash IS the punchline.",
+    suggested: "*chases invisible prey* THE WISDOM IS-- *crashes into wall*",
+    trimChars: 61
+  },
+  {
+    original: "I have forgotten the question. I have also forgotten my name.",
+    chars: 60,
+    category: "chaotic",
+    issue: "Parallel structure works but second sentence just escalates the same joke. One hit is enough.",
+    suggested: "I have forgotten the question. And my name.",
+    trimChars: 43
+  },
+  {
+    original: "*vibrating* The answer is CHAOS. I mean yes. I mean CHAOS.",
+    chars: 58,
+    category: "chaotic",
+    issue: "Reversal back to CHAOS after 'yes' is the joke, but the repetition weakens rather than escalates.",
+    suggested: "*vibrating* The answer is CHAOS. I mean yes. I mean-- CHAOS.",
+    trimChars: 61,
+    skip: true
+  },
+  {
+    original: "BREAKING NEWS: *stares at corner* That's it. That's the news.",
+    chars: 61,
+    category: "chaotic",
+    issue: "'That's the news' restates what 'That's it' already said.",
+    suggested: "BREAKING NEWS: *stares at corner* That's it.",
+    trimChars: 45
+  },
+  {
+    original: "*full body shiver* The spirits moved through me. They said 'meow.'",
+    chars: 66,
+    category: "chaotic",
+    issue: "Solid but 'The spirits moved through me' is setup for the punchline. Could be tighter.",
+    suggested: "*full body shiver* The spirits have spoken. They said 'meow.'",
+    trimChars: 61,
+    skip: true
+  },
+  {
+    original: "*lies down dramatically* I'm fine. Everything is fine. The answer is no.",
+    chars: 72,
+    category: "chaotic",
+    issue: "'I'm fine. Everything is fine.' is two sentences saying the same thing.",
+    suggested: "*lies down dramatically* Everything is fine. The answer is no.",
+    trimChars: 63
+  },
+  {
+    original: "Once you do it, you will know. So will I. And Everyone else. We'll be waiting with popcorn.",
+    chars: 91,
+    category: "wise",
+    issue: "'So will I. And Everyone else.' is two extra beats before the punchline. Get to the popcorn.",
+    suggested: "Once you do it, you will know. We'll be waiting with popcorn.",
+    trimChars: 61
+  },
+  {
+    original: "Be the bigger person. Then go home and describe everything to your cat in a voice that would get you fired.",
+    chars: 107,
+    category: "wise",
+    issue: "The second sentence is the real line but 'describe everything to your cat in a voice that' is wordy.",
+    suggested: "Be the bigger person. Then go home and tell your cat everything in a voice that would get you fired.",
+    trimChars: 100
+  },
+  {
+    original: "The high road is empty because everyone's down in the ditch having more fun.",
+    chars: 76,
+    category: "wise",
+    issue: "'down in the ditch' is extra -- 'in the ditch' does the same work.",
+    suggested: "The high road is empty because everyone's in the ditch having more fun.",
+    trimChars: 70
+  },
+  {
+    original: "I'll do the right thing. But I'm going to complain the whole time.",
+    chars: 65,
+    category: "wise",
+    issue: "Second sentence over-explains. The 'but' and the concept could be tighter.",
+    suggested: "I'll do the right thing. Loudly and resentfully.",
+    trimChars: 49
+  },
+  {
+    original: "Dogs believe every day is the best day. Annoying. More annoying that it seems to work.",
+    chars: 86,
+    category: "wise",
+    issue: "'More annoying that it seems to work' is great but 'Annoying.' before it is redundant setup.",
+    suggested: "Dogs believe every day is the best day. Annoying that it seems to work.",
+    trimChars: 71
+  },
+  {
+    original: "I maintain eye contact while using the litter box. You can't even maintain eye contact while saying 'I need space.'",
+    chars: 113,
+    category: "wise",
+    issue: "The parallel structure repeats 'maintain eye contact' which slows the second beat.",
+    suggested: "I maintain eye contact while using the litter box. You can't even do it while saying 'I need space.'",
+    trimChars: 99
+  },
+  {
+    original: "Silence is not empty. It's full. When you are silent, you are often full of it.",
+    chars: 79,
+    category: "mystical",
+    issue: "First two sentences set up the punchline perfectly. 'When you are silent, you are often full of it' over-delivers the joke -- the reader already got there.",
+    suggested: "Silence is not empty. It's full. ...You're often full of it.",
+    trimChars: 60
+  },
+  {
+    original: "I came home with something dead. You came home with what? Anxiety? Receipts?",
+    chars: 77,
+    category: "wise",
+    issue: "'You came home with what?' is a question the next words answer. Cut the question.",
+    suggested: "I came home with something dead. You came home with anxiety and receipts.",
+    trimChars: 72
+  },
+  {
+    original: "Out of everyone in this house I chose you. Don't post about it. Just sit still and don't make it weird.",
+    chars: 103,
+    category: "wise",
+    issue: "'Just sit still and don't make it weird' restates 'Don't post about it' in different words.",
+    suggested: "Out of everyone in this house I chose you. Don't make it weird.",
+    trimChars: 63
+  },
+  {
+    original: "Would you give them the good charger? The real test isn't love. It's the good charger.",
+    chars: 85,
+    category: "wise",
+    issue: "Second and third sentences explain the joke the first sentence already made.",
+    suggested: "Would you give them the good charger?",
+    trimChars: 37
+  },
+  {
+    original: "Do you show them your belly? That's not a metaphor. Do you?",
+    chars: 59,
+    category: "wise",
+    issue: "'That's not a metaphor. Do you?' weakens by over-explaining that it's literal.",
+    suggested: "Do you show them your belly?",
+    trimChars: 28
+  },
+  {
+    original: "The dog and I share a water bowl. Would you share your cup with the dog?",
+    chars: 72,
+    category: "wise",
+    issue: "Second sentence explains the implication. The first sentence is the answer.",
+    suggested: "The dog and I share a water bowl.",
+    trimChars: 32
+  },
+  {
+    original: "*sits at the foot of the bed, facing the door* I'm not here for conversation. I'm holding the perimeter.",
+    chars: 105,
+    category: "wise",
+    issue: "Stage direction + two sentences. 'I'm not here for conversation' is redundant when 'holding the perimeter' says it all.",
+    suggested: "*sits at the foot of the bed, facing the door* Holding the perimeter.",
+    trimChars: 69
+  },
+  {
+    original: "Behind the ear. Not the belly. Know the difference or lose a hand.",
+    chars: 65,
+    category: "wise",
+    issue: "'Know the difference or lose a hand' explains the joke. The contrast already landed.",
+    suggested: "Behind the ear. Not the belly.",
+    trimChars: 30
+  },
+  {
+    original: "Existence is pain. Except under blankets. There, existence is acceptable.",
+    chars: 73,
+    category: "existential",
+    issue: "'There, existence is acceptable' restates what 'Except under blankets' already said.",
+    suggested: "Existence is pain. Except under blankets.",
+    trimChars: 41
+  },
+  {
+    original: "Nothing matters. But also, everything matters. Especially treats.",
+    chars: 64,
+    category: "existential",
+    issue: "Three beats. 'But also, everything matters' hedges the first line's impact. 'Especially treats' is the punchline -- get there faster.",
+    suggested: "Nothing matters. Especially treats.",
+    trimChars: 35
+  },
+  {
+    original: "The void stares back. The void is also tired. The void gets it.",
+    chars: 63,
+    category: "existential",
+    issue: "Three-sentence escalation but 'The void is also tired' and 'The void gets it' make the same point.",
+    suggested: "The void stares back. The void is also tired.",
+    trimChars: 46
+  },
+  {
+    original: "The question is not 'why are we here' but 'is this the best spot?'",
+    chars: 66,
+    category: "existential",
+    issue: "'The question is not X but Y' is a wordy reframe formula. Make it direct.",
+    suggested: "The real question is: is this the best spot?",
+    trimChars: 44
+  },
+  {
+    original: "I don't understand why you'd put a climbing structure in the living room and expect me NOT to.",
+    chars: 93,
+    category: "judgy",
+    issue: "Great concept but wordy. Trim the middle.",
+    suggested: "You put a climbing structure in the living room and expected me NOT to?",
+    trimChars: 70
+  },
+  {
+    original: "Your question is interesting, but have you considered my needs?",
+    chars: 62,
+    category: "demanding",
+    issue: "'Your question is interesting, but' is throat-clearing.",
+    suggested: "Have you considered my needs?",
+    trimChars: 29
+  },
+  {
+    original: "Your feelings matter. But my feelings about the closed door matter more.",
+    chars: 71,
+    category: "demanding",
+    issue: "'Your feelings matter' is setup that could be cut.",
+    suggested: "My feelings about the closed door matter more.",
+    trimChars: 47
+  },
+  {
+    original: "I've made a note. In my mind. Where I keep grudges.",
+    chars: 52,
+    category: "cold",
+    issue: "Three fragments making the same point with diminishing returns. 'In my mind. Where I keep grudges.' are both explaining 'I've made a note.'",
+    suggested: "I've made a note. Where I keep grudges.",
+    trimChars: 39
+  },
+  {
+    original: "I forgive but I do not forget. Actually, I don't forgive either.",
+    chars: 63,
+    category: "cold",
+    issue: "The reversal is the joke but 'I forgive but I do not forget' is a known saying that slows arrival at the punchline.",
+    suggested: "I forgive. Actually, I don't forgive either.",
+    trimChars: 44
+  },
+  {
+    original: "Every slight is catalogued. The reckoning comes when you least expect it.",
+    chars: 72,
+    category: "cold",
+    issue: "Two sentences saying the same thing -- 'catalogued' already implies reckoning.",
+    suggested: "Every slight is catalogued. The reckoning comes.",
+    trimChars: 48
+  },
+  {
+    original: "*from inside a box* The answer you seek is seeking you. Also, I'm in this box now.",
+    chars: 84,
+    category: "mystical",
+    issue: "'Also, I'm in this box now' restates the stage direction.",
+    suggested: "*from inside a box* The answer you seek is seeking you.",
+    trimChars: 56
+  },
+  {
+    original: "*staring out window* All things come to those who wait. Like birds. I'm waiting for birds.",
+    chars: 92,
+    category: "mystical",
+    issue: "'I'm waiting for birds' over-explains what 'Like birds' already made clear.",
+    suggested: "*staring out window* All things come to those who wait. Like birds.",
+    trimChars: 68
+  },
+  {
+    original: "*lying on closed laptop you need to look up the answer* The path forward will become clear. *falls asleep* ...when I wake up.",
+    chars: 125,
+    category: "mystical",
+    issue: "Stage direction is too long and over-specific. '...when I wake up' explains the falls-asleep joke.",
+    suggested: "*lying on your laptop* The path forward will become clear. *falls asleep*",
+    trimChars: 72
+  },
+  {
+    original: "*batting at dust mote* Stay focused on what matters. *completely distracted* ...What matters again?",
+    chars: 99,
+    category: "chaotic",
+    issue: "'*completely distracted*' is redundant when the next line shows the distraction.",
+    suggested: "*batting at dust mote* Stay focused on what matters. ...What matters again?",
+    trimChars: 74
+  },
+  {
+    original: "*on top of fridge* Rise above your problems. Like this. I'm above them.",
+    chars: 72,
+    category: "wise",
+    issue: "'I'm above them' restates what 'Like this' + stage direction already showed.",
+    suggested: "*on top of fridge* Rise above your problems. Like this.",
+    trimChars: 57
+  },
+  {
+    original: "The answer requires more information. Specifically, have you tried bribing me?",
+    chars: 78,
+    category: "demanding",
+    issue: "First sentence is setup. 'Specifically' is a filler word.",
+    suggested: "Have you tried bribing me?",
+    trimChars: 26
+  },
+  {
+    original: "Have you considered NOT asking that?",
+    chars: 35,
+    category: "judgy",
+    issue: "Clean as is. Skip.",
+    suggested: "Have you considered NOT asking that?",
+    trimChars: 35,
+    skip: true
+  },
+  {
+    original: "I don't need attention right now. You'll know when I do.",
+    chars: 55,
+    category: "demanding",
+    issue: "First sentence is setup that weakens the punchline.",
+    suggested: "You'll know when I need attention.",
+    trimChars: 33
+  },
+  {
+    original: "*settles directly on your laptop* This is mine now. What were you doing? Doesn't matter.",
+    chars: 90,
+    category: "demanding",
+    issue: "'What were you doing? Doesn't matter.' are two extra beats after the punchline.",
+    suggested: "*settles on your laptop* This is mine now.",
+    trimChars: 42
+  },
+  {
+    original: "The answer is unclear, but what IS clear is that you should share that sushi.",
+    chars: 77,
+    category: "demanding",
+    issue: "'The answer is unclear, but what IS clear is that' is a 10-word runway to the punchline.",
+    suggested: "The answer is unclear. Share that sushi.",
+    trimChars: 39
+  },
+  {
+    original: "I wasn't hungry until you started eating. Now I'm starving.",
+    chars: 59,
+    category: "demanding",
+    issue: "Both sentences make the same point -- seeing food triggered hunger. Keep the punchier one.",
+    suggested: "I wasn't hungry until you started eating.",
+    trimChars: 41
+  },
+  {
+    original: "You had fish for dinner and didn't share. I'm still processing this betrayal.",
+    chars: 78,
+    category: "judgy",
+    issue: "'I'm still processing this betrayal' over-explains the reaction.",
+    suggested: "You had fish for dinner and didn't share.",
+    trimChars: 41
+  },
+  {
+    original: "The Amazon box is my home. The bed you bought me is decorative.",
+    chars: 62,
+    category: "judgy",
+    issue: "Both halves are good but the second sentence explains the first. Let the box speak.",
+    suggested: "The Amazon box is my home. The bed is decorative.",
+    trimChars: 50
+  },
+  {
+    original: "I sat on someone's lap without asking and they loved it. Try that on the subway and it's a situation.",
+    chars: 101,
+    category: "chaotic",
+    issue: "The subway comparison is the punchline but the first sentence takes too long to arrive. Trim.",
+    suggested: "I sit on laps without asking and they love it. Try that on the subway.",
+    trimChars: 69
+  },
+  {
+    original: "I rubbed against you because I love you. I'm now running away because I love you differently.",
+    chars: 92,
+    category: "chaotic",
+    issue: "Repetition of 'because I love you' is the structure, but 'differently' over-explains the joke.",
+    suggested: "I rubbed against you because I love you. I'm running away for the same reason.",
+    trimChars: 79
+  },
+  {
+    original: "I bit you because you stopped petting me. Also I bit you because you were petting me.",
+    chars: 86,
+    category: "chaotic",
+    issue: "Great parallel contradiction but verbose. Tighten both halves.",
+    suggested: "Bit you because you stopped petting me. Bit you because you were petting me.",
+    trimChars: 77
+  },
+  {
+    original: "I'm not cuddling. I'm applying therapeutic pressure. With my entire body.",
+    chars: 73,
+    category: "nurturing",
+    issue: "'With my entire body' is an extra beat that explains the joke.",
+    suggested: "I'm not cuddling. I'm applying therapeutic pressure.",
+    trimChars: 52
+  },
+  {
+    original: "I am going to sit EXACTLY on your laptop keyboard. For your mental health.",
+    chars: 73,
+    category: "nurturing",
+    issue: "'For your mental health' explains the joke that's already clear from context.",
+    suggested: "I am going to sit EXACTLY on your laptop keyboard.",
+    trimChars: 51
+  },
+  {
+    original: "*slow blink* That's cat for \"I acknowledge your suffering.\" You're welcome.",
+    chars: 76,
+    category: "nurturing",
+    issue: "'That's cat for' is explanation. 'You're welcome' after the translation is double-tagging.",
+    suggested: "*slow blink* I acknowledge your suffering.",
+    trimChars: 42
+  },
+  {
+    original: "*purrs aggressively at your problems* They will be vibrated into submission.",
+    chars: 76,
+    category: "nurturing",
+    issue: "'They will be vibrated into submission' explains what 'purrs aggressively at your problems' already conveyed.",
+    suggested: "*purrs aggressively at your problems*",
+    trimChars: 37
+  },
+  {
+    original: "Rest is important. *yawns, stretching to take up entire bed* See? I'm helping.",
+    chars: 79,
+    category: "nurturing",
+    issue: "'See? I'm helping.' tags the joke after the action already made it.",
+    suggested: "Rest is important. *yawns, stretching to take up entire bed*",
+    trimChars: 61
+  },
+  {
+    original: "I'm the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.",
+    chars: 85,
+    category: "meta",
+    issue: "Second sentence is clever but explains why the first sentence is funny.",
+    suggested: "I'm the healthiest coping mechanism you have.",
+    trimChars: 46
+  },
+  {
+    original: "Stop living in their head. But, since you're there, might as well do some re-decorating.",
+    chars: 88,
+    category: "wise",
+    issue: "The reversal is good but 'But, since you're there, might as well do some' is a long runway.",
+    suggested: "Stop living in their head. But since you're there, redecorate.",
+    trimChars: 62
+  },
+  {
+    original: "I know things about you just from drinking your toilet water.",
+    chars: 61,
+    category: "wise",
+    issue: "'I know things about you just from' is wordy setup.",
+    suggested: "Your toilet water told me everything.",
+    trimChars: 36
+  },
+  {
+    original: "It's YOUR problem. That's why you feed and shelter it and make sure it grows.",
+    chars: 77,
+    category: "wise",
+    issue: "'That's why you feed and shelter it and make sure it grows' over-explains the metaphor.",
+    suggested: "It's YOUR problem. That's why you feed it.",
+    trimChars: 42
+  },
+  {
+    original: "You have three situationships, two side hustles, and one rotating crisis.",
+    chars: 72,
+    category: "wise",
+    issue: "This one earns its length -- the list builds. But 'rotating crisis' could be tighter.",
+    suggested: "Three situationships, two side hustles, one rotating crisis.",
+    trimChars: 61
+  },
+  {
+    original: "I love how your plan relies on accidental courage and happenstance.",
+    chars: 66,
+    category: "wise",
+    issue: "'I love how' is throat-clearing setup.",
+    suggested: "Your plan relies on accidental courage and happenstance.",
+    trimChars: 56
+  },
+  {
+    original: "Your dream life has better lighting. But you can't pay your rent there.",
+    chars: 70,
+    category: "wise",
+    issue: "Both sentences are good but 'But you can't pay your rent there' over-explains.",
+    suggested: "Your dream life has better lighting.",
+    trimChars: 35
+  },
+  {
+    original: "Interesting theory. Wrong, but interesting.",
+    chars: 43,
+    category: "judgy",
+    issue: "'but interesting' restates the opening. One or the other.",
+    suggested: "Interesting theory. Wrong.",
+    trimChars: 25
+  },
+  {
+    original: "I can smell a lie. *looks at you* I wish I couldn't.",
+    chars: 52,
+    category: "wise",
+    issue: "'I wish I couldn't' weakens the cold read with a hedge.",
+    suggested: "I can smell a lie. *looks at you*",
+    trimChars: 33
+  },
+  {
+    original: "That's your real personality? *long pause* Bold choice.",
+    chars: 54,
+    category: "wise",
+    issue: "'Bold choice' explains the joke the pause already landed.",
+    suggested: "That's your real personality? *long pause*",
+    trimChars: 42
+  },
+  {
+    original: "The closed door. The forbidden counter. The untouchable plant. All lies.",
+    chars: 72,
+    category: "wise",
+    issue: "List of three + punchline works. But 'All lies' could be even tighter.",
+    suggested: "The closed door. The forbidden counter. The untouchable plant. All lies.",
+    trimChars: 72,
+    skip: true
+  },
+  {
+    original: "There's a version where you're the villain. You should hear it.",
+    chars: 62,
+    category: "wise",
+    issue: "'You should hear it' explains the implication. The first sentence already landed.",
+    suggested: "There's a version where you're the villain.",
+    trimChars: 43
+  },
+  {
+    original: "What if it's just... not that deep. *stretches* What if it's this.",
+    chars: 65,
+    category: "wise",
+    issue: "Second sentence restates the first in different words.",
+    suggested: "What if it's just... not that deep. *stretches*",
+    trimChars: 48
+  },
+  {
+    original: "I'm not for everyone. That's the point.",
+    chars: 39,
+    category: "wise",
+    issue: "'That's the point' over-explains.",
+    suggested: "I'm not for everyone.",
+    trimChars: 21
+  },
+  {
+    original: "The door opened after I stared at it for eleven hours. Willpower or coincidence? Either way, I won.",
+    chars: 99,
+    category: "wise",
+    issue: "'Willpower or coincidence? Either way, I won.' is two extra sentences explaining the punchline.",
+    suggested: "The door opened after I stared at it for eleven hours.",
+    trimChars: 55
+  },
+  {
+    original: "Something broke and you're holding it together with both hands looking very guilty. **takes opportunity to swish my tail in your face and tickle you.**",
+    chars: 153,
+    category: "heartfelt",
+    issue: "Stage direction is way too long and wordy. The setup sentence is strong alone.",
+    suggested: "Something broke and you're holding it together with both hands. *swishes tail in your face*",
+    trimChars: 92
+  },
+  {
+    original: "I don't have strong feelings about this. I have medium feelings.",
+    chars: 62,
+    category: "wise",
+    issue: "The setup-punchline structure works but 'I don't have strong feelings about this' is a long runway.",
+    suggested: "I have medium feelings about this.",
+    trimChars: 33
+  },
+  {
+    original: "I thought about it and I don't have a thought about it.",
+    chars: 55,
+    category: "existential",
+    issue: "This one earns its length through contradiction. Keep.",
+    suggested: "I thought about it and I don't have a thought about it.",
+    trimChars: 55,
+    skip: true
+  },
+  {
+    original: "Good news: it's not your fault. Bad news: it's still your problem.",
+    chars: 65,
+    category: "cold",
+    issue: "'Good news/Bad news' format is a well-worn structure that pads the actual content.",
+    suggested: "Not your fault. Still your problem.",
+    trimChars: 34
+  },
+  {
+    original: "The situation is what it is. That's not helpful but it's accurate.",
+    chars: 64,
+    category: "cold",
+    issue: "'That's not helpful but it's accurate' meta-comments on itself. Let the line breathe.",
+    suggested: "The situation is what it is.",
+    trimChars: 27
+  },
+  {
+    original: "I've worked on myself. Myself is still a project. It's always a project.",
+    chars: 72,
+    category: "existential",
+    issue: "Third sentence restates the second.",
+    suggested: "I've worked on myself. Myself is still a project.",
+    trimChars: 50
+  },
+  {
+    original: "Modern romance is just two people being weird at each other until someone flinches.",
+    chars: 82,
+    category: "wise",
+    issue: "'Modern romance is just' is a setup cushion. Start at the action.",
+    suggested: "Two people being weird at each other until someone flinches.",
+    trimChars: 60
+  },
+  {
+    original: "Your fandom has become your personality. That's a problem. An entertaining problem.",
+    chars: 82,
+    category: "judgy",
+    issue: "'An entertaining problem' hedges the punch of 'That's a problem.'",
+    suggested: "Your fandom has become your personality. That's a problem.",
+    trimChars: 58
+  },
+  {
+    original: "The thing you love has been ruined. This happens to everything. Mourn and move on.",
+    chars: 82,
+    category: "cold",
+    issue: "'This happens to everything' explains the observation. 'Mourn and move on' is the real line.",
+    suggested: "The thing you love has been ruined. Mourn and move on.",
+    trimChars: 55
+  },
+  {
+    original: "Nostalgia is a trap. But it's a comfortable trap. With snacks.",
+    chars: 61,
+    category: "wise",
+    issue: "'With snacks' is the punchline. 'But it's a comfortable trap' pads the runway.",
+    suggested: "Nostalgia is a trap. With snacks.",
+    trimChars: 32
+  },
+  {
+    original: "Common sense isn't common. It's actually quite rare. You're proving it.",
+    chars: 70,
+    category: "judgy",
+    issue: "'It's actually quite rare' restates 'isn't common.' Cut the middle.",
+    suggested: "Common sense isn't common. You're proving it.",
+    trimChars: 45
+  },
+  {
+    original: "I care about you. In a detached way. From a distance. But genuinely.",
+    chars: 66,
+    category: "heartfelt",
+    issue: "Four fragments. 'In a detached way' and 'From a distance' say the same thing.",
+    suggested: "I care about you. From a distance. But genuinely.",
+    trimChars: 50
+  },
+  {
+    original: "That seems like a lot of effort for a little result. But okay.",
+    chars: 61,
+    category: "judgy",
+    issue: "'But okay' is weak tag ending.",
+    suggested: "That seems like a lot of effort for a little result.",
+    trimChars: 53
+  },
+  {
+    original: "You're asking a cat about office politics? My advice: hiss and leave.",
+    chars: 68,
+    category: "judgy",
+    issue: "'You're asking a cat about office politics?' is setup. 'My advice:' is another setup word. Get to the punchline.",
+    suggested: "Office politics? Hiss and leave.",
+    trimChars: 31
+  },
+  {
+    original: "Reply all was invented by someone who wanted to watch the world burn.",
+    chars: 68,
+    category: "chaotic",
+    issue: "'was invented by someone who wanted to' is a wordy construction.",
+    suggested: "Reply all exists to watch the world burn.",
+    trimChars: 41
+  },
+  {
+    original: "Have you considered my needs? No? Then I haven't considered your question.",
+    chars: 73,
+    category: "demanding",
+    issue: "'No? Then' is unnecessary bridge between setup and payoff.",
+    suggested: "Have you considered my needs? I haven't considered your question.",
+    trimChars: 64
+  },
+  {
+    original: "I was going to warn you. I was. But then I got distracted by the curtain and now it's too late.",
+    chars: 94,
+    category: "chaotic",
+    issue: "'I was. But then' repeats the hesitation. Trim.",
+    suggested: "I was going to warn you. But the curtain happened and now it's too late.",
+    trimChars: 72
+  },
+  {
+    original: "My plan had seven steps. I skipped to step six. Steps two through five are a mystery.",
+    chars: 84,
+    category: "chaotic",
+    issue: "Third sentence explains the joke that 'skipped to step six' already delivered.",
+    suggested: "My plan had seven steps. I skipped to step six.",
+    trimChars: 48
+  },
+  {
+    original: "*stretches one leg impossibly far* Today has potential. I can feel it in this specific leg.",
+    chars: 92,
+    category: "chaotic",
+    issue: "'I can feel it in this specific leg' is good but 'this specific' is wordy.",
+    suggested: "*stretches one leg impossibly far* Today has potential. I can feel it in this leg.",
+    trimChars: 82
+  },
+  {
+    original: "I don't trust people who are happy before coffee. Or after coffee. Or between coffees.",
+    chars: 85,
+    category: "cold",
+    issue: "Three beats but 'Or between coffees' adds nothing the first two didn't already cover.",
+    suggested: "I don't trust people who are happy before coffee. Or after.",
+    trimChars: 59
+  },
+  {
+    original: "I already ate, groomed, patrolled, and had a crisis. Full day, going back to bed.",
+    chars: 82,
+    category: "chaotic",
+    issue: "The list is good. 'Full day, going back to bed' is two phrases where one would land harder.",
+    suggested: "I already ate, groomed, patrolled, and had a crisis. Back to bed.",
+    trimChars: 65
+  },
+  {
+    original: "Start each morning expecting the worst. It will get better or you can feel smug about calling it.",
+    chars: 97,
+    category: "wise",
+    issue: "Second sentence is clever but long. Tighten.",
+    suggested: "Start each morning expecting the worst. Either it improves or you called it.",
+    trimChars: 75
+  },
+  {
+    original: "*one ear rotates toward you* Now hold on. Don't go answerin' that yet. Let the question breathe a minute.",
+    chars: 108,
+    category: "mystical",
+    issue: "'Now hold on' and 'Don't go answerin' that yet' say the same thing.",
+    suggested: "*one ear rotates* Don't answer that yet. Let the question breathe.",
+    trimChars: 65
+  },
+  {
+    original: "*stretches one leg impossibly far* See, the thing about your little problem is... it ain't little to you. And that's the whole thing right there.",
+    chars: 148,
+    category: "mystical",
+    issue: "Stage direction + 'See, the thing about' + 'And that's the whole thing right there' -- three layers of padding around a good core.",
+    suggested: "The thing about your little problem is... it ain't little to you.",
+    trimChars: 65
+  },
+  {
+    original: "See now, that question had a heartbeat when it walked in here. *pupils dilate* I heard it.",
+    chars: 90,
+    category: "mystical",
+    issue: "'See now' is throat-clearing. 'I heard it' over-explains after the pupil dilation already showed the reaction.",
+    suggested: "That question had a heartbeat when it walked in here. *pupils dilate*",
+    trimChars: 69
+  },
+  {
+    original: "Man, I had a whole speech planned. *turns around twice, lies down* Nah. You'll get there.",
+    chars: 90,
+    category: "mystical",
+    issue: "'Man, I had a whole speech planned' is wordy setup. '*turns around twice, lies down*' is long stage direction.",
+    suggested: "Had a whole speech planned. *turns around, lies down* Nah. You'll get there.",
+    trimChars: 76
+  },
+  {
+    original: "I could fix this for you. *kneads blanket once, stops* But where's the poetry in that?",
+    chars: 87,
+    category: "mystical",
+    issue: "'*kneads blanket once, stops*' interrupts the clean two-line structure.",
+    suggested: "I could fix this for you. But where's the poetry in that?",
+    trimChars: 58
+  },
+  {
+    original: "You're on hold. They KNOW you're on hold. That music isn't for comfort -- it's to see how long you'll stay.",
+    chars: 107,
+    category: "wise",
+    issue: "Third sentence is the punchline but 'it's to see how long you'll stay' is wordy.",
+    suggested: "You're on hold. They KNOW you're on hold. That music is a test.",
+    trimChars: 63
+  },
+  {
+    original: "You're describing a catastrophe like it's a recipe.",
+    chars: 51,
+    category: "judgy",
+    issue: "Clean as is. Actually strong. Skip.",
+    suggested: "You're describing a catastrophe like it's a recipe.",
+    trimChars: 51,
+    skip: true
+  },
+  {
+    original: "Every religion would condemn this. Every therapist would flag it. *pupils fully dilated* Are you convinced?",
+    chars: 107,
+    category: "chaotic",
+    issue: "'Are you convinced?' explains the bit. The pupil dilation IS the yes.",
+    suggested: "Every religion would condemn this. Every therapist would flag it. *pupils fully dilated*",
+    trimChars: 88
+  },
+  {
+    original: "The truth is a hairball on the rug. Ugly. But better out than lodged in your throat.",
+    chars: 83,
+    category: "wise",
+    issue: "'Ugly. But better out than lodged in your throat' is explanation after the metaphor already landed.",
+    suggested: "The truth is a hairball on the rug. Better out than in.",
+    trimChars: 55
+  },
+  {
+    original: "Your anxiety has anxiety. It's anxieties all the way down.",
+    chars: 57,
+    category: "chaotic",
+    issue: "Second sentence explains the first in different words.",
+    suggested: "Your anxiety has anxiety.",
+    trimChars: 25
+  },
+  {
+    original: "Your problem isn't the problem. Your problem is how calm you are about the problem.",
+    chars: 82,
+    category: "wise",
+    issue: "Solid -- the repetition of 'problem' is the structure. But 'Your problem is how calm you are about the problem' could be tighter.",
+    suggested: "The problem isn't the problem. The problem is how calm you are.",
+    trimChars: 63
+  },
+  {
+    original: "You're not tired. You're depleted. Different thing. Worse thing.",
+    chars: 63,
+    category: "nurturing",
+    issue: "'Different thing. Worse thing.' are two fragments making the same point.",
+    suggested: "You're not tired. You're depleted. Worse thing.",
+    trimChars: 48
+  },
+  {
+    original: "Absolutely! Make your dreams come true. Have you been dreaming of giant cat towers and unlimited tuna buffets?",
+    chars: 110,
+    category: "chaotic",
+    issue: "Second sentence is the joke but it's buried under 'Have you been dreaming of' -- get to the imagery faster.",
+    suggested: "Absolutely! Giant cat towers and unlimited tuna buffets!",
+    trimChars: 57
+  },
+  {
+    original: "What are you waiting for? The sun is up. The house is mine. I have no need for you now.",
+    chars: 86,
+    category: "cold",
+    issue: "'The sun is up. The house is mine.' are both good but 'What are you waiting for?' is throat-clearing. 'I have no need for you now' is the punchline -- clean the runway.",
+    suggested: "The sun is up. The house is mine. I have no need for you now.",
+    trimChars: 61
+  },
+  {
+    original: "My therapist is a cardboard box. I sit in it and I feel better. Maybe get a box before you make any decisions.",
+    chars: 110,
+    category: "chaotic",
+    issue: "Three sentences. 'I sit in it and I feel better' explains what a therapist does. Third sentence is advice-y.",
+    suggested: "My therapist is a cardboard box. Maybe get a box before you decide.",
+    trimChars: 66
+  },
+  {
+    original: "You remind me of me when I hear a noise at 3 AM -- frozen, wide-eyed, completely unable to make a decision.",
+    chars: 108,
+    category: "judgy",
+    issue: "The comparison lands at 'frozen, wide-eyed' -- 'completely unable to make a decision' spells it out.",
+    suggested: "You remind me of me when I hear a noise at 3 AM. Frozen. Wide-eyed.",
+    trimChars: 67
+  },
+  {
+    original: "Does this person make you arch your back in a good way? No? Then why are we having this conversation?",
+    chars: 101,
+    category: "judgy",
+    issue: "'No? Then why are we having this conversation?' is a wordy tag. The question is the line.",
+    suggested: "Does this person make you arch your back in a good way?",
+    trimChars: 55
+  },
+  {
+    original: "Do they look at you the way I look at an unattended rotisserie chicken? No? Then it's not love.",
+    chars: 96,
+    category: "judgy",
+    issue: "'No? Then it's not love.' over-explains what the comparison already delivered.",
+    suggested: "Do they look at you the way I look at an unattended rotisserie chicken?",
+    trimChars: 71
+  },
+  {
+    original: "Here's my rule -- if I have to meow more than twice to get what I need, the arrangement isn't working.",
+    chars: 102,
+    category: "demanding",
+    issue: "'Here's my rule --' is throat-clearing. 'the arrangement isn't working' could be tighter.",
+    suggested: "If I have to meow more than twice, the arrangement isn't working.",
+    trimChars: 64
+  },
+  {
+    original: "I have OPTIONS. You probably do too. But options don't keep you warm at 3 AM.",
+    chars: 77,
+    category: "wise",
+    issue: "'You probably do too.' is a bridge that adds nothing.",
+    suggested: "I have OPTIONS. But options don't keep you warm at 3 AM.",
+    trimChars: 56
+  },
+  {
+    original: "I've seen things. Raccoon fights. Dumpster politics. Turf wars with a one-eyed tabby. Your drama doesn't register on my scale.",
+    chars: 124,
+    category: "cold",
+    issue: "The list is great but goes one beat too long. 'Your drama doesn't register on my scale' is explanation after the list already made the point.",
+    suggested: "Raccoon fights. Dumpster politics. Turf wars with a one-eyed tabby. Your drama doesn't register.",
+    trimChars: 97
+  },
+  {
+    original: "I've scaled sofa backs, cabinet ranges, counters, and refrigerator tops - only to find contentment right here in the middle of this sunny floor.",
+    chars: 145,
+    category: "existential",
+    issue: "Beautiful sentiment but very wordy. Trim the list and the landing.",
+    suggested: "I've scaled every surface in this house. Contentment was on the sunny floor.",
+    trimChars: 75
+  },
+  {
+    original: "Your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.",
+    chars: 143,
+    category: "chaotic",
+    issue: "The list of four adjectives is one too many. Three makes the point, four is flab.",
+    suggested: "Your argument is legally airtight, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.",
+    trimChars: 113
+  },
+  {
+    original: "Settle for menu options. Settle for drapes in your 2nd color choice. Not for this.",
+    chars: 82,
+    category: "demanding",
+    issue: "Two examples where one is enough before the punchline.",
+    suggested: "Settle for drapes in your second-choice color. Not for this.",
+    trimChars: 60
+  },
+  {
+    original: "Hold the camera right under your chin and take a picture of your face. See? That's why I think you look funny!",
+    chars: 111,
+    category: "chaotic",
+    issue: "'See? That's why I think you look funny!' explains the joke.",
+    suggested: "Hold the camera right under your chin and take a picture of your face.",
+    trimChars: 70
+  },
+  {
+    original: "You're asking an animal that was worshipped as a god in ancient Egypt. So yes, I'm qualified.",
+    chars: 92,
+    category: "chaotic",
+    issue: "'So yes, I'm qualified.' over-explains. The Egypt line IS the credential.",
+    suggested: "You're asking an animal that was worshipped as a god in ancient Egypt.",
+    trimChars: 69
+  },
+  {
+    original: "I've been neutered and I still have more confidence than you right now.",
+    chars: 70,
+    category: "chaotic",
+    issue: "'right now' is a weak tag. Cut it.",
+    suggested: "I've been neutered and I still have more confidence than you.",
+    trimChars: 61
+  },
+  {
+    original: "If you're worried enough to ask a potentially hostile cat on the internet, some part of you wants to take care of yourself.",
+    chars: 122,
+    category: "wise",
+    issue: "'a potentially hostile cat on the internet' is wordy. 'some part of you wants to take care of yourself' is the punchline but arrives late.",
+    suggested: "If you're worried enough to ask a cat, some part of you wants to take care of yourself.",
+    trimChars: 87
+  },
+  {
+    original: "I don't know what's wrong with you. I don't know what's wrong with me. I accept that and I nap.",
+    chars: 96,
+    category: "wise",
+    issue: "First two sentences are parallel but verbose. Third sentence is the real line.",
+    suggested: "I don't know what's wrong with you or me. I accept that and I nap.",
+    trimChars: 66
+  },
+  {
+    original: "What's wrong with you? ...You don't know? Great. Neither do I. This has been productive.",
+    chars: 88,
+    category: "chaotic",
+    issue: "'This has been productive' is explanation after the joke already landed at 'Neither do I.'",
+    suggested: "What's wrong with you? You don't know? Great. Neither do I.",
+    trimChars: 59
+  },
+  {
+    original: "How bad is it? ...Scale of one to ten? I can't count. I'm a cat. But you seem fine.",
+    chars: 83,
+    category: "chaotic",
+    issue: "'I'm a cat' explains 'I can't count.' 'But you seem fine' is a weak tag.",
+    suggested: "Scale of one to ten? I can't count. But you seem fine.",
+    trimChars: 55
+  },
+  {
+    original: "*lying on back, paws curled* You ever just let the whole thing go and see what catches you?",
+    chars: 93,
+    category: "mystical",
+    issue: "Stage direction is fine but 'You ever just' is filler.",
+    suggested: "*lying on back, paws curled* Let the whole thing go. See what catches you.",
+    trimChars: 74
+  },
+  {
+    original: "You said 'there are no wrong answers' and you set out to prove them wrong.",
+    chars: 73,
+    category: "judgy",
+    issue: "Clean and punchy. Actually earns its length. Skip.",
+    suggested: "You said 'there are no wrong answers' and you set out to prove them wrong.",
+    trimChars: 73,
+    skip: true
+  },
+  {
+    original: "I didn't ASK to be consulted. But I WAS. Take it SERIOUSLY.",
+    chars: 59,
+    category: "meta",
+    issue: "'But I WAS' bridges two sentences unnecessarily.",
+    suggested: "I didn't ASK to be consulted. Take it SERIOUSLY.",
+    trimChars: 49
+  },
+  {
+    original: "This is technically self-care if you lie to yourself hard enough.",
+    chars: 63,
+    category: "meta",
+    issue: "'if you lie to yourself hard enough' is explanation after the joke.",
+    suggested: "This is technically self-care.",
+    trimChars: 29
+  },
+  {
+    original: "You clicked 'Consult the Cat.' This is on you.",
+    chars: 47,
+    category: "meta",
+    issue: "'This is on you' explains the implication.",
+    suggested: "You clicked 'Consult the Cat.'",
+    trimChars: 30
+  },
+  {
+    original: "Caution is not cowardice. And that stuffed animal IS intimidating.",
+    chars: 65,
+    category: "wise",
+    issue: "The second sentence is the punchline but weakens the clean wisdom of the first by tagging it with comedy.",
+    suggested: "Caution is not cowardice.",
+    trimChars: 25
+  },
+  {
+    original: "A healthy paranoia is just advanced pattern recognition.",
+    chars: 56,
+    category: "wise",
+    issue: "Clean and tight. Skip.",
+    suggested: "A healthy paranoia is just advanced pattern recognition.",
+    trimChars: 56,
+    skip: true
+  },
+  {
+    original: "I never know what I want until the bowl is full. Then I know. Wait for clarity.",
+    chars: 79,
+    category: "wise",
+    issue: "'Then I know. Wait for clarity.' are two tags that both explain the punchline.",
+    suggested: "I never know what I want until the bowl is full. Then I know.",
+    trimChars: 61
+  },
+  {
+    original: "Of all the spots. This one. Figure it out.",
+    chars: 42,
+    category: "nurturing",
+    issue: "'Figure it out' tells the reader what to do. The choosing already speaks.",
+    suggested: "Of all the spots. This one.",
+    trimChars: 27
+  }
+];
+
+// Filter out skipped items
+const activeItems = items.filter(i => !i.skip);
+const decisions = {};
+let totalItems = activeItems.length;
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = '';
+
+  // Section: 100+ chars
+  let html = '<div class="section-divider">100+ characters (' + activeItems.filter(i => i.chars >= 100).length + ' responses)</div>';
+  activeItems.filter(i => i.chars >= 100).forEach((item, idx) => {
+    html += renderItem(item, 'a' + idx);
+  });
+
+  html += '<div class="section-divider">80-99 characters (' + activeItems.filter(i => i.chars >= 80 && i.chars < 100).length + ' responses)</div>';
+  activeItems.filter(i => i.chars >= 80 && i.chars < 100).forEach((item, idx) => {
+    html += renderItem(item, 'b' + idx);
+  });
+
+  html += '<div class="section-divider">60-79 characters (' + activeItems.filter(i => i.chars >= 60 && i.chars < 80).length + ' responses)</div>';
+  activeItems.filter(i => i.chars >= 60 && i.chars < 80).forEach((item, idx) => {
+    html += renderItem(item, 'c' + idx);
+  });
+
+  html += '<div class="section-divider">Under 60 characters (' + activeItems.filter(i => i.chars < 60).length + ' responses)</div>';
+  activeItems.filter(i => i.chars < 60).forEach((item, idx) => {
+    html += renderItem(item, 'd' + idx);
+  });
+
+  container.innerHTML = html;
+  updateStats();
+}
+
+function renderItem(item, id) {
+  const status = decisions[id] || '';
+  const cls = status === 'keep' ? 'kept' : status === 'cut' ? 'cut' : status === 'edit' ? 'edited' : '';
+  const saved = item.chars - item.trimChars;
+  return `
+    <div class="item ${cls}" id="item-${id}">
+      <span class="category-badge">${item.category}</span>
+      <div class="original">"${escHtml(item.original)}"</div>
+      <div class="char-count">${item.chars} chars</div>
+      <div class="issue">${escHtml(item.issue)}</div>
+      <div class="suggested">"${escHtml(item.suggested)}"</div>
+      <div class="trim-count">${item.trimChars} chars (saves ${saved})</div>
+      <div class="actions">
+        <button class="btn-keep-original" onclick="decide('${id}','keep-original')">KEEP ORIGINAL</button>
+        <button class="btn-use-trim" onclick="decide('${id}','use-trim')">USE TRIM</button>
+        <button class="btn-cut" onclick="decide('${id}','cut')">CUT</button>
+        <button class="btn-edit" onclick="toggleEdit('${id}')">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-${id}">
+        <textarea id="textarea-${id}" oninput="updateCharCount('${id}')">${escHtml(item.suggested)}</textarea>
+        <div class="char-live" id="charlive-${id}">${item.trimChars} chars</div>
+        <button class="save-edit" onclick="saveEdit('${id}')">Save Edit</button>
+      </div>
+    </div>
+  `;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function decide(id, type) {
+  decisions[id] = type;
+  const el = document.getElementById('item-' + id);
+  const cls = type === 'keep-original' ? 'kept-original' : type === 'use-trim' ? 'use-trim' : type === 'cut' ? 'cut' : 'edited';
+  el.className = 'item ' + cls;
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(id) {
+  const el = document.getElementById('edit-' + id);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function updateCharCount(id) {
+  const ta = document.getElementById('textarea-' + id);
+  document.getElementById('charlive-' + id).textContent = ta.value.length + ' chars';
+}
+
+function saveEdit(id) {
+  decisions[id] = 'edit';
+  const el = document.getElementById('item-' + id);
+  el.className = 'item edited';
+  updateStats();
+  updateExport();
+}
+
+function updateStats() {
+  let keepOrigC = 0, useTrimC = 0, cutC = 0, editC = 0, saved = 0;
+  const allIds = getAllIds();
+  allIds.forEach(id => {
+    const d = decisions[id];
+    if (d === 'keep-original') { keepOrigC++; }
+    else if (d === 'use-trim') { useTrimC++; saved += getCharsSaved(id); }
+    else if (d === 'cut') { cutC++; saved += getOrigChars(id); }
+    else if (d === 'edit') { editC++; saved += getEditCharsSaved(id); }
+  });
+  document.getElementById('keepOrigCount').textContent = keepOrigC;
+  document.getElementById('useTrimCount').textContent = useTrimC;
+  document.getElementById('cutCount').textContent = cutC;
+  document.getElementById('editCount').textContent = editC;
+  document.getElementById('pendingCount').textContent = allIds.length - keepOrigC - useTrimC - cutC - editC;
+  document.getElementById('charsSaved').textContent = saved;
+}
+
+function getAllIds() {
+  const ids = [];
+  activeItems.filter(i => i.chars >= 100).forEach((_, idx) => ids.push('a' + idx));
+  activeItems.filter(i => i.chars >= 80 && i.chars < 100).forEach((_, idx) => ids.push('b' + idx));
+  activeItems.filter(i => i.chars >= 60 && i.chars < 80).forEach((_, idx) => ids.push('c' + idx));
+  activeItems.filter(i => i.chars < 60).forEach((_, idx) => ids.push('d' + idx));
+  return ids;
+}
+
+function getItemByBucket(id) {
+  const prefix = id[0];
+  const idx = parseInt(id.slice(1));
+  if (prefix === 'a') return activeItems.filter(i => i.chars >= 100)[idx];
+  if (prefix === 'b') return activeItems.filter(i => i.chars >= 80 && i.chars < 100)[idx];
+  if (prefix === 'c') return activeItems.filter(i => i.chars >= 60 && i.chars < 80)[idx];
+  if (prefix === 'd') return activeItems.filter(i => i.chars < 60)[idx];
+}
+
+function getCharsSaved(id) {
+  const item = getItemByBucket(id);
+  return item ? item.chars - item.trimChars : 0;
+}
+
+function getOrigChars(id) {
+  const item = getItemByBucket(id);
+  return item ? item.chars : 0;
+}
+
+function getEditCharsSaved(id) {
+  const item = getItemByBucket(id);
+  const ta = document.getElementById('textarea-' + id);
+  if (!item || !ta) return 0;
+  return item.chars - ta.value.length;
+}
+
+function updateExport() {
+  const result = [];
+  const allIds = getAllIds();
+  allIds.forEach(id => {
+    const d = decisions[id];
+    const item = getItemByBucket(id);
+    if (!item) return;
+    if (d === 'keep-original') {
+      result.push({ text: item.original, category: item.category, action: 'kept' });
+    } else if (d === 'use-trim') {
+      result.push({ text: item.suggested, category: item.category, action: 'trimmed' });
+    } else if (d === 'edit') {
+      const ta = document.getElementById('textarea-' + id);
+      if (ta) result.push({ text: ta.value, category: item.category, action: 'edited' });
+    } else if (d === 'cut') {
+      result.push({ text: item.original, category: item.category, action: 'cut' });
+    }
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(result, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Copied!');
+  });
+}
+
+render();
+</script>
+</body>
+</html>

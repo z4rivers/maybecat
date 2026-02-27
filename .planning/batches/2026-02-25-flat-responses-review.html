@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Responses Review — Feb 25, 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: #0f0f1e;
+            border-bottom: 2px solid #e94560;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .stat {
+            background: #16213e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecca3;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+
+        .stat.cut-stat {
+            border-left-color: #e94560;
+        }
+        .stat.cut-stat .stat-value {
+            color: #e94560;
+        }
+
+        .stat.edit-stat {
+            border-left-color: #ffd93d;
+        }
+        .stat.edit-stat .stat-value {
+            color: #ffd93d;
+        }
+
+        .stat.undecided-stat {
+            border-left-color: #888;
+        }
+        .stat.undecided-stat .stat-value {
+            color: #888;
+        }
+
+        /* Section headers */
+        .section-header {
+            background: #0f0f1e;
+            border: 1px solid #2d3561;
+            border-left: 4px solid #e94560;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 40px 0 20px 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-header .section-count {
+            color: #888;
+            font-size: 13px;
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        .section-description {
+            color: #999;
+            font-size: 13px;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+
+        /* Response cards */
+        .response-card {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .response-card.kept {
+            border-left: 5px solid #4ecca3;
+            background: #1a2847;
+        }
+
+        .response-card.cut {
+            border-left: 5px solid #e94560;
+            background: #2e1a23;
+            opacity: 0.5;
+        }
+
+        .response-card.edited {
+            border-left: 5px solid #ffd93d;
+            background: #2e2a1a;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .response-number {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #2d3561;
+            color: #ccc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .response-text {
+            font-size: 22px;
+            font-weight: 500;
+            color: #fff;
+            line-height: 1.5;
+            padding: 20px 24px;
+            background: #0f0f1e;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 16px;
+        }
+
+        .response-text em {
+            font-style: italic;
+            color: #ccc;
+        }
+
+        /* Edit area */
+        .edit-area {
+            display: none;
+            margin-bottom: 16px;
+        }
+
+        .edit-area.visible {
+            display: block;
+        }
+
+        .edit-area label {
+            display: block;
+            color: #ffd93d;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .edit-area textarea {
+            width: 100%;
+            min-height: 80px;
+            background: #0a0a18;
+            border: 2px solid #ffd93d44;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 18px;
+            font-family: inherit;
+            padding: 14px 16px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .edit-area textarea:focus {
+            outline: none;
+            border-color: #ffd93d;
+        }
+
+        .edit-area .edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .edit-area .btn-save-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .edit-area .btn-save-edit:hover {
+            background: #e6c335;
+        }
+
+        .edit-area .btn-cancel-edit {
+            background: transparent;
+            color: #999;
+            border: 1px solid #555;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .edit-area .btn-cancel-edit:hover {
+            border-color: #999;
+            color: #ccc;
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid #2d3561;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-keep {
+            background: #4ecca3;
+            color: #0f0f1e;
+        }
+
+        .btn-keep:hover {
+            background: #3db890;
+            transform: translateY(-1px);
+        }
+
+        .btn-cut {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-cut:hover {
+            background: #d63851;
+            transform: translateY(-1px);
+        }
+
+        .btn-edit {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        .btn-edit:hover {
+            background: #e6c335;
+            transform: translateY(-1px);
+        }
+
+        .btn-undo {
+            background: transparent;
+            border: 1px solid #555;
+            color: #999;
+            padding: 10px 20px;
+            display: none;
+        }
+
+        .btn-undo:hover {
+            border-color: #999;
+            color: #ccc;
+        }
+
+        .decided .btn-undo {
+            display: inline-block;
+        }
+
+        .decided .btn-keep,
+        .decided .btn-cut,
+        .decided .btn-edit {
+            opacity: 0.4;
+        }
+
+        .decision-label {
+            display: none;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: auto;
+        }
+
+        .kept .decision-label.keep-label {
+            display: block;
+            color: #4ecca3;
+        }
+
+        .cut .decision-label.cut-label {
+            display: block;
+            color: #e94560;
+        }
+
+        .edited .decision-label.edit-label {
+            display: block;
+            color: #ffd93d;
+        }
+
+        /* Export section */
+        .export-section {
+            background: #0f0f1e;
+            border: 2px solid #2d3561;
+            border-radius: 10px;
+            padding: 24px;
+            margin-top: 40px;
+        }
+
+        .export-section h2 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .export-note {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .export-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .export-tab {
+            background: #16213e;
+            border: 1px solid #2d3561;
+            color: #999;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .export-tab.active {
+            background: #2d3561;
+            color: #fff;
+            border-color: #4ecca3;
+        }
+
+        .export-tab:hover {
+            border-color: #4ecca3;
+            color: #ccc;
+        }
+
+        #exportBlock {
+            background: #0a0a18;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            color: #ccc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            background: #4ecca3;
+            color: #0f0f1e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 10px;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover {
+            background: #3db890;
+        }
+
+        .copy-btn.copied {
+            background: #ffd93d;
+            color: #0f0f1e;
+        }
+
+        /* Bulk actions per section */
+        .section-bulk {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn-bulk {
+            padding: 6px 16px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: transparent;
+            transition: all 0.15s;
+        }
+
+        .btn-bulk-cut {
+            color: #e94560;
+            border-color: #e9456066;
+        }
+
+        .btn-bulk-cut:hover {
+            background: #e9456022;
+            border-color: #e94560;
+        }
+
+        .btn-bulk-keep {
+            color: #4ecca3;
+            border-color: #4ecca366;
+        }
+
+        .btn-bulk-keep:hover {
+            background: #4ecca322;
+            border-color: #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flat Responses Review</h1>
+            <div class="subtitle">46 responses flagged for potential removal — therapy poster energy, vague observations, flat cat, literary quotes, other flat — Feb 25, 2026</div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value" id="statTotal">46</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Decided</div>
+                    <div class="stat-value" id="statDecided">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Kept</div>
+                    <div class="stat-value" id="statKept">0</div>
+                </div>
+                <div class="stat cut-stat">
+                    <div class="stat-label">Cut</div>
+                    <div class="stat-value" id="statCut">0</div>
+                </div>
+                <div class="stat edit-stat">
+                    <div class="stat-label">Edited</div>
+                    <div class="stat-value" id="statEdited">0</div>
+                </div>
+                <div class="stat undecided-stat">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="statRemaining">46</div>
+                </div>
+            </div>
+        </header>
+
+        <div id="responses"></div>
+
+        <div class="export-section">
+            <h2>Export</h2>
+            <div class="export-note">Responses marked KEEP, CUT, or EDIT. Copy JSON for processing.</div>
+            <div class="export-tabs">
+                <button class="export-tab active" onclick="showExport('all')">All Decisions</button>
+                <button class="export-tab" onclick="showExport('keep')">Kept Only</button>
+                <button class="export-tab" onclick="showExport('cut')">Cut Only</button>
+                <button class="export-tab" onclick="showExport('edit')">Edited Only</button>
+            </div>
+            <div id="exportBlock"></div>
+            <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// RESPONSE DATA
+// ============================================
+const sections = [
+  {
+    title: "Therapy poster energy",
+    description: "Reads like a motivational poster in a counselor's office. No voice, no twist, no cat.",
+    responses: [
+      { text: "Purpose is what you put in the emptiness.", category: "wise" },
+      { text: "Your need for acceptance can make you invisible.", category: "heartfelt" },
+      { text: "Busy is sometimes just a hiding place.", category: "wise" },
+      { text: "Something in you has been ready for a while.", category: "heartfelt" },
+      { text: "Most people begin to feel better right around here.", category: "nurturing" },
+      { text: "This too. Even this.", category: "heartfelt" },
+      { text: "Be a lighthouse. Just stand there. Emit light.", category: "wise" },
+      { text: "Soften what is not required for survival.", category: "poetic" },
+      { text: "There will be chaos sown by pure love and kindness.", category: "nurturing" },
+      { text: "Dancing through pain became normal.", category: "existential" },
+      { text: "Find that spot where it feels comfortable and stable.", category: "nurturing" },
+      { text: "Infuse your movements with emotion and personality.", category: "heartfelt" }
+    ]
+  },
+  {
+    title: "Vague floating observations \u2014 not answers",
+    description: "Pretty language that doesn't land as a response to anything. No direction, no reframe, no energy.",
+    responses: [
+      { text: "You don't know if this counts as belonging.", category: "heartfelt" },
+      { text: "First the sounds. Then the edges. Then the weight of it.", category: "existential" },
+      { text: "Nothing is certain yet - not the day, not the mood, not you.", category: "existential" },
+      { text: "Words feel like too much but silence feels like too little.", category: "poetic" },
+      { text: "You flinched at your own decision.", category: "poetic" },
+      { text: "After being buried for so long, that feeling is translucent.", category: "poetic" },
+      { text: "You're in the hour that belongs to neither day nor night.", category: "poetic" },
+      { text: "Between the motion and the act falls the shadow.", category: "existential" },
+      { text: "A light breath of wind ruffles the surface of the water.", category: "poetic" }
+    ]
+  },
+  {
+    title: "Flat cat observations \u2014 no twist",
+    description: "Cat-adjacent but no personality, no surprise, no reason to screenshot. Just... describes something.",
+    responses: [
+      { text: "The smaller the space, the safer it feels.", category: "mystical" },
+      { text: "Comfort can be found in small dark places.", category: "wise" },
+      { text: "Being in the same room might be enough.", category: "wise" },
+      { text: "Same space, different activities. That works.", category: "wise" },
+      { text: "Sometimes proximity is the point.", category: "wise" },
+      { text: "Scratches tell stories. Every mark on the furniture is a memory.", category: "poetic" },
+      { text: "Lie down. Be warm. Let the purring do its work.", category: "poetic" },
+      { text: "The vacuum always stops eventually. And then quiet returns. Patience.", category: "poetic" },
+      { text: "I walk into a room like I'm not sure the room is real.", category: "poetic" },
+      { text: "The door opens. Could be for me. Usually isn't.", category: "poetic" },
+      { text: "You are holding tension in locations you have not yet identified.", category: "mystical" }
+    ]
+  },
+  {
+    title: "Literary quotes that don't land without context",
+    description: "Borrowed lines that need their original context to work. Without it, they're just vague.",
+    responses: [
+      { text: "Let yourself be silently drawn by the strange pull of what you really love.", category: "wise" },
+      { text: "Be patient toward all that is unsolved in your heart.", category: "nurturing" },
+      { text: "You are your best thing.", category: "nurturing" }
+    ]
+  },
+  {
+    title: "Other flat",
+    description: "Miscellaneous responses that don't have enough energy, twist, or voice to earn their spot.",
+    responses: [
+      { text: "Two people. Same room. Different planets.", category: "wise" },
+      { text: "One of them is right. Neither of them is happy.", category: "wise" },
+      { text: "The quiet version of you is paying attention.", category: "wise" },
+      { text: "You came up from somewhere deep.", category: "nurturing" },
+      { text: "*stares out window* Some questions aren't for answering. They're for carrying awhile.", category: "existential" },
+      { text: "The doubts have doubts. It's doubts all the way down.", category: "existential" },
+      { text: "\"Available.\" They could just say waiting.", category: "poetic" },
+      { text: "Ghosts, shadows and whispers can be the toughest opponents.", category: "wise" },
+      { text: "What's left when the ringing stops is yours.", category: "poetic" },
+      { text: "You're an estuary. Fresh and salt at once.", category: "existential" },
+      { text: "There's a certain feeling when something isn't quite funny and isn't quite sad. That's where you live now.", category: "existential" }
+    ]
+  }
+];
+
+// ============================================
+// STATE
+// ============================================
+const decisions = {};
+const editedTexts = {};
+let currentExportMode = 'all';
+
+// Flatten for global indexing
+const allResponses = [];
+const sectionMap = [];
+for (let s = 0; s < sections.length; s++) {
+  for (let r = 0; r < sections[s].responses.length; r++) {
+    allResponses.push(sections[s].responses[r]);
+    sectionMap.push(s);
+  }
+}
+
+function updateStats() {
+  const total = allResponses.length;
+  let kept = 0, cut = 0, edited = 0;
+  for (const d of Object.values(decisions)) {
+    if (d === 'keep') kept++;
+    if (d === 'cut') cut++;
+    if (d === 'edit') edited++;
+  }
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statDecided').textContent = kept + cut + edited;
+  document.getElementById('statKept').textContent = kept;
+  document.getElementById('statCut').textContent = cut;
+  document.getElementById('statEdited').textContent = edited;
+  document.getElementById('statRemaining').textContent = total - kept - cut - edited;
+  updateExport();
+}
+
+function decide(idx, action) {
+  if (action === 'edit') {
+    toggleEdit(idx);
+    return;
+  }
+  decisions[idx] = action;
+  const card = document.getElementById('card-' + idx);
+  card.classList.remove('kept', 'cut', 'edited');
+  card.classList.add('decided');
+  card.classList.add(action === 'keep' ? 'kept' : 'cut');
+  // Hide edit area if open
+  const editArea = document.getElementById('edit-' + idx);
+  if (editArea) editArea.classList.remove('visible');
+  updateStats();
+}
+
+function toggleEdit(idx) {
+  const editArea = document.getElementById('edit-' + idx);
+  editArea.classList.toggle('visible');
+  if (editArea.classList.contains('visible')) {
+    const textarea = editArea.querySelector('textarea');
+    textarea.focus();
+  }
+}
+
+function saveEdit(idx) {
+  const textarea = document.getElementById('textarea-' + idx);
+  const newText = textarea.value.trim();
+  if (!newText) return;
+
+  editedTexts[idx] = newText;
+  decisions[idx] = 'edit';
+
+  const card = document.getElementById('card-' + idx);
+  card.classList.remove('kept', 'cut', 'edited');
+  card.classList.add('decided', 'edited');
+
+  // Update displayed text
+  const textEl = document.getElementById('text-' + idx);
+  textEl.innerHTML = escapeHtml(newText);
+
+  // Hide edit area
+  document.getElementById('edit-' + idx).classList.remove('visible');
+  updateStats();
+}
+
+function cancelEdit(idx) {
+  document.getElementById('edit-' + idx).classList.remove('visible');
+}
+
+function undoDecision(idx) {
+  delete decisions[idx];
+  delete editedTexts[idx];
+  const card = document.getElementById('card-' + idx);
+  card.classList.remove('kept', 'cut', 'edited', 'decided');
+  // Restore original text
+  const textEl = document.getElementById('text-' + idx);
+  textEl.innerHTML = escapeHtml(allResponses[idx].text);
+  // Reset textarea
+  const textarea = document.getElementById('textarea-' + idx);
+  textarea.value = allResponses[idx].text;
+  // Hide edit area
+  document.getElementById('edit-' + idx).classList.remove('visible');
+  updateStats();
+}
+
+function bulkDecide(sectionIdx, action) {
+  let globalIdx = 0;
+  for (let s = 0; s < sectionIdx; s++) {
+    globalIdx += sections[s].responses.length;
+  }
+  for (let r = 0; r < sections[sectionIdx].responses.length; r++) {
+    const idx = globalIdx + r;
+    if (!decisions[idx]) {
+      decide(idx, action);
+    }
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showExport(mode) {
+  currentExportMode = mode;
+  document.querySelectorAll('.export-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  updateExport();
+}
+
+function updateExport() {
+  const output = [];
+  for (let i = 0; i < allResponses.length; i++) {
+    const d = decisions[i];
+    const text = editedTexts[i] || allResponses[i].text;
+    const category = allResponses[i].category;
+
+    if (currentExportMode === 'all' && d) {
+      output.push({ text: text, category: category, decision: d, original: d === 'edit' ? allResponses[i].text : undefined });
+    } else if (currentExportMode === 'keep' && d === 'keep') {
+      output.push({ text: text, category: category });
+    } else if (currentExportMode === 'cut' && d === 'cut') {
+      output.push({ text: text, category: category });
+    } else if (currentExportMode === 'edit' && d === 'edit') {
+      output.push({ text: text, category: category, original: allResponses[i].text });
+    }
+  }
+  // Clean up undefined fields
+  const cleaned = output.map(item => {
+    const obj = { text: item.text, category: item.category };
+    if (item.decision) obj.decision = item.decision;
+    if (item.original) obj.original = item.original;
+    return obj;
+  });
+  document.getElementById('exportBlock').textContent = JSON.stringify(cleaned, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('exportBlock').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy to Clipboard';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ============================================
+// RENDER
+// ============================================
+function render() {
+  const container = document.getElementById('responses');
+  let html = '';
+  let globalIdx = 0;
+
+  for (let s = 0; s < sections.length; s++) {
+    const section = sections[s];
+
+    // Section header
+    html += '<div class="section-header">';
+    html += 'Section ' + (s + 1) + ': ' + escapeHtml(section.title);
+    html += '<span class="section-count">' + section.responses.length + ' responses</span>';
+    html += '<div class="section-description">' + escapeHtml(section.description) + '</div>';
+    html += '</div>';
+
+    // Bulk actions
+    html += '<div class="section-bulk">';
+    html += '<button class="btn-bulk btn-bulk-cut" onclick="bulkDecide(' + s + ', \'cut\')">Cut All in Section</button>';
+    html += '<button class="btn-bulk btn-bulk-keep" onclick="bulkDecide(' + s + ', \'keep\')">Keep All in Section</button>';
+    html += '</div>';
+
+    for (let r = 0; r < section.responses.length; r++) {
+      const resp = section.responses[r];
+      const idx = globalIdx;
+
+      html += '<div class="response-card" id="card-' + idx + '">';
+
+      // Meta row
+      html += '<div class="card-meta">';
+      html += '<span class="response-number">#' + (idx + 1) + '</span>';
+      html += '<span class="category-badge">' + escapeHtml(resp.category) + '</span>';
+      html += '</div>';
+
+      // Response text - large and prominent
+      html += '<div class="response-text" id="text-' + idx + '">' + escapeHtml(resp.text) + '</div>';
+
+      // Edit area (hidden by default, pre-populated)
+      html += '<div class="edit-area" id="edit-' + idx + '">';
+      html += '<label>Edit response text</label>';
+      html += '<textarea id="textarea-' + idx + '">' + escapeHtml(resp.text) + '</textarea>';
+      html += '<div class="edit-actions">';
+      html += '<button class="btn-save-edit" onclick="saveEdit(' + idx + ')">Save Edit</button>';
+      html += '<button class="btn-cancel-edit" onclick="cancelEdit(' + idx + ')">Cancel</button>';
+      html += '</div>';
+      html += '</div>';
+
+      // Action buttons
+      html += '<div class="actions">';
+      html += '<button class="btn btn-keep" onclick="decide(' + idx + ', \'keep\')">Keep</button>';
+      html += '<button class="btn btn-cut" onclick="decide(' + idx + ', \'cut\')">Cut</button>';
+      html += '<button class="btn btn-edit" onclick="decide(' + idx + ', \'edit\')">Edit</button>';
+      html += '<button class="btn btn-undo" onclick="undoDecision(' + idx + ')">Undo</button>';
+      html += '<span class="decision-label keep-label">KEPT</span>';
+      html += '<span class="decision-label cut-label">CUT</span>';
+      html += '<span class="decision-label edit-label">EDITED</span>';
+      html += '</div>';
+
+      html += '</div>';
+      globalIdx++;
+    }
+  }
+
+  container.innerHTML = html;
+  updateStats();
+}
+
+render();
+</script>
+</body>
+</html>

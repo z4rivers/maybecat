@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Review: Paw Prints on the Counter (Feb 23)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .header h1 { font-size: 1.3em; color: #fff; margin-bottom: 5px; }
+  .header p { color: #888; font-size: 0.85em; }
+  .stats { display: flex; gap: 20px; margin-top: 10px; font-size: 0.9em; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #333; transition: border-color 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .item-number { color: #666; font-size: 0.8em; margin-bottom: 8px; }
+  .item-text { font-size: 1.15em; line-height: 1.5; color: #fff; margin-bottom: 12px; font-style: italic; }
+  .item-meta { color: #666; font-size: 0.8em; margin-bottom: 12px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.2s; }
+  .btn-keep { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; }
+  .btn-keep:hover, .btn-keep.active { background: #4ecca3; color: #1a1a2e; }
+  .btn-cut { background: #e9456022; color: #e94560; border: 1px solid #e94560; }
+  .btn-cut:hover, .btn-cut.active { background: #e94560; color: #fff; }
+  .btn-edit { background: #ffd93d22; color: #ffd93d; border: 1px solid #ffd93d; }
+  .btn-edit:hover, .btn-edit.active { background: #ffd93d; color: #1a1a2e; }
+  .edit-area { display: none; margin-top: 12px; }
+  .edit-area.visible { display: block; }
+  .edit-area textarea { width: 100%; background: #0f1729; color: #fff; border: 1px solid #ffd93d; border-radius: 4px; padding: 10px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 60px; }
+  .export-section { margin-top: 40px; padding: 20px; background: #0f1729; border-radius: 8px; }
+  .export-section h2 { color: #fff; margin-bottom: 10px; font-size: 1.1em; }
+  .export-box { background: #1a1a2e; color: #4ecca3; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 0.85em; white-space: pre-wrap; max-height: 400px; overflow-y: auto; cursor: pointer; border: 1px solid #333; }
+  .export-box:hover { border-color: #4ecca3; }
+  .copy-hint { color: #666; font-size: 0.8em; margin-top: 5px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Paw Prints on the Counter — Feb 23</h1>
+  <p>The small real thing wins every time. Charm that isn't trying. You were supposed to be mad but you're not and you both know it.</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <span id="keepCount">0</span></span>
+    <span class="stat-cut">Cut: <span id="cutCount">0</span></span>
+    <span class="stat-edit">Edit: <span id="editCount">0</span></span>
+    <span class="stat-pending">Pending: <span id="pendingCount">18</span></span>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<div class="export-section">
+  <h2>Export (kept + edited)</h2>
+  <div class="export-box" id="exportBox" onclick="navigator.clipboard.writeText(this.textContent).then(() => this.style.borderColor='#4ecca3')">[]</div>
+  <p class="copy-hint">Click to copy</p>
+</div>
+
+<script>
+const responses = [
+  { text: "You were mid-lecture and I yawned and you forgot the whole thing.", category: "chaotic" },
+  { text: "You can't stay mad at something warm.", category: "wise" },
+  { text: "I broke the thing. You picked me up anyway. Noted.", category: "wholesome" },
+  { text: "The paw prints are evidence. Also adorable. You're conflicted and I'm not.", category: "chaotic" },
+  { text: "You made the bed. I unmade it. You said my name like a sentence. Then you left it.", category: "wholesome" },
+  { text: "I knocked your water over and you just sighed and got another one. That's love.", category: "wholesome" },
+  { text: "You'll forgive it. You always do. It's embarrassing for both of us.", category: "wise" },
+  { text: "The thing you're mad about is already the thing you'll miss.", category: "wise" },
+  { text: "Your whole argument fell apart the second I showed up.", category: "chaotic" },
+  { text: "I bit you a little and you said 'ow' but you didn't move your hand.", category: "wholesome" },
+  { text: "I tracked mud in. You took a photo before you cleaned it.", category: "chaotic_wholesome" },
+  { text: "The mess is mine. The smile is also mine. You can't separate them.", category: "wise" },
+  { text: "You said no and I heard 'maybe if you're cute about it.'", category: "chaotic" },
+  { text: "Three seconds of purring erases about six hours of nonsense. Use that information however you want.", category: "wise" },
+  { text: "Small warm things win. Always have.", category: "wise" },
+  { text: "You were having a bad day and then something soft happened and the bad day lost.", category: "wholesome" },
+  { text: "I sat on the one thing you needed and suddenly it wasn't urgent anymore.", category: "chaotic" },
+  { text: "You keep pretending the rules apply to me. We both enjoy the performance.", category: "chaotic" },
+];
+
+const state = responses.map((r, i) => ({ ...r, id: i, status: 'pending', editedText: r.text }));
+
+function render() {
+  const container = document.getElementById('items');
+  container.innerHTML = state.map((item, i) => `
+    <div class="item ${item.status === 'keep' ? 'kept' : item.status === 'cut' ? 'cut' : item.status === 'edit' ? 'edited' : ''}" id="item-${i}">
+      <div class="item-number">#${i + 1}</div>
+      <div class="item-text">"${item.status === 'edit' ? item.editedText : item.text}"</div>
+      <div class="item-meta">${item.category}</div>
+      <div class="actions">
+        <button class="btn btn-keep ${item.status === 'keep' ? 'active' : ''}" onclick="setStatus(${i}, 'keep')">KEEP</button>
+        <button class="btn btn-cut ${item.status === 'cut' ? 'active' : ''}" onclick="setStatus(${i}, 'cut')">CUT</button>
+        <button class="btn btn-edit ${item.status === 'edit' ? 'active' : ''}" onclick="toggleEdit(${i})">EDIT</button>
+      </div>
+      <div class="edit-area ${item.status === 'edit' ? 'visible' : ''}" id="edit-${i}">
+        <textarea oninput="updateEdit(${i}, this.value)">${item.editedText}</textarea>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+  updateExport();
+}
+
+function setStatus(i, status) {
+  if (state[i].status === status) { state[i].status = 'pending'; }
+  else { state[i].status = status; }
+  render();
+}
+
+function toggleEdit(i) {
+  if (state[i].status === 'edit') { state[i].status = 'pending'; }
+  else { state[i].status = 'edit'; }
+  render();
+  if (state[i].status === 'edit') {
+    const ta = document.querySelector(`#edit-${i} textarea`);
+    if (ta) ta.focus();
+  }
+}
+
+function updateEdit(i, val) { state[i].editedText = val; updateExport(); }
+
+function updateStats() {
+  document.getElementById('keepCount').textContent = state.filter(s => s.status === 'keep').length;
+  document.getElementById('cutCount').textContent = state.filter(s => s.status === 'cut').length;
+  document.getElementById('editCount').textContent = state.filter(s => s.status === 'edit').length;
+  document.getElementById('pendingCount').textContent = state.filter(s => s.status === 'pending').length;
+}
+
+function updateExport() {
+  const kept = state.filter(s => s.status === 'keep' || s.status === 'edit').map(s => ({
+    text: s.status === 'edit' ? s.editedText : s.text,
+    category: s.category
+  }));
+  document.getElementById('exportBox').textContent = JSON.stringify(kept, null, 2);
+}
+
+render();
+</script>
+</body>
+</html>

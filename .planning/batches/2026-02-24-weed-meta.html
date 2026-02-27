@@ -1,0 +1,3057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weed: meta (85 responses)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 100px; }
+  .header { position: sticky; top: 0; background: #1a1a2e; padding: 15px 0; border-bottom: 2px solid #333; z-index: 100; margin-bottom: 20px; }
+  .header h1 { font-size: 1.3em; color: #fff; margin-bottom: 5px; }
+  .header p { color: #888; font-size: 0.85em; }
+  .stats { display: flex; gap: 20px; margin-top: 10px; font-size: 0.9em; flex-wrap: wrap; }
+  .stat-keep { color: #4ecca3; }
+  .stat-cut { color: #e94560; }
+  .stat-edit { color: #ffd93d; }
+  .stat-pending { color: #888; }
+  .item { background: #16213e; border-radius: 8px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #333; transition: border-color 0.2s, opacity 0.2s; }
+  .item.kept { border-left-color: #4ecca3; }
+  .item.cut { border-left-color: #e94560; opacity: 0.5; }
+  .item.edited { border-left-color: #ffd93d; }
+  .item-number { color: #666; font-size: 0.8em; margin-bottom: 8px; }
+  .item-text { font-size: 1.15em; line-height: 1.5; color: #fff; margin-bottom: 12px; font-style: italic; white-space: pre-wrap; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { padding: 6px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.2s; }
+  .btn-keep { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; }
+  .btn-keep:hover { background: #4ecca344; }
+  .btn-cut { background: #e9456022; color: #e94560; border: 1px solid #e94560; }
+  .btn-cut:hover { background: #e9456044; }
+  .btn-edit { background: #ffd93d22; color: #ffd93d; border: 1px solid #ffd93d; }
+  .btn-edit:hover { background: #ffd93d44; }
+  .btn-save { background: #ffd93d44; color: #ffd93d; border: 1px solid #ffd93d; margin-top: 8px; }
+  .btn-save:hover { background: #ffd93d66; }
+  .edit-area { margin-top: 12px; }
+  .edit-area textarea { width: 100%; background: #0f1a2e; color: #fff; border: 1px solid #ffd93d44; border-radius: 4px; padding: 10px; font-family: inherit; font-size: 1em; resize: vertical; }
+  .edit-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .edit-controls label { color: #aaa; font-size: 0.85em; }
+  .edit-controls select { background: #0f1a2e; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 4px 8px; font-size: 0.85em; }
+  .export-section { margin-top: 40px; padding: 20px; background: #0f1a2e; border-radius: 8px; border: 1px solid #333; }
+  .export-section h2 { color: #fff; margin-bottom: 10px; font-size: 1.1em; }
+  .export-section p { color: #888; font-size: 0.85em; margin-bottom: 10px; }
+  .export-section pre { background: #1a1a2e; padding: 15px; border-radius: 4px; color: #4ecca3; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto; }
+  .copy-btn { background: #4ecca322; color: #4ecca3; border: 1px solid #4ecca3; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.9em; margin-top: 10px; }
+  .copy-btn:hover { background: #4ecca344; }
+  .jump-btn { position: fixed; bottom: 20px; right: 20px; background: #e94560; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .jump-btn:hover { background: #d13550; }
+  .jump-btn.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Weed: meta (85 responses)</h1>
+  <p>Review each response. KEEP = stays, CUT = delete from source, EDIT = modify text/category.</p>
+  <div class="stats">
+    <span class="stat-keep">Keep: <strong id="stat-keep">0</strong></span>
+    <span class="stat-cut">Cut: <strong id="stat-cut">0</strong></span>
+    <span class="stat-edit">Edit: <strong id="stat-edit">0</strong></span>
+    <span class="stat-pending">Pending: <strong id="stat-pending">85</strong></span>
+  </div>
+</div>
+
+
+    <div class="item" id="item-1" data-index="1" data-original="*pretends not to hear*">
+      <div class="item-number">#1</div>
+      <div class="item-text">*pretends not to hear*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(1, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(1, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(1)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-1" style="display:none;">
+        <textarea id="textarea-1" rows="3">*pretends not to hear*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-1">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(1)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-2" data-index="2" data-original="My tail is doing the angry thing. See it?">
+      <div class="item-number">#2</div>
+      <div class="item-text">My tail is doing the angry thing. See it?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(2, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(2, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(2)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-2" style="display:none;">
+        <textarea id="textarea-2" rows="3">My tail is doing the angry thing. See it?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-2">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(2)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-3" data-index="3" data-original="This is the wisdom you came for? Really?">
+      <div class="item-number">#3</div>
+      <div class="item-text">This is the wisdom you came for? Really?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(3, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(3, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(3)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-3" style="display:none;">
+        <textarea id="textarea-3" rows="3">This is the wisdom you came for? Really?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-3">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(3)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-4" data-index="4" data-original="You clicked &#39;Consult the Cat.&#39; This is on you.">
+      <div class="item-number">#4</div>
+      <div class="item-text">You clicked &#39;Consult the Cat.&#39; This is on you.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(4, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(4, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(4)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-4" style="display:none;">
+        <textarea id="textarea-4" rows="3">You clicked &#39;Consult the Cat.&#39; This is on you.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-4">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(4)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-5" data-index="5" data-original="Ask again. I dare you. It&#39;ll probably be worse.">
+      <div class="item-number">#5</div>
+      <div class="item-text">Ask again. I dare you. It&#39;ll probably be worse.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(5, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(5, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(5)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-5" style="display:none;">
+        <textarea id="textarea-5" rows="3">Ask again. I dare you. It&#39;ll probably be worse.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-5">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(5)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-6" data-index="6" data-original="Yes, this counts as productive. Don&#39;t question it.">
+      <div class="item-number">#6</div>
+      <div class="item-text">Yes, this counts as productive. Don&#39;t question it.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(6, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(6, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(6)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-6" style="display:none;">
+        <textarea id="textarea-6" rows="3">Yes, this counts as productive. Don&#39;t question it.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-6">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(6)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-7" data-index="7" data-original="Good idea, needs a cat.">
+      <div class="item-number">#7</div>
+      <div class="item-text">Good idea, needs a cat.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(7, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(7, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(7)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-7" style="display:none;">
+        <textarea id="textarea-7" rows="3">Good idea, needs a cat.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-7">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(7)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-8" data-index="8" data-original="You got here somehow. Don&#39;t blame the cat.">
+      <div class="item-number">#8</div>
+      <div class="item-text">You got here somehow. Don&#39;t blame the cat.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(8, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(8, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(8)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-8" style="display:none;">
+        <textarea id="textarea-8" rows="3">You got here somehow. Don&#39;t blame the cat.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-8">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(8)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-9" data-index="9" data-original="*stares* Go ahead. Share it. I don&#39;t need credit.">
+      <div class="item-number">#9</div>
+      <div class="item-text">*stares* Go ahead. Share it. I don&#39;t need credit.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(9, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(9, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(9)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-9" style="display:none;">
+        <textarea id="textarea-9" rows="3">*stares* Go ahead. Share it. I don&#39;t need credit.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-9">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(9)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-10" data-index="10" data-original="Being vague isn&#39;t a choice. It&#39;s a lifestyle.">
+      <div class="item-number">#10</div>
+      <div class="item-text">Being vague isn&#39;t a choice. It&#39;s a lifestyle.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(10, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(10, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(10)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-10" style="display:none;">
+        <textarea id="textarea-10" rows="3">Being vague isn&#39;t a choice. It&#39;s a lifestyle.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-10">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(10)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-11" data-index="11" data-original="*stares* So you came back. Why. Be specific.">
+      <div class="item-number">#11</div>
+      <div class="item-text">*stares* So you came back. Why. Be specific.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(11, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(11, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(11)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-11" style="display:none;">
+        <textarea id="textarea-11" rows="3">*stares* So you came back. Why. Be specific.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-11">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(11)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-12" data-index="12" data-original="This is rock bottom for both of us. Cute though.">
+      <div class="item-number">#12</div>
+      <div class="item-text">This is rock bottom for both of us. Cute though.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(12, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(12, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(12)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-12" style="display:none;">
+        <textarea id="textarea-12" rows="3">This is rock bottom for both of us. Cute though.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-12">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(12)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-13" data-index="13" data-original="You think this is a JOKE? This is ANCIENT. FELINE. WISDOM.">
+      <div class="item-number">#13</div>
+      <div class="item-text">You think this is a JOKE? This is ANCIENT. FELINE. WISDOM.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(13, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(13, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(13)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-13" style="display:none;">
+        <textarea id="textarea-13" rows="3">You think this is a JOKE? This is ANCIENT. FELINE. WISDOM.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-13">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(13)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-14" data-index="14" data-original="I didn&#39;t ASK to be consulted. But I WAS. Take it SERIOUSLY.">
+      <div class="item-number">#14</div>
+      <div class="item-text">I didn&#39;t ASK to be consulted. But I WAS. Take it SERIOUSLY.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(14, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(14, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(14)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-14" style="display:none;">
+        <textarea id="textarea-14" rows="3">I didn&#39;t ASK to be consulted. But I WAS. Take it SERIOUSLY.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-14">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(14)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-15" data-index="15" data-original="*tilts head* You scrolled past a lot to get here. Explain.">
+      <div class="item-number">#15</div>
+      <div class="item-text">*tilts head* You scrolled past a lot to get here. Explain.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(15, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(15, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(15)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-15" style="display:none;">
+        <textarea id="textarea-15" rows="3">*tilts head* You scrolled past a lot to get here. Explain.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-15">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(15)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-16" data-index="16" data-original="*stares* Is this... is this what you do? With your time?">
+      <div class="item-number">#16</div>
+      <div class="item-text">*stares* Is this... is this what you do? With your time?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(16, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(16, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(16)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-16" style="display:none;">
+        <textarea id="textarea-16" rows="3">*stares* Is this... is this what you do? With your time?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-16">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(16)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-17" data-index="17" data-original="This is technically self-care if you lie to yourself hard enough.">
+      <div class="item-number">#17</div>
+      <div class="item-text">This is technically self-care if you lie to yourself hard enough.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(17, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(17, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(17)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-17" style="display:none;">
+        <textarea id="textarea-17" rows="3">This is technically self-care if you lie to yourself hard enough.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-17">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(17)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-18" data-index="18" data-original="Oh, another question. Fun. *looks away*">
+      <div class="item-number">#18</div>
+      <div class="item-text">Oh, another question. Fun. *looks away*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(18, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(18, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(18)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-18" style="display:none;">
+        <textarea id="textarea-18" rows="3">Oh, another question. Fun. *looks away*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-18">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(18)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-19" data-index="19" data-original="I literally cannot care less. And yet. *sighs* Go on.">
+      <div class="item-number">#19</div>
+      <div class="item-text">I literally cannot care less. And yet. *sighs* Go on.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(19, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(19, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(19)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-19" style="display:none;">
+        <textarea id="textarea-19" rows="3">I literally cannot care less. And yet. *sighs* Go on.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-19">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(19)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-20" data-index="20" data-original="This is a SACRED DIGITAL SPACE and you WILL respect it.">
+      <div class="item-number">#20</div>
+      <div class="item-text">This is a SACRED DIGITAL SPACE and you WILL respect it.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(20, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(20, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(20)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-20" style="display:none;">
+        <textarea id="textarea-20" rows="3">This is a SACRED DIGITAL SPACE and you WILL respect it.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-20">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(20)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-21" data-index="21" data-original="I&#39;m not JUST a cat. I&#39;m THE cat. *meow*">
+      <div class="item-number">#21</div>
+      <div class="item-text">I&#39;m not JUST a cat. I&#39;m THE cat. *meow*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(21, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(21, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(21)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-21" style="display:none;">
+        <textarea id="textarea-21" rows="3">I&#39;m not JUST a cat. I&#39;m THE cat. *meow*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-21">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(21)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-22" data-index="22" data-original="I&#39;m the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.">
+      <div class="item-number">#22</div>
+      <div class="item-text">I&#39;m the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(22, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(22, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(22)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-22" style="display:none;">
+        <textarea id="textarea-22" rows="3">I&#39;m the healthiest coping mechanism you have. Somewhere a therapist just felt a chill.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-22">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(22)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-23" data-index="23" data-original="*licks paw for 47 seconds* What was the question?">
+      <div class="item-number">#23</div>
+      <div class="item-text">*licks paw for 47 seconds* What was the question?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(23, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(23, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(23)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-23" style="display:none;">
+        <textarea id="textarea-23" rows="3">*licks paw for 47 seconds* What was the question?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-23">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(23)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-24" data-index="24" data-original="*slow blink* That&#39;s a yes. Or a no. Interpret as you wish.">
+      <div class="item-number">#24</div>
+      <div class="item-text">*slow blink* That&#39;s a yes. Or a no. Interpret as you wish.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(24, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(24, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(24)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-24" style="display:none;">
+        <textarea id="textarea-24" rows="3">*slow blink* That&#39;s a yes. Or a no. Interpret as you wish.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-24">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(24)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-25" data-index="25" data-original="*walks away mid-sentence* I&#39;ve heard enough.">
+      <div class="item-number">#25</div>
+      <div class="item-text">*walks away mid-sentence* I&#39;ve heard enough.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(25, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(25, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(25)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-25" style="display:none;">
+        <textarea id="textarea-25" rows="3">*walks away mid-sentence* I&#39;ve heard enough.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-25">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(25)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-26" data-index="26" data-original="*tail flick* I acknowledge your existence. Barely.">
+      <div class="item-number">#26</div>
+      <div class="item-text">*tail flick* I acknowledge your existence. Barely.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(26, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(26, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(26)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-26" style="display:none;">
+        <textarea id="textarea-26" rows="3">*tail flick* I acknowledge your existence. Barely.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-26">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(26)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-27" data-index="27" data-original="*reaches one paw out to touch your arm, then immediately falls asleep*">
+      <div class="item-number">#27</div>
+      <div class="item-text">*reaches one paw out to touch your arm, then immediately falls asleep*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(27, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(27, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(27)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-27" style="display:none;">
+        <textarea id="textarea-27" rows="3">*reaches one paw out to touch your arm, then immediately falls asleep*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-27">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(27)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-28" data-index="28" data-original="*licks butt, ignores you*">
+      <div class="item-number">#28</div>
+      <div class="item-text">*licks butt, ignores you*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(28, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(28, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(28)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-28" style="display:none;">
+        <textarea id="textarea-28" rows="3">*licks butt, ignores you*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-28">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(28)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-29" data-index="29" data-original="*stares out window*">
+      <div class="item-number">#29</div>
+      <div class="item-text">*stares out window*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(29, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(29, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(29)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-29" style="display:none;">
+        <textarea id="textarea-29" rows="3">*stares out window*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-29">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(29)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-30" data-index="30" data-original="*grooms paw*">
+      <div class="item-number">#30</div>
+      <div class="item-text">*grooms paw*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(30, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(30, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(30)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-30" style="display:none;">
+        <textarea id="textarea-30" rows="3">*grooms paw*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-30">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(30)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-31" data-index="31" data-original="*sits on your question*">
+      <div class="item-number">#31</div>
+      <div class="item-text">*sits on your question*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(31, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(31, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(31)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-31" style="display:none;">
+        <textarea id="textarea-31" rows="3">*sits on your question*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-31">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(31)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-32" data-index="32" data-original="*stretches, walks away*">
+      <div class="item-number">#32</div>
+      <div class="item-text">*stretches, walks away*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(32, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(32, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(32)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-32" style="display:none;">
+        <textarea id="textarea-32" rows="3">*stretches, walks away*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-32">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(32)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-33" data-index="33" data-original="*blinks slowly, no further comment*">
+      <div class="item-number">#33</div>
+      <div class="item-text">*blinks slowly, no further comment*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(33, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(33, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(33)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-33" style="display:none;">
+        <textarea id="textarea-33" rows="3">*blinks slowly, no further comment*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-33">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(33)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-34" data-index="34" data-original="*turns around*">
+      <div class="item-number">#34</div>
+      <div class="item-text">*turns around*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(34, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(34, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(34)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-34" style="display:none;">
+        <textarea id="textarea-34" rows="3">*turns around*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-34">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(34)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-35" data-index="35" data-original="*stares at you, unblinking*">
+      <div class="item-number">#35</div>
+      <div class="item-text">*stares at you, unblinking*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(35, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(35, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(35)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-35" style="display:none;">
+        <textarea id="textarea-35" rows="3">*stares at you, unblinking*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-35">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(35)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-36" data-index="36" data-original="*chirps at bird outside*">
+      <div class="item-number">#36</div>
+      <div class="item-text">*chirps at bird outside*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(36, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(36, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(36)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-36" style="display:none;">
+        <textarea id="textarea-36" rows="3">*chirps at bird outside*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-36">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(36)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-37" data-index="37" data-original="*loafs*">
+      <div class="item-number">#37</div>
+      <div class="item-text">*loafs*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(37, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(37, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(37)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-37" style="display:none;">
+        <textarea id="textarea-37" rows="3">*loafs*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-37">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(37)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-38" data-index="38" data-original="*headbutts you, no explanation*">
+      <div class="item-number">#38</div>
+      <div class="item-text">*headbutts you, no explanation*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(38, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(38, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(38)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-38" style="display:none;">
+        <textarea id="textarea-38" rows="3">*headbutts you, no explanation*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-38">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(38)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-39" data-index="39" data-original="*purrs, then bites*">
+      <div class="item-number">#39</div>
+      <div class="item-text">*purrs, then bites*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(39, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(39, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(39)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-39" style="display:none;">
+        <textarea id="textarea-39" rows="3">*purrs, then bites*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-39">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(39)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-40" data-index="40" data-original="*shows you butt*">
+      <div class="item-number">#40</div>
+      <div class="item-text">*shows you butt*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(40, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(40, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(40)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-40" style="display:none;">
+        <textarea id="textarea-40" rows="3">*shows you butt*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-40">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(40)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-41" data-index="41" data-original="*continues napping*">
+      <div class="item-number">#41</div>
+      <div class="item-text">*continues napping*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(41, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(41, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(41)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-41" style="display:none;">
+        <textarea id="textarea-41" rows="3">*continues napping*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-41">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(41)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-42" data-index="42" data-original="POV: you asked a cat for advice.">
+      <div class="item-number">#42</div>
+      <div class="item-text">POV: you asked a cat for advice.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(42, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(42, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(42)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-42" style="display:none;">
+        <textarea id="textarea-42" rows="3">POV: you asked a cat for advice.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-42">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(42)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-43" data-index="43" data-original="My toxic trait is thinking I&#39;m a cat.">
+      <div class="item-number">#43</div>
+      <div class="item-text">My toxic trait is thinking I&#39;m a cat.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(43, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(43, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(43)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-43" style="display:none;">
+        <textarea id="textarea-43" rows="3">My toxic trait is thinking I&#39;m a cat.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-43">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(43)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-44" data-index="44" data-original="You&#39;re asking the wrong virtual cat.">
+      <div class="item-number">#44</div>
+      <div class="item-text">You&#39;re asking the wrong virtual cat.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(44, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(44, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(44)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-44" style="display:none;">
+        <textarea id="textarea-44" rows="3">You&#39;re asking the wrong virtual cat.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-44">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(44)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-45" data-index="45" data-original="Things are not how I remember them. **goes into stealth mode**.">
+      <div class="item-number">#45</div>
+      <div class="item-text">Things are not how I remember them. **goes into stealth mode**.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(45, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(45, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(45)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-45" style="display:none;">
+        <textarea id="textarea-45" rows="3">Things are not how I remember them. **goes into stealth mode**.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-45">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(45)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-46" data-index="46" data-original="**pupils go full moon**">
+      <div class="item-number">#46</div>
+      <div class="item-text">**pupils go full moon**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(46, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(46, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(46)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-46" style="display:none;">
+        <textarea id="textarea-46" rows="3">**pupils go full moon**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-46">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(46)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-47" data-index="47" data-original="**tail puffs to twice its size**">
+      <div class="item-number">#47</div>
+      <div class="item-text">**tail puffs to twice its size**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(47, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(47, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(47)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-47" style="display:none;">
+        <textarea id="textarea-47" rows="3">**tail puffs to twice its size**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-47">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(47)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-48" data-index="48" data-original="**stretches to full length, then contracts to smallest possible shape**">
+      <div class="item-number">#48</div>
+      <div class="item-text">**stretches to full length, then contracts to smallest possible shape**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(48, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(48, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(48)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-48" style="display:none;">
+        <textarea id="textarea-48" rows="3">**stretches to full length, then contracts to smallest possible shape**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-48">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(48)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-49" data-index="49" data-original="**walks toward you. Stops just out of reach.**">
+      <div class="item-number">#49</div>
+      <div class="item-text">**walks toward you. Stops just out of reach.**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(49, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(49, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(49)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-49" style="display:none;">
+        <textarea id="textarea-49" rows="3">**walks toward you. Stops just out of reach.**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-49">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(49)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-50" data-index="50" data-original="**licks your hand once. Leaves.**">
+      <div class="item-number">#50</div>
+      <div class="item-text">**licks your hand once. Leaves.**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(50, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(50, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(50)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-50" style="display:none;">
+        <textarea id="textarea-50" rows="3">**licks your hand once. Leaves.**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-50">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(50)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-51" data-index="51" data-original="**does nothing. Meaningfully.**">
+      <div class="item-number">#51</div>
+      <div class="item-text">**does nothing. Meaningfully.**</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(51, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(51, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(51)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-51" style="display:none;">
+        <textarea id="textarea-51" rows="3">**does nothing. Meaningfully.**</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-51">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(51)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-52" data-index="52" data-original="*tail flick* Next question.">
+      <div class="item-number">#52</div>
+      <div class="item-text">*tail flick* Next question.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(52, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(52, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(52)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-52" style="display:none;">
+        <textarea id="textarea-52" rows="3">*tail flick* Next question.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-52">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(52)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-53" data-index="53" data-original="I have observations that accidentally help.">
+      <div class="item-number">#53</div>
+      <div class="item-text">I have observations that accidentally help.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(53, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(53, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(53)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-53" style="display:none;">
+        <textarea id="textarea-53" rows="3">I have observations that accidentally help.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-53">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(53)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-54" data-index="54" data-original="You keep changing the question.">
+      <div class="item-number">#54</div>
+      <div class="item-text">You keep changing the question.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(54, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(54, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(54)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-54" style="display:none;">
+        <textarea id="textarea-54" rows="3">You keep changing the question.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-54">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(54)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-55" data-index="55" data-original="Shorter. Weirder. Less clean.">
+      <div class="item-number">#55</div>
+      <div class="item-text">Shorter. Weirder. Less clean.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(55, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(55, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(55)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-55" style="display:none;">
+        <textarea id="textarea-55" rows="3">Shorter. Weirder. Less clean.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-55">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(55)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-56" data-index="56" data-original="Lol, I like that one.">
+      <div class="item-number">#56</div>
+      <div class="item-text">Lol, I like that one.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(56, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(56, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(56)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-56" style="display:none;">
+        <textarea id="textarea-56" rows="3">Lol, I like that one.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-56">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(56)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-57" data-index="57" data-original="OK. Four refrigerators opened. What have we got?">
+      <div class="item-number">#57</div>
+      <div class="item-text">OK. Four refrigerators opened. What have we got?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(57, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(57, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(57)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-57" style="display:none;">
+        <textarea id="textarea-57" rows="3">OK. Four refrigerators opened. What have we got?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-57">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(57)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-58" data-index="58" data-original="*arrives at the emergency, sits down, begins grooming*">
+      <div class="item-number">#58</div>
+      <div class="item-text">*arrives at the emergency, sits down, begins grooming*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(58, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(58, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(58)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-58" style="display:none;">
+        <textarea id="textarea-58" rows="3">*arrives at the emergency, sits down, begins grooming*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-58">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(58)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-59" data-index="59" data-original="*slow blink* I didn&#39;t see anything. And if I did, I forgot.">
+      <div class="item-number">#59</div>
+      <div class="item-text">*slow blink* I didn&#39;t see anything. And if I did, I forgot.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(59, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(59, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(59)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-59" style="display:none;">
+        <textarea id="textarea-59" rows="3">*slow blink* I didn&#39;t see anything. And if I did, I forgot.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-59">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(59)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-60" data-index="60" data-original="Do you understand consequences?">
+      <div class="item-number">#60</div>
+      <div class="item-text">Do you understand consequences?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(60, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(60, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(60)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-60" style="display:none;">
+        <textarea id="textarea-60" rows="3">Do you understand consequences?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-60">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(60)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-61" data-index="61" data-original="Here is what I know for certain: nothing.">
+      <div class="item-number">#61</div>
+      <div class="item-text">Here is what I know for certain: nothing.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(61, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(61, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(61)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-61" style="display:none;">
+        <textarea id="textarea-61" rows="3">Here is what I know for certain: nothing.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-61">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(61)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-62" data-index="62" data-original="I considered. I have follow-up questions. Seventeen of them.">
+      <div class="item-number">#62</div>
+      <div class="item-text">I considered. I have follow-up questions. Seventeen of them.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(62, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(62, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(62)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-62" style="display:none;">
+        <textarea id="textarea-62" rows="3">I considered. I have follow-up questions. Seventeen of them.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-62">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(62)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-63" data-index="63" data-original="I did exactly what you asked. You should have asked better.">
+      <div class="item-number">#63</div>
+      <div class="item-text">I did exactly what you asked. You should have asked better.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(63, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(63, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(63)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-63" style="display:none;">
+        <textarea id="textarea-63" rows="3">I did exactly what you asked. You should have asked better.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-63">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(63)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-64" data-index="64" data-original="*tail tip flicks* You&#39;re not jiggy yet. You&#39;re pre-jiggy.">
+      <div class="item-number">#64</div>
+      <div class="item-text">*tail tip flicks* You&#39;re not jiggy yet. You&#39;re pre-jiggy.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(64, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(64, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(64)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-64" style="display:none;">
+        <textarea id="textarea-64" rows="3">*tail tip flicks* You&#39;re not jiggy yet. You&#39;re pre-jiggy.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-64">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(64)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-65" data-index="65" data-original="You want advice? Go ask a comedian. I&#39;m just here to get some pets and share some love.">
+      <div class="item-number">#65</div>
+      <div class="item-text">You want advice? Go ask a comedian. I&#39;m just here to get some pets and share some love.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(65, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(65, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(65)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-65" style="display:none;">
+        <textarea id="textarea-65" rows="3">You want advice? Go ask a comedian. I&#39;m just here to get some pets and share some love.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-65">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(65)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-66" data-index="66" data-original="I don&#39;t know, but I&#39;ll message another cat about it.">
+      <div class="item-number">#66</div>
+      <div class="item-text">I don&#39;t know, but I&#39;ll message another cat about it.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(66, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(66, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(66)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-66" style="display:none;">
+        <textarea id="textarea-66" rows="3">I don&#39;t know, but I&#39;ll message another cat about it.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-66">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(66)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-67" data-index="67" data-original="*tail tip flicks* That&#39;s not a no.">
+      <div class="item-number">#67</div>
+      <div class="item-text">*tail tip flicks* That&#39;s not a no.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(67, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(67, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(67)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-67" style="display:none;">
+        <textarea id="textarea-67" rows="3">*tail tip flicks* That&#39;s not a no.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-67">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(67)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-68" data-index="68" data-original="*types, deletes, retypes, deletes, sends &#39;hey&#39;*">
+      <div class="item-number">#68</div>
+      <div class="item-text">*types, deletes, retypes, deletes, sends &#39;hey&#39;*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(68, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(68, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(68)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-68" style="display:none;">
+        <textarea id="textarea-68" rows="3">*types, deletes, retypes, deletes, sends &#39;hey&#39;*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-68">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(68)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-69" data-index="69" data-original="Not committed to aggression. Not relaxed. Ears undecided.">
+      <div class="item-number">#69</div>
+      <div class="item-text">Not committed to aggression. Not relaxed. Ears undecided.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(69, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(69, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(69)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-69" style="display:none;">
+        <textarea id="textarea-69" rows="3">Not committed to aggression. Not relaxed. Ears undecided.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-69">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(69)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-70" data-index="70" data-original="The cat can&#39;t even agree with itself.">
+      <div class="item-number">#70</div>
+      <div class="item-text">The cat can&#39;t even agree with itself.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(70, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(70, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(70)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-70" style="display:none;">
+        <textarea id="textarea-70" rows="3">The cat can&#39;t even agree with itself.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-70">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(70)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-71" data-index="71" data-original="Purring can mean happy, anxious, in pain, or over-excited. Sound familiar?">
+      <div class="item-number">#71</div>
+      <div class="item-text">Purring can mean happy, anxious, in pain, or over-excited. Sound familiar?</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(71, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(71, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(71)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-71" style="display:none;">
+        <textarea id="textarea-71" rows="3">Purring can mean happy, anxious, in pain, or over-excited. Sound familiar?</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-71">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(71)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-72" data-index="72" data-original="We&#39;re having a moment. Regretting it.">
+      <div class="item-number">#72</div>
+      <div class="item-text">We&#39;re having a moment. Regretting it.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(72, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(72, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(72)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-72" style="display:none;">
+        <textarea id="textarea-72" rows="3">We&#39;re having a moment. Regretting it.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-72">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(72)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-73" data-index="73" data-original="The tail flick means I&#39;m furious.">
+      <div class="item-number">#73</div>
+      <div class="item-text">The tail flick means I&#39;m furious.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(73, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(73, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(73)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-73" style="display:none;">
+        <textarea id="textarea-73" rows="3">The tail flick means I&#39;m furious.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-73">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(73)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-74" data-index="74" data-original="The patient refuses autopsy, not completely dead.">
+      <div class="item-number">#74</div>
+      <div class="item-text">The patient refuses autopsy, not completely dead.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(74, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(74, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(74)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-74" style="display:none;">
+        <textarea id="textarea-74" rows="3">The patient refuses autopsy, not completely dead.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-74">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(74)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-75" data-index="75" data-original="Still looking for the right words on this one.">
+      <div class="item-number">#75</div>
+      <div class="item-text">Still looking for the right words on this one.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(75, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(75, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(75)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-75" style="display:none;">
+        <textarea id="textarea-75" rows="3">Still looking for the right words on this one.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-75">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(75)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-76" data-index="76" data-original="Call someone who answers. Tell them about the lousy advice I&#39;m about to give you.">
+      <div class="item-number">#76</div>
+      <div class="item-text">Call someone who answers. Tell them about the lousy advice I&#39;m about to give you.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(76, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(76, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(76)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-76" style="display:none;">
+        <textarea id="textarea-76" rows="3">Call someone who answers. Tell them about the lousy advice I&#39;m about to give you.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-76">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(76)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-77" data-index="77" data-original="As described by a scientist who has never experienced fun.">
+      <div class="item-number">#77</div>
+      <div class="item-text">As described by a scientist who has never experienced fun.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(77, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(77, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(77)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-77" style="display:none;">
+        <textarea id="textarea-77" rows="3">As described by a scientist who has never experienced fun.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-77">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(77)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-78" data-index="78" data-original="Oblique, beautiful, slightly ominous.">
+      <div class="item-number">#78</div>
+      <div class="item-text">Oblique, beautiful, slightly ominous.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(78, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(78, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(78)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-78" style="display:none;">
+        <textarea id="textarea-78" rows="3">Oblique, beautiful, slightly ominous.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-78">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(78)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-79" data-index="79" data-original="I have zero training, zero empathy, and zero interest. So naturally, you came to me.">
+      <div class="item-number">#79</div>
+      <div class="item-text">I have zero training, zero empathy, and zero interest. So naturally, you came to me.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(79, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(79, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(79)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-79" style="display:none;">
+        <textarea id="textarea-79" rows="3">I have zero training, zero empathy, and zero interest. So naturally, you came to me.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-79">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(79)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-80" data-index="80" data-original="Trying to make sense of what I just witnessed. Give me a minute.">
+      <div class="item-number">#80</div>
+      <div class="item-text">Trying to make sense of what I just witnessed. Give me a minute.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(80, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(80, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(80)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-80" style="display:none;">
+        <textarea id="textarea-80" rows="3">Trying to make sense of what I just witnessed. Give me a minute.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-80">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(80)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-81" data-index="81" data-original="*tail tip flicks* The answer is yes. Or no.">
+      <div class="item-number">#81</div>
+      <div class="item-text">*tail tip flicks* The answer is yes. Or no.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(81, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(81, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(81)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-81" style="display:none;">
+        <textarea id="textarea-81" rows="3">*tail tip flicks* The answer is yes. Or no.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-81">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(81)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-82" data-index="82" data-original="Does not work as advertised but honestly neither do you.">
+      <div class="item-number">#82</div>
+      <div class="item-text">Does not work as advertised but honestly neither do you.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(82, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(82, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(82)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-82" style="display:none;">
+        <textarea id="textarea-82" rows="3">Does not work as advertised but honestly neither do you.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-82">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(82)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-83" data-index="83" data-original="Looked for three hours. Walked right past it twice.">
+      <div class="item-number">#83</div>
+      <div class="item-text">Looked for three hours. Walked right past it twice.</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(83, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(83, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(83)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-83" style="display:none;">
+        <textarea id="textarea-83" rows="3">Looked for three hours. Walked right past it twice.</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-83">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(83)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-84" data-index="84" data-original="You&#39;ve been punk&#39;d. Every day. Since adoption. *walks away eating your food*">
+      <div class="item-number">#84</div>
+      <div class="item-text">You&#39;ve been punk&#39;d. Every day. Since adoption. *walks away eating your food*</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(84, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(84, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(84)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-84" style="display:none;">
+        <textarea id="textarea-84" rows="3">You&#39;ve been punk&#39;d. Every day. Since adoption. *walks away eating your food*</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-84">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(84)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" id="item-85" data-index="85" data-original="Cat people usually have a type they fall for: calico, tortoise shell, siamese...">
+      <div class="item-number">#85</div>
+      <div class="item-text">Cat people usually have a type they fall for: calico, tortoise shell, siamese...</div>
+      <div class="actions">
+        <button class="btn btn-keep" onclick="decide(85, 'keep')">KEEP</button>
+        <button class="btn btn-cut" onclick="decide(85, 'cut')">CUT</button>
+        <button class="btn btn-edit" onclick="toggleEdit(85)">EDIT</button>
+      </div>
+      <div class="edit-area" id="edit-85" style="display:none;">
+        <textarea id="textarea-85" rows="3">Cat people usually have a type they fall for: calico, tortoise shell, siamese...</textarea>
+        <div class="edit-controls">
+          <label>Category:
+            <select id="cat-85">
+              <option value="chaotic">chaotic</option>
+              <option value="wise">wise</option>
+              <option value="cold">cold</option>
+              <option value="judgy">judgy</option>
+              <option value="demanding">demanding</option>
+              <option value="mystical">mystical</option>
+              <option value="heartfelt">heartfelt</option>
+              <option value="existential">existential</option>
+              <option value="nurturing">nurturing</option>
+              <option value="poetic">poetic</option>
+              <option value="meta" selected>meta</option>
+              <option value="angry">angry</option>
+              <option value="adoption">adoption</option>
+            </select>
+          </label>
+          <button class="btn btn-save" onclick="saveEdit(85)">Save Edit</button>
+        </div>
+      </div>
+    </div>
+
+<div class="export-section">
+  <h2>Export JSON (cuts + edits only)</h2>
+  <p>Only items that need action are exported. Keeps require no changes to the source file.</p>
+  <pre id="export-json">{
+  "cuts": [],
+  "edits": []
+}</pre>
+  <button class="copy-btn" onclick="copyExport()">Copy to Clipboard</button>
+</div>
+
+<button class="jump-btn" id="jump-btn" onclick="jumpToNext()">Jump to next undecided</button>
+
+<script>
+const STORAGE_KEY = 'weed-meta-2026-02-24';
+const TOTAL = 85;
+
+// State: { [index]: { decision: 'keep'|'cut'|'edit', editedText?: string, editedCategory?: string } }
+let state = {};
+
+// Load from localStorage
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    state = JSON.parse(saved);
+    // Restore UI
+    Object.keys(state).forEach(idx => {
+      applyDecision(parseInt(idx), state[idx]);
+    });
+  }
+} catch(e) { console.error('Failed to load state:', e); }
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function decide(index, decision) {
+  const item = document.getElementById('item-' + index);
+  if (!item) return;
+
+  // Clear previous state
+  item.classList.remove('kept', 'cut', 'edited');
+
+  if (decision === 'keep') {
+    item.classList.add('kept');
+    state[index] = { decision: 'keep' };
+    // Hide edit area
+    const editArea = document.getElementById('edit-' + index);
+    if (editArea) editArea.style.display = 'none';
+  } else if (decision === 'cut') {
+    item.classList.add('cut');
+    state[index] = { decision: 'cut' };
+    // Hide edit area
+    const editArea = document.getElementById('edit-' + index);
+    if (editArea) editArea.style.display = 'none';
+  }
+
+  save();
+  updateStats();
+  updateExport();
+}
+
+function toggleEdit(index) {
+  const editArea = document.getElementById('edit-' + index);
+  if (!editArea) return;
+  editArea.style.display = editArea.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveEdit(index) {
+  const textarea = document.getElementById('textarea-' + index);
+  const catSelect = document.getElementById('cat-' + index);
+  const item = document.getElementById('item-' + index);
+  if (!textarea || !catSelect || !item) return;
+
+  const editedText = textarea.value.trim();
+  const editedCategory = catSelect.value;
+  const originalText = item.getAttribute('data-original');
+
+  item.classList.remove('kept', 'cut', 'edited');
+  item.classList.add('edited');
+
+  state[index] = {
+    decision: 'edit',
+    editedText: editedText,
+    editedCategory: editedCategory,
+    originalText: originalText
+  };
+
+  save();
+  updateStats();
+  updateExport();
+}
+
+function applyDecision(index, entry) {
+  const item = document.getElementById('item-' + index);
+  if (!item) return;
+
+  item.classList.remove('kept', 'cut', 'edited');
+
+  if (entry.decision === 'keep') {
+    item.classList.add('kept');
+  } else if (entry.decision === 'cut') {
+    item.classList.add('cut');
+  } else if (entry.decision === 'edit') {
+    item.classList.add('edited');
+    // Restore textarea and category
+    const textarea = document.getElementById('textarea-' + index);
+    const catSelect = document.getElementById('cat-' + index);
+    if (textarea && entry.editedText) textarea.value = entry.editedText;
+    if (catSelect && entry.editedCategory) catSelect.value = entry.editedCategory;
+    const editArea = document.getElementById('edit-' + index);
+    if (editArea) editArea.style.display = 'block';
+  }
+}
+
+function updateStats() {
+  let keeps = 0, cuts = 0, edits = 0;
+  Object.values(state).forEach(s => {
+    if (s.decision === 'keep') keeps++;
+    else if (s.decision === 'cut') cuts++;
+    else if (s.decision === 'edit') edits++;
+  });
+  document.getElementById('stat-keep').textContent = keeps;
+  document.getElementById('stat-cut').textContent = cuts;
+  document.getElementById('stat-edit').textContent = edits;
+  document.getElementById('stat-pending').textContent = TOTAL - keeps - cuts - edits;
+
+  // Show/hide jump button
+  const pending = TOTAL - keeps - cuts - edits;
+  const jumpBtn = document.getElementById('jump-btn');
+  if (jumpBtn) {
+    jumpBtn.classList.toggle('hidden', pending === 0);
+  }
+}
+
+function updateExport() {
+  const cuts = [];
+  const edits = [];
+
+  Object.keys(state).forEach(idx => {
+    const entry = state[idx];
+    const item = document.getElementById('item-' + idx);
+    if (!item) return;
+    const originalText = item.getAttribute('data-original');
+
+    if (entry.decision === 'cut') {
+      cuts.push({ text: originalText, category: 'meta' });
+    } else if (entry.decision === 'edit') {
+      edits.push({
+        original: entry.originalText || originalText,
+        edited: entry.editedText || originalText,
+        category: entry.editedCategory || 'meta'
+      });
+    }
+  });
+
+  const exportData = { cuts, edits };
+  document.getElementById('export-json').textContent = JSON.stringify(exportData, null, 2);
+}
+
+function copyExport() {
+  const text = document.getElementById('export-json').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function jumpToNext() {
+  for (let i = 1; i <= TOTAL; i++) {
+    if (!state[i]) {
+      const item = document.getElementById('item-' + i);
+      if (item) {
+        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        item.style.outline = '2px solid #ffd93d';
+        setTimeout(() => item.style.outline = '', 2000);
+      }
+      return;
+    }
+  }
+}
+
+// Initial stats
+updateStats();
+updateExport();
+</script>
+</body>
+</html>
