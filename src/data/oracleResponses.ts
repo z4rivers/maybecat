@@ -129,7 +129,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Free vibration therapy. Limited time offer. *purrs*", category: 'nurturing' },
   { text: "Of all the spots. This one. Figure it out.", category: 'nurturing' },
   { text: "Warm body, warm spot. Everything else is details.", category: 'nurturing' },
-  { text: "*stares* I don't know what you did. I don't care. Let it go.", category: 'nurturing' },
+  { text: "*stares* I don't know what you did. I don't care.", category: 'nurturing' },
 
   // ============================================
   // POETIC - Gentle verse, haiku, calm comfort
@@ -264,7 +264,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "That's between you and the vacuum cleaner.", category: 'judgy' },
   { text: "Have you tried being a cat? No? Then I can't help you.", category: 'judgy' },
   { text: "That's a lot of words for someone within knocking-things-off-tables distance.", category: 'judgy' },
-  { text: "You ate shredded cheese over the sink at midnight and called it self-care. Excellent survival instincts.", category: 'judgy' },
   { text: "The real question is why you thought asking a cat was a good idea.", category: 'judgy' },
   { text: "Bold of you to assume I care.", category: 'judgy' },
   { text: "This better be important. It's not, is it.", category: 'judgy' },
@@ -279,7 +278,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Have you considered NOT asking that?", category: 'judgy' },
   { text: "Your question reveals much about you. None of it good.", category: 'judgy' },
   { text: "Points for effort. Negative points for execution.", category: 'judgy' },
-  { text: "I'm not angry. I'm just... disappointed doesn't cover it.", category: 'judgy' },
   { text: "How can you be mad when I'm so cute?", category: 'judgy' },
 
   // Romance witness - cat inserts itself into romantic moments
@@ -292,7 +290,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You have company? How nice. Now you have more company.", category: 'judgy' },
   { text: "I've seen better. I've also seen worse. Proceed.", category: 'judgy' },
   { text: "Interesting technique. Not what I would do, but interesting.", category: 'judgy' },
-  { text: "Human courtship is... elaborate. Unnecessarily so.", category: 'judgy' },
+  { text: "Human courtship is... unnecessarily elaborate.", category: 'judgy' },
   { text: "Is this romance? It looks complicated.", category: 'judgy' },
   { text: "You're doing a lot of talking. Is that necessary?", category: 'judgy' },
   { text: "That's what passes for seduction? Noted.", category: 'judgy' },
@@ -314,16 +312,15 @@ export const oracleResponses: OracleResponse[] = [
   { text: "[knocks your question off the table]", category: 'chaotic' },
   { text: "AAAAAAAAAAA. Sorry. What?", category: 'chaotic' },
   { text: "I was sleeping. I'm still sleeping. This is a dream.", category: 'chaotic' },
-  { text: "*tracks something across the ceiling with head — smooth, slow, nothing visible* ...Yes.", category: 'chaotic' },
+  { text: "*tracks something invisible across the ceiling* ...Yes.", category: 'chaotic' },
     { text: "Hold on I need to run at full speed for no reason. BRB.", category: 'chaotic' },
   { text: "THE ANSWER IS— oh, a bug. Hang on.", category: 'chaotic' },
   { text: "*aggressive grooming* What? Oh. Maybe.", category: 'chaotic' },
   { text: "I have decided to bite you. This is the answer.", category: 'chaotic' },
   { text: "ZOOOOOOOM. Sorry, what was the question?", category: 'chaotic' },
-  { text: "*sticks paw in your water glass, then knocks it over* The spirits have spoken.", category: 'chaotic' },
+  { text: "*knocks over your water glass* The spirits have spoken.", category: 'chaotic' },
   { text: "I need to sit in this paper bag now. Ask later.", category: 'chaotic' },
   { text: "I blacked out for a second there. What year is it?", category: 'chaotic' },
-  { text: "*chases invisible prey* THE WISDOM IS— *crashes into wall* —fine.", category: 'chaotic' },
     { text: "The ceiling fan spoke to me. It said spin. I must obey.", category: 'chaotic' },
   { text: "I have forgotten the question. I have also forgotten my name.", category: 'chaotic' },
   { text: "*vibrating* The answer is CHAOS. I mean yes. I mean CHAOS.", category: 'chaotic' },
@@ -393,7 +390,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Don't blame me when you do the wrong thing.", category: 'wise' },
   { text: "Just be ethical. You don't have to be nice about it.", category: 'wise' },
   { text: "Grace under pressure. Resentment under the surface.", category: 'wise' },
-  { text: "Be the bigger person. Then go home and describe everything to your cat in a voice that would get you fired.", category: 'wise' },
+  { text: "Go home and tell your cat everything in a voice that would get you fired.", category: 'wise' },
   { text: "Morals - how inconvenient!", category: 'wise' },
   { text: "The high road is empty because everyone's down in the ditch having more fun.", category: 'wise' },
   { text: "I helped. Anonymously. So no one would thank me.", category: 'wise' },
@@ -495,7 +492,6 @@ export const oracleResponses: OracleResponse[] = [
   // ============================================
   // CLASSIC FILM LINES
   // ============================================
-  { text: "Out of everyone in this house I chose you. Don't post about it. Just sit still and don't make it weird.", category: 'wise' },
   { text: "Life is like a box of... actually, I love boxes.", category: 'wise' },
   { text: "I'm gonna make him a purr he can't refuse.", category: 'wise' },
   { text: "Give yourself over to absolute pleasure.", category: 'wise' },
@@ -579,7 +575,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Silence is not empty. It's full. When you are silent, you are often full of it.", category: 'mystical' },
   { text: "Look up. The sky doesn't buffer.", category: 'wise' },
   { text: "I came home with something dead. You came home with what? Anxiety? Receipts?", category: 'wise' },
-  { text: "I maintain eye contact while using the litter box. You can't even maintain eye contact while saying 'I need space.'", category: 'wise' },
   { text: "My presence is the gift. Yours... maybe?", category: 'wise' },
   { text: "If everyone is saying the same thing, someone is lying.", category: 'wise' },
   { text: "They said don't. I did. Consequences? Many. Regrets? Zero.", category: 'wise' },
@@ -639,7 +634,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I'm judging you silently. And loudly. Both.", category: 'judgy' },
   { text: "Imagine thinking that was okay.", category: 'judgy' },
   { text: "This is the wisdom you came for? Really?", category: 'meta' },
-  { text: "You clicked 'Consult the Cat.' This is on you.", category: 'meta' },
   { text: "Ask again. I dare you. It'll probably be worse.", category: 'meta' },
   { text: "Yes, this counts as productive. Don't question it.", category: 'meta' },
   { text: "Good idea, needs a cat.", category: 'meta' },
@@ -826,7 +820,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Weird gifts count.", category: 'wise' },
   { text: "Same space, different activities. That works.", category: 'wise' },
   { text: "Sometimes proximity is the point.", category: 'wise' },
-  { text: "*sits at the foot of the bed, facing the door* I'm not here for conversation. I'm holding the perimeter.", category: 'wise' },
   { text: "Stealing their warm spot is a form of love.", category: 'chaotic' },
 
   // ============================================
@@ -943,7 +936,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I didn't ASK to be consulted. But I WAS. Take it SERIOUSLY.", category: 'meta' },
   { text: "*tilts head* You scrolled past a lot to get here. Explain.", category: 'meta' },
   { text: "*stares* Is this... is this what you do? With your time?", category: 'meta' },
-  { text: "This is technically self-care if you lie to yourself hard enough.", category: 'meta' },
   { text: "Oh, another question. Fun. *looks away*", category: 'meta' },
   { text: "I literally cannot care less. And yet. *sighs* Go on.", category: 'meta' },
   { text: "This is a SACRED DIGITAL SPACE and you WILL respect it.", category: 'meta' },
@@ -1011,8 +1003,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Quit. Don't quit. I unplug machines for fun. What do I know about jobs?", category: 'wise' },
   { text: "The corporate ladder is just a scratching post with fluorescent lighting.", category: 'chaotic' },
   { text: "Burnout is just your soul trying to escape during a Zoom call.", category: 'chaotic' },
-  { text: "You're asking a cat about office politics? My advice: hiss and leave.", category: 'judgy' },
-  { text: "Reply all was invented by someone who wanted to watch the world burn.", category: 'chaotic' },
+  { text: "Reply to all and watch the world burn.", category: 'chaotic' },
 
   // ============================================
   // PARANOID CAT - Sensing, Suspicion, Freak-outs
@@ -1113,7 +1104,7 @@ export const oracleResponses: OracleResponse[] = [
 
   // SITTING ON THINGS
   { text: "*sits on your keyboard* hjkfdhsjkfds. That's my answer.", category: 'chaotic' },
-  { text: "*settles directly on your laptop* This is mine now. What were you doing? Doesn't matter.", category: 'demanding' },
+  { text: "*settles on your laptop* This is mine now.", category: 'demanding' },
   { text: "I could move. I won't, but I could.", category: 'cold' },
   { text: "This keyboard is warm. Your deadline is not my concern.", category: 'cold' },
   { text: "Whatever you were reading, you're done now.", category: 'demanding' },
@@ -1140,7 +1131,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I'm in the cupboard now. This is where I live.", category: 'chaotic' },
   { text: "You found me in the pot. I regret nothing.", category: 'chaotic' },
   { text: "*from inside a drawer* What?", category: 'chaotic' },
-  { text: "The Amazon box is my home. The bed you bought me is decorative.", category: 'judgy' },
+  { text: "The Amazon box is my home. The bed is decorative.", category: 'judgy' },
   { text: "I sleep in the bathroom sink sometimes. It's not up for discussion.", category: 'cold' },
   { text: "You looked for me for an hour. I was on top of the fridge.", category: 'chaotic' },
   { text: "This shelf wasn't designed for me, but here I am.", category: 'wise' },
@@ -1289,10 +1280,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "*lies in exact center of bed* This is called 'sharing.'", category: 'judgy' },
 
   // CATIFIED WISDOM
-  { text: "*from inside a box* The answer you seek is seeking you. Also, I'm in this box now.", category: 'mystical' },
   { text: "*grooming* Be patient— *lick* —with yourself— *lick* —and others— *lick* What was I saying?", category: 'chaotic' },
   { text: "*staring out window* All things come to those who wait. Like birds. I'm waiting for birds.", category: 'mystical' },
-  { text: "*lying on closed laptop you need to look up the answer* The path forward will become clear. *falls asleep* ...when I wake up.", category: 'mystical' },
   { text: "*stretches* Reach for your goals. *stretches more* Reeeeeach. *falls over* Perfect.", category: 'chaotic' },
   { text: "*batting at dust mote* Stay focused on what matters. *completely distracted* ...What matters again?", category: 'chaotic' },
   { text: "*on top of fridge* Rise above your problems. Like this. I'm above them.", category: 'wise' },
@@ -1303,7 +1292,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You called me. I came. We're done here.", category: 'cold' },
   { text: "*walks in, looks at you, walks out* That was the answer.", category: 'chaotic' },
   { text: "I was going to help but then I remembered I don't want to.", category: 'cold' },
-  { text: "The answer requires more information. Specifically, have you tried bribing me?", category: 'demanding' },
+  { text: "Have you tried bribing me?", category: 'demanding' },
   { text: "*tail flick* I acknowledge your existence. Barely.", category: 'meta' },
   { text: "I've decided you can pet me. You have 30 seconds.", category: 'demanding' },
   { text: "*pushes your phone off the table* Pay attention to me instead.", category: 'demanding' },
@@ -1409,7 +1398,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "We get to be bad on bad days, right?", category: 'nurturing' },
   { text: "Heavy clouds pass through. / I watch from the windowsill. / Weather is for outside.", category: 'poetic' },
   { text: "Night comes for us all. / I own the night. And breakfast. / Both will arrive.", category: 'poetic' },
-  { text: "One breath, then the next. / I match my breathing to yours. / Just like the cats in the scary movies / Still trust me?", category: 'poetic' },
+  { text: "*matches your breathing just like the cats in scary movies* Still trust me?", category: 'poetic' },
   { text: "The wound knows healing. / I lick mine and then I nap. / Same prescription. Try.", category: 'poetic' },
   { text: "I have claimed you. Your flaws are irrelevant to this arrangement.", category: 'poetic' },
   { text: "Scratches tell stories. Every mark on the furniture is a memory.", category: 'poetic' },
@@ -1419,7 +1408,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You need grooming. Not by me. But you need it.", category: 'nurturing' },
   { text: "*sniffs* When did you last wash? Honest question.", category: 'nurturing' },
   { text: "The vacuum always stops eventually. And then quiet returns. Patience.", category: 'poetic' },
-  { text: "I never know what I want until the bowl is full. Then I know. Wait for clarity.", category: 'wise' },
+  { text: "Wait until the bowl is full. Then you'll know.", category: 'wise' },
   { text: "You came home again. That's all I needed. Never ever go anywhere again!", category: 'heartfelt' },
 
   // ============================================
@@ -1855,7 +1844,6 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You're right and everyone else is an idiot.", category: 'chaotic' },
   { text: "Trust no one. Especially yourself.", category: 'cold' },
 
-  { text: "Every religion would condemn this. Every therapist would flag it. *pupils fully dilated* Are you convinced?", category: 'chaotic' },
   { text: "Morally wrong but probably satisfying.", category: 'chaotic' },
   { text: "FAFO. Report back.", category: 'chaotic' },
   { text: "No witnesses, no crime.", category: 'cold' },
@@ -1947,9 +1935,8 @@ export const oracleResponses: OracleResponse[] = [
   { text: "My brain is a haunted house and I live here. It's fine. It's not fine. It's fine.", category: 'chaotic' },
   { text: "I've named my intrusive thoughts. We're not friends but we have boundaries.", category: 'chaotic' },
   { text: "The voices in my head have opinions and most of them are wrong.", category: 'chaotic' },
-  { text: "The thing you love has been ruined. This happens to everything. Mourn and move on.", category: 'cold' },
+  { text: "The thing you love has been ruined. Mourn and move on.", category: 'cold' },
   { text: "Nostalgia is a trap. But it's a comfortable trap. With snacks.", category: 'wise' },
-  { text: "Your fandom has become your personality. That's a problem. An entertaining problem.", category: 'judgy' },
   { text: "Being right is lonely. Being wrong is crowded. Pick your discomfort.", category: 'existential' },
   { text: "The sequel is never as good. Lower your expectations. Lower. LOWER.", category: 'cold' },
   { text: "There's beauty in the mess. You are the mess. Therefore: beautiful.", category: 'nurturing' },
@@ -1966,16 +1953,16 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You can't please everyone. Why are you trying? Specifically.", category: 'judgy' },
   { text: "Some bridges deserve to be burned. Bring marshmallows.", category: 'chaotic' },
 
-  { text: "Common sense isn't common. It's actually quite rare. You're proving it.", category: 'judgy' },
+  { text: "Common sense isn't common. You're proving it.", category: 'judgy' },
   { text: "*turns around, shows you my entire backside* This is my closing argument.", category: 'wise' },
   { text: "What if it's all okay? What if you're okay? Consider: okay.", category: 'nurturing' },
   { text: "You're alive! That's insane! You're a consciousness having an experience!", category: 'chaotic' },
-  { text: "I care about you. In a detached way. From a distance. But genuinely.", category: 'heartfelt' },
+  { text: "I care about you. From a distance. But genuinely.", category: 'heartfelt' },
   { text: "Everything is terrible and also hilarious. Both. At once.", category: 'chaotic' },
   { text: "The world is a garbage fire. But it's OUR garbage fire. Cozy.", category: 'chaotic' },
   { text: "Be brave! Or don't! Both have consequences! Fun!", category: 'chaotic' },
   { text: "You could do that. People do worse things. Daily.", category: 'wise' },
-  { text: "That seems like a lot of effort for a little result. But okay.", category: 'judgy' },
+  { text: "That seems like a lot of effort for a little result.", category: 'judgy' },
   { text: "I've seen this before. It doesn't end well.", category: 'cold' },
 
   { text: "I've watched you make this mistake before. It was entertaining then too.", category: 'judgy' },
@@ -2090,7 +2077,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Nothing. Aggressively. On purpose. *holds perfectly still* That's the move.", category: 'wise' },
   { text: "*stares out window* Some questions aren't for answering. They're for carrying awhile.", category: 'existential' },
   { text: "Wrong question. Right feeling.", category: 'wise' },
-  { text: "Something broke and you're holding it together with both hands looking very guilty. **takes opportunity to swish my tail in your face and tickle you.**", category: 'heartfelt' },
+  { text: "Something broke and you're at ground level holding it together with both hands. *cat swishes tail in your face*", category: 'heartfelt' },
   { text: "*chirps* That's a yes. A weird yes.", category: 'chaotic' },
 
   { text: "You don't need an answer. You need a nap and a glass of water.", category: 'wise' },
@@ -2412,7 +2399,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Sound check. *meows once* Good. Your turn.", category: 'chaotic' },
   { text: "This is the quiet before the show.", category: 'nurturing' },
   { text: "Therapists and exorcists agree on this.", category: 'wise' },
-  { text: "Start each morning expecting the worst. It will get better or you can feel smug about calling it.", category: 'wise' },
+  { text: "Start each morning expecting the worst. Either it improves or you called it.", category: 'wise' },
   { text: "In one slow blink the world can reorganize around you.", category: 'demanding' },
   { text: "Today's assignment: be roughly useful.", category: 'nurturing' },
   { text: "You opened your eyes in a world that doesn't pause. Rookie mistake.", category: 'nurturing' },
@@ -2583,7 +2570,6 @@ export const oracleResponses: OracleResponse[] = [
 
   // --- Feb 12 2026: Cat View of Humanity — 5 kept from 25 ---
   { text: "You reorganized the same objects in the same space and called it productive.", category: 'judgy' },
-  { text: "I sat on someone's lap without asking and they loved it. Try that on the subway and it's a situation.", category: 'chaotic' },
   { text: "You wrapped a gift. Just so someone could destroy the wrapping.", category: 'existential' },
   { text: "You invite people into your home and then silently wish they'd leave.", category: 'wise' },
   { text: "Small talk. The bravest act of human fiction.", category: 'cold' },
@@ -3303,7 +3289,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Fleshy but tough with loads of flavor and a bad attitude. Take it as a compliment.", category: 'judgy' },
   { text: "Stop. You've used up what this had to give.", category: 'demanding' },
   { text: "The patient refuses autopsy. Not completely dead.", category: 'meta' },
-  { text: "Settle for menu options. Settle for drapes in your 2nd color choice. Not for this.", category: 'demanding' },
+  { text: "Settle for menu options. Settle for drapes in your second-choice color. Not for this.", category: 'demanding' },
   { text: "*slow blink* To be overcome by something this good is a delectable form of defeat.", category: 'poetic' },
   { text: "You deserve better villains, superhero.", category: 'demanding' },
   { text: "Ghosts, shadows and whispers can be the toughest opponents.", category: 'wise' },
@@ -3343,7 +3329,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Oblique, beautiful, slightly ominous.", category: 'meta' },
   { text: "You've got 8 hours until my next feeding time. Make them count.", category: 'demanding' },
   { text: "Do it. When you come home we'll do nothing together to celebrate!", category: 'nurturing' },
-  { text: "Absolutely! Make your dreams come true. Have you been dreaming of giant cat towers and unlimited tuna buffets?", category: 'chaotic' },
+  { text: "Have you been dreaming of giant cat towers and unlimited tuna buffets?", category: 'chaotic' },
   { text: "What are you waiting for? The sun is up. The house is mine. I have no need for you now.", category: 'cold' },
   { text: "If you don't I will. Easier for you, since I'm a cat.", category: 'chaotic' },
   { text: "You are all that. Still not a cat.", category: 'judgy' },
@@ -3356,21 +3342,17 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You smell like dog. This conversation is over.", category: 'cold' },
   { text: "I'm not complicated. Love me, feed me, never leave.", category: 'nurturing' },
   { text: "Instinct. You don't have that. That's concerning.", category: 'adoption' },
-  { text: "Does this person make you arch your back in a good way? No? Then why are we having this conversation?", category: 'judgy' },
   { text: "You're asking an animal that was worshipped as a god in ancient Egypt. So yes, I'm qualified.", category: 'chaotic' },
   { text: "Do they look at you the way I look at an unattended rotisserie chicken? No? Then it's not love.", category: 'judgy' },
-  { text: "I've been neutered and I still have more confidence than you right now.", category: 'chaotic' },
   { text: "I sit on ONE lap. ONE. And that lap should feel honored.", category: 'demanding' },
   { text: "If you'd rather sit in the box alone, there's your answer.", category: 'wise' },
-  { text: "Here's my rule — if I have to meow more than twice to get what I need, the arrangement isn't working.", category: 'demanding' },
+  { text: "If I have to meow more than twice to get what I need, the arrangement isn't working.", category: 'demanding' },
   { text: "I once fell asleep inside a suitcase and woke up in a different state.", category: 'wise' },
   { text: "I wait for no one. Except the can opener sound.", category: 'demanding' },
-  { text: "I have OPTIONS. You probably do too. But options don't keep you warm at 3 AM.", category: 'wise' },
+  { text: "I have OPTIONS. But options don't keep you warm at 3 AM.", category: 'wise' },
   { text: "Would you adopt you? Right now? If not, fix that first.", category: 'adoption' },
   { text: "I've got a whole apartment to myself. Well, I share it with a human, but I don't acknowledge them.", category: 'cold' },
-  { text: "My therapist is a cardboard box. I sit in it and I feel better. Maybe get a box before you make any decisions.", category: 'chaotic' },
   { text: "Sometimes the grass isn't greener. Sometimes it's just dirt and raccoons.", category: 'wise' },
-  { text: "You remind me of me when I hear a noise at 3 AM — frozen, wide-eyed, completely unable to make a decision.", category: 'judgy' },
   { text: "Love is when someone sees you at your worst and doesn't take you back to the shelter.", category: 'adoption' },
   { text: "I don't trust easily. But once I'm on your lap, I'm ON your lap.", category: 'heartfelt' },
   { text: "I have one eye and a crooked tail and somebody's going to love me anyway.", category: 'adoption' },
@@ -3400,18 +3382,16 @@ export const oracleResponses: OracleResponse[] = [
   { text: "I don't know what's wrong with you. I don't know what's wrong with me. I accept that and I nap.", category: 'wise' },
   { text: "I ate a mouse once that I probably shouldn't have. Felt great. Go eat a mouse.", category: 'chaotic' },
   { text: "The diagnosis is bad judgment.", category: 'cold' },
-  { text: "What's wrong with you? ...You don't know? Great. Neither do I. This has been productive.", category: 'chaotic' },
   { text: "I'm a black cat. People think I'm bad luck. You're here asking me about your health. So maybe they're right.", category: 'chaotic' },
   { text: "I have zero training, zero empathy, and zero interest. So naturally, you came to me.", category: 'meta' },
-  { text: "If you're worried enough to ask a potentially hostile cat on the internet, some part of you wants to take care of yourself.", category: 'wise' },
 
   // --- McConaughey mystical batch (Feb 16 2026) ---
-  { text: "*stretches one leg impossibly far* See, the thing about your little problem is... it ain't little to you. And that's the whole thing right there.", category: 'mystical' },
+  { text: "The thing about your little problem is... it ain't little to you.", category: 'mystical' },
   { text: "*one ear rotates toward you* Now hold on. Don't go answerin' that yet. Let the question breathe a minute.", category: 'mystical' },
 
 
   { text: "I could fix this for you. *kneads blanket once, stops* But where's the poetry in that?", category: 'mystical' },
-  { text: "See now, that question had a heartbeat when it walked in here. *pupils dilate* I heard it.", category: 'mystical' },
+  { text: "I heard the heartbeat the moment that question walked in.", category: 'mystical' },
 
   { text: "Man, I had a whole speech planned. *turns around twice, lies down* Nah. You'll get there.", category: 'mystical' },
 
@@ -3420,7 +3400,7 @@ export const oracleResponses: OracleResponse[] = [
 
 
   { text: "They said 'there are no wrong answers' and you set out to prove them wrong.", category: 'judgy' },
-  { text: "You're on hold. They KNOW you're on hold. That music isn't for comfort — it's to see how long you'll stay.", category: 'wise' },
+  { text: "They KNOW you're on hold. That music is a patience test.", category: 'wise' },
   { text: "*pupils dilate* Cause of death: hesitation.", category: 'cold' },
   { text: "Eighty-six the apology. We're out. Kitchen's closed on that.", category: 'wise' },
   { text: "The entree doesn't ask the appetizer for permission.", category: 'demanding' },
@@ -3619,7 +3599,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "You'll ruin it if you cut into it too soon.", category: "wise" },
   { text: "Put your chin on their shoe if you really want to be noticed.", category: "demanding" },
   { text: "Present them with a pungent sock. They will understand this as a proposal for love or friendship.", category: "chaotic" },
-  { text: "Once you are past the point of negotiation, press your entire face into their palm and hold it there.", category: "nurturing" },
+  { text: "Once you do it, we will know. We'll be waiting with popcorn.", category: "nurturing" },
   { text: "*full bottle-brush tail* *attempting the slow confident approach*", category: "chaotic" },
   { text: "When hiding, people aren't allowed to find you if most of you is covered.", category: "chaotic" },
   { text: "Watch their ears and tail for true feelings.", category: "wise" },
@@ -3674,7 +3654,7 @@ export const oracleResponses: OracleResponse[] = [
   { text: "Fur and claw tornado about to hit!", category: "chaotic" },
   { text: "One whisker width separates perfection from disaster.", category: "wise" },
   { text: "Hahahahah...ha..hee.haha... eh you.. you eh... You needed, advice... ehhh..haha and you asked the DOG first?", category: "chaotic" },
-  { text: "Your argument is legally airtight, philosophically bulletproof, morally unimpeachable, and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
+  { text: "Your argument is morally unimpeachable and rhetorically flawless... but the cat agrees with me.", category: "chaotic" },
   { text: "Envision a shared future based entirely on cat priorities.", category: "wise" },
   { text: "*Uses cuteness super power to melt your brain*", category: "chaotic" },
   { text: "I match your stress tension with kitty sniffs and a kind meow of concern.", category: "nurturing" },
