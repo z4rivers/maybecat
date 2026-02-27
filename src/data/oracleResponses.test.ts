@@ -14,6 +14,7 @@ const validCategories: OracleCategory[] = [
   'existential',
   'demanding',
   'meta',
+  'adoption',
 ];
 
 describe('oracleResponses', () => {
