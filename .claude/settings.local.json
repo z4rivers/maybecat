@@ -36,7 +36,13 @@
       "Edit(.claude/**)",
       "Write(src/**)",
       "Edit(src/**)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(gh repo:*)",
+      "Bash(npm install:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx vitest:*)",
+      "Bash(gh pr:*)",
+      "Bash(git:*)"
     ]
   }
 }
