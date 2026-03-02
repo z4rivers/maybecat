@@ -381,9 +381,14 @@ export async function getRandomAdoptableCat(): Promise<ShelterCat> {
  * v5: Filter cats with numbers in names (shelter IDs)
  * v6: Drop alphabetical sort (always returned same A-B name cats like Butter Bean)
  */
-const CACHE_VERSION = 7;
+const CACHE_VERSION = 8;
 const CACHE_KEY = `rescueGroupsCats_v${CACHE_VERSION}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+/** True if the pool is entirely fallback cats (should never be cached) */
+function isFallbackPool(cats: ShelterCat[]): boolean {
+  return cats.length > 0 && cats.every(c => c.id.startsWith('fallback-'));
+}
 
 interface CachedCats {
   cats: ShelterCat[];
@@ -471,9 +476,11 @@ export async function getCachedOrFetchCats(limit: number = 10): Promise<ShelterC
     return pickRandom(cached, limit);
   }
 
-  // Fetch fresh pool and cache it
+  // Fetch fresh pool and cache it (but never cache fallbacks — they'd poison the cache for 24h)
   const pool = await fetchAdoptableCats(limit);
-  setCachedCats(pool);
+  if (!isFallbackPool(pool)) {
+    setCachedCats(pool);
+  }
   return pickRandom(pool, limit);
 }
 
@@ -490,7 +497,9 @@ export async function refreshCats(limit: number = 10): Promise<ShelterCat[]> {
 
   // Cache empty/expired — fetch fresh from API
   const pool = await fetchAdoptableCats(limit);
-  setCachedCats(pool);
+  if (!isFallbackPool(pool)) {
+    setCachedCats(pool);
+  }
   return pickRandom(pool, limit);
 }
 
