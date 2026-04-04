@@ -40,9 +40,10 @@
       ]
     }
   ],
-  "rewrites": [
-    { "source": "/api/cat-image/:path*", "destination": "https://cdn.rescuegroups.org/:path*" },
-    { "source": "/fnp", "destination": "/fnp.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/api/cat-image/(.*)", "dest": "https://cdn.rescuegroups.org/$1" },
+    { "src": "/fnp", "dest": "/fnp.html" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
