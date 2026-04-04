@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FNP Board Practice Exam</title>
+  <style>
+    :root {
+      --blue: #1a4f8a; --light-blue: #e8f0fa; --accent: #2E75B6;
+      --green: #15803d; --green-bg: #dcfce7;
+      --red: #b91c1c; --red-bg: #fee2e2;
+      --gray: #f5f6f8; --border: #dde3ee; --text: #1c1f26; --muted: #6b7280;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #eef1f7; color: var(--text); line-height: 1.65; min-height: 100vh; }
+
+    /* SCREENS */
+    .screen { display: none; }
+    #start-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.5rem; text-align: center; }
+    #exam-screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+    #results-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3rem 1.5rem; text-align: center; min-height: 100vh; }
+
+    /* START */
+    .start-logo { font-size: 3.5rem; margin-bottom: 1rem; }
+    .start-title { font-size: 2rem; font-weight: 800; color: var(--blue); margin-bottom: 0.4rem; }
+    .start-sub { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; }
+    .start-stats { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+    .stat-box { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.5rem; min-width: 90px; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .btn-primary { background: var(--blue); color: white; border: none; padding: 0.9rem 2.5rem; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+    .btn-primary:hover { background: #0f3460; transform: translateY(-1px); }
+
+    /* HEADER */
+    .exam-header { background: var(--blue); color: white; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.18); }
+    .exam-title { font-size: 1rem; font-weight: 700; }
+    .progress-bar-wrap { background: rgba(255,255,255,0.2); height: 4px; width: 100%; border-radius: 2px; margin-top: 4px; }
+    .progress-bar-fill { background: #4ade80; height: 4px; border-radius: 2px; transition: width 0.3s; }
+    .header-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .mode-badge { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .mode-badge.review { background: rgba(248,113,113,0.4); }
+    .exam-counter { font-size: 0.85rem; opacity: 0.85; white-space: nowrap; }
+    .score-badge { background: rgba(74,222,128,0.25); border: 1px solid rgba(74,222,128,0.5); border-radius: 20px; padding: 0.2rem 0.8rem; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+
+    /* EXAM BODY */
+    .exam-body { flex: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 2rem 1.25rem; }
+    .question-card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .q-header { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.4rem 0.85rem; border-bottom: 1px solid var(--border); background: var(--gray); }
+    .q-number { font-size: 1rem; font-weight: 800; color: var(--blue); }
+    .q-system { background: var(--light-blue); color: var(--accent); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .review-tag { background: #fee2e2; color: var(--red); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; margin-left: auto; }
+
+    .q-body { padding: 1.4rem 1.4rem 0.75rem; }
+    .q-text { font-size: 1.05rem; font-weight: 500; margin-bottom: 1.4rem; line-height: 1.6; }
+
+    .options { display: flex; flex-direction: column; gap: 0.55rem; }
+    .option-btn { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 0.97rem; cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.08s; text-align: left; width: 100%; line-height: 1.5; }
+    .option-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--light-blue); transform: translateX(2px); }
+    .option-btn:disabled { cursor: default; }
+    .option-btn .letter { font-weight: 700; color: var(--accent); min-width: 20px; font-size: 0.95rem; }
+    .option-btn.reveal-correct { border-color: var(--green); background: var(--green-bg); }
+    .option-btn.reveal-correct .letter { color: var(--green); }
+    .option-btn.selected-wrong { border-color: var(--red); background: var(--red-bg); }
+    .option-btn.selected-wrong .letter { color: var(--red); }
+    .option-btn.dim { opacity: 0.4; }
+
+    /* FEEDBACK */
+    .feedback-area { margin: 1.25rem 1.4rem 1rem; display: none; }
+    .feedback-area.visible { display: block; }
+    .feedback-box { border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 0.75rem; font-size: 0.95rem; }
+    .feedback-box.correct { background: var(--green-bg); border-left: 4px solid var(--green); color: #14532d; }
+    .feedback-box.wrong { background: var(--red-bg); border-left: 4px solid var(--red); color: #7f1d1d; }
+
+    /* PENALTY BOX */
+    .penalty-box { background: #fefce8; border: 2px dashed #f59e0b; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 0.75rem; font-size: 1rem; color: #78350f; display: none; }
+    .penalty-box.visible { display: block; }
+    .penalty-header { font-weight: 800; font-size: 1.1rem; margin-bottom: 0.35rem; }
+    .penalty-task { font-size: 1.05rem; }
+
+    .rationale-box { background: #f0f7ff; border-left: 4px solid #93c5fd; border-radius: 0 10px 10px 0; padding: 1rem 1.1rem; font-size: 0.93rem; color: #1e3a5f; }
+    .rationale-label { font-weight: 700; color: var(--blue); display: block; margin-bottom: 0.35rem; }
+
+    /* NAV */
+    .q-nav { padding: 1rem 1.4rem 1.4rem; display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap; }
+    .btn-next { background: var(--accent); color: white; border: none; padding: 0.65rem 1.6rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; display: none; }
+    .btn-next.visible { display: inline-block; }
+    .btn-next:hover { background: var(--blue); }
+    .btn-skip { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.65rem 1.2rem; border-radius: 8px; font-size: 0.9rem; cursor: pointer; }
+    .btn-skip:hover { background: var(--gray); }
+
+    /* RESULTS */
+    .results-emoji { font-size: 4rem; margin-bottom: 0.75rem; }
+    .results-title { font-size: 2rem; font-weight: 800; color: var(--blue); margin-bottom: 0.4rem; }
+    .results-sub { color: var(--muted); font-size: 1rem; margin-bottom: 2rem; }
+    .score-circle { width: 140px; height: 140px; border-radius: 50%; background: var(--light-blue); border: 6px solid var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 2rem; }
+    .score-pct { font-size: 2.4rem; font-weight: 800; color: var(--blue); line-height: 1; }
+    .score-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+    .results-grid { display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; max-width: 500px; }
+    .result-stat { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.4rem; min-width: 110px; }
+    .result-stat .num { font-size: 1.8rem; font-weight: 800; }
+    .result-stat.green .num { color: var(--green); }
+    .result-stat.red .num { color: var(--red); }
+    .result-stat.yellow .num { color: #a16207; }
+    .result-stat .lbl { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+    .results-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn-secondary { background: white; color: var(--blue); border: 2px solid var(--blue); padding: 0.75rem 1.75rem; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    .btn-secondary:hover { background: var(--light-blue); }
+    .missed-section { margin-top: 2.5rem; max-width: 680px; width: 100%; text-align: left; }
+    .missed-title { font-size: 1.1rem; font-weight: 700; color: var(--red); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #fee2e2; }
+    .missed-item { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; font-size: 0.9rem; }
+    .missed-q { font-weight: 600; margin-bottom: 0.25rem; }
+    .missed-ans { color: var(--muted); font-size: 0.85rem; }
+    .missed-ans strong { color: var(--green); }
+
+    /* CELEBRATION OVERLAY */
+    #celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; }
+    #celebration.active { display: block; }
+    .cel-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 20px; padding: 1.5rem 2.5rem; text-align: center; font-size: 1.8rem; font-weight: 800; color: var(--blue); box-shadow: 0 8px 40px rgba(0,0,0,0.18); animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); z-index: 10000; pointer-events: none; }
+    @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+    canvas#confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+    @media (max-width: 600px) {
+      .exam-body { padding: 1rem 0.75rem; }
+      .q-body, .q-nav, .feedback-area { padding-left: 1rem; padding-right: 1rem; }
+      .q-header { padding: 0.85rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CELEBRATION OVERLAY -->
+<div id="celebration">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="cel-message" id="cel-message"></div>
+</div>
+
+<!-- START SCREEN -->
+<div id="start-screen" class="screen active">
+  <div class="start-logo">🩺</div>
+  <h1 class="start-title">FNP Board Practice Exam</h1>
+  <p class="start-sub">ANCC / AANP Style &nbsp;·&nbsp; 50 Questions &nbsp;·&nbsp; Mixed Systems</p>
+  <div class="start-stats">
+    <div class="stat-box"><div class="stat-num">50</div><div class="stat-label">Questions</div></div>
+    <div class="stat-box"><div class="stat-num">15</div><div class="stat-label">Systems</div></div>
+    <div class="stat-box"><div class="stat-num">∞</div><div class="stat-label">Review loops</div></div>
+  </div>
+  <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1.5rem;max-width:420px;line-height:1.6;">
+    Answer each question. Wrong answers go into a review queue — you'll keep cycling through missed questions until you get them all. Get 10 right in a row and something nice happens. Get one wrong and... you'll pay a small price. 😈
+  </p>
+  <button class="btn-primary" onclick="startExam()">Begin Exam →</button>
+</div>
+
+<!-- EXAM SCREEN -->
+<div id="exam-screen" class="screen">
+  <div class="exam-header">
+    <div style="flex:1;">
+      <div class="exam-title">FNP Board Practice Exam</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="header-right">
+      <span class="score-badge" id="score-badge">✅ 0 &nbsp;❌ 0</span>
+      <span class="mode-badge" id="mode-badge">Exam</span>
+      <span class="exam-counter" id="exam-counter">1 / 50</span>
+    </div>
+  </div>
+  <div class="exam-body">
+    <div class="question-card" id="question-card">
+      <div class="q-header">
+        <span class="q-number" id="q-number">Q1</span>
+        <span class="q-system" id="q-system">System</span>
+        <span class="review-tag" id="review-tag" style="display:none">🔄 Review</span>
+      </div>
+      <div class="q-body">
+        <p class="q-text" id="q-text"></p>
+        <div class="options" id="options"></div>
+      </div>
+      <div class="feedback-area" id="feedback-area">
+        <div class="feedback-box" id="feedback-box"></div>
+        <div class="penalty-box" id="penalty-box">
+          <div class="penalty-header">🚨 WRONG ANSWER PENALTY 🚨</div>
+          <div class="penalty-task" id="penalty-task"></div>
+        </div>
+        <div class="rationale-box">
+          <span class="rationale-label">📖 Rationale</span>
+          <span id="rationale-text"></span>
+        </div>
+      </div>
+      <div class="q-nav">
+        <button class="btn-skip" id="btn-skip" onclick="skipQuestion()">Skip →</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="results-screen" class="screen">
+  <div class="results-emoji" id="results-emoji">🎉</div>
+  <h1 class="results-title">Round Complete!</h1>
+  <p class="results-sub" id="results-sub">Here's how you did</p>
+  <div class="score-circle">
+    <div class="score-pct" id="score-pct">0%</div>
+    <div class="score-label">Score</div>
+  </div>
+  <div class="results-grid">
+    <div class="result-stat green"><div class="num" id="r-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="result-stat red"><div class="num" id="r-wrong">0</div><div class="lbl">Missed</div></div>
+    <div class="result-stat yellow"><div class="num" id="r-skipped">0</div><div class="lbl">Skipped</div></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" id="review-btn" onclick="startReviewMode()" style="display:none">🔄 Review Missed Questions</button>
+    <button class="btn-primary" onclick="resetExam()">↺ Start Over</button>
+  </div>
+  <div class="missed-section" id="missed-section"></div>
+</div>
+
+<script>
+// ── PENALTIES ──
+const PENALTIES = [
+  "Do 5 push-ups. Right now. We're watching. 👀",
+  "Say 'I will study harder' out loud 3 times. Your cat is judging you.",
+  "Say the word STETHOSCOPE backwards. Out loud. Slowly. (epocsohtets)",
+  "Stand up, do 10 jumping jacks, and then sit back down like nothing happened.",
+  "Text someone 'I got a question wrong on a nursing board exam' and wait for their response.",
+  "Say 'etomidate' 5 times fast without messing up.",
+  "Do your best impression of a doctor writing a prescription. Show nobody.",
+  "Spell ELECTROENCEPHALOGRAPHY out loud without looking. Then admit you couldn't.",
+  "Say 'acetylsalicylic acid' three times fast. It's just aspirin but say it fancy.",
+  "Do 10 calf raises. Your feet need to pass boards too.",
+  "Hold your breath for 5 seconds and think about what you've done.",
+  "Say 'supraventricular tachycardia' backwards. It doesn't matter if it's wrong, just try.",
+  "Touch your nose, then your ear, then the screen. In that order. Twice.",
+  "Recite the ABCs of trauma (Airway, Breathing, Circulation) out loud while clapping.",
+  "Whisper 'I should have studied' very dramatically into the void.",
+  "Do a slow 360° spin in your chair. Think about your life choices.",
+  "Say 'the mitochondria is the powerhouse of the cell' and then cry a little.",
+  "Tap your desk 5 times and say 'I am a competent future NP' five times.",
+  "Clap your hands twice and say 'NEXT TIME' out loud with full conviction.",
+  "Stand up, stretch your arms out, and pretend you're auscultating your own lungs. Deep breath.",
+  "Say 'propranolol, metoprolol, atenolol, carvedilol' without stumbling.",
+  "Draw a tiny sad face on a sticky note. That is the face of regret.",
+  "Do one wall sit for 10 seconds. Thighs build boards too.",
+  "Say 'nitroglycerin' backwards. (nircylgortin) — yep, that's it.",
+  "Raise both hands, wiggle your fingers, and solemnly say 'I will review the rationale.'"
+];
+
+// ── CELEBRATIONS ──
+const CELEBRATIONS = [
+  "🎉 10 CORRECT IN A ROW! You're basically a doctor.",
+  "🏆 ANOTHER 10! The stethoscope is glowing.",
+  "🌟 20 CORRECT! Boards are shaking.",
+  "🎊 30 CORRECT! You might just pass this thing.",
+  "🥳 KEEP GOING! The ANCC is literally sending you flowers right now.",
+  "🎇 YOU ARE ON FIRE! Call the boards and tell them you're coming.",
+  "💥 UNSTOPPABLE! Someone alert the dean.",
+];
+
+const ALL_QUESTIONS = [
+  { num:1, system:"Cardiology", q:"A 58-year-old male with hypertension presents with a blood pressure of 168/98 mmHg on two separate visits. He is currently taking lisinopril 10 mg daily. Which is the most appropriate next step?", options:["A. Add amlodipine 5 mg daily","B. Add hydrochlorothiazide 25 mg daily","C. Increase lisinopril to 20 mg daily","D. Refer to cardiology immediately"], answer:"C", rationale:"According to JNC 8 guidelines, before adding a second agent, the current medication should be titrated to its maximum tolerated dose. Lisinopril can be increased to 40 mg daily. Increasing to 20 mg is the appropriate next step before adding a second antihypertensive." },
+  { num:2, system:"Endocrinology", q:"A 45-year-old woman presents with fatigue, weight gain, cold intolerance, and constipation. TSH is 8.2 mIU/L and free T4 is low. What is the most appropriate initial treatment?", options:["A. Liothyronine (T3) replacement","B. Levothyroxine (T4) replacement","C. Methimazole","D. Radioactive iodine ablation"], answer:"B", rationale:"Levothyroxine (T4) is the first-line treatment for hypothyroidism. T4 is peripherally converted to active T3. Methimazole and radioactive iodine are used for hyperthyroidism. T3 alone is not recommended due to its short half-life." },
+  { num:3, system:"Pulmonology", q:"A 65-year-old male with a 40 pack-year smoking history presents with progressive dyspnea and chronic productive cough. Spirometry shows FEV1/FVC ratio of 0.65 and FEV1 of 55% predicted. What is the most appropriate initial maintenance therapy?", options:["A. Inhaled corticosteroid alone","B. Long-acting beta-2 agonist (LABA) alone","C. Short-acting beta-2 agonist (SABA) as needed only","D. Long-acting muscarinic antagonist (LAMA)"], answer:"D", rationale:"This patient has GOLD Stage 2 COPD (FEV1 50–79% predicted, FEV1/FVC < 0.70). Per GOLD guidelines, a LAMA (such as tiotropium) is recommended as initial maintenance therapy. A SABA alone is for rescue use; ICS monotherapy is not indicated in COPD without asthma overlap." },
+  { num:4, system:"Gastroenterology", q:"A 52-year-old woman presents with epigastric pain relieved by food, worsened at night. H. pylori testing is positive. Which regimen is most appropriate first-line treatment?", options:["A. Omeprazole alone for 8 weeks","B. Triple therapy: PPI + clarithromycin + amoxicillin for 14 days","C. Bismuth subsalicylate alone","D. Metronidazole alone for 7 days"], answer:"B", rationale:"H. pylori eradication with triple therapy (PPI + clarithromycin + amoxicillin) for 14 days is recommended first-line when clarithromycin resistance rates are low. The 14-day regimen has higher eradication rates than 7-day therapy. PPI alone does not eradicate H. pylori." },
+  { num:5, system:"Neurology", q:"A 70-year-old patient reports sudden onset of right-sided weakness and slurred speech that resolved completely within 45 minutes. CT head is negative. What is the most likely diagnosis?", options:["A. Ischemic stroke","B. Transient ischemic attack (TIA)","C. Complex migraine","D. Todd's paralysis"], answer:"B", rationale:"A TIA is a transient episode of neurologic dysfunction caused by focal brain ischemia without acute infarction, typically resolving within 24 hours. Sudden onset focal deficits with complete resolution and negative CT are classic. TIA carries a high early stroke risk requiring immediate workup." },
+  { num:6, system:"Rheumatology", q:"A 30-year-old female presents with morning stiffness lasting >1 hour, symmetric joint swelling in the MCP and PIP joints bilaterally, and fatigue for 3 months. RF and anti-CCP are positive. What is the most likely diagnosis?", options:["A. Osteoarthritis","B. Systemic lupus erythematosus","C. Rheumatoid arthritis","D. Gout"], answer:"C", rationale:"Rheumatoid arthritis (RA) presents with symmetric polyarthritis involving MCP and PIP joints, morning stiffness >1 hour, and positive RF and anti-CCP. Anti-CCP is highly specific for RA. Osteoarthritis affects DIP joints without prolonged morning stiffness. Gout is typically monoarticular and asymmetric." },
+  { num:7, system:"Dermatology", q:"A 25-year-old presents with a pruritic, vesicular rash on the flexor surfaces of the wrists and between the fingers. The rash is also present on his partner. What is the most likely diagnosis?", options:["A. Contact dermatitis","B. Eczema","C. Scabies","D. Tinea manuum"], answer:"C", rationale:"Scabies presents with intensely pruritic vesicular lesions in finger webs, wrists, and flexor surfaces. Transmission to close contacts is the hallmark. The mite Sarcoptes scabiei burrows into skin. Treatment: permethrin 5% cream. Contact dermatitis and eczema do not typically spread to contacts." },
+  { num:8, system:"Women's Health", q:"A 35-year-old woman presents with cyclic mastalgia, bloating, irritability, and mood changes in the 1–2 weeks before her period that resolve with menstruation. What is the most appropriate first-line management?", options:["A. Oral contraceptive pills","B. Lifestyle modifications: exercise, dietary changes, stress reduction","C. Fluoxetine","D. Spironolactone"], answer:"B", rationale:"For PMS, lifestyle modifications are first-line: regular aerobic exercise, reducing sodium and caffeine, and stress management. SSRIs (fluoxetine) are first-line pharmacologic therapy for severe PMS/PMDD but are not the first step before conservative measures." },
+  { num:9, system:"Infectious Disease", q:"A 28-year-old sexually active female presents with dysuria and urinary frequency. Urinalysis shows pyuria and bacteriuria. She has no fever, CVA tenderness, nausea, or vomiting. What is the most appropriate treatment?", options:["A. Ciprofloxacin 500 mg BID for 7 days","B. Trimethoprim-sulfamethoxazole DS BID for 3 days","C. Nitrofurantoin 100 mg BID for 5 days","D. IV ampicillin"], answer:"C", rationale:"Uncomplicated lower UTI (cystitis): nitrofurantoin for 5 days is preferred first-line per IDSA due to low resistance and minimal collateral damage. TMP-SMX is also first-line but avoid if local resistance >20%. Fluoroquinolones should be reserved for more serious infections." },
+  { num:10, system:"Pediatrics", q:"A 2-year-old speaks about 10 words, walks well, and can stack 4 blocks at a routine well-child visit. Which developmental concern should be addressed?", options:["A. Motor development — should walk up stairs by now","B. Language development — should have 50+ words and 2-word phrases","C. Fine motor — block stacking is below expected","D. No concerns — all milestones are on track"], answer:"B", rationale:"By 24 months, a child should have 50+ words and use 2-word combinations (e.g., 'more milk'). Only 10 words at age 2 is a significant language delay requiring referral for speech-language evaluation and hearing testing. Walking and stacking 4 blocks are within normal range." },
+  { num:11, system:"Psychiatry", q:"A 32-year-old male reports persistent low mood for 8 months, decreased interest, hypersomnia, increased appetite, and difficulty concentrating. He denies suicidal ideation. What is the most appropriate initial treatment?", options:["A. Benzodiazepine","B. SSRI plus cognitive behavioral therapy (CBT)","C. Antipsychotic monotherapy","D. Bupropion plus watchful waiting"], answer:"B", rationale:"Major depressive disorder: SSRI combined with CBT has the best evidence. Benzodiazepines are not indicated for depression and carry dependence risk. Antipsychotics are not first-line for uncomplicated MDD." },
+  { num:12, system:"Cardiology", q:"A 72-year-old woman with atrial fibrillation and a CHA2DS2-VASc score of 4 has no contraindications to anticoagulation. What is the most appropriate management?", options:["A. Aspirin 81 mg daily","B. Clopidogrel plus aspirin","C. Direct oral anticoagulant (DOAC)","D. No anticoagulation needed"], answer:"C", rationale:"CHA2DS2-VASc of 4 = high stroke risk. Anticoagulation is recommended for scores ≥2 in women. DOACs (apixaban, rivaroxaban, dabigatran) are preferred over warfarin: similar/superior efficacy, lower bleeding risk, no routine monitoring required. Aspirin alone is inadequate for AFib stroke prevention." },
+  { num:13, system:"Nephrology", q:"A 60-year-old male with type 2 diabetes has a urine albumin-to-creatinine ratio of 120 mg/g on two occasions and eGFR of 55 mL/min/1.73m². BP is 138/82 mmHg. What is the best pharmacologic approach?", options:["A. SGLT2 inhibitor alone","B. ACE inhibitor or ARB","C. Calcium channel blocker","D. Beta-blocker"], answer:"B", rationale:"In diabetic kidney disease with albuminuria, ACE inhibitor or ARB is first-line: reduces intraglomerular pressure with proven nephroprotective effects beyond BP control. SGLT2 inhibitors are increasingly recommended as add-on therapy but ACE/ARB remains the cornerstone." },
+  { num:14, system:"Hematology", q:"A 28-year-old pregnant woman (16 weeks) has hemoglobin 10.2 g/dL, MCV 72 fL, and low serum ferritin. What is the most appropriate treatment?", options:["A. Vitamin B12 injection","B. Folic acid supplementation","C. Oral ferrous sulfate","D. Blood transfusion"], answer:"C", rationale:"Iron deficiency anemia is the most common anemia in pregnancy. Microcytic anemia + low ferritin = iron deficiency. Oral ferrous sulfate is first-line. Folate and B12 deficiency cause macrocytic anemia. Transfusion is reserved for severe symptomatic anemia." },
+  { num:15, system:"Ophthalmology", q:"A 68-year-old male with diabetes has sudden painless vision loss in his right eye. Fundoscopy shows flame-shaped hemorrhages and disc swelling. What is the most likely diagnosis?", options:["A. Central retinal artery occlusion","B. Central retinal vein occlusion","C. Retinal detachment","D. Acute angle-closure glaucoma"], answer:"B", rationale:"CRVO: painless sudden vision loss with 'blood and thunder' fundus — diffuse flame-shaped hemorrhages in all quadrants, disc edema, tortuous dilated veins. Risk factors: HTN, DM, hyperlipidemia. CRAO: pale retina + cherry-red spot. Retinal detachment: curtain effect." },
+  { num:16, system:"Endocrinology", q:"A 44-year-old obese male with T2DM on metformin has HbA1c 8.9% and established cardiovascular disease. Which add-on agent provides the most cardiovascular benefit?", options:["A. Glipizide","B. Pioglitazone","C. Empagliflozin (SGLT2 inhibitor)","D. Sitagliptin (DPP-4 inhibitor)"], answer:"C", rationale:"In T2DM with established CVD, SGLT2 inhibitors (empagliflozin) have proven cardiovascular mortality benefit in the EMPA-REG trial (38% reduction in CV death). GLP-1 receptor agonists also have CV benefit. Sulfonylureas and DPP-4 inhibitors have no proven CV mortality benefit." },
+  { num:17, system:"Orthopedics", q:"A 55-year-old woman has worsening right knee pain with activity. X-ray shows joint space narrowing, osteophytes, and subchondral sclerosis. No inflammatory markers. What is first-line treatment?", options:["A. Intra-articular corticosteroid injection","B. Systemic corticosteroids","C. Exercise, weight loss, and acetaminophen or NSAIDs","D. Total knee replacement"], answer:"C", rationale:"Osteoarthritis: stepwise approach. First-line = patient education, aerobic exercise, weight loss, and analgesia with acetaminophen or NSAIDs. Intra-articular injections used when conservative measures fail. Surgery reserved for refractory cases. Systemic steroids not indicated for OA." },
+  { num:18, system:"Infectious Disease", q:"A 45-year-old male with HIV (CD4 180 cells/µL, not on prophylaxis) has fever, night sweats, weight loss, and bilateral lung infiltrates. Silver stain of BAL fluid shows cup-shaped organisms. What is the diagnosis?", options:["A. Mycobacterium tuberculosis","B. Pneumocystis jirovecii pneumonia (PCP)","C. Cryptococcal pneumonia","D. CMV pneumonitis"], answer:"B", rationale:"PCP is the most common AIDS-defining OI when CD4 < 200 cells/µL. Classic: subacute dyspnea, fever, bilateral interstitial infiltrates. Diagnosis: GMS silver stain showing cup-shaped cysts. Treatment: TMP-SMX. PCP prophylaxis is indicated when CD4 drops below 200." },
+  { num:19, system:"Gastroenterology", q:"A 50-year-old male has diarrhea, abdominal cramping, and rectal bleeding for 4 months. Colonoscopy shows continuous mucosal inflammation starting at the rectum and extending proximally. What is the most likely diagnosis?", options:["A. Crohn's disease","B. Irritable bowel syndrome","C. Ulcerative colitis","D. Ischemic colitis"], answer:"C", rationale:"Ulcerative colitis: continuous mucosal inflammation from rectum extending proximally, rectal bleeding, diarrhea. Crohn's: transmural, any GI segment, skip lesions. IBS: no bloody diarrhea or colonoscopic findings. Ischemic colitis: affects watershed areas in older patients with vascular disease." },
+  { num:20, system:"Cardiology", q:"A 65-year-old male 6 weeks post-MI is on secondary prevention. Which combination has the strongest evidence for reducing mortality?", options:["A. Aspirin + statin + ACE inhibitor + beta-blocker","B. Aspirin + calcium channel blocker + ARB","C. Aspirin + statin only","D. Beta-blocker + calcium channel blocker + statin"], answer:"A", rationale:"Evidence-based post-MI quadruple therapy: Aspirin (antiplatelet) + Beta-blocker (reduces mortality/arrhythmia) + ACE inhibitor (reduces remodeling/mortality) + Statin (LDL lowering). Multiple large RCTs support this combination. A P2Y12 inhibitor is added for 12 months if a stent was placed." },
+  { num:21, system:"Urology", q:"A 70-year-old male has urinary hesitancy, weak stream, nocturia x3, and incomplete emptying. PSA is 1.8 ng/mL. DRE shows smooth, non-tender enlarged prostate. What is the most appropriate initial treatment?", options:["A. Immediate prostate biopsy","B. Alpha-1 blocker (tamsulosin)","C. 5-alpha reductase inhibitor alone","D. Surgical TURP"], answer:"B", rationale:"Classic BPH. Alpha-1 blockers (tamsulosin, alfuzosin) are first-line pharmacotherapy — they relax smooth muscle in the bladder neck and prostate for rapid symptom relief. 5-alpha reductase inhibitors work best in larger glands but take months. TURP is reserved for refractory cases." },
+  { num:22, system:"Dermatology", q:"A 68-year-old fair-skinned farmer has a pearly, translucent papule with rolled edges and telangiectasias on his nose, slowly growing for 2 years. What is the most likely diagnosis?", options:["A. Squamous cell carcinoma","B. Basal cell carcinoma","C. Melanoma","D. Keratoacanthoma"], answer:"B", rationale:"BCC: most common skin cancer. Classic = pearly papule with rolled borders and telangiectasias on sun-exposed areas. Grows slowly, rarely metastasizes. SCC: scaly erythematous plaque. Melanoma: ABCDE criteria. Keratoacanthoma: rapid growth, dome-shaped with central keratin plug." },
+  { num:23, system:"Pediatrics", q:"A 4-year-old has fever, barky cough worse at night, and inspiratory stridor for 2 days. Neck X-ray shows a 'steeple sign.' He is alert with mild retractions. What is the most appropriate management?", options:["A. Oral amoxicillin","B. Nebulized epinephrine and IV dexamethasone","C. Single dose of oral dexamethasone and observation","D. Immediate intubation"], answer:"C", rationale:"Croup (viral laryngotracheobronchitis), most commonly parainfluenza. Steeple sign = subglottic narrowing. Mild-to-moderate croup: single dose oral dexamethasone 0.6 mg/kg. Nebulized epinephrine for moderate-to-severe or non-responding cases. Intubation for impending respiratory failure." },
+  { num:24, system:"Gynecology", q:"A 26-year-old woman has lower abdominal pain, cervical motion tenderness, mucopurulent cervical discharge, and fever of 38.2°C. Pregnancy test negative. What is the diagnosis and appropriate treatment?", options:["A. Appendicitis — refer to surgery","B. Pelvic inflammatory disease — ceftriaxone + doxycycline + metronidazole","C. Endometriosis — laparoscopy","D. Ovarian torsion — immediate surgery"], answer:"B", rationale:"PID: lower abdominal pain + cervical motion tenderness + uterine/adnexal tenderness. CDC outpatient treatment: IM ceftriaxone 500mg once + doxycycline 100mg BID x 14 days + metronidazole 500mg BID x 14 days. Ovarian torsion: sudden severe pain, absent ovarian blood flow on Doppler." },
+  { num:25, system:"Pulmonology", q:"A 30-year-old woman with asthma uses her rescue inhaler daily and wakes up 3 nights per week with symptoms. How is her asthma classified?", options:["A. Mild intermittent","B. Mild persistent","C. Moderate persistent","D. Severe persistent"], answer:"C", rationale:"NAEPP: Moderate persistent = daily symptoms + nighttime awakenings >1/week. This patient: daily symptoms + 3 nighttime awakenings = moderate persistent. Treatment: low-dose ICS + LABA or increased ICS dose. Mild intermittent: ≤2 days/week. Severe persistent: continuous symptoms." },
+  { num:26, system:"Neurology", q:"A 45-year-old male has episodic severe unilateral periorbital headaches with ipsilateral lacrimation, nasal congestion, and ptosis lasting 45 minutes, occurring multiple times daily for 3 weeks. What is the most likely diagnosis?", options:["A. Migraine with aura","B. Tension headache","C. Cluster headache","D. Trigeminal neuralgia"], answer:"C", rationale:"Cluster headaches: severe unilateral periorbital pain + ipsilateral autonomic features (lacrimation, rhinorrhea, ptosis), lasting 15–180 minutes, multiple times daily in clusters. Predominantly middle-aged males. Acute treatment: high-flow O2 + sumatriptan. Preventive: verapamil." },
+  { num:27, system:"Endocrinology", q:"A 38-year-old woman has heat intolerance, palpitations, weight loss, tremor, diffuse non-tender goiter, TSH 0.02 mIU/L, elevated free T4, and exophthalmos. What is the most likely diagnosis?", options:["A. Toxic multinodular goiter","B. Hashimoto's thyroiditis","C. Graves' disease","D. Subacute thyroiditis"], answer:"C", rationale:"Graves' disease: autoimmune, most common cause of hyperthyroidism in young women. Classic triad: diffuse goiter + hyperthyroidism (suppressed TSH, elevated T4) + ophthalmopathy (exophthalmos). TSI is pathognomonic. Toxic MNG: no exophthalmos. Hashimoto's: typically hypothyroidism." },
+  { num:28, system:"Cardiology", q:"A 55-year-old male has crushing substernal chest pain radiating to the left arm, diaphoresis, and nausea for 45 minutes. ECG shows ST elevation in leads V1–V4. What is the most time-sensitive next step?", options:["A. Administer aspirin and arrange troponin","B. Activate the cardiac catheterization lab for primary PCI","C. Start thrombolytics immediately","D. Order echocardiogram"], answer:"B", rationale:"STEMI: goal is reperfusion within 90 minutes of first medical contact via primary PCI ('door-to-balloon' <90 min). Aspirin, heparin, and P2Y12 inhibitor are adjuncts, but cath lab activation is the immediate priority. Thrombolytics: only if PCI unavailable within 120 minutes." },
+  { num:29, system:"Infectious Disease", q:"A 22-year-old college student has fever, severe sore throat, cervical lymphadenopathy, and fatigue x10 days. Monospot is positive. Which complication requires immediate attention?", options:["A. Rash after amoxicillin","B. Splenomegaly with risk of rupture","C. Bilateral cervical lymphadenopathy","D. Transient elevated liver enzymes"], answer:"B", rationale:"EBV mononucleosis: splenomegaly is common; splenic rupture (~0.5%) is rare but potentially fatal. Patients must avoid contact sports and heavy lifting for 3–4 weeks until splenomegaly resolves. Amoxicillin rash in mono is expected but benign. Elevated LFTs are common and self-resolving." },
+  { num:30, system:"Geriatrics", q:"An 80-year-old woman with moderate dementia and hypertension takes amlodipine, donepezil, and calcium. She reports dizziness. Which medication most likely contributes to her fall risk?", options:["A. Amlodipine","B. Donepezil","C. Calcium supplement","D. All are equally low risk"], answer:"A", rationale:"CCBs (amlodipine) cause vasodilation and orthostatic hypotension, significantly increasing fall risk in elderly patients — identified in the Beers Criteria. Donepezil can cause bradycardia but carries lower fall risk than antihypertensives." },
+  { num:31, system:"Oncology", q:"A 60-year-old male smoker has a 3 cm spiculated lung nodule on CT with hypermetabolic activity on PET. What is the most appropriate next step?", options:["A. Repeat CT in 6 months","B. Tissue biopsy (CT-guided or bronchoscopy)","C. Empiric antibiotic treatment","D. Annual lung cancer screening CT"], answer:"B", rationale:"Spiculated nodule >2 cm + hypermetabolic PET = highly suspicious for primary lung malignancy. Tissue biopsy (CT-guided needle or bronchoscopy) is required before any treatment decision. Watchful waiting is not appropriate for high-risk features." },
+  { num:32, system:"Pharmacology", q:"A 55-year-old male on warfarin for AFib is started on fluconazole for a fungal infection. What is the expected drug interaction?", options:["A. Decreased warfarin effect — increase dose","B. No significant interaction","C. Increased warfarin effect — monitor INR closely and anticipate dose reduction","D. Fluconazole renders warfarin ineffective"], answer:"C", rationale:"Fluconazole inhibits CYP2C9 (primary enzyme for warfarin S-enantiomer metabolism), increasing warfarin plasma levels and INR — raising bleeding risk significantly. Check INR within 3–5 days of starting fluconazole and proactively reduce warfarin dose. Classic CYP450 inhibition interaction." },
+  { num:33, system:"Rheumatology", q:"A 55-year-old male has sudden onset severe pain, swelling, and erythema of the first MTP joint. Uric acid is 9.8 mg/dL. Joint aspiration shows needle-shaped, negatively birefringent crystals. What is the most appropriate acute treatment?", options:["A. Start allopurinol immediately","B. Oral colchicine or NSAIDs","C. IV corticosteroids","D. Probenecid"], answer:"B", rationale:"Acute gout (podagra): first-line treatment is colchicine (most effective within 24–36 hours) or NSAIDs. Allopurinol must NOT be started during an acute attack — it can prolong or worsen the flare. Allopurinol is initiated 2–4 weeks after the acute episode resolves." },
+  { num:34, system:"Psychiatry", q:"A 25-year-old woman has elevated mood, decreased sleep need, grandiosity, excessive spending, and hypersexuality for 3 weeks. She has a prior MDD episode and is not on medications. What is the most appropriate diagnosis and initial treatment?", options:["A. Major depressive disorder — start SSRI","B. Bipolar I disorder, manic episode — mood stabilizer (lithium or valproate)","C. Cyclothymia — psychotherapy only","D. ADHD — stimulant medication"], answer:"B", rationale:"Bipolar I requires at least one manic episode ≥7 days. Classic mania: elevated mood, decreased sleep, grandiosity, excessive spending, hypersexuality. First-line: lithium or valproate. SSRIs must NOT be used as monotherapy in bipolar disorder — they can precipitate mania." },
+  { num:35, system:"Infectious Disease", q:"A 35-year-old camper from New England presents with fever, headache, myalgia, and a 5 cm expanding erythematous lesion with central clearing on the thigh. What is the most appropriate treatment?", options:["A. Amoxicillin","B. Doxycycline 100 mg BID for 10–21 days","C. Azithromycin","D. Ceftriaxone IV"], answer:"B", rationale:"Lyme disease (Borrelia burgdorferi), transmitted by Ixodes ticks in endemic areas. Hallmark: erythema migrans (bull's-eye rash). First-line: doxycycline 100 mg BID x 10–21 days. Amoxicillin: alternative in pregnancy or children <8. IV ceftriaxone: reserved for neurologic Lyme or cardiac involvement." },
+  { num:36, system:"ENT", q:"A 65-year-old diabetic has painful ear canal, purulent discharge, granulation tissue at the bony-cartilaginous junction, and difficulty chewing. CT shows temporal bone involvement. What is the diagnosis?", options:["A. Otitis externa (swimmer's ear)","B. Malignant (necrotizing) otitis externa","C. Cholesteatoma","D. Acute otitis media"], answer:"B", rationale:"Malignant (necrotizing) otitis externa: Pseudomonas aeruginosa infection invading adjacent bone. Occurs almost exclusively in elderly diabetics/immunocompromised patients. Signs: severe pain, granulation tissue at bony-cartilaginous junction, CN involvement (CN VII most common), bone destruction on CT." },
+  { num:37, system:"Preventive Care", q:"A healthy 50-year-old woman with no prior colonoscopy presents for her annual exam. She has average risk for colorectal cancer. What is the most appropriate screening recommendation?", options:["A. Fecal occult blood test annually starting now","B. Colonoscopy every 10 years (or flexible sigmoidoscopy every 5 years)","C. No screening until age 65","D. CT colonography every 10 years only"], answer:"B", rationale:"USPSTF (2021) and ACS: CRC screening begins at age 45 for average-risk adults. Options: colonoscopy every 10 years (gold standard), annual FIT/FOBT, stool DNA every 1–3 years, CT colonography every 5 years, or flex sig every 5 years." },
+  { num:38, system:"Nephrology", q:"A 35-year-old woman has painless gross hematuria, facial edema, and foamy urine. UA shows 3+ protein and RBC casts. She had strep pharyngitis 2 weeks ago. C3 is low. What is the most likely diagnosis?", options:["A. IgA nephropathy","B. Post-streptococcal glomerulonephritis","C. Minimal change disease","D. Lupus nephritis"], answer:"B", rationale:"PSGN classically presents 2–3 weeks after strep pharyngitis with nephritic syndrome: hematuria, RBC casts (pathognomonic for GN), hypertension, edema, and low C3. IgA nephropathy occurs concurrently with infection. Minimal change disease causes nephrotic syndrome with no hematuria." },
+  { num:39, system:"Cardiology", q:"A 78-year-old woman has exertional dyspnea and angina for 6 months. Auscultation reveals a crescendo-decrescendo systolic murmur at the right upper sternal border radiating to the carotids. What is the most likely diagnosis?", options:["A. Mitral regurgitation","B. Aortic stenosis","C. Hypertrophic cardiomyopathy","D. Pulmonary stenosis"], answer:"B", rationale:"Aortic stenosis triad: angina, syncope, dyspnea. Murmur: harsh crescendo-decrescendo at right upper sternal border radiating to carotids. Pulsus parvus et tardus may be present. MR: holosystolic at apex radiating to axilla. HOCM: increases with Valsalva. Echocardiogram confirms diagnosis." },
+  { num:40, system:"Pediatrics", q:"A 6-month-old has wheezing, low-grade fever, nasal congestion, and respiratory distress. O2 sat is 93% on room air. A sibling had a cold last week. What is the most likely diagnosis and management?", options:["A. Asthma — start inhaled corticosteroid","B. Pneumonia — oral amoxicillin","C. Bronchiolitis — supportive care","D. Croup — oral dexamethasone"], answer:"C", rationale:"Bronchiolitis: most common lower respiratory tract infection in infants <2 years, usually RSV. Management: nasal suctioning, hydration, supplemental O2 as needed. No evidence supports bronchodilators, corticosteroids, or antibiotics in typical bronchiolitis. Hospitalize if O2 sat <90–92% or inability to feed." },
+  { num:41, system:"Women's Health", q:"A 22-year-old woman requests combined oral contraceptive pills. She smokes 10 cigarettes per day and has migraines with visual aura. Which condition is an absolute contraindication (WHO Category 4) to combined OCPs?", options:["A. Smoking under age 35","B. Migraine with aura","C. Family history of breast cancer","D. Mild hypertension (130/85 mmHg)"], answer:"B", rationale:"Migraine with aura: WHO Category 4 absolute contraindication to combined estrogen-containing contraceptives due to significantly increased ischemic stroke risk. Other absolute contraindications: smoking ≥15 cigarettes/day at age ≥35, history of VTE, CVA, or CAD. Use progestin-only or non-hormonal methods." },
+  { num:42, system:"Pulmonology", q:"A 55-year-old non-smoking male has progressive dyspnea over 2 years. CXR shows bilateral interstitial infiltrates with honeycombing at the lung bases. PFTs show a restrictive pattern with reduced DLCO. What is the most likely diagnosis?", options:["A. COPD","B. Idiopathic pulmonary fibrosis (IPF)","C. Pulmonary sarcoidosis","D. Hypersensitivity pneumonitis"], answer:"B", rationale:"IPF: progressive dyspnea, bibasilar 'Velcro' crackles, restrictive PFTs with reduced DLCO, HRCT showing honeycombing and traction bronchiectasis at the bases. Affects adults >50. Median survival 3–5 years. Sarcoidosis: upper lobes + hilar adenopathy. COPD: obstructive pattern." },
+  { num:43, system:"Endocrinology", q:"A 30-year-old woman has episodic severe headache, palpitations, diaphoresis, and BP 210/120 mmHg during episodes. 24-hour urine shows elevated metanephrines and catecholamines. What is the most likely diagnosis?", options:["A. Essential hypertension","B. Primary hyperaldosteronism (Conn's syndrome)","C. Pheochromocytoma","D. Cushing's syndrome"], answer:"C", rationale:"Pheochromocytoma: catecholamine-secreting adrenal medulla tumor. Classic triad: episodic headache + sweating + palpitations with severe hypertension. Diagnosis: 24-hour urine metanephrines (most sensitive). Treatment: surgical resection after alpha-blockade (phenoxybenzamine) then beta-blockade." },
+  { num:44, system:"Gastroenterology", q:"A 60-year-old male with chronic GERD and smoking history presents with dysphagia to solids progressing to liquids over 4 months and 20 lb weight loss. What is the most important next step?", options:["A. Trial of PPI therapy for 8 weeks","B. Barium swallow study","C. Upper endoscopy (EGD) with biopsy","D. H. pylori testing"], answer:"C", rationale:"Progressive dysphagia (solids → liquids) + weight loss in a patient with GERD and smoking = alarm symptoms requiring urgent EGD with biopsy to rule out esophageal cancer. Red flag symptoms warrant direct visualization. Barium swallow cannot provide tissue diagnosis. PPI trial would inappropriately delay diagnosis." },
+  { num:45, system:"Musculoskeletal", q:"A 25-year-old male has low back pain and morning stiffness >1 hour that improves with exercise and worsens with rest, plus alternating buttock pain. X-ray shows sacroiliac joint sclerosis. HLA-B27 is positive. What is the most likely diagnosis?", options:["A. Lumbar disc herniation","B. Ankylosing spondylitis","C. DISH (diffuse idiopathic skeletal hyperostosis)","D. Mechanical low back pain"], answer:"B", rationale:"Ankylosing spondylitis: seronegative spondyloarthropathy in young males. Classic: inflammatory back pain (worse at rest, better with exercise), morning stiffness >1 hour, sacroiliitis, HLA-B27 positivity (~90%), progression to 'bamboo spine.' Treatment: NSAIDs first-line; TNF-alpha inhibitors for refractory disease." },
+  { num:46, system:"Pharmacology", q:"A 45-year-old female on metformin for T2DM requires cardiac catheterization with contrast dye. What is the appropriate management of her metformin?", options:["A. Continue metformin without interruption","B. Stop metformin the day of the procedure and for 48 hours after; recheck renal function before restarting","C. Switch to insulin permanently","D. Double the metformin dose the day before the procedure"], answer:"B", rationale:"Iodinated contrast can temporarily impair renal function. Metformin accumulates with decreased GFR and can cause lactic acidosis. Protocol: hold metformin on the day of procedure and for 48 hours after, then confirm eGFR/creatinine has returned to baseline before restarting." },
+  { num:47, system:"Preventive Care", q:"A 55-year-old male with a 30 pack-year smoking history currently smokes. He has no symptoms. Which USPSTF Grade A or B screening recommendation applies?", options:["A. Annual chest X-ray for lung cancer","B. Annual low-dose CT (LDCT) for lung cancer","C. Annual sputum cytology","D. No lung cancer screening until age 65"], answer:"B", rationale:"USPSTF: annual LDCT for adults aged 50–80 with ≥20 pack-year history who currently smoke or quit within 15 years (Grade B). This patient qualifies: age 55, 30 pack-year, current smoker. Chest X-ray does NOT reduce lung cancer mortality. LDCT reduces mortality by ~20% in high-risk individuals (NLST trial)." },
+  { num:48, system:"Neurology", q:"A 70-year-old woman with AFib on warfarin (INR 3.4) presents with sudden severe headache ('worst headache of her life'), neck stiffness, and photophobia. CT head shows subarachnoid blood. What is the most likely diagnosis?", options:["A. Migraine with aura","B. Meningitis","C. Subarachnoid hemorrhage (SAH)","D. Hypertensive encephalopathy"], answer:"C", rationale:"SAH: thunderclap 'worst headache of my life' + meningismus (neck stiffness, photophobia). CT shows hyperdensity in subarachnoid space (90% sensitive within 24 hours). Supratherapeutic INR contributed to hemorrhage. Immediate management: reverse anticoagulation with 4-factor PCC or FFP + neurosurgical consultation." },
+  { num:49, system:"Men's Health", q:"A 60-year-old male has a PSA of 5.2 ng/mL. DRE reveals a hard, irregular nodule on the right lobe. What is the most appropriate next step?", options:["A. Repeat PSA in 6 months","B. Start finasteride to shrink the prostate","C. Refer to urology for prostate biopsy","D. MRI of the prostate for definitive diagnosis"], answer:"C", rationale:"Elevated PSA (>4 ng/mL at age 60) + abnormal DRE (hard, irregular nodule) = significant concern for prostate cancer. Urology referral for prostate biopsy is the most appropriate next step. An abnormal DRE always warrants biopsy regardless of PSA level. MRI can guide biopsy but does not replace tissue diagnosis." },
+  { num:50, system:"Geriatrics/Pharmacology", q:"An 82-year-old woman with insomnia, hypertension, and OA requests a sleep aid. She takes lisinopril and ibuprofen. Which sleep aid is most appropriate and safest for her?", options:["A. Diazepam 5 mg at bedtime","B. Diphenhydramine (Benadryl) 25 mg at bedtime","C. Low-dose doxepin 3–6 mg at bedtime","D. Zolpidem 10 mg at bedtime"], answer:"C", rationale:"Beers Criteria: benzodiazepines (diazepam) and z-drugs (zolpidem) are high-risk in elderly due to falls, fractures, cognitive impairment, and delirium. Diphenhydramine has strong anticholinergic effects — also Beers-listed. Low-dose doxepin (3–6 mg) is FDA-approved for insomnia maintenance and is the only hypnotic with acceptable safety in elderly at these doses. CBT-I remains first-line gold standard." }
+];
+
+// ── STATE ──
+let examQueue = [], reviewQueue = [], currentIndex = 0, isReviewMode = false;
+let correct = 0, wrong = 0, skipped = 0, wrongItems = [];
+let answered = false;
+let consecutiveCorrect = 0;
+let celebrationCount = 0;
+
+// ── CONFETTI ──
+let confettiActive = false;
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  confettiActive = true;
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    w: 8 + Math.random() * 8,
+    h: 5 + Math.random() * 5,
+    r: Math.random() * Math.PI * 2,
+    dr: (Math.random() - 0.5) * 0.15,
+    speed: 3 + Math.random() * 4,
+    color: ['#f59e0b','#3b82f6','#10b981','#ec4899','#8b5cf6','#ef4444','#06b6d4'][Math.floor(Math.random()*7)]
+  }));
+  let frames = 0;
+  function draw() {
+    if (!confettiActive) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.y += p.speed;
+      p.r += p.dr;
+      if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+    });
+    frames++;
+    if (frames < 180) requestAnimationFrame(draw);
+    else { confettiActive = false; ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  draw();
+}
+
+function showCelebration(msg) {
+  const cel = document.getElementById('celebration');
+  const celMsg = document.getElementById('cel-message');
+  celMsg.textContent = msg;
+  cel.classList.add('active');
+  launchConfetti();
+  setTimeout(() => { cel.classList.remove('active'); }, 3000);
+}
+
+// ── SCREENS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startExam() {
+  examQueue = [...ALL_QUESTIONS];
+  reviewQueue = []; currentIndex = 0; isReviewMode = false;
+  correct = 0; wrong = 0; skipped = 0; wrongItems = [];
+  answered = false; consecutiveCorrect = 0; celebrationCount = 0;
+  showScreen('exam-screen');
+  renderQuestion();
+}
+
+function startReviewMode() {
+  if (reviewQueue.length === 0) return;
+  examQueue = [...reviewQueue];
+  reviewQueue = []; currentIndex = 0; isReviewMode = true;
+  correct = 0; wrong = 0; skipped = 0; wrongItems = [];
+  answered = false; consecutiveCorrect = 0;
+  showScreen('exam-screen');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentIndex >= examQueue.length) { showResults(); return; }
+  const q = examQueue[currentIndex];
+  answered = false;
+
+  document.getElementById('q-number').textContent = `Q${q.num}`;
+  document.getElementById('q-system').textContent = q.system;
+  document.getElementById('review-tag').style.display = isReviewMode ? 'inline-block' : 'none';
+  document.getElementById('mode-badge').textContent = isReviewMode ? 'Review' : 'Exam';
+  document.getElementById('mode-badge').className = 'mode-badge' + (isReviewMode ? ' review' : '');
+  document.getElementById('exam-counter').textContent = `${currentIndex + 1} / ${examQueue.length}`;
+  document.getElementById('score-badge').textContent = `✅ ${correct}  ❌ ${wrong}`;
+  document.getElementById('progress-fill').style.width = Math.round((currentIndex / examQueue.length) * 100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    const letter = opt[0];
+    btn.innerHTML = `<span class="letter">${letter}.</span><span>${opt.substring(3)}</span>`;
+    btn.addEventListener('click', () => selectAnswer(letter, q));
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById('feedback-area').classList.remove('visible');
+  document.getElementById('btn-next').classList.remove('visible');
+  document.getElementById('btn-skip').style.display = 'inline-block';
+  document.getElementById('penalty-box').classList.remove('visible');
+}
+
+function selectAnswer(letter, q) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = letter === q.answer;
+
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.disabled = true;
+    const l = btn.querySelector('.letter').textContent.replace('.','');
+    if (l === q.answer) btn.classList.add('reveal-correct');
+    else if (l === letter && !isCorrect) btn.classList.add('selected-wrong');
+    else btn.classList.add('dim');
+  });
+
+  const feedbackBox = document.getElementById('feedback-box');
+  feedbackBox.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong');
+
+  if (isCorrect) {
+    correct++;
+    consecutiveCorrect++;
+    feedbackBox.innerHTML = `✅ <strong>Correct!</strong> Nice work.`;
+    document.getElementById('penalty-box').classList.remove('visible');
+    // Milestone every 10 correct
+    if (consecutiveCorrect > 0 && consecutiveCorrect % 10 === 0) {
+      setTimeout(() => {
+        const msg = CELEBRATIONS[Math.min(celebrationCount, CELEBRATIONS.length - 1)];
+        showCelebration(msg);
+        celebrationCount++;
+      }, 400);
+    }
+  } else {
+    wrong++;
+    consecutiveCorrect = 0;
+    wrongItems.push(q);
+    reviewQueue.push(q);
+    const penalty = PENALTIES[Math.floor(Math.random() * PENALTIES.length)];
+    feedbackBox.innerHTML = `❌ <strong>Wrong!</strong> Correct answer: <strong>${q.answer}</strong>.`;
+    const penaltyBox = document.getElementById('penalty-box');
+    document.getElementById('penalty-task').textContent = penalty;
+    penaltyBox.classList.add('visible');
+  }
+
+  document.getElementById('rationale-text').textContent = q.rationale;
+  document.getElementById('feedback-area').classList.add('visible');
+  document.getElementById('score-badge').textContent = `✅ ${correct}  ❌ ${wrong}`;
+  document.getElementById('btn-next').classList.add('visible');
+  document.getElementById('btn-skip').style.display = 'none';
+}
+
+function nextQuestion() { currentIndex++; renderQuestion(); }
+
+function skipQuestion() {
+  skipped++;
+  reviewQueue.push(examQueue[currentIndex]);
+  currentIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  const total = correct + wrong;
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent = wrong;
+  document.getElementById('r-skipped').textContent = skipped;
+
+  let emoji = '📚', sub = 'Keep studying — review mode will help.';
+  if (pct >= 90) { emoji = '🏆'; sub = 'Outstanding! Board-ready performance.'; }
+  else if (pct >= 80) { emoji = '🎉'; sub = 'Strong performance! Almost there.'; }
+  else if (pct >= 70) { emoji = '📖'; sub = 'Good start — review the missed questions.'; }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('results-sub').textContent = sub;
+
+  const reviewBtn = document.getElementById('review-btn');
+  reviewBtn.style.display = reviewQueue.length > 0 ? 'inline-block' : 'none';
+  if (reviewQueue.length > 0) reviewBtn.textContent = `🔄 Review ${reviewQueue.length} Missed Question${reviewQueue.length > 1 ? 's' : ''}`;
+
+  const missedSection = document.getElementById('missed-section');
+  if (wrongItems.length > 0) {
+    let html = `<div class="missed-title">❌ Missed Questions (${wrongItems.length})</div>`;
+    wrongItems.forEach(q => {
+      const correctOpt = q.options.find(o => o[0] === q.answer);
+      html += `<div class="missed-item"><div class="missed-q">Q${q.num} [${q.system}]: ${q.q.substring(0, 90)}...</div><div class="missed-ans">Correct answer: <strong>${correctOpt}</strong></div></div>`;
+    });
+    missedSection.innerHTML = html;
+  } else {
+    missedSection.innerHTML = '';
+  }
+
+  showScreen('results-screen');
+}
+
+function resetExam() { showScreen('start-screen'); }
+document.addEventListener('DOMContentLoaded', () => showScreen('start-screen'));
+</script>
+</body>
+</html>

@@ -42,6 +42,7 @@
   ],
   "rewrites": [
     { "source": "/api/cat-image/:path*", "destination": "https://cdn.rescuegroups.org/:path*" },
+    { "source": "/fnp", "destination": "/fnp.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
