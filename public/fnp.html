@@ -71,11 +71,26 @@
 
     .feedback-box { margin: 0 1.2rem 1.2rem; border-radius: 10px; padding: 1rem 1.1rem; font-size: 0.93rem; line-height: 1.55; display: none; }
     .feedback-box.correct { background: var(--green-bg); border-left: 4px solid var(--green); }
-    .feedback-box.wrong { background: var(--red-bg); border-left: 4px solid var(--red); }
+    .feedback-box.wrong { background: transparent; border: none; padding: 0; }
+    .feedback-box.wrong.tryagain { background: var(--red-bg); border-left: 4px solid var(--red); padding: 0.75rem 1rem; border-radius: 10px; }
     .feedback-box.visible { display: block; }
     .feedback-label { font-weight: 800; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
     .feedback-label.correct { color: var(--green); }
-    .feedback-label.wrong { color: var(--red); }
+    .feedback-label.wrong { color: var(--red); font-size: 0.95rem; margin-bottom: 0.65rem; }
+
+    .wrong-detail { display: none; flex-direction: column; gap: 0.6rem; }
+    .feedback-box.wrong .wrong-detail { display: flex; }
+
+    .wrong-chose { background: var(--red-bg); border-left: 4px solid var(--red); border-radius: 8px; padding: 0.75rem 1rem; }
+    .wrong-chose-label { font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); margin-bottom: 0.25rem; }
+    .wrong-chose-text { color: #991b1b; font-size: 0.93rem; text-decoration: line-through; text-decoration-color: rgba(185,28,28,0.4); }
+
+    .correct-answer-block { background: var(--green-bg); border-left: 4px solid var(--green); border-radius: 8px; padding: 0.75rem 1rem; }
+    .correct-answer-label { font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--green); margin-bottom: 0.25rem; }
+    .correct-answer-text { color: #166534; font-weight: 600; font-size: 0.95rem; }
+
+    .explanation-block { background: #f8fafc; border-left: 4px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; }
+    .explanation-text { color: var(--text); font-size: 0.9rem; line-height: 1.6; }
 
     .penalty-box { background: #fff7ed; border: 2px dashed #fb923c; border-radius: 10px; padding: 0.85rem 1.1rem; margin: 0 1.2rem 1.2rem; font-size: 0.88rem; color: #9a3412; display: none; }
     .penalty-box.visible { display: block; }
@@ -175,6 +190,20 @@
       <div class="feedback-box" id="feedback-box">
         <div class="feedback-label" id="feedback-label"></div>
         <div id="feedback-text"></div>
+        <!-- Wrong-answer structured layout (hidden unless wrong) -->
+        <div class="wrong-detail" id="wrong-detail">
+          <div class="wrong-chose">
+            <div class="wrong-chose-label">You chose</div>
+            <div class="wrong-chose-text" id="wrong-chose-text"></div>
+          </div>
+          <div class="correct-answer-block">
+            <div class="correct-answer-label">Correct Answer</div>
+            <div class="correct-answer-text" id="correct-answer-text"></div>
+          </div>
+          <div class="explanation-block">
+            <div class="explanation-text" id="explanation-text"></div>
+          </div>
+        </div>
       </div>
       <div class="affirmation-box" id="affirmation-box"></div>
       <div class="penalty-box" id="penalty-box">
@@ -995,10 +1024,11 @@ function handleAnswer(chosenIdx, btn, q) {
     const fb = document.getElementById('feedback-box');
     const fbl = document.getElementById('feedback-label');
     const fbt = document.getElementById('feedback-text');
-    fb.className = 'feedback-box wrong visible';
+    fb.className = 'feedback-box wrong tryagain visible';
     fbl.className = 'feedback-label wrong';
-    fbl.textContent = 'Try again';
+    fbl.textContent = 'Not quite — try again';
     fbt.textContent = '';
+    document.getElementById('wrong-detail').style.display = 'none';
     document.getElementById('penalty-box').className = 'penalty-box';
     document.getElementById('affirmation-box').className = 'affirmation-box';
     return;
@@ -1033,6 +1063,10 @@ function handleAnswer(chosenIdx, btn, q) {
   const ptitle = document.getElementById('penalty-title');
   const aff = document.getElementById('affirmation-box');
 
+  // Hide wrong-detail block by default each time
+  document.getElementById('wrong-detail').style.display = 'none';
+  fbt.textContent = '';
+
   if (isCorrect) {
     correctCount++;
     if (!firstAttemptWrong) streak++; else streak = 0;
@@ -1059,7 +1093,12 @@ function handleAnswer(chosenIdx, btn, q) {
     fb.className = 'feedback-box wrong visible';
     fbl.className = 'feedback-label wrong';
     fbl.textContent = '✗ Incorrect';
-    fbt.textContent = `Correct answer: ${q.opts[q.ans]}. ${q.exp}`;
+    // Populate structured wrong-answer layout
+    const chosenText = q.opts[chosenIdx];
+    document.getElementById('wrong-chose-text').textContent = chosenText;
+    document.getElementById('correct-answer-text').textContent = q.opts[q.ans];
+    document.getElementById('explanation-text').textContent = q.exp;
+    document.getElementById('wrong-detail').style.display = 'flex';
     aff.className = 'affirmation-box';
     // Pick a wrong-answer response — music mnemonics only if keywords match the question
     const qText = (q.q + ' ' + q.opts.join(' ') + ' ' + q.exp).toLowerCase();
