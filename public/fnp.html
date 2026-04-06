@@ -888,6 +888,7 @@ function showQuestion() {
     return;
   }
   answeredThisQ = false;
+  firstAttemptWrong = false;
   const q = roundQueue[currentIdx];
   const total = roundQueue.length;
   const pct = Math.round((currentIdx / total) * 100);
@@ -930,28 +931,42 @@ function showQuestion() {
   }
 }
 
+let firstAttemptWrong = false;
+
 function handleAnswer(chosenIdx, btn, q) {
   if (answeredThisQ) return;
+
+  const isCorrect = chosenIdx === q.ans;
+
+  // First wrong attempt: cross off and let them try again
+  if (!isCorrect && !firstAttemptWrong) {
+    firstAttemptWrong = true;
+    btn.disabled = true;
+    btn.classList.add('wrong');
+    const fb = document.getElementById('feedback-box');
+    const fbl = document.getElementById('feedback-label');
+    const fbt = document.getElementById('feedback-text');
+    fb.className = 'feedback-box wrong visible';
+    fbl.className = 'feedback-label wrong';
+    fbl.textContent = 'Try again';
+    fbt.textContent = '';
+    document.getElementById('penalty-box').className = 'penalty-box';
+    document.getElementById('affirmation-box').className = 'affirmation-box';
+    return;
+  }
+
+  // Second attempt or correct on first — full resolution
   answeredThisQ = true;
   totalAnswered++;
 
-  const isCorrect = chosenIdx === q.ans;
   const allBtns = document.querySelectorAll('.option-btn');
 
   allBtns.forEach(b => {
     b.disabled = true;
-    const letter = b.querySelector('.option-letter');
-    // figure out which original index this button represents
   });
 
-  // Re-map: find which button corresponds to which answer
-  // Options were shuffled, but we stored original index in onclick
-  // We need to highlight the correct answer button
-  const optsWithIdx = [...document.querySelectorAll('.option-btn')];
-  // We stored the onclick with original index - find correct btn
-  // Since options are rendered by shuffle, we scan all buttons for the correct answer text
   const correctText = q.opts[q.ans];
-  optsWithIdx.forEach(b => {
+  [...document.querySelectorAll('.option-btn')].forEach(b => {
     const spans = b.querySelectorAll('span');
     if (spans[1] && spans[1].textContent === correctText) {
       b.classList.add('correct');
@@ -971,21 +986,21 @@ function handleAnswer(chosenIdx, btn, q) {
 
   if (isCorrect) {
     correctCount++;
-    streak++;
+    if (!firstAttemptWrong) streak++; else streak = 0;
     fb.className = 'feedback-box correct visible';
     fbl.className = 'feedback-label correct';
-    fbl.textContent = '✓ Correct!';
+    fbl.textContent = firstAttemptWrong ? '✓ Correct (second try)' : '✓ Correct!';
     fbt.textContent = q.exp;
     pb.className = 'penalty-box';
-    // Show affirmation ~1 in 3 correct answers
-    if (Math.random() < 0.33) {
+    // Show affirmation ~1 in 3 correct answers (only on first-try correct)
+    if (!firstAttemptWrong && Math.random() < 0.33) {
       aff.textContent = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
       aff.className = 'affirmation-box visible';
     } else {
       aff.className = 'affirmation-box';
     }
 
-    if (streak > 0 && streak % 10 === 0) {
+    if (!firstAttemptWrong && streak > 0 && streak % 10 === 0) {
       launchConfetti();
       showToast(`🔥 ${streak}-question streak! You're on fire!`);
     }
@@ -1023,7 +1038,6 @@ function handleAnswer(chosenIdx, btn, q) {
   updateStreakBadge();
   document.getElementById('score-badge').textContent = `✓ ${correctCount}`;
   document.getElementById('next-btn-wrap').className = 'next-btn-wrap visible';
-  const isLastOriginal = currentIdx === (examQueue.length - wrongCount - 1 + examQueue.length) % examQueue.length;
   document.getElementById('next-btn').textContent = 'Next Question →';
 }
 
