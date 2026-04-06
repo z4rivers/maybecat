@@ -1024,7 +1024,7 @@ function handleAnswer(chosenIdx, btn, q) {
   document.getElementById('score-badge').textContent = `✓ ${correctCount}`;
   document.getElementById('next-btn-wrap').className = 'next-btn-wrap visible';
   const isLastOriginal = currentIdx === (examQueue.length - wrongCount - 1 + examQueue.length) % examQueue.length;
-  document.getElementById('next-btn').textContent = (currentIdx + 1 >= examQueue.length - (isCorrect ? 0 : 1)) ? 'See Results →' : 'Next Question →';
+  document.getElementById('next-btn').textContent = 'Next Question →';
 }
 
 function nextQuestion() {
