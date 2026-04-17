@@ -1262,7 +1262,7 @@ function handleAnswer(chosenIdx, btn, q) {
 
   const isCorrect = chosenIdx === q.ans;
 
-  // First wrong attempt: cross off and let them try again
+  // First wrong attempt: cross off, show why that choice is wrong, let them try again
   if (!isCorrect && !firstAttemptWrong) {
     firstAttemptWrong = true;
     btn.disabled = true;
@@ -1272,8 +1272,20 @@ function handleAnswer(chosenIdx, btn, q) {
     const fbt = document.getElementById('feedback-text');
     fb.className = 'feedback-box wrong tryagain visible';
     fbl.className = 'feedback-label wrong';
-    fbl.textContent = 'Not quite — try again';
-    fbt.textContent = '';
+    fbl.textContent = 'Not quite — one more try';
+
+    // Show why the chosen answer is wrong, without revealing the correct answer
+    const chosenText = q.opts[chosenIdx];
+    // Build a hint: use wrongExps if available, else generate a short directional nudge
+    let hint = '';
+    if (q.wrongExps && q.wrongExps[chosenIdx]) {
+      hint = `You chose "${chosenText}" — ${q.wrongExps[chosenIdx]}`;
+    } else {
+      // Generic nudge that names what they picked without giving away the answer
+      hint = `"${chosenText}" isn't the right call here. Think about the primary mechanism or guideline — one more chance.`;
+    }
+    fbt.textContent = hint;
+
     document.getElementById('wrong-detail').style.display = 'none';
     document.getElementById('penalty-box').className = 'penalty-box';
     document.getElementById('affirmation-box').className = 'affirmation-box';
