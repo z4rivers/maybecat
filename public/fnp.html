@@ -166,7 +166,7 @@
   <div id="missed-banner" class="missed-banner" style="display:none;"></div>
 
   <div class="start-stats">
-    <div class="stat-box"><div class="stat-num">515</div><div class="stat-label">Questions</div></div>
+    <div class="stat-box"><div class="stat-num" id="start-total-count">0</div><div class="stat-label">Questions</div></div>
     <div class="stat-box"><div class="stat-num">30</div><div class="stat-label">Per Round</div></div>
     <div class="stat-box"><div class="stat-num" id="start-missed-count">0</div><div class="stat-label">Saved Misses</div></div>
     <div class="stat-box"><div class="stat-num known-stat" id="start-known-count">0</div><div class="stat-label">I Know These</div></div>
@@ -1425,6 +1425,7 @@ function markKnown() {
 }
 
 function initStartScreen() {
+  document.getElementById('start-total-count').textContent = ALL_QUESTIONS.length;
   const hs = loadHighScore();
   if (hs) {
     document.getElementById('hs-banner').style.display = 'block';
